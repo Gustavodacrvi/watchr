@@ -46,7 +46,7 @@
               icon="calendar"
               color="var(--green)"
               :value="calendarStr"
-              @click="task.calendar = null"
+              @click="removeCalendar"
             />
             <Tag v-if="task.priority"
               icon="priority"
@@ -245,6 +245,8 @@ export default {
         order: [],
         files: [],
       },
+      fromIconDrop: false,
+      toReplace: null,
       readyToRemove: false,
       savingTask: false,
       uploadProgress: null,
@@ -308,6 +310,11 @@ export default {
     }
   },
   methods: {
+    removeCalendar() {
+      this.task.calendar = null
+      this.fromIconDrop = false
+      this.toReplace = null
+    },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
@@ -524,6 +531,10 @@ export default {
         }
         
         let n = t.name
+        if (this.toReplace)
+          for (const s of this.toReplace)
+            if (!this.fromIconDrop && s)
+              n = n.replace(s, '')
         const i = n.indexOf(' $')
         if (i && i > -1 && t.calendar) {
           n = n.substr(0, i)
@@ -539,7 +550,7 @@ export default {
           list: this.listId,
           folder: this.folderId,
           tags: this.tagIds,
-          name: n, heading,
+          name: n.trim(), heading,
           calendar,
           files: this.task.files,
           handleFiles: this.isEditingFiles ? taskId => {
@@ -622,7 +633,13 @@ export default {
     calendarOptions() {
       return {
         comp: 'CalendarPicker',
-        content: {callback: date => {this.task.calendar = date}, repeat: true}
+        content: {callback: date => {
+          this.fromIconDrop = date !== null
+          if (date !== null)
+            this.toReplace = null
+          
+          this.task.calendar = date
+        }, repeat: true}
       }
     },
     durationOptions() {
@@ -859,6 +876,16 @@ export default {
           this.options = this.folders.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
         }
+      }
+
+      const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
+      if (res) {
+        this.toReplace = res.matches
+        this.task.calendar = res.calendar
+        this.fromIconDrop = null
+      } else if (!this.fromIconDrop) {
+        this.toReplace = null
+        this.task.calendar = null
       }
 
       parsePriority()

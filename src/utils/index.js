@@ -12,6 +12,242 @@ let contextMenuRunned = false
 import { mergeWith, isEqual } from 'lodash'
 
 export default {
+  calendarObjNaturalCalendarInput(str, disablePmFormat) {
+    const tod = mom()
+    const TOD_STR = tod.format('Y-M-D')
+    const format = disablePmFormat ? 'HH:mm' : 'LT'
+    
+    const matches = []
+    let cal = null
+    
+    const get = obj => ({
+      editDate: TOD_STR,
+      begins: TOD_STR,
+      ...obj,
+    })
+    const spec = str => get({
+      type: 'specific',
+      specific: str,
+    })
+
+    const parseDay = str => {
+      const time = mom('' + parseInt(str, 10), 'D')
+
+      if (time.isValid()) {
+        if (time.isAfter(tod, 'day'))
+          cal = spec(time.format('Y-M-D'))
+        else
+          cal = spec(time.add(1, 'month').format('Y-M-D'))
+        matches.push(str)
+      }
+    }
+    const setMonth = num => {
+      if (cal && cal.type === 'specific') {
+        const time = mom(cal.specific, 'Y-M-D')
+        time.month(num)
+        return spec(time.format('Y-M-D'))
+      }
+    }
+
+    const keywords = [
+      {
+        match: 'next week',
+        get: () => spec(tod.clone().add(1, 'week').startOf('week').add(1, 'd').format('Y-M-D')),
+      },
+      {
+        match: ['monday', 'mon'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Mon', 'ddd'))
+      },
+      {
+        match: ['tuesday', 'tue'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Tue', 'ddd'))
+      },
+      {
+        match: ['wednesday', 'wed'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Wed', 'ddd'))
+      },
+      {
+        match: ['thursday', 'thu'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Thu', 'ddd'))
+      },
+      {
+        match: ['friday', 'fri'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Fri', 'ddd'))
+      },
+      {
+        match: ['saturday', 'sat'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sat', 'ddd'))
+      },
+      {
+        match: ['sunday', 'sun'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sun', 'ddd'))
+      },
+      {
+        match: 'next month',
+        get: () => spec(tod.clone().add(1, 'month').startOf('month').format('Y-M-D')),
+      },
+      {
+        match: 'next year',
+        get: () => spec(tod.clone().add(1, 'year').startOf('year').format('Y-M-D')),
+      },
+      {
+        match: /\sin (\d+) (\w+)/g,
+        get: match => {
+          const str = (match[0] && match[0].trim()) || ''
+
+          const split = str.split(' ')
+          const num = parseInt(split[1], 10)
+          const type = split[split.length - 1]
+
+          const types = [
+            'hours', 'days', 'weeks',
+            'months', 'years',
+          ]
+
+          if (num && type && types.includes(type)) {
+            if (type !== 'hours') {
+              cal = spec(tod.clone().add(num, type).format('Y-M-D'))
+            } else {
+              const mo = tod.clone().add(num, 'hours')
+              cal = spec(mo.format('Y-M-D'))
+              cal.time = mo.format('HH:mm')
+            }
+            matches.push(str)
+          }
+        },
+      },
+      {
+        match: /\s([0-3][0-9])th/g,
+        get: match => {
+          parseDay((match[0] && match[0].trim()) || '')
+        },
+      },
+      {
+        match: ['january', 'jan'],
+        get: m => setMonth(0),
+      },
+      {
+        match: ['february', 'feb'],
+        get: m => setMonth(1),
+      },
+      {
+        match: ['february', 'feb'],
+        get: m => setMonth(2),
+      },
+      {
+        match: ['march', 'mar'],
+        get: m => setMonth(3),
+      },
+      {
+        match: ['april', 'apr'],
+        get: m => setMonth(4),
+      },
+      {
+        match: 'may',
+        get: m => setMonth(5),
+      },
+      {
+        match: ['june', 'jun'],
+        get: m => setMonth(6),
+      },
+      {
+        match: ['jul', 'july'],
+        get: m => setMonth(7),
+      },
+      {
+        match: ['september', 'sep'],
+        get: m => setMonth(8),
+      },
+      {
+        match: ['october', 'oct'],
+        get: m => setMonth(9),
+      },
+      {
+        match: ['november', 'nov'],
+        get: m => setMonth(10),
+      },
+      {
+        match: ['december', 'dec'],
+        get: m => setMonth(11),
+      },
+      {
+        match: /\s([0-9][0-9][0-9][0-9])/g,
+        get: match => {
+          if (cal && cal.type === 'specific') {
+            const str = (match[0] && match[0].trim()) || ''
+  
+            let time = mom(str, 'Y')
+            
+            if (time.isValid()) {
+              time = mom(cal.specific, 'Y-M-D')
+              time.year(parseInt(str, 10))
+              cal = spec(time.format('Y-M-D'))
+              matches.push(str)
+            }
+          }
+        },
+      },
+      {
+        match: 'no date',
+        get: () => null,
+      },
+      {
+        match: ['today', 'tod'],
+        get: () => spec(TOD_STR)
+      },
+      {
+        match: ['tomorrow', 'tom', 'next day'],
+        get: () => spec(tod.clone().add(1, 'd').format('Y-M-D'))
+      },
+      {
+        match: ['someday', 'som'],
+        get: () => get({type: 'someday'})
+      },
+      {
+        match: !disablePmFormat ? /\s(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/g : /\s(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/g, // match 1am - 12am, 1pm - 12pm
+        get: match => {
+          const str = (match[0] && match[0].trim()) || ''
+
+          const time = mom(str, format)
+          if (time.isValid()) {
+            const hour = time.format('HH:mm')
+            matches.push(str)
+            if (cal) {
+              cal.time = hour
+            } else {
+              if (time.isSameOrBefore(tod, 'minute')) {
+                cal = spec(tod.clone().add(1, 'd').format('Y-M-D'))
+                cal.time = hour
+              } else {
+                cal = spec(TOD_STR)
+                cal.time = hour
+              }
+            }
+          }
+        },
+      },
+    ]
+
+    for (const obj of keywords) {
+      if (obj.match instanceof RegExp) {
+        const match = str.match(obj.match)
+        if (match) {
+          obj.get(match)
+        }
+      } else if (!Array.isArray(obj.match) && str.includes(' ' + obj.match)) {
+        matches.push(obj.match)
+        cal = obj.get()
+      } else if (Array.isArray(obj.match)) {
+        for (const k of obj.match)
+          if (str.includes(' ' + k)) {
+            matches.push(k)
+            cal = obj.get()
+          }
+      }
+    }
+
+    return {calendar: cal, matches}
+  },
   parseHTMLStr(str) {
     const escapeHTML = str => {
       let div = document.createElement("div")
