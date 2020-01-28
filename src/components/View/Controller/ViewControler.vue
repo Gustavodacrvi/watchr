@@ -449,6 +449,7 @@ export default {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
           id: date,
+          calendarEvents: date,
           showHeading: true,
 
           sort: sortHeading,
