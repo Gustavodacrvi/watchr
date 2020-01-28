@@ -46,7 +46,7 @@
               icon="calendar"
               color="var(--green)"
               :value="calendarStr"
-              @click="task.calendar = null"
+              @click="removeCalendar"
             />
             <Tag v-if="task.priority"
               icon="priority"
@@ -310,6 +310,11 @@ export default {
     }
   },
   methods: {
+    removeCalendar() {
+      this.task.calendar = null
+      this.fromIconDrop = false
+      this.toReplace = null
+    },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
@@ -526,10 +531,10 @@ export default {
         }
         
         let n = t.name
-        for (const s of this.toReplace)
-          if (!this.fromIconDrop && s)
-            n = n.replace(s, '')
-        console.log(n)
+        if (this.toReplace)
+          for (const s of this.toReplace)
+            if (!this.fromIconDrop && s)
+              n = n.replace(s, '')
         const i = n.indexOf(' $')
         if (i && i > -1 && t.calendar) {
           n = n.substr(0, i)
@@ -540,7 +545,7 @@ export default {
         if (calendar === undefined) calendar = null
         if (this.isEditingFiles && this.addedFiles.length > 0)
           this.savingTask = true
-/*         this.$emit('save', {
+        this.$emit('save', {
           ...t,
           list: this.listId,
           folder: this.folderId,
@@ -566,7 +571,7 @@ export default {
               })
             })
           } : null
-        }) */
+        })
         t.checklist = []
         t.notes = ''
         t.name = ''
