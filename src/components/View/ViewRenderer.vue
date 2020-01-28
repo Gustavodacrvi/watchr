@@ -466,12 +466,16 @@ export default {
           }
         }
   
-        if (this.isOnAlt && !this.isOnControl)
+        if (this.isOnAlt && this.isOnControl)
           switch (key) {
             case 's': {
               this.toggleCalendar()
               break
             }
+          }
+  
+        if (this.isOnAlt && !this.isOnControl)
+          switch (key) {
             case 'c': {
               this.showCompleted = !this.showCompleted
               break

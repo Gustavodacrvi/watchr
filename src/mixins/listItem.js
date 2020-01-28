@@ -131,7 +131,7 @@ export default {
       if (this.isOnShift) {
         switch (key) {
           case "C": {
-            if (!this.isEditing && this.comp === 'Task') {
+            if (!this.isEditing && this.comp === 'Task' && !isTyping) {
               this.isEditing = true
               this.editAction = 'addChecklist'
             }

@@ -240,7 +240,7 @@ export default {
         ],
         getter({getters, rootGetters}, listId) {
           const list = getters.lists.find(el => el.id === listId)
-          let ord = list.tasks.slice()
+          let ord = (list.tasks && list.tasks.slice()) || []
           
           let headsOrder = list.headingsOrder.slice() || []
     
