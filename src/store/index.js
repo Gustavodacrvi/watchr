@@ -589,16 +589,7 @@ gapi.load('client', () => {
     scope: "https://www.googleapis.com/auth/calendar.readonly",
   })
 
-  gapi.client.load('calendar', 'v3', async () => {
-    setTimeout(async () => {
-      const events = await gapi.client.calendar.events.list({
-        calendarId: 'primary',
-        minTime: ''
-      })
-  
-      console.log(events.result.items)
-    }, 10000)
-  })
+  gapi.client.load('calendar', 'v3')
 })
 
 window.addEventListener('resize', () => store.commit('saveWindowWidth'))
