@@ -11,6 +11,18 @@ const TOD_STR = moment().format('Y-M-D')
 
 Vue.use(Vuex)
 
+gapi.load('client', () => {
+
+  gapi.client.init({
+    apiKey: process.env.VUE_APP_API_KEY,
+    clientId: process.env.VUE_APP_CLIENT_ID,
+    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+    scope: "https://www.googleapis.com/auth/calendar.readonly",
+  })
+
+  gapi.client.load('calendar', 'v3')
+})
+
 const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
 
 import firebase from 'firebase/app'
