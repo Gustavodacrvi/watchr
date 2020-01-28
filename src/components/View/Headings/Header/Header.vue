@@ -43,9 +43,6 @@
       :inclusiveTags='inclusiveTags'
       :exclusiveTags='exclusiveTags'
     />
-    <CalendarEvents
-      :date='getCalendarOrderDate'
-    />
     <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>
   </div>
 </template>
@@ -57,7 +54,6 @@ import HeaderFiles from './HeaderFiles.vue'
 import Info from './Info.vue'
 import HeaderBar from './Bar.vue'
 import FilterTags from './FilterTags.vue'
-import CalendarEvents from './../../RenderComponents/CalendarEvents.vue'
 
 import Defer from '@/mixins/defer'
 
@@ -66,9 +62,9 @@ export default {
     Defer(),
   ],
   props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'deadline', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle', 
-  'getCalendarOrderDate', 'saveHeaderName',  'saveHeaderContent', 'extraIcons','removeHeaderTag'],
+  'saveHeaderName',  'saveHeaderContent', 'extraIcons','removeHeaderTag'],
   components: {
-    FilterTags, CalendarEvents,
+    FilterTags,
     HeaderBar,
     HeaderFiles,
     NotesApp,

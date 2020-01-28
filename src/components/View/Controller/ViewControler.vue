@@ -674,6 +674,8 @@ export default {
     getCalendarOrderDate() {
       let currentDate = mom()
       const n = this.viewName
+      if (n !== 'Tomorrow' && n !== 'Today' && n !== 'Calendar')
+        return null
       if (n === 'Tomorrow')
         currentDate.add(1, 'd')
 
