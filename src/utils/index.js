@@ -52,12 +52,66 @@ export default {
         get: () => spec(tod.clone().add(1, 'week').startOf('week').add(1, 'd').format('Y-M-D')),
       },
       {
+        match: ['monday', 'mon'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Mon', 'ddd'))
+      },
+      {
+        match: ['tuesday', 'tue'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Tue', 'ddd'))
+      },
+      {
+        match: ['wednesday', 'wed'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Wed', 'ddd'))
+      },
+      {
+        match: ['thursday', 'thu'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Thu', 'ddd'))
+      },
+      {
+        match: ['friday', 'fri'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Fri', 'ddd'))
+      },
+      {
+        match: ['saturday', 'sat'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sat', 'ddd'))
+      },
+      {
+        match: ['sunday', 'sun'],
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sun', 'ddd'))
+      },
+      {
         match: 'next month',
         get: () => spec(tod.clone().add(1, 'month').startOf('month').format('Y-M-D')),
       },
       {
         match: 'next year',
         get: () => spec(tod.clone().add(1, 'year').startOf('year').format('Y-M-D')),
+      },
+      {
+        match: /in (\d+) (\w+)/g,
+        get: match => {
+          const str = (match[0] && match[0].trim()) || ''
+
+          const split = str.split(' ')
+          const num = parseInt(split[1], 10)
+          const type = split[split.length - 1]
+
+          const types = [
+            'hours', 'days', 'weeks',
+            'months', 'years',
+          ]
+
+          if (num && type && types.includes(type)) {
+            if (type !== 'hours') {
+              cal = spec(tod.clone().add(num, type).format('Y-M-D'))
+            } else {
+              const mo = tod.clone().add(num, 'hours')
+              cal = spec(mo.format('Y-M-D'))
+              cal.time = mo.format('HH:mm')
+            }
+            matches.push(str)
+          }
+        },
       },
       {
         match: !disablePmFormat ? /\s(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/g : /\s(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/g, // match 1am - 12am, 1pm - 12pm
