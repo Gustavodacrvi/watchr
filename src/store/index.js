@@ -11,18 +11,6 @@ const TOD_STR = moment().format('Y-M-D')
 
 Vue.use(Vuex)
 
-gapi.load('client', () => {
-
-  gapi.client.init({
-    apiKey: process.env.VUE_APP_API_KEY,
-    clientId: process.env.VUE_APP_CLIENT_ID,
-    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-    scope: "https://www.googleapis.com/auth/calendar.readonly",
-  })
-
-  gapi.client.load('calendar', 'v3')
-})
-
 const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
 
 import firebase from 'firebase/app'
@@ -591,6 +579,27 @@ auth.getRedirectResult().then(res => {
   seconds: 4,
   type: 'error',
 }))
+
+gapi.load('client', () => {
+
+  gapi.client.init({
+    apiKey: process.env.VUE_APP_API_KEY,
+    clientId: process.env.VUE_APP_CLIENT_ID,
+    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+    scope: "https://www.googleapis.com/auth/calendar.readonly",
+  })
+
+  gapi.client.load('calendar', 'v3', async () => {
+    setTimeout(async () => {
+      const events = await gapi.client.calendar.events.list({
+        calendarId: 'primary',
+        minTime: ''
+      })
+  
+      console.log(events.result.items)
+    }, 10000)
+  })
+})
 
 window.addEventListener('resize', () => store.commit('saveWindowWidth'))
 
