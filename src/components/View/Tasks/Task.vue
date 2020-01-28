@@ -278,7 +278,7 @@ export default {
       s.height = this.itemHeight + 'px'
       s.minHeight = this.itemHeight + 'px'
       requestAnimationFrame(() => {
-        const dur = this.completeAnimation ? 750 : 0
+        const dur = this.completeAnimation ? 1200 : 0
         
         s.transitionDuration = '.25s'
         s.transitionDelay = `.${dur}s`

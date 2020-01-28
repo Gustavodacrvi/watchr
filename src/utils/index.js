@@ -12,6 +12,97 @@ let contextMenuRunned = false
 import { mergeWith, isEqual } from 'lodash'
 
 export default {
+  calendarObjNaturalCalendarInput(str, disablePmFormat) {
+    const tod = mom()
+    const TOD_STR = tod.format('Y-M-D')
+    const format = disablePmFormat ? 'HH:mm' : 'LT'
+    
+    const matches = []
+    let cal = null
+    
+    const get = obj => ({
+      editDate: TOD_STR,
+      begins: TOD_STR,
+      ...obj,
+    })
+    const spec = str => get({
+      type: 'specific',
+      specific: str,
+    })
+    
+    const keywords = [
+      {
+        match: 'no date',
+        get: () => null,
+      },
+      {
+        match: ['today', 'tod'],
+        get: () => spec(TOD_STR)
+      },
+      {
+        match: ['tomorrow', 'tom', 'next day'],
+        get: () => spec(tod.clone().add(1, 'd').format('Y-M-D'))
+      },
+      {
+        match: ['someday', 'som'],
+        get: () => get({type: 'someday'})
+      },
+      {
+        match: 'next week',
+        get: () => spec(tod.clone().add(1, 'week').startOf('week').add(1, 'd').format('Y-M-D')),
+      },
+      {
+        match: 'next month',
+        get: () => spec(tod.clone().add(1, 'month').startOf('month').format('Y-M-D')),
+      },
+      {
+        match: 'next year',
+        get: () => spec(tod.clone().add(1, 'year').startOf('year').format('Y-M-D')),
+      },
+      {
+        match: !disablePmFormat ? /\s(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/g : /\s(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/g, // match 1am - 12am, 1pm - 12pm
+        get: match => {
+          const str = match[0].trim()
+          const time = mom(str, format)
+          if (time.isValid()) {
+            const hour = time.format('HH:mm')
+            matches.push(str)
+            if (cal) {
+              cal.time = hour
+            } else {
+              if (time.isSameOrBefore(tod, 'minute')) {
+                cal = spec(tod.clone().add(1, 'd').format('Y-M-D'))
+                cal.time = hour
+              } else {
+                cal = spec(TOD_STR)
+                cal.time = hour
+              }
+            }
+          }
+        },
+      },
+    ]
+
+    for (const obj of keywords) {
+      if (obj.match instanceof RegExp) {
+        const match = str.match(obj.match)
+        if (match) {
+          obj.get(match)
+        }
+      } else if (!Array.isArray(obj.match) && str.includes(' ' + obj.match)) {
+        matches.push(obj.match)
+        cal = obj.get()
+      } else if (Array.isArray(obj.match)) {
+        for (const k of obj.match)
+          if (str.includes(' ' + k)) {
+            matches.push(k)
+            cal = obj.get()
+          }
+      }
+    }
+
+    return {calendar: cal, matches}
+  },
   parseHTMLStr(str) {
     const escapeHTML = str => {
       let div = document.createElement("div")

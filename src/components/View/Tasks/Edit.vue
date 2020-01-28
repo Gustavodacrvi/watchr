@@ -245,6 +245,8 @@ export default {
         order: [],
         files: [],
       },
+      fromIconDrop: false,
+      toReplace: null,
       readyToRemove: false,
       savingTask: false,
       uploadProgress: null,
@@ -524,6 +526,10 @@ export default {
         }
         
         let n = t.name
+        for (const s of this.toReplace)
+          if (!this.fromIconDrop && s)
+            n = n.replace(s, '')
+        console.log(n)
         const i = n.indexOf(' $')
         if (i && i > -1 && t.calendar) {
           n = n.substr(0, i)
@@ -534,12 +540,12 @@ export default {
         if (calendar === undefined) calendar = null
         if (this.isEditingFiles && this.addedFiles.length > 0)
           this.savingTask = true
-        this.$emit('save', {
+/*         this.$emit('save', {
           ...t,
           list: this.listId,
           folder: this.folderId,
           tags: this.tagIds,
-          name: n, heading,
+          name: n.trim(), heading,
           calendar,
           files: this.task.files,
           handleFiles: this.isEditingFiles ? taskId => {
@@ -560,7 +566,7 @@ export default {
               })
             })
           } : null
-        })
+        }) */
         t.checklist = []
         t.notes = ''
         t.name = ''
@@ -622,7 +628,13 @@ export default {
     calendarOptions() {
       return {
         comp: 'CalendarPicker',
-        content: {callback: date => {this.task.calendar = date}, repeat: true}
+        content: {callback: date => {
+          this.fromIconDrop = date !== null
+          if (date !== null)
+            this.toReplace = null
+          
+          this.task.calendar = date
+        }, repeat: true}
       }
     },
     durationOptions() {
@@ -859,6 +871,16 @@ export default {
           this.options = this.folders.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
         }
+      }
+
+      const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
+      if (res) {
+        this.toReplace = res.matches
+        this.task.calendar = res.calendar
+        this.fromIconDrop = null
+      } else if (!this.fromIconDrop) {
+        this.toReplace = null
+        this.task.calendar = null
       }
 
       parsePriority()
