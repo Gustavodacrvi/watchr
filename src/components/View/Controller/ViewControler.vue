@@ -18,6 +18,7 @@
     :headingsOrder='headingsOrder'
     :showAllHeadingsItems='showAllHeadingsItems'
     :rootFallbackItem='rootFallbackItem'
+    :getCalendarOrderDate='getCalendarOrderDate'
     :removeListHandlerWhenThereArentLists='removeListHandlerWhenThereArentLists'
 
     :mainFilter='mainFilter'
@@ -448,6 +449,7 @@ export default {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
           id: date,
+          calendarEvents: date,
           showHeading: true,
 
           sort: sortHeading,
@@ -673,6 +675,8 @@ export default {
     getCalendarOrderDate() {
       let currentDate = mom()
       const n = this.viewName
+      if (n !== 'Tomorrow' && n !== 'Today' && n !== 'Calendar')
+        return null
       if (n === 'Tomorrow')
         currentDate.add(1, 'd')
 

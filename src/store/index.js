@@ -136,6 +136,8 @@ const store = new Vuex.Store({
     pressingKey: null,
     historyPos: 0,
 
+    googleCalendarReady: false,
+
     isFirstSnapshot: true,
     changedIds: [],
   },
@@ -245,6 +247,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    googleCalendarReady(state) {
+      state.googleCalendarReady = true
+    },
     movingTask(state, bool) {
       state.movingTask = bool
     },
@@ -579,6 +584,22 @@ auth.getRedirectResult().then(res => {
   seconds: 4,
   type: 'error',
 }))
+
+gapi.load('client', () => {
+
+  gapi.client.init({
+    apiKey: process.env.VUE_APP_API_KEY,
+    clientId: process.env.VUE_APP_CLIENT_ID,
+    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+    scope: "https://www.googleapis.com/auth/calendar.readonly",
+  })
+
+  gapi.client.load('calendar', 'v3', () => {
+    setTimeout(() => {
+      store.commit('googleCalendarReady')
+    }, 1500)
+  })
+})
 
 window.addEventListener('resize', () => store.commit('saveWindowWidth'))
 

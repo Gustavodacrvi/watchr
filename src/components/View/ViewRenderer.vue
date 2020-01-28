@@ -37,6 +37,9 @@
 
         @update='onSmartComponentUpdate'
       />
+      <CalendarEvents
+        :date='getCalendarOrderDate'
+      />
       <component v-if="extraListView && defer(3)" :is='extraListView.comp'
         v-bind="{...$props, ...extraListView}"
 
@@ -112,6 +115,7 @@ import ListHandler from './Views/ListHandler.vue'
 import Pomodoro from './Views/Pomodoro/Pomodoro.vue'
 import Statistics from './Views/Statistics/Statistics.vue'
 import Defer from '@/mixins/defer'
+import CalendarEvents from './RenderComponents/CalendarEvents.vue'
 
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
@@ -135,11 +139,12 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'deadline', 'headerTags', 'headerCalendar', 'files',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
+  'getCalendarOrderDate',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
-    ListHandler,
+    ListHandler, CalendarEvents,
     PaginationVue, TaskHandler,
     Header: HeaderVue, HelperComponent,
     ActionButtons: ActionButtonsVue,

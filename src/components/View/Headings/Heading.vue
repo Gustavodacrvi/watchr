@@ -34,6 +34,7 @@
             </span>
           </div>
         </div>
+        <CalendarEvents v-if="calendarEvents" :date='calendarEvents'/>
         <NotesApp :notes="notes" @save-notes="saveNote"/>
         <transition
           @enter='enterCont'
@@ -65,6 +66,7 @@ import IconVue from '../../Icon.vue'
 import EditVue from './../RenderComponents/Edit.vue'
 import Notes from './Notes.vue'
 import Defer from '@/mixins/defer'
+import CalendarEvents from './../RenderComponents/CalendarEvents.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -74,9 +76,9 @@ export default {
   mixins: [
     Defer(),
   ],
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
   components: {
-    IconDrop: IconDropVue,
+    IconDrop: IconDropVue, CalendarEvents,
     Icon: IconVue,
     EditHeading: EditVue,
     NotesApp: Notes,

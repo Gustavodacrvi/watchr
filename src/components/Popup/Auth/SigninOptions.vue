@@ -27,40 +27,44 @@ export default {
     firebase.auth().languageCode = this.lang
   },
   methods: {
-    google() {
+    async google() {
       if (this.isUpgrading) this.$emit('google')
       if (!provider || this.isUpgrading) return;
-
       const toast = (t) => this.$store.commit('pushToast', t)
 
-      if (this.isDesktop)
-        firebase.auth().signInWithPopup(provider).then(res => {
-          const user = res.user
-          const toast = (t) => this.$store.commit('pushToast', t)
-          const dispatch = this.$store.dispatch
-          toast({
-            name: this.l['You have successfully logged in!'],
-            seconds: 3,
-            type: 'success',
-          })
-          dispatch('createUser', user).then(() => {
-            this.$router.push('/user')
-            window.location.reload()
-            this.$store.dispatch('closePopup')
-          }).catch(err => {
-            firebase.auth().currentUser.delete()
-            toast({
-              name: err.message,
-              seconds: 3,
-              type: 'error',
-            })}
-          )
-        }).catch(err => toast('pushToast', {
-          name: err.message,
+      const authInstance = gapi.auth2.getAuthInstance()
+      const googleUser = await authInstance.signIn()
+
+      const token = googleUser.getAuthResponse().id_token
+
+      const credential = provider.credential(token)
+
+      firebase.auth().signInAndRetrieveDataWithCredential(credential).then(res => {
+        const user = res.user
+        const toast = (t) => this.$store.commit('pushToast', t)
+        const dispatch = this.$store.dispatch
+        toast({
+          name: this.l['You have successfully logged in!'],
           seconds: 3,
-          type: 'error',
-        }))
-      else firebase.auth().signInWithRedirect(provider)
+          type: 'success',
+        })
+        dispatch('createUser', user).then(() => {
+          this.$router.push('/user')
+          window.location.reload()
+          this.$store.dispatch('closePopup')
+        }).catch(err => {
+          firebase.auth().currentUser.delete()
+          toast({
+            name: err.message,
+            seconds: 3,
+            type: 'error',
+          })}
+        )
+      }).catch(err => toast('pushToast', {
+        name: err.message,
+        seconds: 3,
+        type: 'error',
+      }))
     },
     guest() {
       const auth = firebase.auth()
