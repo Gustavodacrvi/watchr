@@ -478,7 +478,7 @@ export default {
       },
       doesTaskIncludeText: {
         getter({}, task, name) {
-          return task.name.includes(name)
+          return task.name && task.name.includes(name)
         },
         cache(args) {
           return JSON.stringify({t: args[0].name, n: args[1]})

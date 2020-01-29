@@ -139,7 +139,9 @@ export default {
       if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
         this.events = []
         const promises = []
-        for (const calendar of this.calendarList) {
+        const list = this.calendarList
+        
+        for (const calendar of list) {
           promises.push(gapi.client.calendar.events.list({
             calendarId: calendar.id,
             timeMax: this.getFinal,
@@ -149,11 +151,9 @@ export default {
           }))
         }
         Promise.all(promises).then(responses => {
-          for (let i = 0; i < this.calendarList.length;i++) {
+          for (let i = 0; i < list.length;i++) {
             const res = responses[i]
-            const calendar = this.calendarList[i]
-            
-            console.log(res)
+            const calendar = list[i]
             
             const obj = {
               id: calendar.id,
@@ -188,7 +188,7 @@ export default {
   computed: {
     ...mapState(['userInfo']),
     getHeight() {
-      return (this.events.reduce((tot, cal) => {
+      return (this.getCalendars.reduce((tot, cal) => {
         return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'
     },
     getInit() {
