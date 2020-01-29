@@ -184,14 +184,18 @@ export default {
       isTaskOverdue: {
         getter({getters}, task) {
           const calendar = task.calendar
-          if (!calendar || getters.isTaskInView(task, "Completed")) return false
-          
+
           let tod = null
           const getTod = () => {
             if (tod) return tod
             tod = mom()
             return tod
           }
+        
+          if (task.deadline && !task.checked && mom(task.deadline, 'Y-M-D').isBefore(getTod(), 'day')) return true
+          
+          if (!calendar || getters.isTaskInView(task, "Completed")) return false
+          
   
           const c = calendar
           if (c.type === 'specific') {
@@ -218,6 +222,8 @@ export default {
           const t = args[0]
           return JSON.stringify({
             c: t.calendar, co: t.completed,
+            ce: t.checked,
+            d: t.deadline,
           })
         },
       },
@@ -246,14 +252,20 @@ export default {
       },
       isTaskShowingOnDate: {
         getter({getters}, task, date, onlySpecific) {
+          if (task.deadline && task.deadline === TODAY_DATE)
+            return true
+
           if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday')
             return false
           if (onlySpecific && task.calendar.type !== 'specific') return false
+
+          
           return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific)
         },
         cache(args) {
           return JSON.stringify({
             task: args[0].calendar,
+            deadline: args[0].deadline,
             date: args[1],
             onlySpecific: args[2],
           })
@@ -317,6 +329,29 @@ export default {
           })
         },
       },
+      getTaskDeadlineStr: {
+        getter({getters}, task, date, l) {
+          const getDaysLeft = (deadline, date) => {
+            const dead = mom(deadline, 'Y-M-D')
+            const compare = mom(date, 'Y-M-D')
+            const diff = dead.diff(compare, 'days')
+            if (diff === 0)
+              return 'Ends today'
+            else if (diff === 1)
+              return `1 day left`
+            return `${diff} days left`
+          }
+          
+          if (!task.deadline)
+            return null
+          return utils.getHumanReadableDate(task.deadline, l) + ' ' + getDaysLeft(task.deadline, date)
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].deadline,
+          })
+        },
+      },
       isTaskInView: {
         getter({getters}, task, view) {
           switch (view) {
@@ -357,6 +392,7 @@ export default {
             case 'Today': {
               obj = {
                 calendar: t.calendar,
+                deadline: t.deadline,
                 today: TODAY_DATE,
                 complete: t.completeDate,
                 checkCom: t.checkDate,
@@ -371,12 +407,14 @@ export default {
               obj = {
                 c: t.calendar,
                 t: t.completed,
+                d: t.deadline,
               }
               break
             }
             case 'Tomorrow': {
               obj = {
                 calendar: t.calendar,
+                deadline: t.deadline,
                 today: TOM_DATE,
                 complete: t.completeDate,
                 checkCom: t.checkDate,
@@ -386,6 +424,7 @@ export default {
             case 'Completed': {
               obj = {
                 cal: t.calendar,
+                deadline: t.deadline,
                 complete: t.completeDate,
                 ca: t.canceled,
               }
@@ -425,7 +464,7 @@ export default {
       },
       isTaskInbox: {
         getter({}, task) {
-          return !task.completed &&
+          return !task.completed && !task.checked &&
           !utilsTask.hasCalendarBinding(task) &&
           !task.list &&
           !task.folder &&
@@ -434,11 +473,12 @@ export default {
         cache(args) {
           const t = args[0]
           return JSON.stringify({
-            completed: t.completed,
-            calendar: t.calendar,
-            list: t.list,
-            folder: t.folder,
-            tags: t.tags,
+            com: t.completed,
+            che: t.checked,
+            cal: t.calendar,
+            lis: t.list,
+            fol: t.folder,
+            tag: t.tags,
           })
         },
       },
@@ -873,6 +913,7 @@ export default {
           fullCheckDate: tod.format('Y-M-D HH:mm ss'),
           fullCompleteDate: tod.format('Y-M-D HH:mm ss'),
           completed: true,
+          checked: true,
           canceled: false,
           cancelDate: null,
           fullCancelDate: null,
@@ -899,6 +940,7 @@ export default {
           completedFire: null,
           completeDate: null,
           completed: false,
+          checked: false,
           checkDate: null,
           fullCheckDate: null,
           calendar: c,
@@ -915,6 +957,7 @@ export default {
       const tod = mom()
       await batchSetTasks(b, {
         canceled: true,
+        checked: true,
         cancelDate: tod.format('Y-M-D'),
         checkDate: tod.format('Y-M-D'),
         fullCancelDate: tod.format('Y-M-D HH:mm ss'),
@@ -931,6 +974,7 @@ export default {
 
       await batchSetTasks(b, {
         canceled: false,
+        checked: false,
         cancelDate: null,
         checkDate: null,
         fullCancelDate: null,

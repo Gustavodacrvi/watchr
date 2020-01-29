@@ -40,6 +40,7 @@ export const setTask = (batch, task, ref, writes) => {
           collection: 'tasks',
           [ref.id]: obj,
         })
+      batch.set(ref, obj, {merge: true})
       solve()
     }
     if (task.handleFiles)

@@ -113,6 +113,7 @@
                 <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                 <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
                 <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
+                <span v-if="deadlineStr" class="tag alert">{{ deadlineStr }}</span>
                 <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                 <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                 <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
@@ -157,6 +158,8 @@ import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 import mom from 'moment'
+
+const tod = mom()
 
 import ListItemMixin from "@/mixins/listItem"
 
@@ -343,15 +346,18 @@ export default {
       if (this.isDesktop && !this.isSelecting)
         this.isEditing = true
     },
+    saveTaskContent(obj) {
+      this.$store.dispatch('task/saveTask', {
+        id: this.item.id,
+        ...obj,
+      })
+    },
     saveTask(obj, force) {
       this.justSaved = true
       setTimeout(() => {
         this.justSaved = false
       }, 100)
-      this.$store.dispatch('task/saveTask', {
-        id: this.item.id,
-        ...obj,
-      })
+      this.saveTaskContent(obj)
       if (!obj.handleFiles || force)
         this.isEditing = false
     },
@@ -392,6 +398,7 @@ export default {
       l: 'l',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskCanceled: 'task/isTaskCanceled',
+      getTaskDeadlineStr: 'task/getTaskDeadlineStr',
       isTaskInView: 'task/isTaskInView',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
@@ -413,6 +420,21 @@ export default {
           name: l['No date'],
           icon: 'bloqued',
           callback: () => this.saveCalendarDate(null)
+        },
+        {
+          name: 'Deadline',
+          icon: 'deadline',
+          callback: () => ({
+            comp: 'CalendarPicker',
+            content: {
+              onlyDates: true,
+              noTime: true,
+              allowNull: true,
+              callback: ({specific}) => {this.saveTaskContent({
+                deadline: specific,
+              })}
+            }
+          })
         },
         {
           type: 'optionsList',
@@ -684,6 +706,9 @@ export default {
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
     },
+    deadlineStr() {
+      return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'), this.l)
+    },
     showCheckDate() {
       const n = this.viewName
       if (!(this.canceled || this.completed) || (!this.item.checkDate && !this.item.completeDate) || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
@@ -865,6 +890,10 @@ export default {
 .icon-drop-wrapper {
   position: relative;
   width: 4px;
+}
+
+.alert {
+  color: var(--red);
 }
 
 .calendarStr {

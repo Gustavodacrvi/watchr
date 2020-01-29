@@ -7,17 +7,15 @@ service cloud.firestore {
       
       match /info/{info} {
         allow create: if isSignedIn();
-        allow read, update, delete: if isOwner();
+        allow read, update: if isOwner();
       }
       match /cache/{cache} {
         allow create: if isSignedIn();
-        allow read: if isSignedIn() && isOwner();
-        allow update: if isOwner();
+        allow update, read: if isOwner();
       }
       match /tasks/{task} {
         allow create: if isSignedIn();
-        allow update: if isOwner();
-        allow read, delete: if isOwner();
+        allow read, delete, update: if isOwner();
       }
       match /tags/{tag} {
         allow create: if isSignedIn();
