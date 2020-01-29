@@ -1,27 +1,38 @@
 <template>
   <transition
-    @enter='enter'
     @leave='leave'
   >
-    <div v-if="events.length > 0" class="CalendarEvents">
+    <div v-if="getCalendars.length > 0" class="CalendarEvents" :class="{height: getHeight}">
       <transition-group
         @enter='itemEnter'
         @leave='itemLeave'
       >
-        <a v-for="item in getItems" :key="item.id"
-          class="event rb"
-          :class="{hasLink: item.htmlLink}"
-
-          :href="item.htmlLink"
-          target="_blank"
+        <div v-for="cal in getCalendars"
+          :key="cal.id"
+          class="calendar"
         >
-          <span class="info">
-            {{item.start}} - {{item.end}}&nbsp;
-          </span>
-          <span class="name">
-            {{item.name}}
-          </span>
-        </a>
+          <div v-if="!cal.primary" class="calendar-name-wrapper">
+            <span class="calendar-line"></span>
+            <span class="calendar-name">{{ cal.name }}</span>
+          </div>
+          <a v-for="item in cal.items" :key="item.id"
+            class="event rb"
+            :class="{hasLink: item.htmlLink}"
+
+            :href="item.htmlLink"
+            target="_blank"
+          >
+            <span v-if="item.start && item.end" class="info" :style="{color: item.color || cal.color}">
+              {{item.start}} - {{item.end}}&nbsp;
+            </span>
+            <span v-if="item.start && item.end" class="name">
+              {{item.name}}
+            </span>
+            <span v-else class="name" :style="{color: item.color || cal.color}">
+              {{item.name}}
+            </span>
+          </a>
+        </div>
       </transition-group>
     </div>
   </transition>
@@ -99,7 +110,10 @@ export default {
         s.height = '25px'
         s.opacity = 1
 
-        setTimeout(done, 250)
+        setTimeout(() => {
+          s.height = 'auto'
+          done()
+        }, 255)
       })
 
     },
@@ -131,19 +145,23 @@ export default {
             singleEvents: true,
             orderBy: 'startTime',
           }).then(res => {
-            this.events.push({
+            const obj = {
               id: calendar.id,
-              name: calendar.name,
+              name: calendar.summary,
+              primary: calendar.primary,
               color: calendar.backgroundColor,
               items: res.result.items.map(el => ({
                 id: el.id,
                 name: el.summary,
-                color: el.color,
+                color: el.backgroundColor,
                 htmlLink: el.htmlLink,
-                start: mom(el.start.dateTime).format(this.getFormat),
-                end: mom(el.end.dateTime).format(this.getFormat),
+                start: el.start.dateTime ? mom(el.start.dateTime).format(this.getFormat) : null,
+                end: el.end.dateTime ? mom(el.end.dateTime).format(this.getFormat) : null,
               })),
-            })
+            }
+            if (!calendar.primary)
+              this.events.push(obj)
+            else this.events.unshift(obj)
           })
         }
       }
@@ -152,23 +170,7 @@ export default {
       if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
         gapi.client.calendar.calendarList.list().then(res => {
           this.calendarList = res.result.items
-          this.getEvents()
         })
-  
-          /*
-            kind: "calendar#calendarListEntry"
-            etag: ""1580225830333000""
-            id: "vqucm0oi3r6r128t3gunhrfn14@group.calendar.google.com"
-            summary: "test"
-            timeZone: "America/Sao_Paulo"
-            colorId: "4"
-            backgroundColor: "#fa573c"
-            foregroundColor: "#000000"
-            accessRole: "owner"
-            defaultReminders: Array(0)
-            conferenceProperties: Object
-          */
-          
       }
     },
   },
@@ -176,7 +178,8 @@ export default {
   computed: {
     ...mapState(['userInfo']),
     getHeight() {
-      return ((this.events.length * 25) + 24) + 'px'
+      return (this.events.reduce((tot, cal) => {
+        return cal.primary ? tot + (cal.items.length * 25) : tot + (cal.items.length * 25)}, 0) + 24) + 'px'
     },
     getInit() {
       const date = mom(this.date, 'Y-M-D')
@@ -184,6 +187,9 @@ export default {
       date.minute(0)
       date.second(0)
       return date.toISOString()
+    },
+    getCalendars() {
+      return this.events.filter(el => el.items.length > 0)
     },
     getFinal() {
       const date = mom(this.date, 'Y-M-D')
@@ -201,7 +207,9 @@ export default {
   },
   watch: {
     date() {
-      this.getEvents()
+      if (this.date)
+        this.getEvents()
+      else this.events = []
     },
     calendarList() {
       this.getEvents()
@@ -223,6 +231,36 @@ export default {
   background-color: var(--sidebar-color);
   padding: 12px 0;
   border-radius: 14px;
+}
+
+.calendar-name {
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--sidebar-color);
+  position: relative;
+  z-index: 2;
+  padding: 0 6px;
+}
+
+.calendar-name-wrapper {
+  font-size: .8em;
+  opacity: .6;
+  height: 25px;
+  margin: 4px 12px;
+  position: relative;
+}
+
+.calendar-line {
+  position: absolute;
+  z-index: 1;
+  opacity: .4;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 2px;
+  background-color: var(--fade);
 }
 
 .event {
