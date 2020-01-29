@@ -1,11 +1,13 @@
 <template>
   <transition
+    @enter='enter'
     @leave='leave'
   >
-    <div v-if="getCalendars.length > 0" class="CalendarEvents" :class="{height: getHeight}">
+    <div v-if="getCalendars.length > 0" class="CalendarEvents">
       <transition-group
         @enter='itemEnter'
         @leave='itemLeave'
+        tag="div"
       >
         <div v-for="cal in getCalendars"
           :key="cal.id"
@@ -49,7 +51,6 @@ export default {
   data() {
     return {
       calendarList: [],
-
       events: [],
     }
   },
@@ -73,7 +74,10 @@ export default {
         s.marginTop = '12px'
         s.opacity = 1
 
-        setTimeout(done, 300)
+        setTimeout(() => {
+          s.height = 'auto'
+          done()
+        }, 305)
       })
 
     },
@@ -110,10 +114,7 @@ export default {
         s.height = '25px'
         s.opacity = 1
 
-        setTimeout(() => {
-          s.height = 'auto'
-          done()
-        }, 255)
+        setTimeout(done, 250)
       })
 
     },
@@ -137,14 +138,23 @@ export default {
     getEvents() {
       if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
         this.events = []
+        const promises = []
         for (const calendar of this.calendarList) {
-          gapi.client.calendar.events.list({
+          promises.push(gapi.client.calendar.events.list({
             calendarId: calendar.id,
             timeMax: this.getFinal,
             timeMin: this.getInit,
             singleEvents: true,
             orderBy: 'startTime',
-          }).then(res => {
+          }))
+        }
+        Promise.all(promises).then(responses => {
+          for (let i = 0; i < this.calendarList.length;i++) {
+            const res = responses[i]
+            const calendar = this.calendarList[i]
+            
+            console.log(res)
+            
             const obj = {
               id: calendar.id,
               name: calendar.summary,
@@ -162,8 +172,8 @@ export default {
             if (!calendar.primary)
               this.events.push(obj)
             else this.events.unshift(obj)
-          })
-        }
+          }
+        })
       }
     },
     getCalendarEvents() {
@@ -179,7 +189,7 @@ export default {
     ...mapState(['userInfo']),
     getHeight() {
       return (this.events.reduce((tot, cal) => {
-        return cal.primary ? tot + (cal.items.length * 25) : tot + (cal.items.length * 25)}, 0) + 24) + 'px'
+        return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'
     },
     getInit() {
       const date = mom(this.date, 'Y-M-D')
@@ -231,6 +241,8 @@ export default {
   background-color: var(--sidebar-color);
   padding: 12px 0;
   border-radius: 14px;
+  position: relative;
+  z-index: 4;
 }
 
 .calendar-name {
