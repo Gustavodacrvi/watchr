@@ -8,8 +8,12 @@
         @enter='itemEnter'
         @leave='itemLeave'
       >
-        <div v-for="item in getItems" :key="item.id"
-          class="event"
+        <a v-for="item in getItems" :key="item.id"
+          class="event rb"
+          :class="{hasLink: item.htmlLink}"
+
+          :href="item.htmlLink"
+          target="_blank"
         >
           <span class="info">
             {{item.start}} - {{item.end}}&nbsp;
@@ -17,7 +21,7 @@
           <span class="name">
             {{item.name}}
           </span>
-        </div>
+        </a>
       </transition-group>
     </div>
   </transition>
@@ -52,7 +56,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
         s.height = this.getHeight
-        s.padding = '12px'
+        s.padding = '12px 0'
         s.marginTop = '12px'
         s.opacity = 1
 
@@ -66,7 +70,7 @@ export default {
 
       s.transitionDuration = 0
       s.height = this.getHeight
-      s.padding = '12px'
+      s.padding = '12px 0'
       s.marginTop = '12px'
       s.opacity = 1
 
@@ -131,11 +135,7 @@ export default {
       }
     },
   },
-  // id
-  // htmlLink
-  // summary
-  // start
-  // end
+  // colorId
   computed: {
     ...mapState(['userInfo']),
     getHeight() {
@@ -145,6 +145,7 @@ export default {
       return this.events.map(el => ({
         id: el.id,
         name: el.summary,
+        htmlLink: el.htmlLink,
         start: mom(el.start.dateTime).format(this.getFormat),
         end: mom(el.end.dateTime).format(this.getFormat),
       }))
@@ -189,15 +190,24 @@ export default {
 .CalendarEvents {
   margin-top: 12px;
   background-color: var(--sidebar-color);
-  padding: 12px;
+  padding: 12px 0;
   border-radius: 14px;
 }
 
 .event {
+  text-decoration: none;
   height: 25px;
+  margin: 0 12px;
+  padding: 0 6px;
   font-size: .95em;
   display: flex;
+  color: var(--txt);
   align-items: center;
+}
+
+.hasLink:hover {
+  background-color: var(--dark);
+  cursor: pointer;
 }
 
 .info {
