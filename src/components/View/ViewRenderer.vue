@@ -348,7 +348,7 @@ export default {
           }
         }
   
-        utils.saveByShortcut(this, key, p, (type, item) => {
+        utils.saveByShortcut(this, false, key, p, (type, item) => {
           const dispatch = this.$store.dispatch
   
           const isList = (this.isMainSelectionInTasks !== null || !this.isMainSelectionInTasks) && this.selectedType === 'List'

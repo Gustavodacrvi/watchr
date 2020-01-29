@@ -313,7 +313,9 @@ export default {
   align-items: center;
   margin-top: 20px;
   margin-bottom: 0px;
+  border-bottom: 1.5px solid var(--light-gray);
   height: 50px;
+  opacity: 1;
   z-index: 50;
 }
 

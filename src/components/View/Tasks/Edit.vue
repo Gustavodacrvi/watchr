@@ -319,7 +319,7 @@ export default {
       const p = () => evt.preventDefault()
       const {key} = evt
 
-      utils.saveByShortcut(this, key, p, (type, task) => {
+      utils.saveByShortcut(this, true, key, p, (type, task) => {
         switch (type) {
           case 'save': {
             if (task.tags && task.tags.length > 0) {
@@ -534,7 +534,7 @@ export default {
         if (this.toReplace)
           for (const s of this.toReplace)
             if (!this.fromIconDrop && s)
-              n = n.replace(s, '')
+              n = n.replace(new RegExp(s), '')
         const i = n.indexOf(' $')
         if (i && i > -1 && t.calendar) {
           n = n.substr(0, i)
