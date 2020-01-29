@@ -50,12 +50,11 @@ export default {
   props: ['date'],
   data() {
     return {
-      calendarList: [],
       events: [],
     }
   },
-  mounted() {
-    this.getCalendarEvents()
+  created() {
+    this.getEvents()
   },
   methods: {
     enter(el, done) {
@@ -141,52 +140,47 @@ export default {
         const promises = []
         const list = this.calendarList
         
-        for (const calendar of list) {
-          promises.push(gapi.client.calendar.events.list({
-            calendarId: calendar.id,
-            timeMax: this.getFinal,
-            timeMin: this.getInit,
-            singleEvents: true,
-            orderBy: 'startTime',
-          }))
-        }
-        Promise.all(promises).then(responses => {
-          for (let i = 0; i < list.length;i++) {
-            const res = responses[i]
-            const calendar = list[i]
-            
-            const obj = {
-              id: calendar.id,
-              name: calendar.summary,
-              primary: calendar.primary,
-              color: calendar.backgroundColor,
-              items: res.result.items.map(el => ({
-                id: el.id,
-                name: el.summary,
-                color: el.backgroundColor,
-                htmlLink: el.htmlLink,
-                start: el.start.dateTime ? mom(el.start.dateTime).format(this.getFormat) : null,
-                end: el.end.dateTime ? mom(el.end.dateTime).format(this.getFormat) : null,
-              })),
-            }
-            if (!calendar.primary)
-              this.events.push(obj)
-            else this.events.unshift(obj)
+        if (list) {
+          for (const calendar of list) {
+            promises.push(gapi.client.calendar.events.list({
+              calendarId: calendar.id,
+              timeMax: this.getFinal,
+              timeMin: this.getInit,
+              singleEvents: true,
+              orderBy: 'startTime',
+            }))
           }
-        })
-      }
-    },
-    getCalendarEvents() {
-      if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
-        gapi.client.calendar.calendarList.list().then(res => {
-          this.calendarList = res.result.items
-        })
+          Promise.all(promises).then(responses => {
+            for (let i = 0; i < list.length;i++) {
+              const res = responses[i]
+              const calendar = list[i]
+              
+              const obj = {
+                id: calendar.id,
+                name: calendar.summary,
+                primary: calendar.primary,
+                color: calendar.backgroundColor,
+                items: res.result.items.map(el => ({
+                  id: el.id,
+                  name: el.summary,
+                  color: el.backgroundColor,
+                  htmlLink: el.htmlLink,
+                  start: el.start.dateTime ? mom(el.start.dateTime).format(this.getFormat) : null,
+                  end: el.end.dateTime ? mom(el.end.dateTime).format(this.getFormat) : null,
+                })),
+              }
+              if (!calendar.primary)
+                this.events.push(obj)
+              else this.events.unshift(obj)
+            }
+          })
+        }
       }
     },
   },
   // colorId
   computed: {
-    ...mapState(['userInfo']),
+    ...mapState(['userInfo', 'calendarList']),
     getHeight() {
       return (this.getCalendars.reduce((tot, cal) => {
         return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'
@@ -211,9 +205,6 @@ export default {
     getFormat() {
       return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'
     },
-    isReady() {
-      return this.$store.state.googleCalendarReady
-    },
   },
   watch: {
     date() {
@@ -223,11 +214,6 @@ export default {
     },
     calendarList() {
       this.getEvents()
-    },
-    isReady() {
-      setTimeout(() => {
-        this.getCalendarEvents()
-      })
     },
   },
 }

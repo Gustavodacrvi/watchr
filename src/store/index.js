@@ -137,6 +137,7 @@ const store = new Vuex.Store({
     historyPos: 0,
 
     googleCalendarReady: false,
+    calendarList: [],
 
     isFirstSnapshot: true,
     changedIds: [],
@@ -247,6 +248,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    saveCalendarList(state, list) {
+      state.calendarList = list
+    },
     googleCalendarReady(state) {
       state.googleCalendarReady = true
     },

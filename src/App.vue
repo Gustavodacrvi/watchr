@@ -187,11 +187,21 @@ export default {
         })
         this.saveHistory = true
       }
-    }
+    },
+    getCalendarEvents() {
+      if (typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
+        gapi.client.calendar.calendarList.list().then(res => {
+          this.$store.commit('saveCalendarList', res.result.items)
+        })
+      }
+    },
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'getInitialSmartView', 'needsUpdate']),
+    isReady() {
+      return this.$store.state.googleCalendarReady
+    },
     route() {
       if (this.$route.matched[0]) {
         return this.$route.matched[0].name
@@ -244,7 +254,10 @@ export default {
       this.updateViewType(this.isDesktop || notGoingToAnyOfTheTwo)
 
       this.lastRouteCameFromMenu = from.path === '/menu'
-    }
+    },
+    isReady() {
+      this.getCalendarEvents()
+    },
   }
 }
 
