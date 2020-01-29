@@ -534,24 +534,6 @@ getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
 
-  console.log(user.providerData[0].providerId)
-  
-/*   if (user && user.providerData && user.providerData && user.providerData[0] && user.providerData[0].providerId === 'google.com') {
-    console.log(3)
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-       (position, fd) => {
-         const xhr = new XMLHttpRequest()
-         xhr.onload = () => console.log(xhr.response)
-         xhr.open('GET', `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=${process.env.VUE_APP_API_KEY}`)
-         xhr.send()
-
-         console.log('latitude', position.coords.latitude, 'longitude', position.coords.longitude);
-       },
-      )
-    }
-  } */
-  
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)
   store.commit('firstFirebaseLoad')

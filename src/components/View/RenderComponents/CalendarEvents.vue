@@ -37,6 +37,8 @@ export default {
   props: ['date'],
   data() {
     return {
+      calendarList: [],
+
       events: [],
     }
   },
@@ -118,24 +120,55 @@ export default {
 
     },
     
-    async getCalendarEvents() {
+    getEvents() {
       if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
-        gapi.client.calendar.events.list({
-          calendarId: 'primary',
-          singleEvents: true,
-          timeMax: this.getFinal,
-          timeMin: this.getInit,
-          orderBy: 'startTime'
-        }).then(res => {
-          this.events = res.result.items
-        })
-/* 
-        console.log(await gapi.client.calendar.calendarList.list())
-        console.log(await gapi.client.calendar.events.list({
-          calendarId: 'holyday'
-        })) */
-      } else {
         this.events = []
+        for (const calendar of this.calendarList) {
+          gapi.client.calendar.events.list({
+            calendarId: calendar.id,
+            timeMax: this.getFinal,
+            timeMin: this.getInit,
+            singleEvents: true,
+            orderBy: 'startTime',
+          }).then(res => {
+            this.events.push({
+              id: calendar.id,
+              name: calendar.name,
+              color: calendar.backgroundColor,
+              items: res.result.items.map(el => ({
+                id: el.id,
+                name: el.summary,
+                color: el.color,
+                htmlLink: el.htmlLink,
+                start: mom(el.start.dateTime).format(this.getFormat),
+                end: mom(el.end.dateTime).format(this.getFormat),
+              })),
+            })
+          })
+        }
+      }
+    },
+    getCalendarEvents() {
+      if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
+        gapi.client.calendar.calendarList.list().then(res => {
+          this.calendarList = res.result.items
+          this.getEvents()
+        })
+  
+          /*
+            kind: "calendar#calendarListEntry"
+            etag: ""1580225830333000""
+            id: "vqucm0oi3r6r128t3gunhrfn14@group.calendar.google.com"
+            summary: "test"
+            timeZone: "America/Sao_Paulo"
+            colorId: "4"
+            backgroundColor: "#fa573c"
+            foregroundColor: "#000000"
+            accessRole: "owner"
+            defaultReminders: Array(0)
+            conferenceProperties: Object
+          */
+          
       }
     },
   },
@@ -144,15 +177,6 @@ export default {
     ...mapState(['userInfo']),
     getHeight() {
       return ((this.events.length * 25) + 24) + 'px'
-    },
-    getItems() {
-      return this.events.map(el => ({
-        id: el.id,
-        name: el.summary,
-        htmlLink: el.htmlLink,
-        start: mom(el.start.dateTime).format(this.getFormat),
-        end: mom(el.end.dateTime).format(this.getFormat),
-      }))
     },
     getInit() {
       const date = mom(this.date, 'Y-M-D')
@@ -177,7 +201,10 @@ export default {
   },
   watch: {
     date() {
-      this.getCalendarEvents()
+      this.getEvents()
+    },
+    calendarList() {
+      this.getEvents()
     },
     isReady() {
       setTimeout(() => {
@@ -212,10 +239,6 @@ export default {
 .hasLink:hover {
   background-color: var(--dark);
   cursor: pointer;
-}
-
-.info {
-  color: var(--yellow);
 }
 
 </style>
