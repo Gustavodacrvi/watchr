@@ -118,8 +118,8 @@ export default {
 
     },
     
-    getCalendarEvents() {
-      if (this.date && gapi.client.calendar) {
+    async getCalendarEvents() {
+      if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
         gapi.client.calendar.events.list({
           calendarId: 'primary',
           singleEvents: true,
@@ -128,8 +128,12 @@ export default {
           orderBy: 'startTime'
         }).then(res => {
           this.events = res.result.items
-          console.log(this.events)
         })
+/* 
+        console.log(await gapi.client.calendar.calendarList.list())
+        console.log(await gapi.client.calendar.events.list({
+          calendarId: 'holyday'
+        })) */
       } else {
         this.events = []
       }

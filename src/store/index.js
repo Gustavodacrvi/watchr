@@ -526,12 +526,32 @@ fire.enablePersistence().then(() => enabled = true)
     })
 })
 
+
 store.commit('saveUser', null)
 
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
+
+  console.log(user.providerData[0].providerId)
+  
+/*   if (user && user.providerData && user.providerData && user.providerData[0] && user.providerData[0].providerId === 'google.com') {
+    console.log(3)
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+       (position, fd) => {
+         const xhr = new XMLHttpRequest()
+         xhr.onload = () => console.log(xhr.response)
+         xhr.open('GET', `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=${process.env.VUE_APP_API_KEY}`)
+         xhr.send()
+
+         console.log('latitude', position.coords.latitude, 'longitude', position.coords.longitude);
+       },
+      )
+    }
+  } */
+  
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)
   store.commit('firstFirebaseLoad')
@@ -585,21 +605,23 @@ auth.getRedirectResult().then(res => {
   type: 'error',
 }))
 
-gapi.load('client', () => {
 
-  gapi.client.init({
-    apiKey: process.env.VUE_APP_API_KEY,
-    clientId: process.env.VUE_APP_CLIENT_ID,
-    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-    scope: "https://www.googleapis.com/auth/calendar.readonly",
-  })
+if (typeof gapi !== "undefined")
+  gapi.load('client', () => {
 
-  gapi.client.load('calendar', 'v3', () => {
-    setTimeout(() => {
-      store.commit('googleCalendarReady')
-    }, 1500)
+    gapi.client.init({
+      apiKey: process.env.VUE_APP_API_KEY,
+      clientId: process.env.VUE_APP_CLIENT_ID,
+      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+      scope: "https://www.googleapis.com/auth/calendar.readonly",
+    })
+
+    gapi.client.load('calendar', 'v3', () => {
+      setTimeout(() => {
+        store.commit('googleCalendarReady')
+      }, 1500)
+    })
   })
-})
 
 window.addEventListener('resize', () => store.commit('saveWindowWidth'))
 
