@@ -142,6 +142,7 @@ export default {
       isTaskInOneYear: 'task/isTaskInOneYear',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
+      isListInView: 'list/isListInView',
       doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
       doesTaskIncludeText: 'task/doesTaskIncludeText',
       isTaskInHeading: 'task/isTaskInHeading',
@@ -409,6 +410,8 @@ export default {
 
       if (!isSmartOrderViewType)
         arr = [...arr, ...this.lastDayDeadlineItemsHeadings]
+      else
+        arr = [...arr, ...this.smartOrderListHeadings]
 
       return arr
     },
@@ -657,7 +660,7 @@ export default {
     lastDayDeadlineItemsHeadings() {
 
       const arr = []
-      const itemsOrder = this.getCurrentScheduleTasksOrder
+      const itemsOrder = list.smartViewsOrders[viewName]
       const dispatch = this.$store.dispatch
 
       const date = this.getCalendarOrderDate
@@ -822,6 +825,54 @@ export default {
         })
       }
       
+      return arr
+    },
+    smartOrderListHeadings() {
+
+      const viewName = this.viewName
+
+      const arr = []
+
+      const itemsOrder = (this.viewOrders[viewName] && this.viewOrders[viewName].lists) || []
+      const dispatch = this.$store.dispatch
+
+      const filterFunction = l => this.isListInView(l, viewName)
+
+      let color
+      if (viewName === 'Someday')
+        color = 'var(--brown)'
+      if (viewName === 'Anytime')
+        color = 'var(--dark-blue)'
+
+      arr.push({
+        color,
+        name: 'Lists',
+        id: 'LISTS_SMART_VIEW_RODER',
+        icon: 'tasks',
+        showHeading: true,
+
+        listType: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+        
+        sort: lists => this.sortArray(itemsOrder, lists),
+        filter: filterFunction,
+        options: lists => [],
+        updateIds: ids => {
+          this.$store.dispatch('list/saveListsSmartViewOrderTasksIds', {
+            ids, viewName,
+          })
+        },
+        fallbackItem: (list, force) => {
+        },
+        onAddItem: obj => {
+
+        }
+      })
+
       return arr
     },
 

@@ -255,6 +255,49 @@ export default {
           return JSON.stringify(args[0])
         },
       },
+      isListAnytime: {
+        getter({}, list) {
+          return !utilsTask.hasCalendarBinding(list)
+        },
+        cache(args) {
+          const t = args[0]
+          return JSON.stringify({
+            l: t.list, f: t.folder, t: t.tags,
+            c: t.calendar,
+          })
+        },
+      },
+      isListInView: {
+        getter({getters}, list, view) {
+          switch (view) {
+            case 'Someday': return getters.isListSomeday(list)
+            case 'Anytime': return getters.isListAnytime(list)
+          }
+        },
+        cache(args) {
+          const view = args[1]
+          const t = args[0]
+          let obj = {}
+
+          switch (view) {
+            case 'Anytime': {
+              obj = {
+                calendar: t.calendar,
+                list: t.list,
+                folder: t.folder,
+                tags: t.tags,
+              }
+              break
+            }
+            case 'Someday': {
+              obj = t.calendar
+              break
+            }
+          }
+
+          return JSON.stringify({obj, view})
+        },
+      },
       getListsByName: {
         react: [
           'name',
@@ -1018,6 +1061,19 @@ export default {
       setList(b, {
         smartViewsOrders: views,
       }, listRef(listId))
+
+      b.commit()
+    },
+    saveListsSmartViewOrderTasksIds(c, {ids, viewName}) {
+      const b = fire.batch()
+
+      setInfo(b, {
+        viewOrders: {
+          [viewName]: {
+            lists: ids
+          },
+        },
+      })
 
       b.commit()
     },
