@@ -42,6 +42,12 @@
               :value="taskDurationStr"
               @click="task.taskDuration = ''"
             />
+            <Tag v-if="deadlineStr"
+              icon="deadline"
+              color="var(--red)"
+              :value="deadlineStr"
+              @click="task.deadline = ''"
+            />
             <Tag v-if="calendarStr"
               icon="calendar"
               color="var(--green)"
@@ -173,6 +179,16 @@
                 :center='true'
               />
               <IconDrop
+                handle="deadline"
+                width="22px"
+                class="opt-icon"
+                :options="deadlineOptions"
+                :circle='true'
+                handleColor='var(--red)'
+                title='Add deadline'
+                :center='true'
+              />
+              <IconDrop
                 handle="clock"
                 width="22px"
                 class="opt-icon"
@@ -234,6 +250,7 @@ export default {
         name: '',
         priority: '',
         taskDuration: '',
+        deadline: '',
         folder: '',
         list: '',
         notes: '',
@@ -319,7 +336,7 @@ export default {
       const p = () => evt.preventDefault()
       const {key} = evt
 
-      utils.saveByShortcut(this, key, p, (type, task) => {
+      utils.saveByShortcut(this, true, key, p, (type, task) => {
         switch (type) {
           case 'save': {
             if (task.tags && task.tags.length > 0) {
@@ -534,7 +551,7 @@ export default {
         if (this.toReplace)
           for (const s of this.toReplace)
             if (!this.fromIconDrop && s)
-              n = n.replace(s, '')
+              n = n.replace(new RegExp(s), '')
         const i = n.indexOf(' $')
         if (i && i > -1 && t.calendar) {
           n = n.substr(0, i)
@@ -642,6 +659,19 @@ export default {
         }, repeat: true}
       }
     },
+    deadlineOptions() {
+      return {
+        comp: 'CalendarPicker',
+        content: {
+          onlyDates: true,
+          noTime: true,
+          allowNull: true,
+          callback: date => {
+            this.task.deadline = date.specific
+          }
+        }
+      }
+    },
     durationOptions() {
       return {
         comp: 'TimePicker',
@@ -704,12 +734,16 @@ export default {
     },
     atLeastOnSpecialTag() {
       const t = this.task
-      return this.calendarStr || t.priority || t.folder || t.taskDuration || t.list || (t.list && t.heading)
+      return this.calendarStr || t.deadline || t.priority || t.folder || t.taskDuration || t.list || (t.list && t.heading)
     },
     calendarStr() {
       if (this.task.calendar)
         return utils.parseCalendarObjectToString(this.task.calendar, this.l, this.userInfo)
       return null
+    },
+    deadlineStr() {
+      if (this.task.deadline)
+        return utils.getHumanReadableDate(this.task.deadline, this.l)
     },
     taskDurationStr() {
       if (this.task.taskDuration)

@@ -35,9 +35,12 @@
           :selectEverythingToggle='selectEverythingToggle'
           :itemIconDropOptions='itemIconDropOptions'
           :getItemFirestoreRef='getItemFirestoreRef'
-          :itemPlaceholder='itemPlaceholder'
           :disableFallback='disableFallback'
           :onAddExistingItem='onAddExistingItem'
+
+          :itemPlaceholder='h.itemPlaceholder || itemPlaceholder'
+          :comp='h.comp || comp'
+          :editComp='h.editComp || editComp'
 
           :hideListName="h.hideListName"
           :viewName='viewName'
@@ -49,10 +52,8 @@
           :allowCalendarStr='h.calendarStr'
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
-          :comp='comp'
           :showHeadingName="h.showHeadingName"
           :scheduleObject='scheduleObject'
-          :editComp='editComp'
           :onSortableAdd='h.onSortableAdd'
           :isLast='(i + 1) === headings.length'
           @add-heading='addHeading'
@@ -167,10 +168,12 @@ export default {
     },
 
     enter(el, done) {
+      const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
 
       s.transitionDuration = 0
-      s.opacity = 0
+      w.transitionDuration = 0
+      w.opacity = 0
       s.height = 0
       s.margin = 0
       s.padding = 0
@@ -178,23 +181,29 @@ export default {
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.4s'
+        w.transitionDuration = '.4s'
 
         s.marginTop = '20px'
         s.marginBottom = 0
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
-        s.opacity = 1
+        w.opacity = 1
         s.padding = '0 6px'
         s.overflow = 'hidden'
         setTimeout(done, 400)
       })
     },
     leave(el, done) {
+      const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
 
       s.transitionDuration = '.4s'
-      s.opacity = 0
+      w.transitionDuration = '.4s'
+      w.opacity = 0
+      w.height = 0
+      w.overflow = 'hidden'
       s.height = 0
+      s.overflow = 'hidden'
       s.margin = 0
       s.padding = 0
       s.borderBoddom = '0px solid var(--back-color)'

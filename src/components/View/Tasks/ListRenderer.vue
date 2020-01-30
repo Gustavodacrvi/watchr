@@ -759,7 +759,7 @@ export default {
             shouldRender = this.headingFilterFunction(t)
         }
 
-        const newItemRef = this.getItemFirestoreRef()
+        const newItemRef = this.getItemFirestoreRef(this.header)
 
         t = {
           ...t,
@@ -932,7 +932,7 @@ export default {
         return this.pressingSelectKeys
     },
     inflate() {
-      if (!((this.isRoot && this.comp === 'Task' && this.getHeadings.length === 0) || this.isLast)) return null
+      if (!((this.isRoot && this.comp === 'Task' && this.getHeadings.length === 0) || this.isLast) || this.showIllustration) return null
       return this.isRoot ? {
         minHeight: this.compHeight,
       } : {

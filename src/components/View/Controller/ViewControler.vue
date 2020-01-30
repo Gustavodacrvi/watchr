@@ -103,6 +103,9 @@ export default {
     sidebar() {
       this.$emit('sidebar')
     },
+    sortArray(...args) {
+      return this.$store.getters.checkMissingIdsAndSortArr(...args)
+    },
   },
   computed: {
     ...mapState({
@@ -118,7 +121,14 @@ export default {
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
+      getCalendarOrderSmartViewListsOrder: 'list/getCalendarOrderSmartViewListsOrder',
       isTaskInList: 'task/isTaskInList',
+      isTaskLastDeadlineDay: 'task/isTaskLastDeadlineDay',
+      getEndsTodayLists: 'list/getEndsTodayLists',
+      getBeginsTodayLists: 'list/getBeginsTodayLists',
+      isListLastDeadlineDay: 'list/isListLastDeadlineDay',
+      isListBeginDay: 'list/isListBeginDay',
+      getEndsTodayTasks: 'task/getEndsTodayTasks',
       getOverdueTasks: 'task/getOverdueTasks',
       isTaskInSevenDays: 'task/isTaskInSevenDays',
       isTaskInFolder: 'task/isTaskInFolder',
@@ -132,6 +142,7 @@ export default {
       isTaskInOneYear: 'task/isTaskInOneYear',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
+      isListInView: 'list/isListInView',
       doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
       doesTaskIncludeText: 'task/doesTaskIncludeText',
       isTaskInHeading: 'task/isTaskInHeading',
@@ -164,8 +175,6 @@ export default {
       let folders = Array.from(setOfFolders)
       folders.forEach(f => f.smartViewControllerType = 'folder')
 
-      const sortArray = this.$store.getters.checkMissingIdsAndSortArr
-
       let currentDate = mom()
       if (viewName === 'Tomorrow')
         currentDate.add(1, 'd')
@@ -186,9 +195,9 @@ export default {
       }
 
       if (!order) order = []
-      const headings = sortArray(order, [...folders, ...lists])
+      const headings = this.sortArray(order, [...folders, ...lists])
 
-      const arr = []
+      let arr = []
       for (const viewHeading of headings) {
         if (viewHeading.smartViewControllerType === 'list') {
           const list = viewHeading
@@ -233,7 +242,7 @@ export default {
 
           const filterFunction = task => this.isTaskInList(task, list.id)
 
-          const sort = tasks => sortArray(calendarOrder, tasks)
+          const sort = tasks => this.sortArray(calendarOrder, tasks)
 
           arr.push({
             name: list.name,
@@ -270,7 +279,7 @@ export default {
                 task.list = list.id
               return task
             },
-            onAddTask: obj => {
+            onAddItem: obj => {
               if (isSmartOrderViewType)
                 this.$store.dispatch('list/addTaskByIndexSmartViewList', {
                   ...obj, listId: list.id, viewName: viewName,
@@ -335,7 +344,7 @@ export default {
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
-          const sort = tasks => sortArray(calendarOrder, tasks)
+          const sort = tasks => this.sortArray(calendarOrder, tasks)
           
           arr.push({
             name: folder.name,
@@ -372,7 +381,7 @@ export default {
                 task.folder = folder.id
               return task
             },
-            onAddTask: obj => {
+            onAddItem: obj => {
               if (isSmartOrderViewType)
                 this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
                   ...obj, folderId: folder.id, viewName: viewName,
@@ -398,6 +407,11 @@ export default {
           })
         }
       }
+
+      if (!isSmartOrderViewType)
+        arr = [...arr, ...this.lastDayDeadlineItemsHeadings]
+      else
+        arr = [...arr, ...this.smartOrderListHeadings]
 
       return arr
     },
@@ -459,7 +473,7 @@ export default {
               task.calendar = calObj(date)
             return task
           },
-          onAddTask: obj => {
+          onAddItem: obj => {
             const date = obj.header.id
             this.$store.dispatch('task/addTask', {
               ...obj.task
@@ -643,6 +657,227 @@ export default {
         },
       ]
     },
+    lastDayDeadlineItemsHeadings() {
+
+      const arr = []
+      const itemsOrder = this.getCurrentScheduleTasksOrder
+      const dispatch = this.$store.dispatch
+
+      const date = this.getCalendarOrderDate
+
+      const saveOrder = ids => {
+        this.$store.dispatch('task/saveCalendarOrder', {
+          ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
+          date,
+        })
+      }
+      const onListAddItem = obj => {
+        this.$store.dispatch('list/addListByIndexCalendarOrder', {
+          ...obj,
+          ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
+          date,
+        })
+      }
+      
+      if (this.hasEndsTodayLists) {
+        const filterFunction = l => this.isListLastDeadlineDay(l, date)
+
+        arr.push({
+          name: 'Ends today lists',
+          id: 'LAST_DEADLINE_DAY_LIST',
+          icon: 'deadline',
+          color: 'var(--red)',
+
+          listType: true,
+          directFiltering: true,
+
+          comp: 'List',
+          editComp: 'ListEdit',
+          itemPlaceholder: 'List name...',
+          
+          sort: lists => this.sortArray(itemsOrder, lists),
+          filter: filterFunction,
+          options: lists => [{
+            name: 'Change deadline',
+            icon: 'deadline',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                onlyDates: true,
+                noTime: true,
+                allowNull: true,
+                callback: ({specific}) => {
+                  dispatch('list/saveListsById', {
+                    ids: lists.map(el => el.id),
+                    list: {
+                      deadline: specific,
+                    },
+                  })
+                }
+              }
+            })
+          }],
+          updateIds: saveOrder,
+          fallbackItem: (list, force) => {
+            if (force || !list.deadline)
+              list.deadline = mom().format('Y-M-D')
+            return list
+          },
+          onAddItem: onListAddItem
+        })
+      }
+      if (this.hasBeginsTodayLists) {
+        const filterFunction = l => this.isListBeginDay(l, date)
+
+        arr.push({
+          name: 'Begins today lists',
+          id: 'BEGINDS_TODAY_LISTS',
+          icon: 'calendar',
+
+          listType: true,
+          directFiltering: true,
+
+          comp: 'List',
+          editComp: 'ListEdit',
+          itemPlaceholder: 'List name...',
+          
+          sort: lists => this.sortArray(itemsOrder, lists),
+          filter: filterFunction,
+          options: lists => [{
+            name: 'Change date',
+            icon: 'calendar',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                callback: (calendar) => {
+                  dispatch('list/saveListsById', {
+                    ids: lists.map(el => el.id),
+                    list: {
+                      calendar,
+                    },
+                  })
+                }
+              }
+            })
+          }],
+          updateIds: saveOrder,
+          fallbackItem: (list, force) => {
+            if (force || !list.calendar) {
+              list.calendar = {
+                type: 'specific',
+                editDate: mom().format('Y-M-D'),
+                begins: mom().format('Y-M-D'),
+          
+                specific: date,
+              }
+            }
+            return list
+          },
+          onAddItem: onListAddItem
+        })
+      }
+      if (this.hasEndsTodayTasks) {
+        const filterFunction = l => this.isTaskLastDeadlineDay(l, date)
+
+        arr.push({
+          name: 'Ends today tasks',
+          id: 'LAST_DEADLIEN_DAY_TASKS',
+          icon: 'deadline',
+          color: 'var(--red)',
+
+          directFiltering: true,
+          
+          sort: tasks => this.sortArray(itemsOrder, tasks),
+          filter: filterFunction,
+          options: tasks => [{
+            name: 'Change deadline',
+            icon: 'deadline',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                onlyDates: true,
+                noTime: true,
+                allowNull: true,
+                callback: ({specific}) => {
+                  dispatch('task/saveTasksById', {
+                    ids: tasks.map(el => el.id),
+                    task: {
+                      deadline: specific,
+                    },
+                  })
+                }
+              }
+            })
+          }],
+          updateIds: saveOrder,
+          fallbackItem: (task, force) => {
+            if (force || !task.deadline)
+              task.deadline = mom().format('Y-M-D')
+            return task
+          },
+          onAddItem: obj => {
+            this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
+              ...obj,
+              ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
+              date,
+            })
+          }
+        })
+      }
+      
+      return arr
+    },
+    smartOrderListHeadings() {
+
+      const viewName = this.viewName
+
+      const arr = []
+
+      const itemsOrder = (this.viewOrders[viewName] && this.viewOrders[viewName].lists) || []
+      const dispatch = this.$store.dispatch
+
+      const filterFunction = l => this.isListInView(l, viewName)
+
+      let color
+      if (viewName === 'Someday')
+        color = 'var(--brown)'
+      if (viewName === 'Anytime')
+        color = 'var(--dark-blue)'
+
+      arr.push({
+        color,
+        name: 'Lists',
+        id: 'LISTS_SMART_VIEW_RODER',
+        icon: 'tasks',
+        showHeading: true,
+
+        listType: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+        
+        sort: lists => this.sortArray(itemsOrder, lists),
+        filter: filterFunction,
+        options: lists => [],
+        updateIds: ids => {
+          dispatch('list/saveListsSmartViewOrderListIds', {
+            ids, viewName,
+          })
+        },
+        fallbackItem: (list, force) => {
+          return list
+        },
+        onAddItem: obj => {
+          dispatch('list/addListByIndexSmartViewOrderListIds', {
+            ...obj, viewName: viewName,
+          })
+        }
+      })
+
+      return arr
+    },
 
     periodicTasks() {
       return this.tasks.filter(el => el.calendar && el.calendar.type === 'periodic')
@@ -703,6 +938,15 @@ export default {
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart && 
         (n === 'Today' || n === 'Tomorrow' || n === 'Calendar')
+    },
+    hasEndsTodayLists() {
+      return this.getEndsTodayLists(this.getCalendarOrderDate).length > 0
+    },
+    hasBeginsTodayLists() {
+      return this.getBeginsTodayLists(this.getCalendarOrderDate).length > 0
+    },
+    hasEndsTodayTasks() {
+      return this.getEndsTodayTasks(this.getCalendarOrderDate).length > 0
     },
     hasOverdueTasks() {
       return this.getOverdueTasks().length > 0

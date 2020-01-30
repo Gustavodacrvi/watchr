@@ -128,10 +128,10 @@ export default {
           break
         }}
       }
-      if (this.isOnShift) {
+      if (this.isOnShift && !isTyping) {
         switch (key) {
           case "C": {
-            if (!this.isEditing && this.comp === 'Task' && !isTyping) {
+            if (!this.isEditing && this.comp === 'Task') {
               this.isEditing = true
               this.editAction = 'addChecklist'
             }
@@ -143,10 +143,8 @@ export default {
             break
           }
           case ' ': {
-            if (!isTyping) {
-              p()
-              this.$emit('add-item-after', 0)
-            }
+            p()
+            this.$emit('add-item-after', 0)
             break
           }
         }
@@ -354,6 +352,9 @@ export default {
     },
     canceledItem() {
       this.canceled = this.canceledItem
+    },
+    options() {
+      this.bindContextMenu(this.options)
     },
     selectedItems() {
       if (this.isDesktop)

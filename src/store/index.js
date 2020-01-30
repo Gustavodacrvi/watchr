@@ -60,7 +60,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '088'
+const version = '089'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -137,6 +137,7 @@ const store = new Vuex.Store({
     historyPos: 0,
 
     googleCalendarReady: false,
+    calendarList: [],
 
     isFirstSnapshot: true,
     changedIds: [],
@@ -247,6 +248,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    saveCalendarList(state, list) {
+      state.calendarList = list
+    },
     googleCalendarReady(state) {
       state.googleCalendarReady = true
     },
@@ -368,6 +372,9 @@ const store = new Vuex.Store({
       })
     },
     logOut({state}) {
+      const authInstance = gapi.auth2.getAuthInstance()
+      authInstance.signOut()
+
       auth.signOut().then(() => {
         state.authState = false
         location.reload()
@@ -526,12 +533,14 @@ fire.enablePersistence().then(() => enabled = true)
     })
 })
 
+
 store.commit('saveUser', null)
 
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
+
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)
   store.commit('firstFirebaseLoad')
@@ -585,21 +594,24 @@ auth.getRedirectResult().then(res => {
   type: 'error',
 }))
 
-gapi.load('client', () => {
 
-  gapi.client.init({
-    apiKey: process.env.VUE_APP_API_KEY,
-    clientId: process.env.VUE_APP_CLIENT_ID,
-    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-    scope: "https://www.googleapis.com/auth/calendar.readonly",
-  })
+if (typeof gapi !== "undefined")
+  gapi.load('client', () => {
 
-  gapi.client.load('calendar', 'v3', () => {
-    setTimeout(() => {
-      store.commit('googleCalendarReady')
-    }, 1500)
+    
+    gapi.client.init({
+      apiKey: process.env.VUE_APP_API_KEY,
+      clientId: process.env.VUE_APP_CLIENT_ID,
+      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+      scope: "https://www.googleapis.com/auth/calendar.readonly",
+    })
+    
+    gapi.client.load('calendar', 'v3', () => {
+      setTimeout(() => {
+        store.commit('googleCalendarReady')
+      }, 1500)
+    })
   })
-})
 
 window.addEventListener('resize', () => store.commit('saveWindowWidth'))
 

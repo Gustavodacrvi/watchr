@@ -175,10 +175,11 @@ export default {
       return this.viewName === 'Upcoming'
     },
     showHeading() {
-      if (this.viewName !== 'Upcoming') return null
-      return h => {
-        return h.showHeading
-      }
+      if (this.viewName === 'Upcoming' || this.isSmartOrderViewType)
+        return h => {
+          return h.showHeading
+        }
+      return null
     },
     headings() {
       if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings) 
@@ -205,6 +206,9 @@ export default {
         }
       }
       return []
+    },
+    showAllHeadingsItems() {
+      return this.viewName === 'Today' && this.isSmart
     },
     headerOptions() {
       return null

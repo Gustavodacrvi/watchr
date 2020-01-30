@@ -48,7 +48,7 @@ import utils from '@/utils'
 
 import mom from 'moment'
 
-import { taskRef } from '@/utils/firestore'
+import { taskRef, listRef } from '@/utils/firestore'
 
 import HandlerMixin from "@/mixins/handlerMixin"
 
@@ -97,8 +97,10 @@ export default {
         }
       })
     },
-    getItemFirestoreRef() {
-      return taskRef()
+    getItemFirestoreRef(heading) {
+      if (!heading)
+        return taskRef()
+      return heading.listType ? listRef() : taskRef()
     },
     allowSomeday() {
       this.$emit('allow-someday')
@@ -272,7 +274,7 @@ export default {
       return finalObj
     },
     emitIds() {
-      this.$emit('items-ids', this.allItemsIds)
+      this.$emit('items-ids', this.allNonFilteredViewIds)
     },
   },
   computed: {
@@ -294,6 +296,9 @@ export default {
     }),
     timeFormat() {
       return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
+    },
+    allNonFilteredViewIds() {
+      return this.allNonFilteredViewTasks.map(el => el.id)
     },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
@@ -320,9 +325,14 @@ export default {
       if (!headings) return []
       const mainTasks = this.mainTasks
       return headings.map(head => {
+        
+        const nonFiltered = !head.directFiltering ?
+          head.sort(mainTasks.filter(task => head.filter(task)))
+          : head.sort((!head.listType ? this.storeTasks : this.lists).filter(item => head.filter(item)))
+
         if (head.react)
-          for (const p of head.react) mainTasks[p]
-        const nonFiltered = head.sort(mainTasks.filter(task => head.filter(task)))
+          for (const p of head.react) nonFiltered[p]
+
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
         let updateIds = ids =>
@@ -413,10 +423,10 @@ export default {
           onAddItem: obj => {
             const newObj = {
               ...obj,
-              task: obj.item,
-              newTaskRef: obj.newItemRef,
+              [head.listType ? 'list' : 'task']: obj.item,
+              [head.listType ? 'newListRef' : 'newTaskRef']: obj.newItemRef,
             }
-            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => head.onAddTask(newObj))
+            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => head.onAddItem(newObj))
           },
           progress: head.progress ? head.progress() : undefined,
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
@@ -465,7 +475,7 @@ export default {
     },
     filterOptionsPipes() {
       return [
-        'pipeCompleted', 'pipeSomeday', 'pipeCanceled',, 'pipeFilterOptions',
+        'pipeCompleted', 'pipeSomeday', 'pipeCanceled', 'pipeFilterOptions',
       ]
     },
     filteredFilterOptionsByConfig() {
@@ -553,7 +563,7 @@ export default {
       },
       deep: true,
     },
-    allItemsIds() {
+    allNonFilteredViewIds() {
       this.emitIds()
     },
   }

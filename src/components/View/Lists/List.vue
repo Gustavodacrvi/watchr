@@ -111,6 +111,8 @@ import { mapGetters, mapState, mapActions } from 'vuex'
 
 import mom from 'moment'
 
+const tod = mom()
+
 import ListItemMixin from "@/mixins/listItem"
 
 export default {
@@ -264,7 +266,7 @@ export default {
     deadlineStr() {
       const list = this.item
       if (!list.deadline) return null
-      return this.getListDeadlineStr(list, mom().format('Y-M-D'), this.l)
+      return this.getListDeadlineStr(list, tod.format('Y-M-D'), this.l)
     },
     listTasks() {
       return this.getListTasks(this.tasks, this.item.id)
@@ -406,6 +408,10 @@ export default {
 .deadline {
   white-space: nowrap;
   color: var(--red);
+}
+
+.check-icon {
+  opacity: .4;
 }
 
 .completed {

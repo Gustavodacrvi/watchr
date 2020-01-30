@@ -3,20 +3,37 @@
     @enter='enter'
     @leave='leave'
   >
-    <div v-if="events.length > 0" class="CalendarEvents">
+    <div v-if="getCalendars.length > 0" class="CalendarEvents">
       <transition-group
         @enter='itemEnter'
         @leave='itemLeave'
+        tag="div"
       >
-        <div v-for="item in getItems" :key="item.id"
-          class="event"
+        <div v-for="cal in getCalendars"
+          :key="cal.id"
+          class="calendar"
         >
-          <span class="info">
-            {{item.start}} - {{item.end}}&nbsp;
-          </span>
-          <span class="name">
-            {{item.name}}
-          </span>
+          <div v-if="!cal.primary" class="calendar-name-wrapper">
+            <span class="calendar-line"></span>
+            <span class="calendar-name">{{ cal.name }}</span>
+          </div>
+          <a v-for="item in cal.items" :key="item.id"
+            class="event rb"
+            :class="{hasLink: item.htmlLink}"
+
+            :href="item.htmlLink"
+            target="_blank"
+          >
+            <span v-if="item.start && item.end" class="info" :style="{color: item.color || cal.color}">
+              {{item.start}} - {{item.end}}&nbsp;
+            </span>
+            <span v-if="item.start && item.end" class="name">
+              {{item.name}}
+            </span>
+            <span v-else class="name" :style="{color: item.color || cal.color}">
+              {{item.name}}
+            </span>
+          </a>
         </div>
       </transition-group>
     </div>
@@ -36,8 +53,8 @@ export default {
       events: [],
     }
   },
-  mounted() {
-    this.getCalendarEvents()
+  created() {
+    this.getEvents()
   },
   methods: {
     enter(el, done) {
@@ -52,11 +69,14 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
         s.height = this.getHeight
-        s.padding = '12px'
+        s.padding = '12px 0'
         s.marginTop = '12px'
         s.opacity = 1
 
-        setTimeout(done, 300)
+        setTimeout(() => {
+          s.height = 'auto'
+          done()
+        }, 305)
       })
 
     },
@@ -66,7 +86,7 @@ export default {
 
       s.transitionDuration = 0
       s.height = this.getHeight
-      s.padding = '12px'
+      s.padding = '12px 0'
       s.marginTop = '12px'
       s.opacity = 1
 
@@ -114,40 +134,56 @@ export default {
 
     },
     
-    getCalendarEvents() {
-      if (this.date && gapi.client.calendar) {
-        gapi.client.calendar.events.list({
-          calendarId: 'primary',
-          singleEvents: true,
-          timeMax: this.getFinal,
-          timeMin: this.getInit,
-          orderBy: 'startTime'
-        }).then(res => {
-          this.events = res.result.items
-          console.log(this.events)
-        })
-      } else {
+    getEvents() {
+      if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
         this.events = []
+        const promises = []
+        const list = this.calendarList
+        
+        if (list) {
+          for (const calendar of list) {
+            promises.push(gapi.client.calendar.events.list({
+              calendarId: calendar.id,
+              timeMax: this.getFinal,
+              timeMin: this.getInit,
+              singleEvents: true,
+              orderBy: 'startTime',
+            }))
+          }
+          Promise.all(promises).then(responses => {
+            for (let i = 0; i < list.length;i++) {
+              const res = responses[i]
+              const calendar = list[i]
+              
+              const obj = {
+                id: calendar.id,
+                name: calendar.summary,
+                primary: calendar.primary,
+                color: calendar.backgroundColor,
+                items: res.result.items.map(el => ({
+                  id: el.id,
+                  name: el.summary,
+                  color: el.backgroundColor,
+                  htmlLink: el.htmlLink,
+                  start: el.start.dateTime ? mom(el.start.dateTime).format(this.getFormat) : null,
+                  end: el.end.dateTime ? mom(el.end.dateTime).format(this.getFormat) : null,
+                })),
+              }
+              if (!calendar.primary)
+                this.events.push(obj)
+              else this.events.unshift(obj)
+            }
+          })
+        }
       }
     },
   },
-  // id
-  // htmlLink
-  // summary
-  // start
-  // end
+  // colorId
   computed: {
-    ...mapState(['userInfo']),
+    ...mapState(['userInfo', 'calendarList']),
     getHeight() {
-      return ((this.events.length * 25) + 24) + 'px'
-    },
-    getItems() {
-      return this.events.map(el => ({
-        id: el.id,
-        name: el.summary,
-        start: mom(el.start.dateTime).format(this.getFormat),
-        end: mom(el.end.dateTime).format(this.getFormat),
-      }))
+      return (this.getCalendars.reduce((tot, cal) => {
+        return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'
     },
     getInit() {
       const date = mom(this.date, 'Y-M-D')
@@ -155,6 +191,9 @@ export default {
       date.minute(0)
       date.second(0)
       return date.toISOString()
+    },
+    getCalendars() {
+      return this.events.filter(el => el.items.length > 0)
     },
     getFinal() {
       const date = mom(this.date, 'Y-M-D')
@@ -166,18 +205,15 @@ export default {
     getFormat() {
       return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'
     },
-    isReady() {
-      return this.$store.state.googleCalendarReady
-    },
   },
   watch: {
     date() {
-      this.getCalendarEvents()
+      if (this.date)
+        this.getEvents()
+      else this.events = []
     },
-    isReady() {
-      setTimeout(() => {
-        this.getCalendarEvents()
-      })
+    calendarList() {
+      this.getEvents()
     },
   },
 }
@@ -189,19 +225,56 @@ export default {
 .CalendarEvents {
   margin-top: 12px;
   background-color: var(--sidebar-color);
-  padding: 12px;
+  padding: 12px 0;
   border-radius: 14px;
+  position: relative;
+  z-index: 4;
+}
+
+.calendar-name {
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--sidebar-color);
+  position: relative;
+  z-index: 2;
+  padding: 0 6px;
+}
+
+.calendar-name-wrapper {
+  font-size: .8em;
+  opacity: .6;
+  height: 25px;
+  margin: 4px 12px;
+  position: relative;
+}
+
+.calendar-line {
+  position: absolute;
+  z-index: 1;
+  opacity: .4;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 2px;
+  background-color: var(--fade);
 }
 
 .event {
+  text-decoration: none;
   height: 25px;
+  margin: 0 12px;
+  padding: 0 6px;
   font-size: .95em;
   display: flex;
+  color: var(--txt);
   align-items: center;
 }
 
-.info {
-  color: var(--yellow);
+.hasLink:hover {
+  background-color: var(--dark);
+  cursor: pointer;
 }
 
 </style>

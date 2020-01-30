@@ -188,10 +188,6 @@ export default {
         },
       },
       {
-        match: 'no date',
-        get: () => null,
-      },
-      {
         match: ['today', 'tod'],
         get: () => spec(TOD_STR)
       },
@@ -225,6 +221,10 @@ export default {
             }
           }
         },
+      },
+      {
+        match: 'no date',
+        get: () => null,
       },
     ]
 
@@ -623,7 +623,7 @@ export default {
 
     return false
   },
-  saveByShortcut(vm, key, preventDefault, save) {
+  saveByShortcut(vm, isEditing, key, preventDefault, save) {
     const p = preventDefault
     const {isOnControl, isOnShift, isOnAlt} = vm
 
@@ -635,7 +635,7 @@ export default {
       }
     }
     
-    if (isOnShift) {
+    if (isOnShift && !isEditing) {
       switch (key) {
         case 'S': {
           save('save', {

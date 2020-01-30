@@ -86,10 +86,14 @@ export default {
   height: 50px;
   z-index: 10;
   overflow: hidden;
-  cursor: pointer;
+  cursor: grab;
   border-radius: 100px;
   background-color: var(--card);
   box-shadow: 0 3px 8px rgba(15,15,15,.3);
+}
+
+.inner-ball-button:active {
+  cursor: grabbing;
 }
 
 

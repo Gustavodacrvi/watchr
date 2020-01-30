@@ -11,7 +11,8 @@ import router from '../router'
 
 import mom from 'moment'
 
-const TOD_STR = mom().format('Y-M-D')
+const TOD_DATE = mom().format('Y-M-D')
+const TOM_DATE = mom().add(1, 'day').format('Y-M-D')
 
 export default {
   namespaced: true,
@@ -38,7 +39,7 @@ export default {
           if (!c || c.type === 'someday' || c.type === 'specific') return list.completed
           
           let tod = mom(moment, 'Y-M-D')
-          if (!tod.isValid()) tod = mom(TOD_STR,' Y-M-D')
+          if (!tod.isValid()) tod = mom(TOD_DATE,' Y-M-D')
           if (c.type === 'after completion') {
             if (!c.lastCompleteDate) return false
             const last = mom(c.lastCompleteDate, 'Y-M-D')
@@ -178,8 +179,125 @@ export default {
           return JSON.stringify(args)
         }
       },
+      getCalendarOrderSmartViewListsOrder: {
+        getter(c) {
+          const taskIdsFromList = this.getAllTasksOrderByList(list.id)
+
+          let found = false
+          for (const id of calendarOrder)
+            if (taskIdsFromList.includes(id)) {
+              found = true
+              break
+            }
+
+          if (found) tasksOrder = calendarOrder
+          else tasksOrder = taskIdsFromList
+        },
+        cache(args) {
+
+        },
+      },
+      isListLastDeadlineDay: {
+        getter({}, list, date) {
+          if (!list.deadline || list.completed || list.canceled)
+            return false
+          return list.deadline === (date || TOD_DATE)
+        },
+        cache(args) {
+          return JSON.stringify({
+            d: args[0].deadline,
+            c: args[0].completed,
+            ca: args[0].canceled,
+            da: args[1],
+          })
+        },
+      },
+      isListBeginDay: {
+        getter({}, list, date) {
+          if (!list.calendar || list.completed || list.canceled || list.calendar.type !== 'specific')
+            return false
+          return list.calendar.specific === (date || TOD_DATE)
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].completed,
+            ca: args[0].canceled,
+            c: args[0].calendar,
+            da: args[1],
+          })
+        },
+      },
     }),
     ...MemoizeGetters('lists', {
+      getEndsTodayLists: {
+        react: [
+          'deadline',
+          'completed',
+          'canceled',
+        ],
+        getter({getters}, date) {
+          return getters.lists.filter(l => getters.isListLastDeadlineDay(l, date))
+        },
+        cache(args) {
+          return JSON.stringify(args[0])
+        },
+      },
+      getBeginsTodayLists: {
+        react: [
+          'completed',
+          'canceled',
+          'calendar',
+        ],
+        getter({getters}, date) {
+          return getters.lists.filter(l => getters.isListBeginDay(l, date))
+        },
+        cache(args) {
+          return JSON.stringify(args[0])
+        },
+      },
+      isListAnytime: {
+        getter({}, list) {
+          return !utilsTask.hasCalendarBinding(list)
+        },
+        cache(args) {
+          const t = args[0]
+          return JSON.stringify({
+            l: t.list, f: t.folder, t: t.tags,
+            c: t.calendar,
+          })
+        },
+      },
+      isListInView: {
+        getter({getters}, list, view) {
+          switch (view) {
+            case 'Someday': return getters.isListSomeday(list)
+            case 'Anytime': return getters.isListAnytime(list)
+          }
+        },
+        cache(args) {
+          const view = args[1]
+          const t = args[0]
+          let obj = {}
+
+          switch (view) {
+            case 'Anytime': {
+              obj = {
+                calendar: t.calendar,
+                list: t.list,
+                folder: t.folder,
+                tags: t.tags,
+              }
+              break
+            }
+            case 'Someday': {
+              obj = t.calendar
+              break
+            }
+          }
+
+          return JSON.stringify({obj, view})
+        },
+      },
       getListsByName: {
         react: [
           'name',
@@ -219,7 +337,7 @@ export default {
               !getters.isListCompleted(l) &&
               !getters.isListCanceled(l) &&
               !getters.isListSomeday(l) &&
-              getters.isListShowingOnDate(l, TOD_STR)
+              getters.isListShowingOnDate(l, TOD_DATE)
             )
         },
         cache(args) {
@@ -266,7 +384,7 @@ export default {
             compareDate = c.lastCompleteDate
     
           ts.forEach(el => {
-            if (isTaskCompleted(el, TOD_STR, compareDate)) completedTasks++
+            if (isTaskCompleted(el, TOD_DATE, compareDate)) completedTasks++
           })
           const result = 100 * completedTasks / numberOfTasks
           if (isNaN(result)) return 0
@@ -618,6 +736,32 @@ export default {
 
       b.commit()
     },
+    addListByIndexCalendarOrder({rootState}, {ids, list, date, newListRef}) {
+      const b = fire.batch()
+
+      const writes = []
+
+      setList(b, {
+        folder: null,
+        name: '',
+        smartViewsOrders: {},
+        userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+        ...list,
+      }, newListRef, writes)
+
+      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
+
+      setInfo(b, {calendarOrders}, writes)
+
+      cacheBatchedItems(b, writes)
+      
+      b.commit()
+    },
     addTaskByIndexSmartViewList(c, {ids, index, task, listId, viewName, newTaskRef}) {
       const b = fire.batch()
 
@@ -917,6 +1061,50 @@ export default {
       setList(b, {
         smartViewsOrders: views,
       }, listRef(listId))
+
+      b.commit()
+    },
+    saveListsSmartViewOrderListIds(c, {ids, viewName}) {
+      const b = fire.batch()
+
+      setInfo(b, {
+        viewOrders: {
+          [viewName]: {
+            lists: ids
+          },
+        },
+      })
+
+      b.commit()
+    },
+    addListByIndexSmartViewOrderListIds(c, {list, newItemRef, ids, viewName}) {
+      const b = fire.batch()
+      
+      const writes = []
+
+      setList(b, {
+        folder: null,
+        name: '',
+        smartViewsOrders: {},
+        userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+        userId: uid(),
+        ...list,
+      }, newItemRef, writes)
+      
+      setInfo(b, {
+        viewOrders: {
+          [viewName]: {
+            lists: ids
+          },
+        },
+      }, writes)
+
+      cacheBatchedItems(b, writes)
 
       b.commit()
     },

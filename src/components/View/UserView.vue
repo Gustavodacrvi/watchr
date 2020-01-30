@@ -58,15 +58,24 @@ export default {
 
       pressingHandle: false,
       handleStart: 0,
+
+      interval: null,
     }
   },
   created() {
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
 
+    this.interval = setInterval(() => {
+      this.getScrollTop()
+    }, 1500)
+
     const savedWidth = localStorage.getItem('watchr_menu_width')
     if (savedWidth !== null)
       this.width = parseInt(savedWidth, 10)
+  },
+  beforeDestroy() {
+    clearInterval(this.interval)
   },
   methods: {
     handlePointermove(evt) {

@@ -361,7 +361,7 @@ export default {
   transition: background-color .15s, height .3s;
 }
 
-.sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble, .sortable-ghost .toggle-icon {
+.sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble, .sortable-ghost .toggle-icon, .sortable-ghost .info {
   display: none;
 }
 

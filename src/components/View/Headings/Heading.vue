@@ -18,19 +18,19 @@
           @mouseleave="onHover = false"
         >
           <div class="header">
-            <span :style="{color}">
+            <span>
               <Icon v-if="hasProgress" class="icon"
                 icon="tasks"
-                color='var(--primary)'
+                :color='getHeadingColor'
                 :progress="progress"
                 width='15px'
               />
               <Icon v-else-if="icon" class="icon"
                 :icon='icon'
-                color='var(--primary)'
+                :color='getHeadingColor'
                 width='22px'
               />
-              <h3 class="name" :class="{hasIcon}">{{ name }}</h3>
+              <h3 class="name" :class="{hasIcon}" :style="{color: getHeadingColor}">{{ name }}</h3>
             </span>
           </div>
         </div>
@@ -266,6 +266,9 @@ export default {
     hasIcon() {
       return this.hasProgress || this.icon
     },
+    getHeadingColor() {
+      return this.color ? this.color : 'var(--primary)'
+    },
   },
   watch: {
     options() {
@@ -313,7 +316,9 @@ export default {
   align-items: center;
   margin-top: 20px;
   margin-bottom: 0px;
+  border-bottom: 1.5px solid var(--light-gray);
   height: 50px;
+  opacity: 1;
   z-index: 50;
 }
 
