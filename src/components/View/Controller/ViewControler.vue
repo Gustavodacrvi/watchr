@@ -103,6 +103,9 @@ export default {
     sidebar() {
       this.$emit('sidebar')
     },
+    sortArray(...args) {
+      return this.$store.getters.checkMissingIdsAndSortArr(...args)
+    },
   },
   computed: {
     ...mapState({
@@ -118,8 +121,10 @@ export default {
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
+      getCalendarOrderSmartViewListsOrder: 'list/getCalendarOrderSmartViewListsOrder',
       isTaskInList: 'task/isTaskInList',
       getEndsTodayLists: 'list/getEndsTodayLists',
+      isListLastDeadlineDay: 'list/isListLastDeadlineDay',
       getEndsTodayTasks: 'task/getEndsTodayTasks',
       getOverdueTasks: 'task/getOverdueTasks',
       isTaskInSevenDays: 'task/isTaskInSevenDays',
@@ -166,8 +171,6 @@ export default {
       let folders = Array.from(setOfFolders)
       folders.forEach(f => f.smartViewControllerType = 'folder')
 
-      const sortArray = this.$store.getters.checkMissingIdsAndSortArr
-
       let currentDate = mom()
       if (viewName === 'Tomorrow')
         currentDate.add(1, 'd')
@@ -188,9 +191,9 @@ export default {
       }
 
       if (!order) order = []
-      const headings = sortArray(order, [...folders, ...lists])
+      const headings = this.sortArray(order, [...folders, ...lists])
 
-      const arr = []
+      let arr = []
       for (const viewHeading of headings) {
         if (viewHeading.smartViewControllerType === 'list') {
           const list = viewHeading
@@ -235,7 +238,7 @@ export default {
 
           const filterFunction = task => this.isTaskInList(task, list.id)
 
-          const sort = tasks => sortArray(calendarOrder, tasks)
+          const sort = tasks => this.sortArray(calendarOrder, tasks)
 
           arr.push({
             name: list.name,
@@ -272,7 +275,7 @@ export default {
                 task.list = list.id
               return task
             },
-            onAddTask: obj => {
+            onAddItem: obj => {
               if (isSmartOrderViewType)
                 this.$store.dispatch('list/addTaskByIndexSmartViewList', {
                   ...obj, listId: list.id, viewName: viewName,
@@ -337,7 +340,7 @@ export default {
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
-          const sort = tasks => sortArray(calendarOrder, tasks)
+          const sort = tasks => this.sortArray(calendarOrder, tasks)
           
           arr.push({
             name: folder.name,
@@ -374,7 +377,7 @@ export default {
                 task.folder = folder.id
               return task
             },
-            onAddTask: obj => {
+            onAddItem: obj => {
               if (isSmartOrderViewType)
                 this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
                   ...obj, folderId: folder.id, viewName: viewName,
@@ -400,6 +403,9 @@ export default {
           })
         }
       }
+
+      if (!isSmartOrderViewType)
+        arr = [...arr, ...this.lastDayDeadlineItemsHeadings]
 
       return arr
     },
@@ -461,7 +467,7 @@ export default {
               task.calendar = calObj(date)
             return task
           },
-          onAddTask: obj => {
+          onAddItem: obj => {
             const date = obj.header.id
             this.$store.dispatch('task/addTask', {
               ...obj.task
@@ -644,6 +650,51 @@ export default {
           filter: task => this.isTaskInView(task, 'Today'),
         },
       ]
+    },
+    lastDayDeadlineItemsHeadings() {
+
+      const arr = []
+      const itemsOrder = this.getCurrentScheduleTasksOrder
+
+      if (this.hasEndsTodayLists) {
+        const saveOrder = ids => {
+          this.$store.dispatch('task/saveCalendarOrder', {
+            ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
+            date: this.getCalendarOrderDate,
+          })
+        }
+        const filterFunction = this.isListLastDeadlineDay
+
+        arr.push({
+          name: 'Last deadline day lists',
+          id: 'LAST_DEADLINE_DAY_LIST',
+          icon: 'deadline',
+          color: 'var(--red)',
+
+          listType: true,
+          directFiltering: true,
+
+          comp: 'List',
+          editComp: 'ListEdit',
+          itemPlaceholder: 'List name...',
+          
+          sort: lists => this.sortArray(itemsOrder, lists),
+          filter: filterFunction,
+          options: tasks => [],
+          updateIds: saveOrder,
+          fallbackItem: (list, force) => {
+
+          },
+          onAddItem: obj => {
+ 
+          },
+          onSortableAdd: (evt, taskIds, type, ids) => {
+
+          }
+        })
+      }
+      
+      return arr
     },
 
     periodicTasks() {

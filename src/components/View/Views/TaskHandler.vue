@@ -320,9 +320,14 @@ export default {
       if (!headings) return []
       const mainTasks = this.mainTasks
       return headings.map(head => {
+        
+        const nonFiltered = !head.directFiltering ?
+          head.sort(mainTasks.filter(task => head.filter(task)))
+          : head.sort((!head.listType ? this.storeTasks : this.lists).filter(item => head.filter(item)))
+
         if (head.react)
-          for (const p of head.react) mainTasks[p]
-        const nonFiltered = head.sort(mainTasks.filter(task => head.filter(task)))
+          for (const p of head.react) nonFiltered[p]
+
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
         let updateIds = ids =>
@@ -416,7 +421,7 @@ export default {
               task: obj.item,
               newTaskRef: obj.newItemRef,
             }
-            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => head.onAddTask(newObj))
+            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => head.onAddItem(newObj))
           },
           progress: head.progress ? head.progress() : undefined,
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
@@ -465,7 +470,7 @@ export default {
     },
     filterOptionsPipes() {
       return [
-        'pipeCompleted', 'pipeSomeday', 'pipeCanceled',, 'pipeFilterOptions',
+        'pipeCompleted', 'pipeSomeday', 'pipeCanceled', 'pipeFilterOptions',
       ]
     },
     filteredFilterOptionsByConfig() {

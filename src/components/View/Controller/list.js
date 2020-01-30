@@ -177,7 +177,7 @@ export default {
                 headingId: h.id, listId: viewList.id, ids,
               })
             },
-            onAddTask: obj => {
+            onAddItem: obj => {
               this.$store.dispatch('list/addTaskHeading', {
                 ...obj, headingId: h.id, listId: viewList.id,
               })

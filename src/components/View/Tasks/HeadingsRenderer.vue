@@ -35,9 +35,12 @@
           :selectEverythingToggle='selectEverythingToggle'
           :itemIconDropOptions='itemIconDropOptions'
           :getItemFirestoreRef='getItemFirestoreRef'
-          :itemPlaceholder='itemPlaceholder'
           :disableFallback='disableFallback'
           :onAddExistingItem='onAddExistingItem'
+
+          :itemPlaceholder='h.itemPlaceholder || itemPlaceholder'
+          :comp='h.comp || comp'
+          :editComp='h.editComp || editComp'
 
           :hideListName="h.hideListName"
           :viewName='viewName'
@@ -49,10 +52,8 @@
           :allowCalendarStr='h.calendarStr'
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
-          :comp='comp'
           :showHeadingName="h.showHeadingName"
           :scheduleObject='scheduleObject'
-          :editComp='editComp'
           :onSortableAdd='h.onSortableAdd'
           :isLast='(i + 1) === headings.length'
           @add-heading='addHeading'
@@ -199,7 +200,10 @@ export default {
       s.transitionDuration = '.4s'
       w.transitionDuration = '.4s'
       w.opacity = 0
+      w.height = 0
+      w.overflow = 'hidden'
       s.height = 0
+      s.overflow = 'hidden'
       s.margin = 0
       s.padding = 0
       s.borderBoddom = '0px solid var(--back-color)'

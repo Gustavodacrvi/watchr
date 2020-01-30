@@ -179,6 +179,24 @@ export default {
           return JSON.stringify(args)
         }
       },
+      getCalendarOrderSmartViewListsOrder: {
+        getter(c) {
+          const taskIdsFromList = this.getAllTasksOrderByList(list.id)
+
+          let found = false
+          for (const id of calendarOrder)
+            if (taskIdsFromList.includes(id)) {
+              found = true
+              break
+            }
+
+          if (found) tasksOrder = calendarOrder
+          else tasksOrder = taskIdsFromList
+        },
+        cache(args) {
+
+        },
+      },
       isListLastDeadlineDay: {
         getter({}, list) {
           if (!list.deadline || list.completed || list.canceled)
