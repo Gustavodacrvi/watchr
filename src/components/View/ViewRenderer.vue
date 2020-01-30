@@ -40,7 +40,6 @@
       <CalendarEvents
         :date='getCalendarOrderDate'
       />
-      {{extraListView}}
       <component v-if="extraListView && defer(3)" :is='extraListView.comp'
         v-bind="{...$props, ...extraListView}"
 

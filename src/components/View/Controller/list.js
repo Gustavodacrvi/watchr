@@ -135,7 +135,6 @@ export default {
       const arr = []
       const viewList = this.viewList
       if (viewList) {
-
         for (const h of viewList.headings) {
           const pipedFilter = task => this.isTaskInHeading(task, h)
           const sort = tasks => this.$store.getters.checkMissingIdsAndSortArr(h.tasks, tasks)

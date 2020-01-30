@@ -9,6 +9,10 @@
 
     <li>You can add deadlines to list just like in lists.</li>
 
+    <h3>Extra Smart View Headings</h3>
+
+    <li>Show "Ends today" heading on dates where the task/list deadline is reached.</li>
+    <li>Show "Begins today" heading on dates where the list defer date is reached.</li>
 
   </div>
 </template>
