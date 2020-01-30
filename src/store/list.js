@@ -1064,7 +1064,7 @@ export default {
 
       b.commit()
     },
-    saveListsSmartViewOrderTasksIds(c, {ids, viewName}) {
+    saveListsSmartViewOrderListIds(c, {ids, viewName}) {
       const b = fire.batch()
 
       setInfo(b, {
@@ -1074,6 +1074,37 @@ export default {
           },
         },
       })
+
+      b.commit()
+    },
+    addListByIndexSmartViewOrderListIds(c, {list, newItemRef, ids, viewName}) {
+      const b = fire.batch()
+      
+      const writes = []
+
+      setList(b, {
+        folder: null,
+        name: '',
+        smartViewsOrders: {},
+        userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+        userId: uid(),
+        ...list,
+      }, newItemRef, writes)
+      
+      setInfo(b, {
+        viewOrders: {
+          [viewName]: {
+            lists: ids
+          },
+        },
+      }, writes)
+
+      cacheBatchedItems(b, writes)
 
       b.commit()
     },

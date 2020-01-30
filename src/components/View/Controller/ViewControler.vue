@@ -660,7 +660,7 @@ export default {
     lastDayDeadlineItemsHeadings() {
 
       const arr = []
-      const itemsOrder = list.smartViewsOrders[viewName]
+      const itemsOrder = this.getCurrentScheduleTasksOrder
       const dispatch = this.$store.dispatch
 
       const date = this.getCalendarOrderDate
@@ -862,14 +862,17 @@ export default {
         filter: filterFunction,
         options: lists => [],
         updateIds: ids => {
-          this.$store.dispatch('list/saveListsSmartViewOrderTasksIds', {
+          dispatch('list/saveListsSmartViewOrderListIds', {
             ids, viewName,
           })
         },
         fallbackItem: (list, force) => {
+          return list
         },
         onAddItem: obj => {
-
+          dispatch('list/addListByIndexSmartViewOrderListIds', {
+            ...obj, viewName: viewName,
+          })
         }
       })
 

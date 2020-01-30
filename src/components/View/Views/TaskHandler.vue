@@ -274,7 +274,7 @@ export default {
       return finalObj
     },
     emitIds() {
-      this.$emit('items-ids', this.allItemsIds)
+      this.$emit('items-ids', this.allNonFilteredViewIds)
     },
   },
   computed: {
@@ -296,6 +296,9 @@ export default {
     }),
     timeFormat() {
       return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
+    },
+    allNonFilteredViewIds() {
+      return this.allNonFilteredViewTasks.map(el => el.id)
     },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
@@ -560,7 +563,7 @@ export default {
       },
       deep: true,
     },
-    allItemsIds() {
+    allNonFilteredViewIds() {
       this.emitIds()
     },
   }
