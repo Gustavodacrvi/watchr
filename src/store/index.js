@@ -60,7 +60,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '088'
+const version = '089'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -372,6 +372,9 @@ const store = new Vuex.Store({
       })
     },
     logOut({state}) {
+      const authInstance = gapi.auth2.getAuthInstance()
+      authInstance.signOut()
+
       auth.signOut().then(() => {
         state.authState = false
         location.reload()
@@ -595,13 +598,14 @@ auth.getRedirectResult().then(res => {
 if (typeof gapi !== "undefined")
   gapi.load('client', () => {
 
+    
     gapi.client.init({
       apiKey: process.env.VUE_APP_API_KEY,
       clientId: process.env.VUE_APP_CLIENT_ID,
       discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
       scope: "https://www.googleapis.com/auth/calendar.readonly",
     })
-
+    
     gapi.client.load('calendar', 'v3', () => {
       setTimeout(() => {
         store.commit('googleCalendarReady')

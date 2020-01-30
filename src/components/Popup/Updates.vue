@@ -77,6 +77,7 @@ import v085 from './Updates/v085.vue'
 import v086 from './Updates/v086.vue'
 import v087 from './Updates/v087.vue'
 import v088 from './Updates/v088.vue'
+import v089 from './Updates/v089.vue'
 
 export default {
   components: {
@@ -85,7 +86,7 @@ export default {
     v051, v052, v053, v054, v055, v056, v057, v058, v059, v060, v061,
     v062, v063, v064, v065, v066, v067, v068, v069, v070, v071, v072,
     v073, v074, v075, v076, v077, v078, v079, v080, v081, v082, v083,
-    v084, v085, v086, v087, v088
+    v084, v085, v086, v087, v088, v089,
   },
   created() {
     this.diff = this.versionDiff || 0

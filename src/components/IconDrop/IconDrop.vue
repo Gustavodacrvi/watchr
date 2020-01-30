@@ -103,7 +103,6 @@ export default {
       })
     },
     update(opt) {
-      console.log(opt)
       if (opt) {
         if (opt.cardOptions) this.cardOptions = opt.cardOptions
         
@@ -122,13 +121,11 @@ export default {
             const {height, width} = getComputedStyle(cont)
             s.width = oldWidth
             s.height = oldHeight
-            console.log(oldWidth, oldHeight)
             setTimeout(() => {
               s.transitionDuration = '.2s'
-              console.log(width, height)
               s.width = width
               s.height = height
-            }, 125)
+            }, 150)
           })
         }, 210)
         this.showingCont = false

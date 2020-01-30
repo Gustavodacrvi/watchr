@@ -33,6 +33,8 @@ export default {
       const toast = (t) => this.$store.commit('pushToast', t)
 
       const authInstance = gapi.auth2.getAuthInstance()
+      console.log(authInstance, authInstance.isSignedIn)
+      
       const googleUser = await authInstance.signIn()
 
       const token = googleUser.getAuthResponse().id_token
