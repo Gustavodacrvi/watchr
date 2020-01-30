@@ -11,7 +11,8 @@ import router from '../router'
 
 import mom from 'moment'
 
-const TOD_STR = mom().format('Y-M-D')
+const TOD_DATE = mom().format('Y-M-D')
+const TOM_DATE = mom().add(1, 'day').format('Y-M-D')
 
 export default {
   namespaced: true,
@@ -38,7 +39,7 @@ export default {
           if (!c || c.type === 'someday' || c.type === 'specific') return list.completed
           
           let tod = mom(moment, 'Y-M-D')
-          if (!tod.isValid()) tod = mom(TOD_STR,' Y-M-D')
+          if (!tod.isValid()) tod = mom(TOD_DATE,' Y-M-D')
           if (c.type === 'after completion') {
             if (!c.lastCompleteDate) return false
             const last = mom(c.lastCompleteDate, 'Y-M-D')
@@ -178,8 +179,32 @@ export default {
           return JSON.stringify(args)
         }
       },
+      isListLastDeadlineDay: {
+        getter({}, list) {
+          if (!list.deadline || list.completed || list.canceled)
+            return false
+          return mom(list.deadline, 'Y-M-D').add(1, 'd').isSame(mom(TOM_DATE, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify({
+            d: args[0].deadline,
+            c: args[0].completed,
+            ca: args[0].canceled,
+          })
+        },
+      },
     }),
     ...MemoizeGetters('lists', {
+      getEndsTodayLists: {
+        react: [
+          'deadline',
+          'completed',
+          'canceled',
+        ],
+        getter({getters}) {
+          return getters.lists.filter(getters.isListLastDeadlineDay)
+        },
+      },
       getListsByName: {
         react: [
           'name',
@@ -219,7 +244,7 @@ export default {
               !getters.isListCompleted(l) &&
               !getters.isListCanceled(l) &&
               !getters.isListSomeday(l) &&
-              getters.isListShowingOnDate(l, TOD_STR)
+              getters.isListShowingOnDate(l, TOD_DATE)
             )
         },
         cache(args) {
@@ -266,7 +291,7 @@ export default {
             compareDate = c.lastCompleteDate
     
           ts.forEach(el => {
-            if (isTaskCompleted(el, TOD_STR, compareDate)) completedTasks++
+            if (isTaskCompleted(el, TOD_DATE, compareDate)) completedTasks++
           })
           const result = 100 * completedTasks / numberOfTasks
           if (isNaN(result)) return 0

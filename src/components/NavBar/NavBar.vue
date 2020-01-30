@@ -22,7 +22,7 @@ export default {
     this.calculateLineOffset()
     setInterval(() => {
       this.calculateLineOffset()
-    }, 200)
+    }, 1000)
     window.addEventListener('resize', this.calculateLineOffset)
   },
   beforeDestroy() {

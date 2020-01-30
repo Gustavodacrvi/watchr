@@ -119,6 +119,8 @@ export default {
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       isTaskInList: 'task/isTaskInList',
+      getEndsTodayLists: 'list/getEndsTodayLists',
+      getEndsTodayTasks: 'task/getEndsTodayTasks',
       getOverdueTasks: 'task/getOverdueTasks',
       isTaskInSevenDays: 'task/isTaskInSevenDays',
       isTaskInFolder: 'task/isTaskInFolder',
@@ -703,6 +705,12 @@ export default {
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart && 
         (n === 'Today' || n === 'Tomorrow' || n === 'Calendar')
+    },
+    hasEndsTodayLists() {
+      return this.getEndsTodayLists().length > 0
+    },
+    hasEndsTodayTasks() {
+      return this.getEndsTodayTasks().length > 0
     },
     hasOverdueTasks() {
       return this.getOverdueTasks().length > 0

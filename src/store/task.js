@@ -182,13 +182,13 @@ export default {
         },
       },
       isTaskOverdue: {
-        getter({getters}, task) {
+        getter({getters}, task, date) {
           const calendar = task.calendar
 
           let tod = null
           const getTod = () => {
             if (tod) return tod
-            tod = mom()
+            tod = mom(date || TODAY_DATE, 'Y-M-D')
             return tod
           }
         
@@ -640,8 +640,32 @@ export default {
           })
         },
       },
+      isTaskLastDeadlineDay: {
+        getter({}, task) {
+          if (!task.deadline || task.completed || task.canceled)
+            return false
+          return mom(task.deadline, 'Y-M-D').add(1, 'd').isSame(mom(TOM_DATE, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify({
+            d: args[0].deadline,
+            c: args[0].completed,
+            ca: args[0].canceled,
+          })
+        },
+      },
     }),
     ...MemoizeGetters('tasks', {
+      getEndsTodayTasks: {
+        react: [
+          'completed',
+          'deadline',
+          'canceled',
+        ],
+        getter({getters}) {
+          return getters.tasks.filter(getters.isTaskLastDeadlineDay) 
+        },
+      },
       getNumberOfTasksByTag: {
         react: [
           'tags',
