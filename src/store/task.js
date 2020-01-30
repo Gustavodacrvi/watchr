@@ -641,16 +641,17 @@ export default {
         },
       },
       isTaskLastDeadlineDay: {
-        getter({}, task) {
+        getter({}, task, date) {
           if (!task.deadline || task.completed || task.canceled)
             return false
-          return task.deadline = TODAY_DATE
+          return task.deadline === (date || TODAY_DATE)
         },
         cache(args) {
           return JSON.stringify({
             d: args[0].deadline,
             c: args[0].completed,
             ca: args[0].canceled,
+            da: args[1],
           })
         },
       },
@@ -662,8 +663,11 @@ export default {
           'deadline',
           'canceled',
         ],
-        getter({getters}) {
-          return getters.tasks.filter(getters.isTaskLastDeadlineDay) 
+        getter({getters}, date) {
+          return getters.tasks.filter(t => getters.isTaskLastDeadlineDay(t, date)) 
+        },
+        cache(args) {
+          return JSON.stringify(args[0])
         },
       },
       getNumberOfTasksByTag: {

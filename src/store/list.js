@@ -198,16 +198,17 @@ export default {
         },
       },
       isListLastDeadlineDay: {
-        getter({}, list) {
+        getter({}, list, date) {
           if (!list.deadline || list.completed || list.canceled)
             return false
-          return list.deadline = TOD_DATE
+          return list.deadline === (date || TOD_DATE)
         },
         cache(args) {
           return JSON.stringify({
             d: args[0].deadline,
             c: args[0].completed,
             ca: args[0].canceled,
+            da: args[1],
           })
         },
       },
@@ -219,8 +220,11 @@ export default {
           'completed',
           'canceled',
         ],
-        getter({getters}) {
-          return getters.lists.filter(getters.isListLastDeadlineDay)
+        getter({getters}, date) {
+          return getters.lists.filter(l => getters.isListLastDeadlineDay(l, date))
+        },
+        cache(args) {
+          return JSON.stringify(args[0])
         },
       },
       getListsByName: {

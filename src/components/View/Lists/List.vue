@@ -410,6 +410,10 @@ export default {
   color: var(--red);
 }
 
+.check-icon {
+  opacity: .4;
+}
+
 .completed {
   opacity: .4;
 }

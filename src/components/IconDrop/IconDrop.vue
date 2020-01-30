@@ -118,14 +118,14 @@ export default {
           s.width = 'auto'
           s.height = 'auto'
           requestAnimationFrame(() => {
-            const {height, width} = getComputedStyle(cont)
+            const {height, width} = getComputedStyle(this.$el.getElementsByClassName('icon-drop-content')[0])
             s.width = oldWidth
             s.height = oldHeight
             setTimeout(() => {
               s.transitionDuration = '.2s'
               s.width = width
               s.height = height
-            }, 150)
+            }, 125)
           })
         }, 210)
         this.showingCont = false

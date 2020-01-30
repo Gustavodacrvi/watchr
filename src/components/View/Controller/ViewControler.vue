@@ -655,15 +655,18 @@ export default {
 
       const arr = []
       const itemsOrder = this.getCurrentScheduleTasksOrder
+      const dispatch = this.$store.dispatch
+
+      const date = this.getCalendarOrderDate
 
       if (this.hasEndsTodayLists) {
         const saveOrder = ids => {
           this.$store.dispatch('task/saveCalendarOrder', {
             ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
-            date: this.getCalendarOrderDate,
+            date,
           })
         }
-        const filterFunction = this.isListLastDeadlineDay
+        const filterFunction = l => this.isListLastDeadlineDay(l, date)
 
         arr.push({
           name: 'Last deadline day lists',
@@ -680,7 +683,26 @@ export default {
           
           sort: lists => this.sortArray(itemsOrder, lists),
           filter: filterFunction,
-          options: tasks => [],
+          options: lists => [{
+            name: 'Change deadline',
+            icon: 'deadline',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                onlyDates: true,
+                noTime: true,
+                allowNull: true,
+                callback: ({specific}) => {
+                  dispatch('list/saveListsById', {
+                    ids: lists.map(el => el.id),
+                    list: {
+                      deadline: specific,
+                    },
+                  })
+                }
+              }
+            })
+          }],
           updateIds: saveOrder,
           fallbackItem: (list, force) => {
             if (force || !list.deadline)
@@ -691,12 +713,9 @@ export default {
             this.$store.dispatch('list/addListByIndexCalendarOrder', {
               ...obj,
               ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
-              date: this.getCalendarOrderDate,
+              date,
             })
           },
-          onSortableAdd: (evt, taskIds, type, ids) => {
-
-          }
         })
       }
       
@@ -764,10 +783,10 @@ export default {
         (n === 'Today' || n === 'Tomorrow' || n === 'Calendar')
     },
     hasEndsTodayLists() {
-      return this.getEndsTodayLists().length > 0
+      return this.getEndsTodayLists(this.getCalendarOrderDate).length > 0
     },
     hasEndsTodayTasks() {
-      return this.getEndsTodayTasks().length > 0
+      return this.getEndsTodayTasks(this.getCalendarOrderDate).length > 0
     },
     hasOverdueTasks() {
       return this.getOverdueTasks().length > 0
