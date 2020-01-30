@@ -683,10 +683,16 @@ export default {
           options: tasks => [],
           updateIds: saveOrder,
           fallbackItem: (list, force) => {
-
+            if (force || !list.deadline)
+              list.deadline = mom().format('Y-M-D')
+            return list
           },
           onAddItem: obj => {
- 
+            this.$store.dispatch('list/addListByIndexCalendarOrder', {
+              ...obj,
+              ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
+              date: this.getCalendarOrderDate,
+            })
           },
           onSortableAdd: (evt, taskIds, type, ids) => {
 

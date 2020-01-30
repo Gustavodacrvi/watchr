@@ -351,10 +351,8 @@ export default {
         utils.saveByShortcut(this, false, key, p, (type, item) => {
           const dispatch = this.$store.dispatch
   
-          const isList = (this.isMainSelectionInTasks !== null || !this.isMainSelectionInTasks) && this.selectedType === 'List'
-  
-          const isTask = ((this.isMainSelectionInTasks === null || this.isMainSelectionInTasks) && this.selectedType !== 'List') || this.selectedType === 'Task'
-  
+          const isTask = this.shortcutsType === 'Task'
+
           if (isTask) {
   
             if (fallbackItems)
@@ -487,29 +485,6 @@ export default {
           }
       }
     },
-/*     moveSelected(up) {
-      const selected = this.fallbackSelected
-      if (selected) {
-        const ids = this.currentSelectionTypeIds
-        const newOrder = ids.slice()
-        const increment = up ? -1 : 1
-  
-        const sort = i => {
-          const newIndex = i + increment
-          if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
-            newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
-        }
-  
-        if (!up)
-          for (let i = ids.length; i > -1; i--)
-            sort(i)
-        else
-          for (let i = 0; i < ids.length; i++)
-            sort(i)
-  
-        this.updateIds(newOrder)
-      }
-    }, */
     keypress({key}) {
       this.keypressed += key
 
@@ -744,16 +719,6 @@ export default {
     allViewItemsIds() {
       return [...this.allListsIds, ...this.allViewTasksIds]
     },
-    isMainSelectionInTasks() {
-      if (!this.mainSelection)
-        return null
-      return this.allViewTasksIds.includes(this.mainSelection)
-    },
-    currentSelectionTypeIds() {
-      if (this.isMainSelectionInTasks)
-        return this.allViewTasksIds
-      return this.allListsIds
-    },
     showHeadingFloatingButton() {
       return this.viewType === 'list' && !this.isSmart
     },
@@ -768,6 +733,13 @@ export default {
         shortRest: '05:00',
         longRest: '15:00',
       }
+    },
+    shortcutsType() {
+      if (this.selectedItems.length > 0)
+        return this.selectedType
+      if (this.tasks.find(t => t.id === this.mainSelection))
+        return 'Task'
+      return 'List'
     },
     getHelperComponent() {
       return (this.openHelper && this.viewName !== 'Pomodoro') ? 'PomoHelper' : this.helperComponent

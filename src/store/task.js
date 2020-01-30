@@ -644,7 +644,7 @@ export default {
         getter({}, task) {
           if (!task.deadline || task.completed || task.canceled)
             return false
-          return mom(task.deadline, 'Y-M-D').add(1, 'd').isSame(mom(TOM_DATE, 'Y-M-D'), 'day')
+          return task.deadline = TODAY_DATE
         },
         cache(args) {
           return JSON.stringify({

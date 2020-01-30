@@ -201,7 +201,7 @@ export default {
         getter({}, list) {
           if (!list.deadline || list.completed || list.canceled)
             return false
-          return mom(list.deadline, 'Y-M-D').add(1, 'd').isSame(mom(TOM_DATE, 'Y-M-D'), 'day')
+          return list.deadline = TOD_DATE
         },
         cache(args) {
           return JSON.stringify({
@@ -659,6 +659,32 @@ export default {
 
       cacheBatchedItems(b, writes)
 
+      b.commit()
+    },
+    addListByIndexCalendarOrder({rootState}, {ids, list, date, newListRef}) {
+      const b = fire.batch()
+
+      const writes = []
+
+      setList(b, {
+        folder: null,
+        name: '',
+        smartViewsOrders: {},
+        userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+        ...list,
+      }, newListRef, writes)
+
+      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
+
+      setInfo(b, {calendarOrders}, writes)
+
+      cacheBatchedItems(b, writes)
+      
       b.commit()
     },
     addTaskByIndexSmartViewList(c, {ids, index, task, listId, viewName, newTaskRef}) {

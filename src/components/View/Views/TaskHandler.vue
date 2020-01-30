@@ -48,7 +48,7 @@ import utils from '@/utils'
 
 import mom from 'moment'
 
-import { taskRef } from '@/utils/firestore'
+import { taskRef, listRef } from '@/utils/firestore'
 
 import HandlerMixin from "@/mixins/handlerMixin"
 
@@ -97,8 +97,10 @@ export default {
         }
       })
     },
-    getItemFirestoreRef() {
-      return taskRef()
+    getItemFirestoreRef(heading) {
+      if (!heading)
+        return taskRef()
+      return heading.listType ? listRef() : taskRef()
     },
     allowSomeday() {
       this.$emit('allow-someday')
@@ -418,8 +420,8 @@ export default {
           onAddItem: obj => {
             const newObj = {
               ...obj,
-              task: obj.item,
-              newTaskRef: obj.newItemRef,
+              [head.listType ? 'list' : 'task']: obj.item,
+              [head.listType ? 'newListRef' : 'newTaskRef']: obj.newItemRef,
             }
             this.fixPosition(newObj, nonFiltered.map(el => el.id), () => head.onAddItem(newObj))
           },

@@ -759,7 +759,7 @@ export default {
             shouldRender = this.headingFilterFunction(t)
         }
 
-        const newItemRef = this.getItemFirestoreRef()
+        const newItemRef = this.getItemFirestoreRef(this.header)
 
         t = {
           ...t,
