@@ -123,6 +123,7 @@ export default {
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getCalendarOrderSmartViewListsOrder: 'list/getCalendarOrderSmartViewListsOrder',
       isTaskInList: 'task/isTaskInList',
+      isTaskLastDeadlineDay: 'task/isTaskLastDeadlineDay',
       getEndsTodayLists: 'list/getEndsTodayLists',
       getBeginsTodayLists: 'list/getBeginsTodayLists',
       isListLastDeadlineDay: 'list/isListLastDeadlineDay',
@@ -661,7 +662,7 @@ export default {
 
       const date = this.getCalendarOrderDate
 
-      const saveListOrder = ids => {
+      const saveOrder = ids => {
         this.$store.dispatch('task/saveCalendarOrder', {
           ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
           date,
@@ -713,7 +714,7 @@ export default {
               }
             })
           }],
-          updateIds: saveListOrder,
+          updateIds: saveOrder,
           fallbackItem: (list, force) => {
             if (force || !list.deadline)
               list.deadline = mom().format('Y-M-D')
@@ -756,7 +757,7 @@ export default {
               }
             })
           }],
-          updateIds: saveListOrder,
+          updateIds: saveOrder,
           fallbackItem: (list, force) => {
             if (force || !list.calendar) {
               list.calendar = {
@@ -770,6 +771,54 @@ export default {
             return list
           },
           onAddItem: onListAddItem
+        })
+      }
+      if (this.hasEndsTodayTasks) {
+        const filterFunction = l => this.isTaskLastDeadlineDay(l, date)
+
+        arr.push({
+          name: 'Ends today tasks',
+          id: 'LAST_DEADLIEN_DAY_TASKS',
+          icon: 'deadline',
+          color: 'var(--red)',
+
+          directFiltering: true,
+          
+          sort: tasks => this.sortArray(itemsOrder, tasks),
+          filter: filterFunction,
+          options: tasks => [{
+            name: 'Change deadline',
+            icon: 'deadline',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                onlyDates: true,
+                noTime: true,
+                allowNull: true,
+                callback: ({specific}) => {
+                  dispatch('task/saveTasksById', {
+                    ids: tasks.map(el => el.id),
+                    task: {
+                      deadline: specific,
+                    },
+                  })
+                }
+              }
+            })
+          }],
+          updateIds: saveOrder,
+          fallbackItem: (task, force) => {
+            if (force || !task.deadline)
+              task.deadline = mom().format('Y-M-D')
+            return task
+          },
+          onAddItem: obj => {
+            this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
+              ...obj,
+              ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
+              date,
+            })
+          }
         })
       }
       

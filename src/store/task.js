@@ -252,8 +252,8 @@ export default {
       },
       isTaskShowingOnDate: {
         getter({getters}, task, date, onlySpecific) {
-          if (task.deadline && task.deadline === TODAY_DATE)
-            return true
+          if (task.deadline && mom(task.deadline, 'Y-M-D').isBefore(mom(TOM_DATE, 'Y-M-D'), 'day'))
+            return false
 
           if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday')
             return false
