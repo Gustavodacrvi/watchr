@@ -212,6 +212,21 @@ export default {
           })
         },
       },
+      isListBeginDay: {
+        getter({}, list, date) {
+          if (!list.calendar || list.completed || list.canceled || list.calendar.type !== 'specific')
+            return false
+          return list.calendar.specific === (date || TOD_DATE)
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].completed,
+            ca: args[0].canceled,
+            c: args[0].calendar,
+            da: args[1],
+          })
+        },
+      },
     }),
     ...MemoizeGetters('lists', {
       getEndsTodayLists: {
@@ -222,6 +237,19 @@ export default {
         ],
         getter({getters}, date) {
           return getters.lists.filter(l => getters.isListLastDeadlineDay(l, date))
+        },
+        cache(args) {
+          return JSON.stringify(args[0])
+        },
+      },
+      getBeginsTodayLists: {
+        react: [
+          'completed',
+          'canceled',
+          'calendar',
+        ],
+        getter({getters}, date) {
+          return getters.lists.filter(l => getters.isListBeginDay(l, date))
         },
         cache(args) {
           return JSON.stringify(args[0])

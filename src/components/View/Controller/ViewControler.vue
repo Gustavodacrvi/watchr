@@ -124,7 +124,9 @@ export default {
       getCalendarOrderSmartViewListsOrder: 'list/getCalendarOrderSmartViewListsOrder',
       isTaskInList: 'task/isTaskInList',
       getEndsTodayLists: 'list/getEndsTodayLists',
+      getBeginsTodayLists: 'list/getBeginsTodayLists',
       isListLastDeadlineDay: 'list/isListLastDeadlineDay',
+      isListBeginDay: 'list/isListBeginDay',
       getEndsTodayTasks: 'task/getEndsTodayTasks',
       getOverdueTasks: 'task/getOverdueTasks',
       isTaskInSevenDays: 'task/isTaskInSevenDays',
@@ -659,17 +661,25 @@ export default {
 
       const date = this.getCalendarOrderDate
 
+      const saveListOrder = ids => {
+        this.$store.dispatch('task/saveCalendarOrder', {
+          ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
+          date,
+        })
+      }
+      const onListAddItem = obj => {
+        this.$store.dispatch('list/addListByIndexCalendarOrder', {
+          ...obj,
+          ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
+          date,
+        })
+      }
+      
       if (this.hasEndsTodayLists) {
-        const saveOrder = ids => {
-          this.$store.dispatch('task/saveCalendarOrder', {
-            ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
-            date,
-          })
-        }
         const filterFunction = l => this.isListLastDeadlineDay(l, date)
 
         arr.push({
-          name: 'Last deadline day lists',
+          name: 'Ends today lists',
           id: 'LAST_DEADLINE_DAY_LIST',
           icon: 'deadline',
           color: 'var(--red)',
@@ -703,19 +713,47 @@ export default {
               }
             })
           }],
-          updateIds: saveOrder,
+          updateIds: saveListOrder,
           fallbackItem: (list, force) => {
             if (force || !list.deadline)
               list.deadline = mom().format('Y-M-D')
             return list
           },
-          onAddItem: obj => {
-            this.$store.dispatch('list/addListByIndexCalendarOrder', {
-              ...obj,
-              ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
-              date,
-            })
+          onAddItem: onListAddItem
+        })
+      }
+      if (this.hasBeginsTodayLists) {
+        const filterFunction = l => this.isListBeginDay(l, date)
+
+        arr.push({
+          name: 'Begins today lists',
+          id: 'BEGINDS_TODAY_LISTS',
+          icon: 'calendar',
+
+          listType: true,
+          directFiltering: true,
+
+          comp: 'List',
+          editComp: 'ListEdit',
+          itemPlaceholder: 'List name...',
+          
+          sort: lists => this.sortArray(itemsOrder, lists),
+          filter: filterFunction,
+          options: lists => [],
+          updateIds: saveListOrder,
+          fallbackItem: (list, force) => {
+            if (force || !list.calendar) {
+              list.calendar = {
+                type: 'specific',
+                editDate: mom().format('Y-M-D'),
+                begins: mom().format('Y-M-D'),
+          
+                specific: date,
+              }
+            }
+            return list
           },
+          onAddItem: onListAddItem
         })
       }
       
@@ -784,6 +822,9 @@ export default {
     },
     hasEndsTodayLists() {
       return this.getEndsTodayLists(this.getCalendarOrderDate).length > 0
+    },
+    hasBeginsTodayLists() {
+      return this.getBeginsTodayLists(this.getCalendarOrderDate).length > 0
     },
     hasEndsTodayTasks() {
       return this.getEndsTodayTasks(this.getCalendarOrderDate).length > 0
