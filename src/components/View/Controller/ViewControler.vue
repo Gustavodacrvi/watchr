@@ -739,7 +739,23 @@ export default {
           
           sort: lists => this.sortArray(itemsOrder, lists),
           filter: filterFunction,
-          options: lists => [],
+          options: lists => [{
+            name: 'Change date',
+            icon: 'calendar',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                callback: (calendar) => {
+                  dispatch('list/saveListsById', {
+                    ids: lists.map(el => el.id),
+                    list: {
+                      calendar,
+                    },
+                  })
+                }
+              }
+            })
+          }],
           updateIds: saveListOrder,
           fallbackItem: (list, force) => {
             if (force || !list.calendar) {
