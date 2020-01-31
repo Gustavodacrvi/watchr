@@ -59,7 +59,7 @@
                   :tabindex="i + 1 + links.length"
                   @click="moveLine(i)"
                   :data-section="s.name"
-                >{{ l[s.name] }}
+                >{{ s.name }}
                   <CircleBubble
                     innerColor='var(--light-gray)'
                     outerColor='var(--fade)'

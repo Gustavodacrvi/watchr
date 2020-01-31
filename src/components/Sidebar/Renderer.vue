@@ -7,27 +7,32 @@
 
       data-name='sidebar-renderer'
     >
-      <SidebarElement v-for="(el,i) in list"
-        :key="el.id"
-        v-bind="{...mapNumbersBind(el), ...el}"
-        class="element"
-        :iconColor='getIconColor(el)'
-        :icon="getIcon(el)"
-        :showColor='showColor'
-        :type="type || el.rendererType"
+      <template v-for="(el,i) in items">
+        <SidebarElement v-if="!el.isEdit" 
+          :key="el.id"
+          v-bind="{...mapNumbersBind(el), ...el}"
+          class="element"
+          :iconColor='getIconColor(el)'
+          :icon="getIcon(el)"
+          :showColor='showColor'
+          :type="type || el.rendererType"
 
-        :tabindex="i + 1"
-        :active="active"
-        :isSmart='isSmart'
-        :viewType="viewType"
-        :isDragging='isDragging'
-        :progress='getProgress(el)'
-        :helpIcons='getExraIcon(el)'
-        :string='getString(el)'
+          :tabindex="i + 1"
+          :active="active"
+          :isSmart='isSmart'
+          :viewType="viewType"
+          :isDragging='isDragging'
+          :progress='getProgress(el)'
+          :helpIcons='getExraIcon(el)'
+          :string='getString(el)'
 
-        :data-id="el.id"
-        data-type="sidebar-element"
-      />
+          :data-id="el.id"
+          data-type="sidebar-element"
+        />
+        <ItemEdit v-else :key="el.isEdit + 'eidt'"
+          @close='removeEdit'
+        />
+      </template>
     </transition-group>
   </div>
 </template>
@@ -35,6 +40,7 @@
 <script>
 
 import SidebarElementVue from './SidebarElement.vue'
+import ItemEdit from './ItemEdit.vue'
 
 import Sortable from 'sortablejs'
 
@@ -43,6 +49,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     SidebarElement: SidebarElementVue,
+    ItemEdit,
   },
   props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor'],
   data() {
@@ -50,7 +57,13 @@ export default {
       sortable: null,
       hover: false,
       isDragging: false,
+
+      items: [],
+      hasEdit: false,
     }
+  },
+  created() {
+    this.items = this.list.slice()
   },
   mounted() {
     this.sortable = new Sortable(this.draggableRoot, {
@@ -109,10 +122,13 @@ export default {
             if (c.dataset.id === 'floating-button') break
             i++
           }
-          this.$emit('buttonAdd', {
+            
+          this.addEdit(i)
+          
+/*           this.$emit('buttonAdd', {
             index: i,
             ids: this.getIds(),
-          })
+          }) */
         } else if (type === 'sidebar-element') {
           if (this.onSortableAdd)
             this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
@@ -125,6 +141,21 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    removeEdit() {
+      this.hasEdit = false
+      const i = this.items.findIndex(el => el.isEdit)
+      if (i > -1)
+        this.items.splice(i, 1)
+    },
+    addEdit(i) {
+      if (!this.hasEdit) {
+        this.hasEdit = true
+        this.items.splice(i, 0, {
+          isEdit: true,
+        })
+      }
+    },
+    
     mapNumbersBind(el) {
       if (this.mapNumbers) {
         const obj = this.mapNumbers(el)
@@ -150,7 +181,7 @@ export default {
       const childs = this.draggableRoot.childNodes
       const ids = []
       for (const el of childs)
-        if (el.dataset.id !== 'floating-button')
+        if (el.dataset.id !== 'floating-button' && el.dataset.id !== 'ItemEdit')
           ids.push(el.dataset.id)
       return ids
     },
@@ -200,6 +231,30 @@ export default {
       return this.$store.state.apply.bool
     },
   },
+  watch: {
+    list(items) {
+      this.items = items.slice()
+/* 
+      if (this.hasEdit && this.addedItem && this.edit) {
+        const oldEditIndex = this.lazyItems.findIndex(el => el.isEdit)
+        if (oldEditIndex > -1)
+          this.lazyItems.splice(oldEditIndex, 1)
+        const itemIndex = items.findIndex(el => el.id === this.addedItem)
+        if (itemIndex > -1) {
+          items.splice(itemIndex + 1, 0, this.edit)
+        }
+      }
+      this.lazyItems = items
+      const ts = this.lazyItems
+      const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))
+      for (const el of removedEls)
+        this.deSelectItem(el)
+
+      setTimeout(() => {
+        this.focusToggle = !this.focusToggle
+      }) */
+    },
+  }
 }
 
 </script>

@@ -11,7 +11,7 @@
     </div>
     <div class="tags" :class="{margins: priorities.length > 0}">
       <Tag class="tag" v-for="p in priorities" :key="p"
-        :value="l[p]"
+        value="p"
         :selected='isPrioritySelected(p)'
         :extraIcon='getPriorityExclusiveIcon(p)'
         icon="priority"

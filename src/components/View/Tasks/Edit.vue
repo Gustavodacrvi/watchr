@@ -57,7 +57,7 @@
             <Tag v-if="task.priority"
               icon="priority"
               :color="getPriorityColor"
-              :value="l[task.priority]"
+              value="task.priority"
               @click="task.priority = ''"
             />
             <Tag v-if="task.folder"

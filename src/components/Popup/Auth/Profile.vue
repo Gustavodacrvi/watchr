@@ -92,7 +92,7 @@
             <h4 class="title">Enabled Sections</h4>
             <CheckboxApp v-for="s in sections" :key="s.name"
               class="rb"
-              :name="l[s.name]"
+              name="s.name"
               :value='!isHided(s.name)'
               :icon='s.icon'
               :color='s.color'
@@ -101,7 +101,7 @@
             <h4 class="title">Enabled Smart Views</h4>
             <CheckboxApp v-for="s in sidebarSmartViews" :key="s.name"
               class="rb"
-              :name="l[s.name]"
+              name="s.name"
               :value='!isSmartViewHided(s.name)'
               :icon='s.icon'
               :color='s.color'

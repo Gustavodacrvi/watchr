@@ -24,7 +24,7 @@ export default {
       if (obj.name) {
         this.$store.dispatch('task/addTask', {...obj})
         this.$store.commit('pushToast', {
-          name: this.l[`Task successfully added!`],
+          name: `Task successfully added!`,
           seconds: 2,
           type: 'success',
         })
