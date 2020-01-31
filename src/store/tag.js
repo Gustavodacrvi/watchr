@@ -93,6 +93,21 @@ export default {
       
       b.commit()
     },
+    addSubTagByIndex({rootState}, {ids, item, newItemRef}) {
+      const b = fire.batch()
+        
+      const writes = []
+      
+      setTag(b, item, newItemRef, rootState, writes)
+      
+      setTag(b, {
+        order: ids,
+      }, tagRef(item.parent), rootState, writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
     addTag({rootState}, {name, index, ids, parent}) {
       if (!parent) parent = null
       const obj = {
@@ -107,24 +122,6 @@ export default {
         
         setTag(b, obj, tagRef(), rootState)
         
-        b.commit()
-      } else if (parent) {
-        const b = fire.batch()
-        
-        const writes = []
-        
-        const order = ids.slice()
-        
-        const ref = tagRef()
-        setTag(b, obj, ref, rootState, writes)
-        order.splice(index, 0, ref.id)
-        
-        setTag(b, {
-          order,
-        }, tagRef(parent), rootState, writes)
-
-        cacheBatchedItems(b, writes)
-
         b.commit()
       }
     },

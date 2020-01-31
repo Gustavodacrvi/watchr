@@ -4,7 +4,6 @@
       type="tag"
       icon="tag"
       iconColor='var(--red)'
-      inputPlaceholder='Tag name...'
       :enableSort='true'
       :showColor='true'
       :list="getTags"
@@ -13,6 +12,7 @@
       :mapNumbers='numberOfTasks'
       :onSortableAdd="onSortableAdd"
 
+      inputPlaceholder='Tag name...'
       :getItemRef='getItemRef'
       
       @add='addTag'
@@ -102,6 +102,10 @@ export default {
               parent: tag.id, tagId, ids
             })
           }
+          tag.inputPlaceholder = 'Subtag name...'
+          tag.fallbackItem = obj => ({...obj, parent: tag.id})
+          tag.getItemRef = () => tagRef()
+          tag.onItemAdd = obj => this.$store.dispatch('tag/addSubTagByIndex', obj)
 
           tag.mapSubTagNumbers = tag => ({
               total: getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
