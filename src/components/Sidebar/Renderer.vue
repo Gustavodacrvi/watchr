@@ -31,6 +31,9 @@
         />
         <ItemEdit v-else :key="el.isEdit + 'eidt'"
           @close='removeEdit'
+          @go='moveEdit'
+
+          :placeholder='inputPlaceholder'
         />
       </template>
     </transition-group>
@@ -51,7 +54,7 @@ export default {
     SidebarElement: SidebarElementVue,
     ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder'],
   data() {
     return {
       sortable: null,
@@ -141,6 +144,15 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    moveEdit(dire) {
+      if (this.hasEdit) {
+        const oldIndex = this.items.findIndex(el => el.isEdit)
+        const newIndex = oldIndex + dire
+
+        if (this.items[newIndex])
+          this.items.splice(newIndex, 0, this.items.splice(oldIndex, 1)[0])
+      }
+    },
     removeEdit() {
       this.hasEdit = false
       const i = this.items.findIndex(el => el.isEdit)

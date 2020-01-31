@@ -42,6 +42,7 @@
           type="list"
           icon="tasks"
           iconColor='var(--primary)'
+          inputPlaceholder='List name...'
           :folder='f.id'
           :disableSelection='true'
           :enableSort="true"

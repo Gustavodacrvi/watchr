@@ -4,6 +4,7 @@
       type="tag"
       icon="tag"
       iconColor='var(--red)'
+      inputPlaceholder='Tag name...'
       :enableSort='true'
       :showColor='true'
       :list="getTags"
