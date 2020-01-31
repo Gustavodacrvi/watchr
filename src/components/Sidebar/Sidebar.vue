@@ -414,7 +414,6 @@ export default {
       platform: 'platform',
       isStandAlone: 'isStandAlone',
       isDesktop: 'isDesktop',
-      l: 'l',
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
@@ -539,12 +538,12 @@ export default {
       const dispatch = this.$store.dispatch
       return [
         {
-          name: this.l['Sort tags by name'],
+          name: 'Sort tags by name',
           icon: 'sort-name',
           callback: () => dispatch('tag/sortTagsByName')
         },
         {
-          name: this.l['Add tag'],
+          name: 'Add tag',
           icon: 'tag',
           callback: () => dispatch('pushPopup', {comp: 'AddTag', naked: true})
         }
@@ -554,31 +553,31 @@ export default {
       const dispatch = this.$store.dispatch
       const arr = [
         {
-          name: this.l['Sort lists by name'],
+          name: 'Sort lists by name',
           icon: 'sort-name',
           callback: () => dispatch('list/sortListsByName'),
         },
         {
-          name: this.l['Add folder'],
+          name: 'Add folder',
           icon: 'folder',
           callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
         },
         {
-          name: this.l['Add list'],
+          name: 'Add list',
           icon: 'tasks',
           callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),
         },
       ]
       if (this.isDesktop) {
         arr.splice(1, 0, {
-          name: this.l['Import from template'],
+          name: 'Import from template',
           icon: 'import',
           file: true,
           accept: '.json',
           handleFiles: (files, promise) => {
             const bug = () => {
               this.$store.commit('pushToast', {
-                name: this.l["An error ocurred while importing the JSON file, the file is corrupted."],
+                name: "An error ocurred while importing the JSON file, the file is corrupted.",
                 seconds: 3,
                 type: 'error'
               })
@@ -596,33 +595,33 @@ export default {
       const inner = []
       if (!this.showDefered) {
         inner.unshift({
-          name: this.l["Show defered lists"],
+          name: "Show defered lists",
           icon: 'sleep',
           callback: () => this.showDefered = true
         })
       } else {
         inner.unshift({
-          name: this.l['Hide defered lists'],
+          name: 'Hide defered lists',
           icon: 'tasks',
           callback: () => this.showDefered = false
         })
       }
       if (!this.showRepeat) {
         inner.unshift({
-          name: this.l['Show periodic lists'],
+          name: 'Show periodic lists',
           icon: 'repeat',
           callback: () => this.showRepeat = true
         })
       } else {
         inner.unshift({
-          name: this.l['Hide periodic lists'],
+          name: 'Hide periodic lists',
           icon: 'repeat',
           callback: () => this.showRepeat = false
         })
       }
       if (inner.length > 0) {
         arr.push({
-          name: this.l['More options'],
+          name: 'More options',
           icon: 'settings-h',
           callback: () => inner,
         })
@@ -633,12 +632,12 @@ export default {
       const dispatch = this.$store.dispatch
       return [
         {
-          name: this.l['Add filter'],
+          name: 'Add filter',
           icon: 'filter',
           callback: () => dispatch('pushPopup', {comp: 'AddFilter', naked: true}),
         },
         {
-          name: this.l['Sort filters by name'],
+          name: 'Sort filters by name',
           icon: 'sort-name',
           callback: () => dispatch('list/sortFiltersByName'),
         }

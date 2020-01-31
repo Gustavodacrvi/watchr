@@ -1,7 +1,7 @@
 <template>
   <div class="PomoBtn">
     <button class="btn cursor remove-highlight" :class="{running, rest}" @click="click">
-      {{ btnMsg }}
+      btnMsg
       <CircleBubble
         innerColor='var(--txt)'
         outerColor='white'
@@ -9,7 +9,7 @@
       />
     </button>
     <button v-if="rest && !running" class="btn cursor remove-highlight" @click="skipRest">
-      {{ l['Skip interval'] }}
+      Skip interval
       <CircleBubble
         innerColor='var(--txt)'
         outerColor='white'
@@ -37,12 +37,11 @@ export default {
       running: state => state.pomo.running,
       rest: state => state.pomo.rest,
     }),
-    ...mapGetters(['l']),
     btnMsg() {
-      if (this.running) return this.l['Stop']
+      if (this.running) return 'Stop'
       if (this.rest)
-        return this.rest === 'short' ? this.l['Short rest'] : this.l['Long rest']
-      return this.l['Start']
+        return this.rest === 'short' ? 'Short rest' : 'Long rest'
+      return 'Start'
     },
   }
 }

@@ -220,7 +220,6 @@ export default {
     }),
     ...mapGetters({
       tasks: 'task/tasks',
-      l: 'l',
       platform: 'platform',
       isDesktop: 'isDesktop',
       getListTasks: 'list/getTasks',
@@ -250,7 +249,7 @@ export default {
       const n = this.viewName
       if (!(this.canceled || this.completed) || (!this.item.checkDate && !this.item.completeDate) || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
         return null
-      return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate, this.l)
+      return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate)
     },
     circleIcon() {
       return this.isSomeday ? 'circle-check-dash' : 'circle-check'
@@ -259,14 +258,14 @@ export default {
       return this.isListSomeday(this.item)
     },
     calendarStr() {
-      const res = this.getListCalendarStr(this.item, this.l, this.userInfo)
+      const res = this.getListCalendarStr(this.item, this.userInfo)
       if (res === 'Someday') return null
       return res
     },
     deadlineStr() {
       const list = this.item
       if (!list.deadline) return null
-      return this.getListDeadlineStr(list, tod.format('Y-M-D'), this.l)
+      return this.getListDeadlineStr(list, tod.format('Y-M-D'))
     },
     listTasks() {
       return this.getListTasks(this.tasks, this.item.id)

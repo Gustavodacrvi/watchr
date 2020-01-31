@@ -20,11 +20,11 @@
     </div>
     <div class="buttons">
       <ButtonApp class="btn"
-        :value="l['Save files']"
+        value="Save files"
         @click="saveCompFiles"
       />
       <ButtonApp class="btn"
-        :value="l['Add file']"
+        value="Add file"
         @click="addCompFile"
       />
     </div>
@@ -94,7 +94,7 @@ export default {
       }).catch(() => {
         this.$emit('close')
         this.$store.commit('pushToast', {
-          name: this.l['An error occurred while editing files.'],
+          name: 'An error occurred while editing files.',
           seconds: 4,
           type: 'error',
         })
@@ -112,7 +112,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['l', 'platform']),
+    ...mapGetters(['platform']),
     fileInput() {
       return this.$refs['file']
     },

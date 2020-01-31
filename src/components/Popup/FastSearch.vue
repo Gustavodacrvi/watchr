@@ -187,7 +187,6 @@ export default {
       tags: 'tag/tags',
       folders: 'folder/folders',
       isStandAlone: 'isStandAlone',
-      l: 'l',
       tasks: 'task/tasks',
     }),
     hasCallback() {
@@ -195,8 +194,8 @@ export default {
     },
     placeholder() {
       if (this.onlyTasks)
-        return this.l['Search task...']
-      return this.l['Search for tags, lists, folders and tasks...']
+        return 'Search task...'
+      return 'Search for tags, lists, folders and tasks...'
     },
     views() {
       return [

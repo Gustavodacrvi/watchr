@@ -23,21 +23,21 @@ export default {
       this.$store.commit('pomo/selectTask', task)
       this.bindTaskOptions([
         {
-          name: this.l['Complete task'],
+          name: 'Complete task',
           callback: () => {
             this.$store.dispatch('task/completeTasks', [this.task])
             this.$store.commit('pomo/removeTask')
           },
         },
         {
-          name: this.l['Remove task'],
+          name: 'Remove task',
           callback: () => {
             this.bindTaskOptions([])
             this.$store.commit('pomo/removeTask')
           },
         },
         {
-          name: this.l['Select another task'],
+          name: 'Select another task',
           callback: () => {
             this.findTask()
           }
@@ -67,7 +67,6 @@ export default {
       task: state => state.pomo.task,
     }),
     ...mapGetters({
-      l: 'l',
       platform: 'platform',
       taskMsg: 'pomo/taskMsg',
     })

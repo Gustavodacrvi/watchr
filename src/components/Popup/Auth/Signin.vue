@@ -1,12 +1,12 @@
 <template>
   <div class="Signin popup cb shadow rb scroll-thin" :class="platform">
     <div class="tac title">
-      <h3 class="pc">{{ l['Sign in'] }}</h3>
+      <h3 class="pc">Sign in</h3>
     </div>
     <div class="content">
       <SigninOptions/>
       <InputApp
-        :placeholder='l["E-mail"] + ":"'
+        placeholder='E-mail:'
         :focus="true"
         :value='eMail'
         @input='v => eMail = v'
@@ -14,7 +14,7 @@
       />
       <InputApp
         class="mt"
-        :placeholder='l["Password"] + ":"'
+        placeholder='Password:'
         type="password"
         :value='password'
         @cancel="$emit('close')"
@@ -22,7 +22,7 @@
       />
       <ButtonApp
         class="mt"
-        :value='l["Sign in"]'
+        value='Sign in'
         @click="signIn"
       />
       <div v-if="!isDesktop" style="height: 400px"></div>
@@ -57,7 +57,7 @@ export default {
       const toast = (toast) => this.$store.commit('pushToast', toast)
       if (this.atLeastOneEmpty)
         toast({
-          name: this.l["Fill in all the required fields."],
+          name: "Fill in all the required fields.",
           type: "error",
           seconds: 4,
         })
@@ -65,13 +65,13 @@ export default {
         const auth = firebase.auth()
         auth.signInWithEmailAndPassword(this.eMail, this.password).then(() => {
           toast({
-            name: this.l['You have successfully logged in!'],
+            name: 'You have successfully logged in!',
             type: 'success',
             seconds: 3,
           })
           if (auth.currentUser && !auth.currentUser.emailVerified)
             toast({
-              name: this.l['Please confirm your e-mail address.'],
+              name: 'Please confirm your e-mail address.',
               type: 'warning',
               seconds: 4,
             })
@@ -90,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform', 'l', 'isDesktop']),
+    ...mapGetters(['platform', 'isDesktop']),
     atLeastOneEmpty() {
       const { eMail, password } = this
       return eMail === '' || password === ''

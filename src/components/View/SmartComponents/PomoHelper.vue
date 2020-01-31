@@ -19,7 +19,7 @@
         <div>
           <div class="auth-wrapper">
             <AuthButton class="btn"
-              :value='l["Close"]'
+              value='Close'
               @click="close"
             />
           </div>
@@ -56,7 +56,6 @@ export default {
       current: state => state.pomo.current,
     }),
     ...mapGetters({
-      l: 'l',
       platform: 'platform',
       color: 'pomo/getPomoColor',
       shadow: 'pomo/getPomoShadow',

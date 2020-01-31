@@ -1,6 +1,6 @@
 <template>
   <div class="priority">
-    <span>{{ l['Must have at least one of:'] }}</span>
+    <span>Must have at least one of:</span>
     <RadioOptions
       :options='radioOptions'
     />
@@ -22,7 +22,6 @@ export default {
 
   },
   computed: {
-    ...mapGetters(['l']),
     radioOptions() {
       return [
         'No priority',

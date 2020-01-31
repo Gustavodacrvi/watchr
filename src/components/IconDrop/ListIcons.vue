@@ -27,7 +27,7 @@
                 :color="l.color"
               />
               <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
-              <span class="name" v-html="priorityParser(l.name)"></span>
+              <span class="name" v-html="l.name"></span>
               <Icon v-if="select && selected.includes(l.name)"
                 class='check-icon'
                 icon='check'
@@ -163,11 +163,6 @@ export default {
         link.handleFiles(files, promise)
       }
     },
-    priorityParser(name) {
-      const str = this.l[name]
-      if (str) return str
-      return name
-    },
     enterItems(el, done) {
       el.style.opacity = 0
       el.style.height = '0px'
@@ -184,7 +179,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['l']),
     select() {
       return this.links && this.links.select
     },

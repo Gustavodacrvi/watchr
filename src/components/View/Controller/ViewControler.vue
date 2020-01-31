@@ -117,7 +117,6 @@ export default {
       folders: 'folder/folders',
       tags: 'tag/tags',
       tasks: 'task/tasks',
-      l: 'l',
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
@@ -262,7 +261,7 @@ export default {
             filter: filterFunction,
             options: tasks => [
               {
-                name: this.l['Change date'],
+                name: 'Change date',
                 icon: 'calendar',
                 callback: () => ({
                   comp: "CalendarPicker",
@@ -364,7 +363,7 @@ export default {
             filter: filterFunction,
             options: tasks => [
               {
-                name: this.l['Change date'],
+                name: 'Change date',
                 icon: 'calendar',
                 callback: () => ({
                   comp: "CalendarPicker",
@@ -461,7 +460,7 @@ export default {
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
         arr.push({
-          name: utils.getHumanReadableDate(date, this.l),
+          name: utils.getHumanReadableDate(date),
           id: date,
           calendarEvents: date,
           showHeading: true,
@@ -496,7 +495,7 @@ export default {
       )
       // this month
       arr.push({
-        name: this.l['This month'],
+        name: 'This month',
         disableSortableMount: true,
         calendarStr: true,
         sort,
@@ -509,7 +508,7 @@ export default {
         task => this.isTaskInPeriod(task, TOD_STR, 'year', true)
       )
       arr.push({
-        name: this.l['This year'],
+        name: 'This year',
         disableSortableMount: true,
         calendarStr: true,
         sort,
@@ -518,7 +517,7 @@ export default {
       })
       // next years
       arr.push({
-        name: this.l['Next years'],
+        name: 'Next years',
         disableSortableMount: true,
         calendarStr: true,
         sort,
@@ -528,7 +527,7 @@ export default {
       // periodic tasks
       arr.push({
         disableSortableMount: true,
-        name: this.l['Periodic tasks'],
+        name: 'Periodic tasks',
         calendarStr: true,
         sort,
         filter: task => task.calendar && task.calendar.type === 'periodic',
@@ -537,7 +536,7 @@ export default {
       // weekly tasks
       arr.push({
         disableSortableMount: true,
-        name: this.l['Weekly tasks'],
+        name: 'Weekly tasks',
         calendarStr: true,
         sort,
         filter: task => task.calendar && task.calendar.type === 'weekly',
@@ -571,17 +570,17 @@ export default {
         const dispatch = this.$store.dispatch
         arr.push({
           disableSortableMount: true,
-          name: utils.getHumanReadableDate(date, this.l),
+          name: utils.getHumanReadableDate(date),
           sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullCheckDate'), 
           options: tasks => [
             {
-              name: this.l['Uncomplete tasks'],
+              name: 'Uncomplete tasks',
               icon: 'circle',
               important: true,
               callback: () => dispatch('task/uncompleteTasks', tasks),
             },
             {
-              name: this.l['Delete tasks'],
+              name: 'Delete tasks',
               icon: 'trash',
               important: true,
               callback: () => dispatch('task/deleteTasks', tasks.map(t => t.id)),
@@ -595,7 +594,6 @@ export default {
     },
     todayHeadingsOptions() {
       const dispatch = this.$store.dispatch
-      const l = this.l
       const saveTasksDay = (ids, mom) => {
         dispatch('task/saveTasksById', {
           ids, task: {calendar: this.$store.getters['task/getSpecificDayCalendarObj'](mom)}
@@ -610,7 +608,7 @@ export default {
       
       return [
         {
-          name: l['Overdue'],
+          name: 'Overdue',
           id: 'overdue',
           color: 'var(--red)',
 
@@ -651,7 +649,7 @@ export default {
         },
         {
           sort: tasks => this.$store.getters.checkMissingIdsAndSortArr(todayTasks, tasks),
-          name: l['Today'],
+          name: 'Today',
           id: 'todya',
           filter: task => this.isTaskInView(task, 'Today'),
         },

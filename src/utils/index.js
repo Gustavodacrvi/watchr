@@ -347,10 +347,7 @@ export default {
   transitionColor(oldNum, newNum, offset, max) {
     return (newNum * offset / max) + oldNum - (oldNum * offset / max)
   },
-  getHumanReadableDate(str, language) {
-    const l = language
-    
-    if (!language) throw 'Missing language object'
+  getHumanReadableDate(str) {
     const tod = mom()
     const sameDay = (mom1, mom2) => {
       return mom1.isSame(mom2, 'day')
@@ -368,7 +365,7 @@ export default {
       return time
     return mom(time, 'H:m').format('h:m A')
   },
-  parseCalendarObjectToString(obj, language, userInfo) {
+  parseCalendarObjectToString(obj, userInfo) {
     let str = ''
 
     const c = obj
@@ -377,7 +374,7 @@ export default {
 
     switch (c.type) {
       case 'specific': {
-        str += this.getHumanReadableDate(c.specific, language)
+        str += this.getHumanReadableDate(c.specific)
         break
       }
       case 'after completion': {
@@ -421,12 +418,12 @@ export default {
     if (c.time) str += ` at ${this.parseTime(c.time, userInfo)}`
 
     if (c.begins && c.begins !== c.editDate) {
-      str += `, begins on ${this.getHumanReadableDate(c.begins, language)}`
+      str += `, begins on ${this.getHumanReadableDate(c.begins)}`
     }
 
     if (c.ends) {
       if (c.ends.type === 'on date') {
-        str += `, ends on ${this.getHumanReadableDate(c.ends.onDate, language)}`
+        str += `, ends on ${this.getHumanReadableDate(c.ends.onDate)}`
       } else {
         str += `, ends after ${c.ends.times} times`
       }
@@ -434,67 +431,6 @@ export default {
 
     return str
   },
-
-
-
-
-
-  /*
-    const l = language
-    
-    const everyDayKey = l['CalParserEveryDay']
-    const daysKey = l['CalParserDaysKey']
-    const everyKey = l['CalParserEveryKey']
-    const DEFERKey = l['CalParserDEFER']
-    const DUEKey = l['CalParserDUE']
-    const timesKey = l['CalParserTimesKeyword']
-    const perKey = l['CalParserPersistentKey']
-    const somedayKey = l['CalParserSomeday']
-    
-    if (!language) throw 'Missing language object'
-    let str = ''
-    switch (obj.type) {
-      case 'specific': {
-        str += this.getHumanReadableDate(obj.specific, language)
-        break
-      }
-      case 'periodic': {
-        if (obj.periodic === 1)
-          str = everyDayKey
-        else str = `${everyKey} ${obj.periodic} ${daysKey}`
-        break
-      }
-      case 'someday': {
-        str = `${somedayKey}`
-        break
-      }
-      case 'weekly': {
-        str = `${everyKey} `
-        obj.weekly.forEach((week, i) => {
-          str += week
-          if (i !== obj.weekly.length - 1)
-            str += ', '
-        })
-        break
-      }
-    }
-    if (obj.defer) {
-      if (str !== '') str += ', '
-      str += `${DEFERKey} ` + this.getHumanReadableDate(obj.defer, language)
-    }
-    if (obj.due) {
-      if (str !== '') str += ', '
-      str += `${DUEKey} ` + this.getHumanReadableDate(obj.due, language)
-    }
-    if (obj.time) str += ` at ${this.parseTime(obj.time, userInfo)}`
-    const hasTimesBinding = obj.times !== null && obj.times !== undefined
-    if (hasTimesBinding) str += ` ${obj.times} ${timesKey}`
-    if (obj.persistent && hasTimesBinding) str += ' ' + perKey
-    
-    return str
-  */
-  
-  
   download(filename, text) {
     let element = document.createElement('a')
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))

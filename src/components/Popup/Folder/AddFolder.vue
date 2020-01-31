@@ -2,7 +2,7 @@
   <div class="addFolder popup cb shadow rb" :class="platform">
     <DropInput
       back-color='var(--card)'
-      :placeholder="['Folder name'] + '...'"
+      placeholder="Folder name..."
       :value='name'
       @input='v => name = v'
       :focus="true"
@@ -39,7 +39,6 @@ export default {
   computed: {
     ...mapGetters({
       platform: 'platform',
-      l: 'l',
       folders: 'folder/folders',
     }),
     ...mapState({
@@ -51,8 +50,8 @@ export default {
       return this.payload.editing === true
     },
     title() {
-      if (!this.isEditing) return this.l['Add folder']
-      return this.l['Edit folder']
+      if (!this.isEditing) return 'Add folder'
+      return 'Edit folder'
     },
   },
   methods: {
@@ -68,7 +67,7 @@ export default {
             ...this.payload,
           })
           toast({
-            name: this.l[`Folder added successfully!`],
+            name: `Folder added successfully!`,
             type: 'success',
             seconds: 2,
           })
@@ -79,20 +78,20 @@ export default {
             id: this.payload.id,
           })
           toast({
-            name: this.l[`Folder edited successfully!`],
+            name: `Folder edited successfully!`,
             type: 'success',
             seconds: 2,
           })
         } else {
           toast({
-            name: this.l[`This folder already exists!`],
+            name: `This folder already exists!`,
             type: 'error',
             seconds: 3,
           })
         }
       } else {
         toast({
-          name: this.l['Fill in all the required fields.'],
+          name: 'Fill in all the required fields.',
           type: 'error',
           seconds: 3,
         })

@@ -46,19 +46,7 @@ import pomo from './pomo'
 import utils from '@/utils'
 import { userRef, cacheRef, setInfo } from "../utils/firestore"
 
-const lang = localStorage.getItem('watchrlanguage') || 'en'
-
-const getLanguageFile = (name) => {
-  return new Promise(resolve => {
-    import(/* webpackMode: "lazy" */`./../assets/locales/${name}.js`)
-      .then((res) => resolve(res.default))
-  })
-}
-
-moment.locale(lang)
-
 const uid = () => auth.currentUser.uid
-
 
 const version = '089'
 
@@ -76,10 +64,8 @@ const store = new Vuex.Store({
     pomo,
   },
   state: {
-    lang,
     lastVersion,
     version,
-    language: null,
     popup: {
       comp: '',
       naked: false,
@@ -233,9 +219,6 @@ const store = new Vuex.Store({
     isPopupOpened(state) {
       return state.popup.comp !== ''
     },
-    l(state) {
-      return state.language
-    },
     recentUsersStr(state) {
       if (!state.userInfo.recentUsers) return []
       return Object.values(state.userInfo.recentUsers).map(user => {
@@ -297,17 +280,6 @@ const store = new Vuex.Store({
     },
     firstFirebaseLoad(state) {
       state.firstFireLoad = true
-    },
-    languageFile(state, language) {
-      state.language = language
-    },
-    saveLang(state, lang) {
-      getLanguageFile(lang).then((language) => {
-        state.lang = lang
-        state.language = language
-        localStorage.setItem('watchrlanguage', lang)
-        location.reload()
-      })
     },
     pushIconDrop(state, drop) {
       state.iconDrop = drop
@@ -436,10 +408,12 @@ const store = new Vuex.Store({
         })
 
         if (!state.isFirstSnapshot) {
-          utils.updateVuexObject(state.task, 'tasks', data.tasks || {}, state.changedIds, isFromHere)
-          utils.updateVuexObject(state.tag, 'tags', data.tags || {}, state.changedIds, isFromHere)
-          utils.updateVuexObject(state.folder, 'folders', data.folders || {}, state.changedIds, isFromHere)
-          utils.updateVuexObject(state.list, 'lists', data.lists || {}, state.changedIds, isFromHere)
+          if (!isFromHere) {
+            utils.updateVuexObject(state.task, 'tasks', data.tasks || {}, state.changedIds, isFromHere)
+            utils.updateVuexObject(state.tag, 'tags', data.tags || {}, state.changedIds, isFromHere)
+            utils.updateVuexObject(state.folder, 'folders', data.folders || {}, state.changedIds, isFromHere)
+            utils.updateVuexObject(state.list, 'lists', data.lists || {}, state.changedIds, isFromHere)
+          }
           
           if (isFromHere) {
             state.changedIds = []
@@ -534,8 +508,6 @@ fire.enablePersistence().then(() => enabled = true)
 
 store.commit('saveUser', null)
 
-getLanguageFile(lang).then((l) => store.commit('languageFile', l))
-
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
 
@@ -555,7 +527,7 @@ auth.onAuthStateChanged((user) => {
   } else {
     setTimeout(() => {
       toast({
-        name: store.getters.l['Anonymous users are deleted every week, sign in to save your data indefinitely.'],
+        name: 'Anonymous users are deleted every week, sign in to save your data indefinitely.',
         seconds: 7,
         type: 'warning',
       })
@@ -569,7 +541,7 @@ auth.getRedirectResult().then(res => {
   const toast = (t) => store.commit('pushToast', t)
   if (user) {
     toast({
-      name: store.getters['l']['You have successfully logged in!'],
+      name: 'You have successfully logged in!',
       seconds: 3,
       type: 'success',
     })

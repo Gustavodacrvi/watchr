@@ -46,7 +46,6 @@ export default {
     ...mapState(['selectedItems']),
     ...mapGetters({
       getNumberOfTasksByFilter: 'task/getNumberOfTasksByFilter',
-      l: 'l',
       isDesktop: 'isDesktop',
     }),
     sortedFilters() {

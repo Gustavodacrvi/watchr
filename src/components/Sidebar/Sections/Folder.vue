@@ -174,7 +174,7 @@ export default {
   },
   computed: {
     ...mapState(['selectedItems', 'isOnControl']),
-    ...mapGetters(['l', 'isDesktop', 'platform']),
+    ...mapGetters(['isDesktop', 'platform']),
     showCont() {
       return this.showing && !this.movingFolder
     },

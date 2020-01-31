@@ -2,7 +2,7 @@
   <div class="AddTag popup cb shadow rb" :class="platform">
     <DropInput
       back-color='var(--card)'
-      :placeholder="l['Tag name'] + '...'"
+      placeholder="Tag name..."
       :value='name'
       @input='v => name = v'
       :focus="true"
@@ -40,7 +40,6 @@ export default {
     ...mapGetters({
       tags: 'tag/tags',
       platform: 'platform',
-      l: 'l',
     }),
     ...mapState({
       popup: state => state.popup,
@@ -51,8 +50,8 @@ export default {
       return this.payload.editing === true
     },
     title() {
-      if (!this.isEditing) return this.l['Add tag']
-      return this.l['Edit tag']
+      if (!this.isEditing) return 'Add tag'
+      return 'Edit tag'
     },
   },
   methods: {
@@ -68,7 +67,7 @@ export default {
             ...this.payload,
           })
           toast({
-            name: this.l[`Tag added successfully!`],
+            name: `Tag added successfully!`,
             type: 'success',
             seconds: 2,
           })
@@ -79,20 +78,20 @@ export default {
             id: this.payload.id,
           })
           toast({
-            name: this.l[`Tag edited successfully!`],
+            name: `Tag edited successfully!`,
             type: 'success',
             seconds: 2,
           })
         } else {
           toast({
-            name: this.l[`This tag already exists!`],
+            name: `This tag already exists!`,
             type: 'error',
             seconds: 3,
           })
         }
       } else {
         toast({
-          name: this.l['Fill in all the required fields.'],
+          name: 'Fill in all the required fields.',
           type: 'error',
           seconds: 3,
         })

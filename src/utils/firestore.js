@@ -28,7 +28,7 @@ export const setTask = (batch, task, rootState, ref, writes) => {
     const save = () => {
       const obj = {
         ...task, handleFiles: null,
-        cloud_function_edit: false, id: ref.id,
+        id: ref.id,
         userId: uid(),
       }
 
@@ -110,7 +110,6 @@ export const batchSetLists = (batch, list, ids, rootState, rootWrites) => {
 export const setTag = (batch, tag, ref, rootState, writes) => {
   const obj = {
     ...tag, id: ref.id,
-    cloud_function_edit: false,
     userId: uid(),
   }
 
@@ -141,7 +140,6 @@ export const setTag = (batch, tag, ref, rootState, writes) => {
 export const setFolder = (batch, folder, ref, rootState, writes) => {
   const obj = {
     ...folder, id: ref.id,
-    cloud_function_edit: false,
     userId: uid(),
   }
 
@@ -171,7 +169,6 @@ export const setFolder = (batch, folder, ref, rootState, writes) => {
 export const setList = (batch, list, ref, rootState, writes) => {
   const obj = {
     ...list, id: ref.id,
-    cloud_function_edit: false,
     userId: uid(),
   }
 
@@ -201,7 +198,6 @@ export const setList = (batch, list, ref, rootState, writes) => {
 export const setPomo = (batch, doc) => {
   const obj = {
     ...doc, id: 'pomo',
-    cloud_function_edit: false,
     userId: uid(),
   }
   batch.set(cacheRef(), {
@@ -214,7 +210,6 @@ export const setPomo = (batch, doc) => {
 export const setInfo = (batch, info, writes) => {
   const obj = {
     ...info, id: 'info',
-    cloud_function_edit: false,
     userId: uid(),
   }
   if (!writes)

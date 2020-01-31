@@ -678,7 +678,6 @@ export default {
     ...mapGetters({
       platform: 'platform',
       isDesktop: 'isDesktop',
-      l: 'l',
       lists: 'list/sortedLists',
       tasks: 'task/tasks',
       folders: 'folder/sortedFolders',
@@ -745,7 +744,6 @@ export default {
       return this.viewName === 'Pomodoro' ? this.pomoOptions : this.taskIconDropOptions
     },
     pomoOptions() {
-      const l = this.l
       const getOptions = (opt, save) => {
         const {duration, shortRest, longRest} = opt
 
@@ -767,12 +765,12 @@ export default {
             }))
           },
           {
-            name: `${l['Duration: ']}<span class="fade">${f(duration)}</span>`,
+            name: `${'Duration: '}<span class="fade">${f(duration)}</span>`,
             callback: () => ({
               comp: 'TimePicker',
               content: {
                 format: '24hr',
-                msg: l['Duration: '],
+                msg: 'Duration: ',
                 callback: newTime => getOptions({
                   duration: newTime, shortRest, longRest,
                 }, true)
@@ -780,12 +778,12 @@ export default {
             }),
           },
           {
-            name: `${l['Short rest: ']}<span class="fade">${f(shortRest)}</span>`,
+            name: `${'Short rest: '}<span class="fade">${f(shortRest)}</span>`,
             callback: () => ({
               comp: 'TimePicker',
               content: {
                 format: '24hr',
-                msg: l['Short rest: '],
+                msg: 'Short rest: ',
                 callback: newTime => getOptions({
                   duration, shortRest: newTime, longRest,
                 }, true)
@@ -793,12 +791,12 @@ export default {
             }),
           },
           {
-            name: `${l['Long rest: ']}<span class="fade">${f(longRest)}</span>`,
+            name: `${'Long rest: '}<span class="fade">${f(longRest)}</span>`,
             callback: () => ({
               comp: 'TimePicker',
               content: {
                 format: '24hr',
-                msg: l['Long rest: '],
+                msg: 'Long rest: ',
                 callback: newTime => getOptions({
                   duration, shortRest, longRest: newTime,
                 }, true)
@@ -991,7 +989,7 @@ export default {
           icon: 'tasks',
           callback: () => {
             const arr = [{
-              name: this.l['List root'],
+              name: 'List root',
               callback: () => moveToList({list: list.id, heading: null})
             }]
             for (const h of list.headings) {
@@ -1014,7 +1012,6 @@ export default {
       const savePri = (pri) => {
         dispatch('task/saveTasksById', {ids, task: {priority: pri}})
       }
-      const l = this.l
 
       const formatTime = time => mom(time, 'HH:mm').format(this.userInfo.disablePmFormat ? 'HH:mm' : 'LT')
 
@@ -1026,11 +1023,11 @@ export default {
 
         return [
           {
-            name: `${l['Start from:']} <span class="fade">${formatTime(time)}</span>`,
+            name: `${'Start from:'} <span class="fade">${formatTime(time)}</span>`,
             callback: () => ({
               comp: 'TimePicker',
               content: {
-                msg: l['Start from:'],
+                msg: 'Start from:',
                 callback: newTime => getScheduleIconDropObject({
                   time: newTime, buffer, fallback,
                 })
@@ -1038,12 +1035,12 @@ export default {
             })
           },
           {
-            name: `${l['Buffer time:']} <span class="fade">${utils.formatQuantity(buffer)}</span>`,
+            name: `${'Buffer time:'} <span class="fade">${utils.formatQuantity(buffer)}</span>`,
             callback: () => ({
               comp: 'TimePicker',
               content: {
                 format: '24hr',
-                msg: l["Buffer time:"],
+                msg: "Buffer time:",
                 callback: newBuffer => getScheduleIconDropObject({
                   time, buffer: newBuffer, fallback,
                 })
@@ -1051,12 +1048,12 @@ export default {
             })
           },
           {
-            name: `${l['Fallback time:']} <span class="fade">${utils.formatQuantity(fallback)}</span>`,
+            name: `${'Fallback time:'} <span class="fade">${utils.formatQuantity(fallback)}</span>`,
             callback: () => ({
               comp: 'TimePicker',
               content: {
                 format: '24hr',
-                msg: l["Buffer time:"],
+                msg: "Buffer time:",
                 callback: newFallback => getScheduleIconDropObject({
                   time, buffer, fallback: newFallback,
                 })
@@ -1064,7 +1061,7 @@ export default {
             })
           },
           {
-            name: l['Auto schedule'],
+            name: 'Auto schedule',
             callback: () => {
               this.saveAutoSchedule({...info})
               return null
@@ -1077,64 +1074,64 @@ export default {
       if (ids.length === 0) {
         let opt = [
           {
-            name: l['Sort tasks'],
+            name: 'Sort tasks',
             icon: 'sort',
             callback: () => [
               {
-                name: l['Sort by name'],
+                name: 'Sort by name',
                 icon: 'sort-name',
                 callback: () => this.sortByName()
               },
               {
-                name: l['Sort by priority'],
+                name: 'Sort by priority',
                 icon: 'priority',
                 callback: () => this.sortByPriority()
               },
               {
-                name: l['Sort by creation date'],
+                name: 'Sort by creation date',
                 icon: 'calendar',
                 callback: () => this.sortByDate(),
               },
               {
-                name: l['Sort by duration(long to short)'],
+                name: 'Sort by duration(long to short)',
                 icon: 'magic',
                 callback: () => this.sortByDurationLong()
               },
               {
-                name: l['Sort by duration(short to long)'],
+                name: 'Sort by duration(short to long)',
                 icon: 'magic',
                 callback: () => this.sortByDurationShort()
               },
             ],
           },
           {
-            name: l['Filter tasks'],
+            name: 'Filter tasks',
             icon: 'filter',
             callback: () => [
               {
-                name: l['Filter by tags'],
+                name: 'Filter by tags',
                 icon: 'tag',
                 callback: () => this.toggleTagSelection()
               },
               {
-                name: l['Filter by priority'],
+                name: 'Filter by priority',
                 icon: 'priority',
                 callback: () => this.togglePrioritySelection()
               },
               {
-                name: l['Filter by lists'],
+                name: 'Filter by lists',
                 icon: 'tasks',
                 callback: () => this.toggleListSelection()
               },
               {
-                name: l['Filter by folders'],
+                name: 'Filter by folders',
                 icon: 'folder',
                 callback: () => this.toggleFolderSelection()
               },
             ],
           },
           {
-            name: l['Open calendar'],
+            name: 'Open calendar',
             icon: 'calendar',
             callback: () => {
               if (this.helperComponent !== 'LongCalendarPicker')
@@ -1143,17 +1140,17 @@ export default {
             }
           },
           {
-            name: l['Auto schedule'],
+            name: 'Auto schedule',
             icon: 'magic',
             callback: () => {
               if (this.autoSchedule)
                 return [
                   {
-                    name: l['Remove schedule'],
+                    name: 'Remove schedule',
                     callback: () => this.saveAutoSchedule(null)
                   },
                   {
-                    name: l['Edit schedule'],
+                    name: 'Edit schedule',
                     callback: () => getScheduleIconDropObject(this.autoSchedule)
                   }
                 ]
@@ -1161,7 +1158,7 @@ export default {
             }
           },
           {
-            name: l['Show completed'],
+            name: 'Show completed',
             icon: 'circle-check',
             callback: () => this.toggleCompleted()
           },
@@ -1177,13 +1174,13 @@ export default {
       } else {
         return [
           {
-            name: l['No date'],
+            name: 'No date',
             icon: 'bloqued',
             callback: () => this.saveDates(null, ids)
           },
           {
             type: 'optionsList',
-            name: l['Schedule'],
+            name: 'Schedule',
             options: [
               {
                 icon: 'star',
@@ -1219,7 +1216,7 @@ export default {
           },
           {
             type: 'optionsList',
-            name: l['Priority'],
+            name: 'Priority',
             options: [
               {
                 icon: 'priority',
@@ -1248,15 +1245,15 @@ export default {
             ],
           },
           {
-            name: l['More options'],
+            name: 'More options',
             icon: 'settings-h',
             callback: () => [
               {
-                name: l['Repeat task'],
+                name: 'Repeat task',
                 icon: 'repeat',
                 callback: () => [
                   {
-                    name: l['Repeat weekly'],
+                    name: 'Repeat weekly',
                     icon: 'repeat',
                     callback: () => ({
                       comp: 'WeeklyPicker',
@@ -1264,7 +1261,7 @@ export default {
                     }),
                   },
                   {
-                    name: l['Repeat periodically'],
+                    name: 'Repeat periodically',
                     icon: 'repeat',
                     callback: () => ({
                       comp: 'PeriodicPicker',
@@ -1274,7 +1271,7 @@ export default {
                 ],
               },
               {
-                name: l['Move to list'],
+                name: 'Move to list',
                 icon: 'tasks',
                 callback: () => {return {
                   allowSearch: true,
@@ -1282,7 +1279,7 @@ export default {
                 }}
               },
               {
-                name: l['Move to folder'],
+                name: 'Move to folder',
                 icon: 'folder',
                 callback: () => {return {
                   allowSearch: true,
@@ -1290,7 +1287,7 @@ export default {
                 }}
               },
               {
-                name: l['Delete task'],
+                name: 'Delete task',
                 icon: 'trash',
                 important: true,
                 callback: () => dispatch('task/deleteTasks', ids)

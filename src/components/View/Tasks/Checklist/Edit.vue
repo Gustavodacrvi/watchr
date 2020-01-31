@@ -10,7 +10,7 @@
           :value='name'
           @input='v => name = v'
           :focus='true'
-          :placeholder='l["Subtask name..."]'
+          placeholder='Subtask name...'
           @enter='addSubtask'
           @goup='$emit("goup")'
           @godown='$emit("godown")'
@@ -82,9 +82,6 @@ export default {
         this.$emit('add', this.name)
       this.name = ''
     },
-  },
-  computed: {
-    ...mapGetters(['l']),
   },
 }
 

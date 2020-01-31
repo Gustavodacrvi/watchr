@@ -2,18 +2,17 @@
 
 export default {
   tagOptions: tag => ({dispatch, getters, tags, tasks, commit}) => {
-    const l = getters['l']
     const showDelete = !tags.some(el => el.parent === tag.id)
     const opt = [
       {
-        name: l['Edit tag'],
+        name: 'Edit tag',
         icon: 'pen',
         callback: () => dispatch('pushPopup', {
             comp: 'AddTag', payload: {...tag, editing: true}, naked: true
           })
       },
       {
-        name: l['Add subtag'],
+        name: 'Add subtag',
         icon: 'arrow',
         callback: () => {
           dispatch('pushPopup', {comp: 'AddTag', payload: {
@@ -22,7 +21,7 @@ export default {
         },
       },
       {
-        name: l['Move tag below'],
+        name: 'Move tag below',
         icon: 'tag',
         callback: () => {
           dispatch('pushPopup', {
@@ -40,7 +39,7 @@ export default {
         },
       },
       {
-        name: l["Toggle favorite"],
+        name: "Toggle favorite",
         icon: 'heart',
         callback: () => {
           dispatch('tag/saveTag', {
@@ -51,7 +50,7 @@ export default {
     ]
     if (!tag.notes)
       opt.push({
-        name: l['Add notes'],
+        name: 'Add notes',
         icon: 'note',
         callback: () => dispatch('pushPopup', {
           comp: 'AddTagNote',
@@ -61,7 +60,7 @@ export default {
       })
     if (showDelete)
       opt.push({
-        name: l['Delete tag'],
+        name: 'Delete tag',
         icon: 'trash',
         important: true,
         callback: () => dispatch('tag/deleteTag', {id: tag.id, tasks})

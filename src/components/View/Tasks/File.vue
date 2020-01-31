@@ -25,12 +25,11 @@ export default {
     utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
   },
   computed: {
-    ...mapGetters(['l']),
     options() {
       const obj = []
       if (!this.disableDelete) {
         obj.push({
-          name: this.l['Delete file'],
+          name: 'Delete file',
           icon: 'trash',
           important: true,
           callback: () => {this.$emit('delete')}
@@ -38,12 +37,12 @@ export default {
       }
       if (this.status !== 'update') {
         obj.unshift(        {
-            name: this.l['Download file'],
+            name: 'Download file',
             icon: 'import',
             callback: () => {this.$emit('download')}
           })
         obj.unshift({
-            name: this.l['View file'],
+            name: 'View file',
             icon: 'file',
             callback: () => {this.$emit('view')}
           })

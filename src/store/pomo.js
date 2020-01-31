@@ -124,7 +124,7 @@ export default {
     },
     taskMsg(state, d, f, rootGetters) {
       if (state.task) return state.task.name
-      return rootGetters.l['Select task']
+      return 'Select task'
     }
   },
   actions: {

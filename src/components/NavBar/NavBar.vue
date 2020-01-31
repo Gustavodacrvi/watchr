@@ -60,29 +60,29 @@ export default {
   },
   computed: {
     ...mapState(['user']),
-    ...mapGetters(['isDesktop', 'platform', 'l']),
+    ...mapGetters(['isDesktop', 'platform']),
     dropLinks() {
       if (!this.user)
         return [
             {
-              name: this.l['Sign up'],
+              name: 'Sign up',
               icon: 'user-plus',
               callback: (close) => this.signUp()
             },
             {
-              name: this.l['Sign in'],
+              name: 'Sign in',
               icon: 'out',
               callback: () => this.signIn()
             }
           ]
       return [
         {
-          name: this.l['Profile'],
+          name: 'Profile',
           icon: 'user',
           callback: () => {this.openProfile()}
         },
         {
-          name: this.l['Log out'],
+          name: 'Log out',
           icon: 'out',
           important: true,
           callback: () => this.logOut(),

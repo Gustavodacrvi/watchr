@@ -58,7 +58,6 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getSubTagsByParentId: 'tag/getSubTagsByParentId',
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
-      l: 'l',
       isDesktop: 'isDesktop',
       sortedRootTags: 'tag/sortedRootTags',
     }),

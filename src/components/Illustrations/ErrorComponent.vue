@@ -19,9 +19,8 @@ export default {
     IllustrationError: IllustrationVue,
   },
   computed: {
-    ...mapGetters(['l']),
     getTitle() {
-      return this.hideTitle ? "" : this.l['Some error occurred, please try again later.']
+      return this.hideTitle ? "" : 'Some error occurred, please try again later.'
     },
   },
 }

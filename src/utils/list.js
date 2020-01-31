@@ -5,7 +5,7 @@ import { pipeBooleanFilters } from '@/utils/memo'
 import mom from 'moment'
 
 export default {
-  listHeadingOptions(list, heading, store, tasks, l) {
+  listHeadingOptions(list, heading, store, tasks) {
     const li = list
     const listId = li.id
     const h = heading
@@ -16,7 +16,7 @@ export default {
 
     return [
       {
-        name: l['Add notes'],
+        name: 'Add notes',
         icon: 'note',
         callback: () => {
           dispatch('pushPopup', {
@@ -29,31 +29,31 @@ export default {
         },
       },
       {
-        name: l['More options'],
+        name: 'More options',
         icon: 'settings-h',
         callback: () => [
           {
-            name: l['Uncomplete tasks'],
+            name: 'Uncomplete tasks',
             icon: 'circle',
             callback: () => dispatch('list/uncompleteHeadingTasks', {
               listId, headingId: h.id, savedTasks: store.getters['task/tasks'],
             })
           },
           {
-            name: l['Duplicate heading'],
+            name: 'Duplicate heading',
             icon: 'copy',
             callback: () => dispatch('list/duplicateHeading', {
                 listId, headingId: h.id, name, tasks: headingTasks.slice(),
               })
           },
           {
-            name: l["Convert to list"],
+            name: "Convert to list",
             icon: 'tasks',
             important: true,
             callback: () => {
               if (store.getters['list/lists'].some(l => l.name === h.name))
                 toast({
-                  name: l['There is already a list with this heading name.'],
+                  name: 'There is already a list with this heading name.',
                   seconds: 3,
                   type: 'error',
                 })
@@ -63,7 +63,7 @@ export default {
             }
           },
           {
-            name: l['Delete heading'],
+            name: 'Delete heading',
             icon: 'trash',
             important: true,
             callback: () => dispatch('list/deleteHeadingFromList', {
@@ -75,7 +75,6 @@ export default {
     ]
   },
   listOptions: (list, removeGoToListOption = false) => ({tasks, getters, dispatch, router}) => {
-    const l = getters['l']
     const listId = list.id
 
     const isTaskInRoot = task => getters['task/isTaskInListRoot'](task)
@@ -122,7 +121,7 @@ export default {
         })
       },
       {
-        name: l['No date'],
+        name: 'No date',
         icon: 'bloqued',
         callback: () => saveCalendarDate(null)
       },
@@ -159,16 +158,16 @@ export default {
         ]
       },
       {
-        name: l["Edit list"],
+        name: "Edit list",
         icon: 'pen',
         callback: () => [
           {
-            name: l['Edit list name'],
+            name: 'Edit list name',
             icon: 'pen',
             callback: () => pop({comp: 'AddList', payload: {...list, editing: true}, naked: true})
           },
 /*           {
-            name: l['Repeat list'],
+            name: 'Repeat list',
             icon: 'repeat',
             callback: () => {return {
               comp: 'CalendarPicker',
@@ -186,7 +185,7 @@ export default {
             }}},
           }, */
 /*           {
-            name: l['Defer date'],
+            name: 'Defer date',
             icon: 'sleep',
             callback: () => {return {
               comp: 'CalendarPicker',
@@ -203,7 +202,7 @@ export default {
             }}},
           }, */
           {
-            name: l['Add notes'],
+            name: 'Add notes',
             icon: 'note',
             callback: () => dispatch('pushPopup', {
               comp: 'AddListNote',
@@ -212,7 +211,7 @@ export default {
             })
           },
           {
-            name: l['Add files'],
+            name: 'Add files',
             icon: 'file',
             callback: () => ({
               comp: 'Files',
@@ -229,7 +228,7 @@ export default {
             }),
           },
           {
-            name: l['Add tags'],
+            name: 'Add tags',
             icon: 'tag',
             callback: () => ({
               allowSearch: true,
@@ -248,7 +247,7 @@ export default {
             }),
           },
 /*           {
-            name: l['Add deadline'],
+            name: 'Add deadline',
             icon: 'deadline',
             callback: () => {return {
               comp: 'CalendarPicker',
@@ -267,7 +266,7 @@ export default {
         ]
       },
       {
-        name: l["Toggle favorite"],
+        name: "Toggle favorite",
         icon: 'heart',
         callback: () => {
           dispatch('list/saveList', {
@@ -288,7 +287,7 @@ export default {
     
     const moreOptions = [
       {
-        name: l["Duplicate list"],
+        name: "Duplicate list",
         icon: 'copy',
         callback: () => {
           dispatch('list/duplicateList', {
@@ -299,7 +298,7 @@ export default {
     ]
     if (getters.isDesktop)
       moreOptions.push({
-        name: l["Export as template"],
+        name: "Export as template",
         icon: 'export',
         callback: l => {
           utils.exportListTemplate({
@@ -307,7 +306,7 @@ export default {
         })}
       })
     moreOptions.push({
-      name: l['Delete list'],
+      name: 'Delete list',
       icon: 'trash',
       important: true,
       callback: () => {
@@ -317,7 +316,7 @@ export default {
       }
     })
     opt = [...opt, {
-      name: l['More options'],
+      name: 'More options',
       icon: 'settings-h',
       callback: () => moreOptions
     }]

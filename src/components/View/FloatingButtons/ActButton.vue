@@ -3,7 +3,7 @@
     <div class="act-button-wrapper" :style='styles'>
       <div class="heading cont side action-heading">
         <div class="floating-btn-msg task-act no-pointer">
-          {{ l['Heading'] }}
+          Heading
         </div>
       </div>
       <div class="main cont create">
@@ -11,15 +11,15 @@
           {{ txt }}
         </div>
         <div class="floating-btn-msg tags-act no-pointer">
-          {{ l["Add tag"] }}
+          Add tag
         </div>
         <div class="floating-btn-msg list-act no-pointer">
-          {{ l["Add list"] }}
+          Add list
         </div>
       </div>
       <div class="existing side cont add">
         <div class="floating-btn-msg task-act no-pointer">
-          {{ l['Add'] }}
+          Add
         </div>
       </div>
     </div>
@@ -47,7 +47,7 @@ export default {
     Icon: IconVue,
   },
   computed: {
-    ...mapGetters(['l', 'platform', 'isDesktop']),
+    ...mapGetters(['platform', 'isDesktop']),
     styles() {
       const height = (this.isDesktop ? 40 : 50) + 'px'
       return {

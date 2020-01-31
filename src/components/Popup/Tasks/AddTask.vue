@@ -1,8 +1,8 @@
 <template>
   <div class="AddTask popup cb shadow rb" :class="platform">
     <TaskEdit
-      :placeholder="l['Task name...']"
-      :notesPlaceholder="l['Notes...']"
+      placeholder="Task name..."
+      notesPlaceholder="Notes..."
       @save='add'
       @cancel="$emit('close')"
     />
@@ -32,7 +32,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'l', 'isDesktop'])
+    ...mapGetters(['platform', 'isDesktop'])
   }
 }
 

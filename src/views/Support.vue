@@ -5,7 +5,7 @@
         <InputApp
           class="no-border-down"
           v-model="search"
-          :placeholder="l['Search article...']"
+          placeholder="Search article..."
         />
         <div class="search-str cbd">
           <div class="path">
@@ -107,7 +107,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['l', 'platform']),
+    ...mapGetters(['platform']),
     tag() {
       return this.$route.params.tag
     },

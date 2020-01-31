@@ -1,7 +1,7 @@
 <template>
   <div class="Signup popup cb shadow rb scroll" :class="platform">
     <div class="tac title">
-      <h3 class="pc">{{ l['Create an Account'] }}</h3>
+      <h3 class="pc">Create an Account</h3>
     </div>
     <div class="content">
       <SigninOptions
@@ -9,7 +9,7 @@
         @google='upgradeAccountToGoogle'
       />
       <InputApp
-        :placeholder='l["Username (Optional)"] + ":"'
+        placeholder='Username(Optional):'
         :focus="true"
         :value='username'
         @input='v => username = v'
@@ -17,14 +17,14 @@
       />
       <InputApp
         class="mt"
-        :placeholder='l["E-mail"] + ":"'
+        placeholder='E-mail'
         :value='eMail'
         @input='v => eMail = v'
         @cancel="$emit('close')"
       />
       <InputApp
         class="mt"
-        :placeholder='l["Password"] + ":"'
+        placeholder='Password:'
         type="password"
         :value='password'
         @input='v => password = v'
@@ -33,14 +33,14 @@
       <InputApp
         class="mt"
         type="password"
-        :placeholder='l["Confirm password"] + ":"'
+        placeholder='Confirm password:'
         :value='conPassword'
         @input='v => conPassword = v'
         @cancel="$emit('close')"
       />
       <ButtonApp
         class="mt"
-        :value='l["Create account"]'
+        value='Create account'
         @click="createAccount"
       />
       <div v-if="!isDesktop" style="height: 400px"></div>
@@ -85,19 +85,19 @@ export default {
       }
       if (this.atLeastOneEmpty)
         toast({
-          name: this.l["Fill in all the required fields."],
+          name: "Fill in all the required fields.",
           type: "error",
           seconds: 4,
         })
       else if (this.tooLong)
         toast({
-          name: this.l["The maximum number of characters is 75."],
+          name: "The maximum number of characters is 75.",
           type: "error",
           seconds: 4,
         })
       else if (this.notEqual)
         toast({
-          name: this.l["The passwords aren't matching."],
+          name: "The passwords aren't matching.",
           type: "error",
           seconds: 4,
         })
@@ -109,13 +109,13 @@ export default {
           })
           const uid = auth.currentUser.uid
           toast({
-            name: this.l['You have successfully created an account!'],
+            name: 'You have successfully created an account!',
             seconds: 3,
             type: 'success'
           })
           auth.currentUser.sendEmailVerification().then(() => {
             toast({
-              name: this.l['An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.'],
+              name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.',
               seconds: 6,
               type: 'warning',
             })
@@ -187,7 +187,7 @@ export default {
     notEqual() {
       return this.password !== this.conPassword
     },
-    ...mapGetters(['platform', 'l'])
+    ...mapGetters(['platform'])
   },
 }
 

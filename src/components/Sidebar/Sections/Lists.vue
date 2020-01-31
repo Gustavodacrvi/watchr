@@ -212,7 +212,6 @@ export default {
     }),
     ...mapGetters({
       tasks: 'task/tasks',
-      l: 'l',
       isDesktop: 'isDesktop',
       isTaskInList: 'task/isTaskInList',
       sortedFolders: 'folder/sortedFolders',

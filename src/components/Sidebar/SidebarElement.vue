@@ -215,7 +215,7 @@ export default {
       viewName: 'viewName',
       storeViewType: 'viewType',
     }),
-    ...mapGetters(['l', 'platform', 'isDesktop']),
+    ...mapGetters(['platform', 'isDesktop']),
     hasSubList() {
       return this.subList && this.subList.length > 0
     },
@@ -233,7 +233,7 @@ export default {
       return this.selectedItems.length === 0
     },
     getName() {
-      if (this.isSmart) return this.l[this.name]
+      if (this.isSmart) return this.name
       return this.name
     },
     hoverStyle() {
