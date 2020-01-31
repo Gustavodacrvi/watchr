@@ -470,8 +470,17 @@ export default {
       
       b.commit()
     },
+    addListInFolderByIndex({rootState}, {ids, item, newItemRef}) {
+      const b = fire.batch()
+      
+      setFolder(b, {order: ids}, folderRef(item.folder), rootState)
+
+      setList(b, item, newItemRef, rootState)
+
+      b.commit()
+    },
     addList({rootState}, {name, ids, index, folderId}) {
-      const batch = fire.batch()
+      const b = fire.batch()
       
       let folder = folderId
       if (!folder) folder = null
@@ -486,26 +495,18 @@ export default {
         tasks: [],
       }
       if (index === undefined && folder === null) {
-        setList(batch, obj, listRef(), rootState)
+        setList(b, obj, listRef(), rootState)
       } else if (index !== undefined && folder === null) {
         const ord = ids.slice()
         const ref = listRef()
-        setList(batch, obj, ref, rootState)
+        setList(b, obj, ref, rootState)
         ord.splice(index, 0, ref.id)
-        setInfo(batch, {
+        setInfo(b, {
           lists: ord,
         })
-      } else {
-        const ord = ids.slice()
-        const ref = listRef()
-        ord.splice(index, 0, ref.id)
-
-        setFolder(batch, {order: ord}, folderRef(folder), rootState)
-
-        setList(batch, obj, ref, rootState)
       }
 
-      batch.commit()
+      b.commit()
     },
     completeLists({rootState}, lists) {
       const batch = fire.batch()

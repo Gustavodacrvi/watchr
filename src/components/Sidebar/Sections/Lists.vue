@@ -55,9 +55,13 @@
           :mapString='mapString'
           :onSortableAdd='betweenFolders'
 
+          :fallbackItem='fallbackItem(f.id)'
+          :getItemRef='getItemRef'
+
           @is-moving='v => isDragginInnerList = v'
           @buttonAdd='obj => folderButtonAdd(f.id, obj)'
           @update='ids => updateFolderIds(f.id, ids)'
+          @add='addList'
         />
       </FolderApp>
     </transition-group>
@@ -73,6 +77,7 @@ import FolderApp from './Folder.vue'
 import utilsList from '@/utils/list'
 import utilsTask from '@/utils/task'
 import utils from '@/utils'
+import { listRef } from '@/utils/firestore'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -127,6 +132,16 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    fallbackItem(folder) {
+      return obj => ({...obj, folder})
+    },
+    getItemRef() {
+      return listRef()
+    },
+    addList(obj) {
+      this.$store.dispatch('list/addListInFolderByIndex', obj)
+    },
+    
     enter(el) {
       const h = el.getElementsByClassName('header')[0].style
       const s = el.style

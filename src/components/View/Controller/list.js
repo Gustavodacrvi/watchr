@@ -45,7 +45,6 @@ export default {
     },
     saveHeaderName() {
       return name => {
-        console.log(name)
         if (this.viewList) {
           if (this.getListByName(name))
             this.pushToast({

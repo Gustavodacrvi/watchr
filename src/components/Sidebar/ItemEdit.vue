@@ -1,5 +1,5 @@
 <template>
-  <div class="ItemEdit rb">
+  <div class="ItemEdit rb shadow">
     <div class="wrapper">
       <input class="input" ref='input'
         autocomplete="off"
@@ -54,11 +54,17 @@ export default {
     keydown(evt) {
       const {key} = evt
 
+      if (key === 'Escape')
+        this.$emit('close')
       if (this.isOnShift) {
         if (key === 'ArrowUp')
           this.go(-1)
         else if (key === 'ArrowDown')
           this.go(1)
+      }
+      if (key === "Enter") {
+        this.$emit('add', this.name)
+        this.name = ''
       }
     },
   },
