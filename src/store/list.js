@@ -531,10 +531,13 @@ export default {
       b.commit()
     },
     completeLists({rootState}, lists) {
-      const batch = fire.batch()
+      const b = fire.batch()
+
+      const writes = []
 
       for (const l of lists) {
-        let calendar = c = l.calendar || null
+        let calendar = l.calendar || null
+        let c = calendar
         if (c && c.type !== 'someday') {
           if (c.type === 'after completion') {
             c.lastCompleteDate = mom().format('Y-M-D')
@@ -549,7 +552,7 @@ export default {
         }
         
         const tod = mom()
-        setList(batch, {
+        setList(b, {
           completedFire: serverTimestamp(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
@@ -560,32 +563,37 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, listRef(l.id), rootState)
-
+        }, listRef(l.id), rootState, writes)
       }
+
+      cacheBatchedItems(b, writes)
       
-      batch.commit()
+      b.commit()
     },
     uncompleteLists({rootState}, lists) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
+      const writes = []
+      
       for (const l of lists) {
         const c = l.calendar
         if (c && c.times === 0) c.times = null
         if (c) {
           c.lastCompleteDate = null
         }
-        setList(batch, {
+        setList(b, {
           completedFire: null,
           completeDate: null,
           completed: false,
           checkDate: null,
           fullCheckDate: null,
           calendar: c,
-        }, listRef(l.id), rootState)
+        }, listRef(l.id), rootState, writes)
       }
 
-      batch.commit()
+      cacheBatchedItems(b, writes)
+
+      b.commit()
     },
     async cancelLists({rootState}, ids) {
       const b = fire.batch()

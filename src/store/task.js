@@ -949,6 +949,7 @@ export default {
         }, rootState, taskRef(t.id), writes)
         commit('change', [t.id], {root: true})
       }
+
       cacheBatchedItems(b, writes)
       
       b.commit()

@@ -19,6 +19,13 @@
     <br>
     <li>Show "Begins today" heading on dates where the list defer date is reached.</li>
     <br>
+    <li>Improved performance.</li>
+    <br>
+
+    <h3>New Sidebar Item Add UI</h3>
+    <br>
+
+    <li>It's now possible to add multiple sidebar items just like in task views.</li>
 
   </div>
 </template>
