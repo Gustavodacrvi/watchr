@@ -126,7 +126,6 @@ const store = new Vuex.Store({
     viewName: '',
     viewType: '',
     mainSelection: null,
-    mainSelectionIndex: null,
     movingTask: false,
     selectedType: null,
     
@@ -257,9 +256,8 @@ const store = new Vuex.Store({
     movingTask(state, bool) {
       state.movingTask = bool
     },
-    saveMainSelection(state, {id, index}) {
+    saveMainSelection(state, id) {
       state.mainSelection = id
-      state.mainSelectionIndex = index
     },
     unpressKey(state) {
       state.pressingKey = null

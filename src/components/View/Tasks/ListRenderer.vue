@@ -102,6 +102,7 @@
       @change-time='changeTime'
       @go='moveItemHandlerSelection'
       @add-heading='addHeadingFromRootHeadings'
+      @headings-items-ids='getHeadingsItemsIds'
     />
   </div>
 </template>
@@ -164,6 +165,7 @@ export default {
       lastButtonElement: null,
       editMoveType: 'add',
       compHeight: 0,
+      headingsItemsIds: [],
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -183,6 +185,8 @@ export default {
       window.addEventListener('keydown', this.keydown)
       window.addEventListener('mousemove', this.mousemove)
     }
+
+    this.emitIds()
   },
   beforeDestroy() {
     this.destroySortables()
@@ -193,11 +197,16 @@ export default {
       window.removeEventListener('mousemove', this.mousemove)
     }
   },
-  beforeUpdate() {
-/*     if (this.draggableRoot && this.header && this.header.name === 'Much better mother fucker')
-      console.log(this.draggableRoot.childNodes) */
-  },
   methods: {
+    getHeadingsItemsIds(ids) {
+      this.headingsItemsIds = ids
+    },
+    emitIds() {
+      if (this.isRoot)
+        this.$parent.$emit('items-ids', this.allItemsIds)
+      else
+        this.$emit('items-ids', this.allItemsIds)
+    },
     getCompHeight() {
       const el = this.$refs['item-renderer-root']
       const offsetTop = el.getBoundingClientRect().top
@@ -875,6 +884,11 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    allItemsIds() {
+      if (!this.isRoot)
+        return this.getItems.map(el => el.id)
+      return [...this.getItems.map(el => el.id), ...this.headingsItemsIds].flat()
+    },
     getMainSelectionIndex() {
       return this.lazyItems.findIndex(i => i.id === this.mainSelection)
     },
@@ -1021,6 +1035,9 @@ export default {
           }
         })
       }
+    },
+    allItemsIds() {
+      this.emitIds()
     },
   }
 }

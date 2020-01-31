@@ -60,6 +60,7 @@
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
           @change-time='changeTime'
+          @items-ids='ids => getItemsIds(ids, i)'
 
           :header="h"
           :addItem="h.onAddItem"
@@ -93,6 +94,8 @@ export default {
     return {
       sortable: null,
       movingHeading: false,
+
+      itemsIdsObj: {}
     }
   },
   mounted() {
@@ -107,6 +110,12 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    getItemsIds(ids, i) {
+      this.itemsIdsObj = {
+        ...this.itemsIdsObj,
+        [i]: ids,
+      }
+    },
     mountSortable() {
       if (this.displayPriority > 2) {
         const el = this.$el.getElementsByClassName('headings-root')[0]
@@ -231,6 +240,13 @@ export default {
     updateHeadingIds() {
       if (this.sortable)
         this.sortable.options.disabled = !this.updateHeadingIds
+    },
+    itemsIdsObj() {
+      const keys = Object.keys(this.itemsIdsObj)
+      const ids = []
+      for (let i = 0;i < keys.length;i++)
+        ids.push(this.itemsIdsObj[i])
+      this.$emit('headings-items-ids', ids.flat())
     },
   },
 }

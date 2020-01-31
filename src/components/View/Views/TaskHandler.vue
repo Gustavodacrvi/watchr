@@ -79,9 +79,6 @@ export default {
   created() {
     this.updateSchedule()
   },
-  mounted() {
-    this.emitIds()
-  },
   methods: {
     onAddExistingItem(index, lazyItems, fallbackItem, callback) {
       this.$store.dispatch('pushPopup', {
@@ -273,9 +270,6 @@ export default {
 
       return finalObj
     },
-    emitIds() {
-      this.$emit('items-ids', this.allNonFilteredViewIds)
-    },
   },
   computed: {
     ...mapState({
@@ -296,9 +290,6 @@ export default {
     }),
     timeFormat() {
       return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
-    },
-    allNonFilteredViewIds() {
-      return this.allNonFilteredViewTasks.map(el => el.id)
     },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
@@ -562,9 +553,6 @@ export default {
         this.updateSchedule()
       },
       deep: true,
-    },
-    allNonFilteredViewIds() {
-      this.emitIds()
     },
   }
 }

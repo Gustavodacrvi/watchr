@@ -242,29 +242,17 @@ export default {
     },
     select(i, dire) {
       if (i === null) {
-        this.saveMainSelection({
-          id: null,
-          index: null,
-        })
+        this.saveMainSelection(null)
       } else {
         const ids = this.allViewItemsIds
 
         if (ids[i]) {
-          this.saveMainSelection({
-            id: ids[i],
-            index: i,
-          })
+          this.saveMainSelection(ids[i])
         } else if (dire !== undefined) {
           if (dire) {
-            this.saveMainSelection({
-              id: ids[0],
-              index: 0,
-            })
+            this.saveMainSelection(ids[0])
           } else {
-            this.saveMainSelection({
-              id: ids[ids.length - 1],
-              index: ids.length - 1,
-            })
+            this.saveMainSelection(ids[ids.length - 1])
           }
         } else if (!ids[i] && this.mainSelectionIsNotInView) {
           this.select(null)
@@ -679,7 +667,6 @@ export default {
       rest: state => state.pomo.rest,
       openHelper: state => state.pomo.openHelper,
       mainSelection: state => state.mainSelection,
-      mainSelectionIndex: state => state.mainSelectionIndex,
 
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
@@ -716,6 +703,11 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    mainSelectionIndex() {
+      if (!this.mainSelection)
+        return null
+      return this.allViewItemsIds.indexOf(this.mainSelection)
+    },
     allViewItemsIds() {
       return [...this.allListsIds, ...this.allViewTasksIds]
     },
@@ -1371,10 +1363,7 @@ export default {
     viewName() {
       this.autoSchedule = null
       this.getComputedOptions()
-      this.saveMainSelection({
-        id: null,
-        index: null,
-      })
+      this.saveMainSelection(null)
     },
     savedSchedule() {
       this.autoSchedule = this.savedSchedule
