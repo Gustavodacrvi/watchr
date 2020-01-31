@@ -79,9 +79,14 @@
           :list="subList"
           :onSortableAdd='onSubTagSortableAdd'
 
+          :inputPlaceholder='inputPlaceholder'
+          :getItemRef='getItemRef'
+          :fallbackItem='fallbackItem'
+
           :mapNumbers='mapSubTagNumbers'
           @buttonAdd='onSubTagAdd'
           @update='onSubTagUpdate'
+          @add='onItemAdd'
         />
       </div>
     </transition>
@@ -100,7 +105,8 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'id', 'progress', 'helpIcons', 'string', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick'],
+  'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'inputPlaceholder'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     Icon: IconVue,
@@ -215,7 +221,7 @@ export default {
       viewName: 'viewName',
       storeViewType: 'viewType',
     }),
-    ...mapGetters(['l', 'platform', 'isDesktop']),
+    ...mapGetters(['platform', 'isDesktop']),
     hasSubList() {
       return this.subList && this.subList.length > 0
     },
@@ -233,7 +239,7 @@ export default {
       return this.selectedItems.length === 0
     },
     getName() {
-      if (this.isSmart) return this.l[this.name]
+      if (this.isSmart) return this.name
       return this.name
     },
     hoverStyle() {

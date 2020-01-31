@@ -1,7 +1,7 @@
 <template>
   <div class="RecentData popup scroll-thin cb shadow rb" :class="platform">
     <div class="tac title">
-      <h3 class="pc">{{ l['Recent Data'] }}</h3>
+      <h3 class="pc">Recent Data</h3>
     </div>
     <div class="cont">
       <div class="numbers">
@@ -294,7 +294,7 @@ export default {
     ...mapState({
       stats: state => state.pomo.stats,
     }),
-    ...mapGetters(['l', 'platform']),
+    ...mapGetters(['platform']),
     firstTime() {
       return !this.stats
     },

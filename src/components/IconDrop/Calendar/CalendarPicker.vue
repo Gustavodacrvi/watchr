@@ -9,7 +9,7 @@
         <Icon v-if="repeat && !onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
       </div>
       <div v-if="!noTime" class="opt cursor remove-highlight rb" @click='$emit("get-time", selectedMoment.format("Y-M-D"))'>
-        <span class="msg">{{ l['Time:'] }} {{ getTime }}</span>
+        <span class="msg">Time: {{ getTime }}</span>
         <CircleBubble
           innerColor='rgba(87,160,222,.1)'
           outerColor='var(--primary)'
@@ -25,13 +25,13 @@
           </div>
         </div>
         <div class="weeks">
-          <span class="week">{{ l['S'] }}</span>
-          <span class="week">{{ l['M'] }}</span>
-          <span class="week">{{ l['T'] }}</span>
-          <span class="week">{{ l['W'] }}</span>
-          <span class="week">{{ l['T'] }}</span>
-          <span class="week">{{ l['F'] }}</span>
-          <span class="week">{{ l['S'] }}</span>
+          <span class="week">S</span>
+          <span class="week">M</span>
+          <span class="week">T</span>
+          <span class="week">W</span>
+          <span class="week">T</span>
+          <span class="week">F</span>
+          <span class="week">S</span>
         </div>
         <div class="dates">
           <span v-for='i in firstWeekDayRange()' :key='i + 100' class="dark-date"></span>
@@ -80,11 +80,18 @@ export default {
   },
   computed: {
     ...mapState(['userInfo']),
-    ...mapGetters(['l']),
     calendarStr() {
       if (this.calendarObj)
-        return utils.parseCalendarObjectToString(this.calendarObj, this.l, this.userInfo)
+        return utils.parseCalendarObjectToString(this.calendarObj, this.userInfo)
       return null
+    },
+    getTime() {
+      if (this.time) {
+        if (this.userInfo.disablePmFormat)
+          return this.time
+        return mom(this.time, 'H:m').format('h:m A')
+      }
+      return 'No time'
     },
   },
   methods: {
@@ -218,20 +225,6 @@ export default {
     },
     isSelectedDate(day) {
       return this.visualMoment.clone().date(day).isSame(this.selectedMoment, 'day')
-    },
-  },
-  computed: {
-    ...mapState({
-      userInfo: state => state.userInfo,
-    }),
-    ...mapGetters(['l']),
-    getTime() {
-      if (this.time) {
-        if (this.userInfo.disablePmFormat)
-          return this.time
-        return mom(this.time, 'H:m').format('h:m A')
-      }
-      return this.l['No time']
     },
   },
 }

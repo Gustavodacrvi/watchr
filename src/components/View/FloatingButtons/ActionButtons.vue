@@ -5,7 +5,7 @@
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
-      :txt='l["Create"]'
+      txt='Create'
     />
   </div>
 </template>
@@ -70,7 +70,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'l', 'isDesktop'])
+    ...mapGetters(['platform', 'isDesktop'])
   },
   watch: {
     moving() {

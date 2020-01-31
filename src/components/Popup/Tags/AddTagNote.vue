@@ -7,7 +7,7 @@
       :value='note'
       @input="v => note = v"
       :options="[]"
-      :placeholder="l['Note...']"
+      placeholder="Note..."
       @cancel="$emit('close')"
       @enter='addNote'
     />
@@ -32,7 +32,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform', 'l']),
+    ...mapGetters(['platform']),
     ...mapState({
       payload: state => state.popup.payload,
     })

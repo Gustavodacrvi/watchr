@@ -67,13 +67,6 @@ export default {
       }, 100)
     },
   },
-  computed: {
-    ...mapGetters(['l']),
-  }
 }
 
 </script>
-
-<style scoped>
-
-</style>

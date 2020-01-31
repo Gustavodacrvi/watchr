@@ -116,8 +116,8 @@ export default {
     },
 
     viewNameValue() {
-      if (this.viewType === 'search') return this.l["Search"]
-      if (this.isSmart) return this.l[this.viewName]
+      if (this.viewType === 'search') return "Search"
+      if (this.isSmart) return this.viewName
     },
     mainFilter() {
       const n = this.viewName

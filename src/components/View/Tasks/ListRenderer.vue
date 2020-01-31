@@ -24,6 +24,7 @@
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
           :comp='comp'
+          :waitForAnotherItemComplete='waitForAnotherTaskCompleteAnimation'
 
           @de-select='deSelectItem'
           @select='selectItem'
@@ -31,6 +32,7 @@
           @add-heading-after='addHeadingAfterSelection'
           @go='moveItemHandlerSelection'
           @change-time='changeTime'
+
 
           :data-id='item.id'
           :data-name='item.name'
@@ -102,6 +104,7 @@
       @change-time='changeTime'
       @go='moveItemHandlerSelection'
       @add-heading='addHeadingFromRootHeadings'
+      @headings-items-ids='getHeadingsItemsIds'
     />
   </div>
 </template>
@@ -164,9 +167,13 @@ export default {
       lastButtonElement: null,
       editMoveType: 'add',
       compHeight: 0,
+      headingsItemsIds: [],
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
+
+      completeAnimationStack: [],
+      completeAnimationSettimeout: null,
     }
   },
   created() {
@@ -183,6 +190,8 @@ export default {
       window.addEventListener('keydown', this.keydown)
       window.addEventListener('mousemove', this.mousemove)
     }
+
+    this.emitIds()
   },
   beforeDestroy() {
     this.destroySortables()
@@ -193,11 +202,29 @@ export default {
       window.removeEventListener('mousemove', this.mousemove)
     }
   },
-  beforeUpdate() {
-/*     if (this.draggableRoot && this.header && this.header.name === 'Much better mother fucker')
-      console.log(this.draggableRoot.childNodes) */
-  },
   methods: {
+    waitForAnotherTaskCompleteAnimation(hideTaskFunc) {
+      this.completeAnimationStack.push(hideTaskFunc)
+
+      if (this.completeAnimationSettimeout)
+        clearTimeout(this.completeAnimationSettimeout)
+      
+      this.completeAnimationSettimeout = setTimeout(() => {
+        for (const animate of this.completeAnimationStack)
+          animate()
+        this.completeAnimationStack = []
+      }, 2250)
+    },
+    
+    getHeadingsItemsIds(ids) {
+      this.headingsItemsIds = ids
+    },
+    emitIds() {
+      if (this.isRoot)
+        this.$parent.$emit('items-ids', this.allItemsIds)
+      else
+        this.$emit('items-ids', this.allItemsIds)
+    },
     getCompHeight() {
       const el = this.$refs['item-renderer-root']
       const offsetTop = el.getBoundingClientRect().top
@@ -331,7 +358,7 @@ export default {
       this.addEdit('Edit', index, this.add, {
         key: 'Edit',
         placeholder: this.itemPlaceholder,
-        notesPlaceholder: this.l['Notes...'], showCancel: true,
+        notesPlaceholder: 'Notes...', showCancel: true,
       })
     },
     addItemAfterSelection(dir) {
@@ -821,7 +848,7 @@ export default {
             this.addEditComp(this.lazyItems.length)
           else if (key === 'A')
             this.addEditComp(0)
-          if (this.viewType === 'list') {
+          if (this.viewType === 'list' && !this.isSmart) {
             if (key === 'h')
               this.addHeadingsEdit(this.lazyItems.length)
             else if (key === 'H')
@@ -868,13 +895,17 @@ export default {
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
-      l: 'l',
       platform: 'platform',
       isDesktop: 'isDesktop',
       getTaskBodyDistance: 'task/getTaskBodyDistance',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    allItemsIds() {
+      if (!this.isRoot)
+        return this.getItems.map(el => el.id)
+      return [...this.getItems.map(el => el.id), ...this.headingsItemsIds].flat()
+    },
     getMainSelectionIndex() {
       return this.lazyItems.findIndex(i => i.id === this.mainSelection)
     },
@@ -892,7 +923,7 @@ export default {
       return this.isRoot & this.showSomedayButton && this.getItems.filter(el => !el.isEdit).length > 0
     },
     showMoreItemsMessage() {
-      return `${this.l['Show ']}${this.nonEditLazyTasks.length - 3} more items...`
+      return `'Show ${this.nonEditLazyTasks.length - 3} more items...`
     },
     showMoreItemsButton() {
       return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditLazyTasks.length > 3
@@ -1021,6 +1052,9 @@ export default {
           }
         })
       }
+    },
+    allItemsIds() {
+      this.emitIds()
     },
   }
 }

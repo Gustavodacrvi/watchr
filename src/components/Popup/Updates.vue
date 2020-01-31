@@ -1,7 +1,7 @@
 <template>
   <div class="Update popup cb shadow rb scroll-thin" :class="platform">
     <div class="title tac">
-      <h3 class="pc">{{ l["What's new"] }} - {{parse(ver)}}</h3>
+      <h3 class="pc">What's new - {{parse(ver)}}</h3>
     </div>
     <div class="content">
       <div class="options-wrapper scroll-thin-horizontal">
@@ -98,7 +98,7 @@ export default {
       ver: '',
       diff: 0,
       versions: [
-        '088', '087', '086', '085', '084', '083', '082', '081', '080', '079', '078', '077', '076', '075', '074', '073', '072', '071', '070', '069', '068', '067', '066', '065', '064', '063', '062', '061', '060', '059', '058', '057', '056', '055', '054', '053', '052', '051', '050', '049', '048', '047', '046', '045', '044', '043', '042', '041', '040',
+        '089', '088', '087', '086', '085', '084', '083', '082', '081', '080', '079', '078', '077', '076', '075', '074', '073', '072', '071', '070', '069', '068', '067', '066', '065', '064', '063', '062', '061', '060', '059', '058', '057', '056', '055', '054', '053', '052', '051', '050', '049', '048', '047', '046', '045', '044', '043', '042', '041', '040',
       ]
     }
   },
@@ -124,7 +124,7 @@ export default {
   },
   computed: {
     ...mapState(['lang', 'version']),
-    ...mapGetters(['l', 'platform', 'versionDiff']),
+    ...mapGetters(['platform', 'versionDiff']),
     nonReadUpdates() {
       const nonRead = []
       for (let i = 0; i < this.diff;i++) {

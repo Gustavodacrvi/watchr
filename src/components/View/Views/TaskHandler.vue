@@ -79,9 +79,6 @@ export default {
   created() {
     this.updateSchedule()
   },
-  mounted() {
-    this.emitIds()
-  },
   methods: {
     onAddExistingItem(index, lazyItems, fallbackItem, callback) {
       this.$store.dispatch('pushPopup', {
@@ -273,9 +270,6 @@ export default {
 
       return finalObj
     },
-    emitIds() {
-      this.$emit('items-ids', this.allNonFilteredViewIds)
-    },
   },
   computed: {
     ...mapState({
@@ -287,7 +281,6 @@ export default {
       folders: 'folder/folders',
       tags: 'tag/tags',
       storeTasks: 'task/tasks',
-      l: 'l',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskCanceled: 'task/isTaskCanceled',
@@ -296,9 +289,6 @@ export default {
     }),
     timeFormat() {
       return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
-    },
-    allNonFilteredViewIds() {
-      return this.allNonFilteredViewTasks.map(el => el.id)
     },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
@@ -345,11 +335,11 @@ export default {
         const unshiftSortingOptions = options => {
           const opt = [
             {
-              name: this.l['Sort tasks'],
+              name: 'Sort tasks',
               icon: 'sort',
               callback: () => [
                 {
-                  name: this.l['Sort by name'],
+                  name: 'Sort by name',
                   icon: 'sort-name',
                   callback: () => {
                     const ts = nonFiltered.slice()
@@ -358,7 +348,7 @@ export default {
                   },
                 },
                 {
-                  name: this.l['Sort by priority'],
+                  name: 'Sort by priority',
                   icon: 'priority',
                   callback: () => {
                     const ts = utilsTask.sortTasksByPriority(tasks.slice())
@@ -366,7 +356,7 @@ export default {
                   },
                 },
                 {
-                  name: this.l['Sort by creation date'],
+                  name: 'Sort by creation date',
                   icon: 'calendar',
                   callback: () => {
                     const ts = utilsTask.sortTasksByTaskDate(tasks.slice())
@@ -374,7 +364,7 @@ export default {
                   },
                 },
                 {
-                  name: this.l['Sort by duration(long to short)'],
+                  name: 'Sort by duration(long to short)',
                   icon: 'magic',
                   callback: () => {
                     const ts = utilsTask.sortTasksByDuration(tasks.slice(), 'long')
@@ -382,7 +372,7 @@ export default {
                   }
                 },
                 {
-                  name: this.l['Sort by duration(short to long)'],
+                  name: 'Sort by duration(short to long)',
                   icon: 'magic',
                   callback: () => {
                     const ts = utilsTask.sortTasksByDuration(tasks.slice(), 'short')
@@ -562,9 +552,6 @@ export default {
         this.updateSchedule()
       },
       deep: true,
-    },
-    allNonFilteredViewIds() {
-      this.emitIds()
     },
   }
 }

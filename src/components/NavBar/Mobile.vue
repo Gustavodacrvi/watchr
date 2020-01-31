@@ -47,7 +47,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['l']),
     title() {
       return this.$route.name
     },

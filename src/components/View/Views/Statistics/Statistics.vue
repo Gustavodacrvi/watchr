@@ -3,8 +3,8 @@
     <h3 class="title">Pomodoro</h3>
     <div class="wrapper">
       <Card class="card"
-        :title='l["Recent Data"]'
-        :descr='l["Predict the efficiency changes by comparing your activity in a certain period of time."]'
+        title='Recent Data'
+        descr='Predict the efficiency changes by comparing your activity in a certain period of time.'
         icon='pomo'
         color='var(--dark-red)'
         @click='click'
@@ -32,11 +32,6 @@ export default {
     click() {
       this.pop('RecentData')
     },
-  },
-  computed: {
-    ...mapGetters([
-      'l', 'platform',
-    ]),
   },
 }
 

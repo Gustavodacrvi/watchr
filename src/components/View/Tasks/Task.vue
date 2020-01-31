@@ -124,9 +124,9 @@
           </div>
           <div v-else-if="isEditing" key="editing">
             <Edit class="handle" @pointerdown.native.stop
-              :placeholder="l['Task name...']"
-              :notesPlaceholder="l['Notes...']"
-              :btnText="l['Save task']"
+              placeholder="Task name..."
+              notesPlaceholder="Notes..."
+              btnText="Save task"
               :defaultTask='item'
               :taskHeight='itemHeight'
               :showCancel='true'
@@ -280,16 +280,23 @@ export default {
       }
       s.height = this.itemHeight + 'px'
       s.minHeight = this.itemHeight + 'px'
-      requestAnimationFrame(() => {
-        const dur = this.completeAnimation ? 999 : 0
-        
+
+      const hideTask = () => {
         s.transitionDuration = '.25s'
-        s.transitionDelay = `.${dur}s`
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
 
-        if (this.completeAnimation) {
+        setTimeout(() => {
+          this.completeAnimation = false
+          done()
+        }, 253)
+      }
+      
+      requestAnimationFrame(() => {
+        if (!this.completeAnimation) {
+          hideTask()
+        } else {
           l.transitionDuration = `.2s`
           n.transitionDuration = `.2s`
 
@@ -297,12 +304,10 @@ export default {
           l.border = '2px solid var(--txt)'
 
           n.opacity = '.4'
+
+          this.waitForAnotherItemComplete(hideTask)
         }
         
-        setTimeout(() => {
-          done()
-          this.completeAnimation = false
-        }, 250 + dur)
       })
     },
     taskEnter(el, done) {
@@ -395,7 +400,6 @@ export default {
       isDesktop: 'isDesktop',
       platform: 'platform',
       fallbackSelected: 'fallbackSelected',
-      l: 'l',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskCanceled: 'task/isTaskCanceled',
       getTaskDeadlineStr: 'task/getTaskDeadlineStr',
@@ -407,17 +411,16 @@ export default {
     options() {
       const {c,t} = this.getTask
       const dispatch = this.$store.dispatch
-      const l = this.l
       const arr = [
         {
-          name: l['Pomo this task'],
+          name: 'Pomo this task',
           icon: 'pomo',
           callback: () => {
             this.$store.dispatch('pomo/toggle', {task: this.item, stopToggle: true})
           },
         },
         {
-          name: l['No date'],
+          name: 'No date',
           icon: 'bloqued',
           callback: () => this.saveCalendarDate(null)
         },
@@ -438,7 +441,7 @@ export default {
         },
         {
           type: 'optionsList',
-          name: l['Schedule'],
+          name: 'Schedule',
           options: [
             {
               icon: 'star',
@@ -468,7 +471,7 @@ export default {
         },
         {
           type: 'optionsList',
-          name: l['Priority'],
+          name: 'Priority',
           options: [
             {
               icon: 'priority',
@@ -497,15 +500,15 @@ export default {
           ],
         },
         {
-          name: l['More options'],
+          name: 'More options',
           icon: 'settings-h',
           callback: () => [
             {
-              name: l['Repeat task'],
+              name: 'Repeat task',
               icon: 'repeat',
               callback: () => [
                 {
-                  name: l['Repeat weekly'],
+                  name: 'Repeat weekly',
                   icon: 'repeat',
                   callback: () => ({
                     comp: 'WeeklyPicker',
@@ -513,7 +516,7 @@ export default {
                   }),
                 },
                 {
-                  name: l['Repeat periodically'],
+                  name: 'Repeat periodically',
                   icon: 'repeat',
                   callback: () => ({
                     comp: 'PeriodicPicker',
@@ -523,21 +526,21 @@ export default {
               ],
             },
             {
-              name: l['Copy task'],
+              name: 'Copy task',
               icon: 'copy',
               callback: () => this.copyItem()
             },
             {
-              name: l['Lists'],
+              name: 'Lists',
               icon: 'tasks',
               callback: () => [
                 {
-                  name: l['Move to list'],
+                  name: 'Move to list',
                   icon: 'tasks',
                   callback: () => this.listOptions
                 },
                 {
-                  name: l['Convert to list'],
+                  name: 'Convert to list',
                   icon: 'tasks',
                   callback: () => {
                     const existingList = this.savedLists.find(l => l.name === this.item.name)
@@ -554,12 +557,12 @@ export default {
               ]
             },
             {
-              name: l['Move to folder'],
+              name: 'Move to folder',
               icon: 'folder',
               callback: () => this.folderOptions
             },
             {
-              name: l['Delete task'],
+              name: 'Delete task',
               icon: 'trash',
               important: true,
               callback: () => dispatch('task/deleteTasks', [this.item.id])
@@ -567,12 +570,6 @@ export default {
           ]
         },
       ]
-      if (c && c.persistent && (c.type === "periodic" || c.type === "periodic"))
-        arr.splice(3, 0, {
-          name: l["Manual complete"],
-          icon: 'circle-check',
-          callback: () => dispatch('task/manualCompleteTasks', [t])
-        })
       return arr
     },
     completedItem() {
@@ -638,7 +635,7 @@ export default {
           icon: 'tasks',
           callback: () => {
             const arr = [{
-              name: this.l['List root'],
+              name: 'List root',
               callback: () => moveToList({list: list.id, heading: null})
             }]
             for (const h of list.headings) {
@@ -702,27 +699,27 @@ export default {
     calendarStr() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (!this.allowCalendarStr && !this.isRoot)) return null
-      const str = utils.parseCalendarObjectToString(c, this.l, this.userInfo)
+      const str = utils.parseCalendarObjectToString(c, this.userInfo)
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
     },
     deadlineStr() {
-      return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'), this.l)
+      return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
     showCheckDate() {
       const n = this.viewName
       if (!(this.canceled || this.completed) || (!this.item.checkDate && !this.item.completeDate) || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
         return null
-      return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate, this.l)
+      return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate)
     },
     nextCalEvent() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
       const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
 
-      const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'), this.l)
+      const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'))
       if (!date || date === this.viewName) return null
-      return this.l["Next event"] + ' ' + date
+      return "Next event" + ' ' + date
     },
     taskDuration() {
       return this.item.taskDuration ? utils.formatQuantity(this.item.taskDuration) : null

@@ -1,11 +1,11 @@
 <template>
   <div class="Signin popup cb shadow rb" :class="platform">
     <div class="tac title">
-      <h3 class="pc">{{ l['Change/Add Username'] }}</h3>
+      <h3 class="pc">Change/Add Username</h3>
     </div>
     <div class="content">
       <InputApp
-        :placeholder='l["Username"] + ":"'
+        placeholder='Username:'
         type="text"
         :value='username'
         :focus='true'
@@ -14,7 +14,7 @@
       />
       <ButtonApp
         class="mt"
-        :value='l["Save"]'
+        value='Save'
         @click="update"
       />
     </div>
@@ -50,13 +50,13 @@ export default {
       const toast = t => this.$store.commit('pushToast', t)
       if (!this.username)
         toast({
-          name: this.l["Fill in all the required fields."],
+          name: "Fill in all the required fields.",
           type: "error",
           seconds: 4,
         })
       else if (this.username.length > 50)
         toast({
-          name: this.l["The maximum number of characters is 50."],
+          name: "The maximum number of characters is 50.",
           type: "error",
           seconds: 4,
         })
@@ -79,7 +79,7 @@ export default {
   },
   computed: {
     ...mapState(['popup', 'user']),
-    ...mapGetters(['platform', 'l']),
+    ...mapGetters(['platform']),
   },
 }
 

@@ -2,7 +2,7 @@
   <div class="AddFilter popup cb shadow rb" :class="platform">
     <DropInput
       back-color='var(--card)'
-      :placeholder="l['Filter name'] + '...'"
+      placeholder="Filter name..."
       :value='name'
       @input='v => name = v'
       :focus="true"
@@ -86,7 +86,7 @@ export default {
     if (this.isEditing) this.name = this.payload.name
   },
   computed: {
-    ...mapGetters(['platform', 'l']),
+    ...mapGetters(['platform']),
     ...mapState({
       filters: state => state.filter.filters,
       popup: state => state.popup,
@@ -97,8 +97,8 @@ export default {
       return this.payload.editing === true
     },
     title() {
-      if (!this.isEditing) return this.l['Add filter']
-      return this.l['Edit filter']
+      if (!this.isEditing) return 'Add filter'
+      return 'Edit filter'
     },
   },
   methods: {
@@ -114,7 +114,7 @@ export default {
             ...this.payload,
           })
           toast({
-            name: this.l[`Filter added successfully!`],
+            name: `Filter added successfully!`,
             type: 'success',
             seconds: 2,
           })
@@ -125,20 +125,20 @@ export default {
             id: this.payload.id,
           })
           toast({
-            name: this.l[`Filter edited successfully!`],
+            name: `Filter edited successfully!`,
             type: 'success',
             seconds: 2,
           })
         } else {
           toast({
-            name: this.l[`This filter already exists!`],
+            name: `This filter already exists!`,
             type: 'error',
             seconds: 3,
           })
         }
       } else {
         toast({
-          name: this.l['Fill in all the required fields.'],
+          name: 'Fill in all the required fields.',
           type: 'error',
           seconds: 3,
         })

@@ -7,27 +7,36 @@
 
       data-name='sidebar-renderer'
     >
-      <SidebarElement v-for="(el,i) in list"
-        :key="el.id"
-        v-bind="{...mapNumbersBind(el), ...el}"
-        class="element"
-        :iconColor='getIconColor(el)'
-        :icon="getIcon(el)"
-        :showColor='showColor'
-        :type="type || el.rendererType"
+      <template v-for="(el,i) in items">
+        <SidebarElement v-if="!el.isEdit" 
+          :key="el.id"
+          v-bind="{...mapNumbersBind(el), ...el}"
+          class="element"
+          :iconColor='getIconColor(el)'
+          :icon="getIcon(el)"
+          :showColor='showColor'
+          :type="type || el.rendererType"
 
-        :tabindex="i + 1"
-        :active="active"
-        :isSmart='isSmart'
-        :viewType="viewType"
-        :isDragging='isDragging'
-        :progress='getProgress(el)'
-        :helpIcons='getExraIcon(el)'
-        :string='getString(el)'
+          :tabindex="i + 1"
+          :active="active"
+          :isSmart='isSmart'
+          :viewType="viewType"
+          :isDragging='isDragging'
+          :progress='getProgress(el)'
+          :helpIcons='getExraIcon(el)'
+          :string='getString(el)'
 
-        :data-id="el.id"
-        data-type="sidebar-element"
-      />
+          :data-id="el.id"
+          data-type="sidebar-element"
+        />
+        <ItemEdit v-else :key="el.isEdit + 'eidt'"
+          @close='removeEdit'
+          @go='moveEdit'
+          @add='addItem'
+
+          :placeholder='inputPlaceholder'
+        />
+      </template>
     </transition-group>
   </div>
 </template>
@@ -35,22 +44,37 @@
 <script>
 
 import SidebarElementVue from './SidebarElement.vue'
+import ItemEdit from './ItemEdit.vue'
 
 import Sortable from 'sortablejs'
+
+import { serverTimestamp, uid } from '@/utils/firestore'
+
+import mom from 'moment'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
     SidebarElement: SidebarElementVue,
+    ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem'],
   data() {
     return {
       sortable: null,
       hover: false,
       isDragging: false,
+
+      items: [],
+      hasEdit: false,
+      addedItem: null,
+
+      updateTimeout: null,
     }
+  },
+  created() {
+    this.items = this.list.slice()
   },
   mounted() {
     this.sortable = new Sortable(this.draggableRoot, {
@@ -84,7 +108,7 @@ export default {
 
       onUpdate: evt => {
         setTimeout(() => {
-          this.$emit('update', this.getIds())
+          this.$emit('update', this.getIds)
         }, 10)
       },
       onStart: () => {
@@ -109,13 +133,11 @@ export default {
             if (c.dataset.id === 'floating-button') break
             i++
           }
-          this.$emit('buttonAdd', {
-            index: i,
-            ids: this.getIds(),
-          })
+            
+          this.addEdit(i)
         } else if (type === 'sidebar-element') {
           if (this.onSortableAdd)
-            this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
+            this.onSortableAdd(this.folder, item.dataset.id, this.getIds)
         }
         this.draggableRoot.removeChild(item)
       },
@@ -125,6 +147,58 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    addItem(name) {
+      if (this.getItemRef) {
+        const newItemRef = this.getItemRef()
+        const id = newItemRef.id
+        const index = this.items.findIndex(el => el.isEdit)
+
+        let item = {
+          name,
+          id,
+          userId: uid(),
+          createdFire: serverTimestamp(),
+          created: mom().format('Y-M-D HH:mm ss'),
+        }
+
+        if (this.fallbackItem)
+          item = this.fallbackItem(item)
+        this.addedItem = id
+
+        this.items.splice(index, 0, item)
+
+        this.$emit('add', {
+          item,
+          newItemRef,
+          ids: this.getIds,
+        })
+      }
+    },
+
+    moveEdit(dire) {
+      if (this.hasEdit) {
+        const oldIndex = this.items.findIndex(el => el.isEdit)
+        const newIndex = oldIndex + dire
+
+        if (this.items[newIndex])
+          this.items.splice(newIndex, 0, this.items.splice(oldIndex, 1)[0])
+      }
+    },
+    removeEdit() {
+      this.hasEdit = false
+      const i = this.items.findIndex(el => el.isEdit)
+      if (i > -1)
+        this.items.splice(i, 1)
+    },
+    addEdit(i) {
+      if (!this.hasEdit) {
+        this.hasEdit = true
+        this.items.splice(i, 0, {
+          isEdit: true,
+        })
+      }
+    },
+    
     mapNumbersBind(el) {
       if (this.mapNumbers) {
         const obj = this.mapNumbers(el)
@@ -145,14 +219,6 @@ export default {
     getExraIcon(el) {
       if (!this.mapHelpIcon) return undefined
       return this.mapHelpIcon(el)
-    },
-    getIds() {
-      const childs = this.draggableRoot.childNodes
-      const ids = []
-      for (const el of childs)
-        if (el.dataset.id !== 'floating-button')
-          ids.push(el.dataset.id)
-      return ids
     },
     enter(el) {
       const s = el.style
@@ -196,10 +262,34 @@ export default {
     draggableRoot() {
       return this.$el.getElementsByClassName('sidebar-renderer-root')[0]
     },
+    getIds() {
+      return this.items.filter(el => !el.isEdit).map(el => el.id)
+    },
     apply() {
       return this.$store.state.apply.bool
     },
   },
+  watch: {
+    list(items) {
+      if (this.updateTimeout)
+        clearTimeout(this.updateTimeout)
+      
+      this.updateTimeout = setTimeout(() => {
+        items = items.slice()
+  
+        if (this.hasEdit && this.addedItem) {
+          const oldEditIndex = this.items.findIndex(el => el.isEdit)
+          if (oldEditIndex > -1)
+            this.items.splice(oldEditIndex, 1)
+          const itemIndex = items.findIndex(el => el.id === this.addedItem)
+          if (itemIndex > -1) {
+            items.splice(itemIndex + 1, 0, {isEdit: true})
+          }
+        }
+        this.items = items
+      }, 250)
+    },
+  }
 }
 
 </script>

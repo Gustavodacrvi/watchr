@@ -71,7 +71,7 @@ export default {
     },
   },
   actions: {
-    addFolder(c, fold) {
+    addFolder({rootState}, fold) {
       const b = fire.batch()
       
       setFolder(b, {
@@ -81,7 +81,7 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         ...fold,
         defaultShowing: true,
-      }, folderRef())
+      }, folderRef(), rootState)
 
       b.commit()
     },
@@ -94,47 +94,47 @@ export default {
 
       b.commit()
     },
-    updateOrder(c, {id, ids}) {
+    updateOrder({rootState}, {id, ids}) {
       const b = fire.batch()
       
       setFolder(b, {
         order: ids,
-      }, folderRef(id))
+      }, folderRef(id), rootState)
 
       b.commit()
     },
-    saveFolder(c, fold) {
+    saveFolder({rootState}, fold) {
       const b = fire.batch()
       
-      setFolder(b, fold, folderRef(fold.id))
+      setFolder(b, fold, folderRef(fold.id), rootState)
 
       b.commit()
     },
-    moveListToRoot(c, {id, ids}) {
+    moveListToRoot({rootState}, {id, ids}) {
       const b = fire.batch()
 
       const writes = []
 
       setInfo(b, {lists: ids}, writes)
-      setList(b, {folder: null}, listRef(id), writes)
+      setList(b, {folder: null}, listRef(id), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    moveListBetweenFolders(c, {folder, id, ids}) {
+    moveListBetweenFolders({rootState}, {folder, id, ids}) {
       const b = fire.batch()
 
       const writes = []
 
-      setFolder(b, {order: ids}, folderRef(folder), writes)
-      setList(b, {folder}, listRef(id), writes)
+      setFolder(b, {order: ids}, folderRef(folder), rootState, writes)
+      setList(b, {folder}, listRef(id), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    moveTasksToFolder({getters}, {ids, taskIds, folderId, smartView}) {
+    moveTasksToFolder({getters, rootState}, {ids, taskIds, folderId, smartView}) {
       const fold = getters.getFoldersById([folderId])[0]
       const b = fire.batch()
 
@@ -148,11 +148,11 @@ export default {
         list: null,
         folder: folderId,
         heading: null,
-      }, taskIds, writes)
+      }, taskIds, rootState, writes)
 
       setFolder(b, {
         smartViewsOrders: views,
-      }, folderRef(folderId), writes)
+      }, folderRef(folderId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -167,7 +167,7 @@ export default {
         folder: folderId,
         list: null,
         heading: null,
-      }, taskIds, writes)
+      }, taskIds, rootState, writes)
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
@@ -177,7 +177,7 @@ export default {
 
       b.commit()
     },
-    async addTaskByIndex(c, {ids, index, task, folderId, newTaskRef}) {
+    async addTaskByIndex({rootState}, {ids, index, task, folderId, newTaskRef}) {
       const b = fire.batch()
 
       const writes = []
@@ -187,13 +187,13 @@ export default {
         ...task,
       }, newTaskRef, writes)
       ids.splice(index, 0, newTaskRef.id)
-      setFolder(b, {tasks: ids}, folderRef(folderId), writes)
+      setFolder(b, {tasks: ids}, folderRef(folderId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    deleteFolderById({getters}, {id, lists, tasks}) {
+    deleteFolderById({getters, rootState}, {id, lists, tasks}) {
       const b = fire.batch()
 
       const folderLists = getters.getListsByFolderId({id, lists})
@@ -203,13 +203,13 @@ export default {
       
       batchSetLists(b, {
         folder: null,
-      }, folderLists.map(el => el.id), writes)
+      }, folderLists.map(el => el.id), rootState, writes)
 
       batchSetTasks(b, {
         folder: null,
-      }, folderTasks.map(el => el.id), writes)
+      }, folderTasks.map(el => el.id), rootState, writes)
     
-      deleteFolder(b, id, writes)
+      deleteFolder(b, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -223,7 +223,7 @@ export default {
 
       const batch = fire.batch()
 
-      setFolder(batch, {smartViewsOrders: views}, folderRef(folderId))
+      setFolder(batch, {smartViewsOrders: views}, folderRef(folderId), rootState)
 
       batch.commit()
     },

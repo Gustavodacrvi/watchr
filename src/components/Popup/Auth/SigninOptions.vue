@@ -1,13 +1,13 @@
 <template>
   <div class="SigninOptions">
     <div class="card cursor rb google" @click="google">
-      <span>{{ l['Sign in with google'] }}</span>
+      <span>Sign in with google</span>
     </div>
     <div v-if="!isUpgrading" class="card cursor rb" @click="guest">
-      <span>{{ l["Sign in as a guest"] }}</span>
+      <span>Sign in as a guest</span>
     </div>
     <div class="tac">
-      <h3>{{ l['OR'] }}</h3>
+      <h3>OR</h3>
     </div>
   </div>
 </template>
@@ -46,7 +46,7 @@ export default {
         const toast = (t) => this.$store.commit('pushToast', t)
         const dispatch = this.$store.dispatch
         toast({
-          name: this.l['You have successfully logged in!'],
+          name: 'You have successfully logged in!',
           seconds: 3,
           type: 'success',
         })
@@ -72,7 +72,7 @@ export default {
       const auth = firebase.auth()
       auth.signInAnonymously().then(() => {
         this.$store.commit('pushToast', {
-          name: this.l['You have successfully signed in as a guest.'],
+          name: 'You have successfully signed in as a guest.',
           seconds: 3,
           type: 'success',
         })
@@ -91,7 +91,7 @@ export default {
   },
   computed: {
     ...mapState(['lang']),
-    ...mapGetters(['platform', 'l', 'isDesktop'])
+    ...mapGetters(['platform', 'isDesktop'])
   },
 }
 

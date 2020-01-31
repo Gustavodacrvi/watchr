@@ -3,10 +3,10 @@
     <transition appear name="state" mode="out-in">
       <UserView v-if="(authState && user.emailVerified) || (user && user.isAnonymous)" key="app" :hideNavbar='hideNavbar'/>
       <div key="notlogged" v-else-if="!authState && firstFireLoad" class="view">
-        <span class='view'>{{ l['Please log in to continue.'] }}</span>
+        <span class='view'>Please log in to continue.</span>
       </div>
       <div v-else-if="user && (!user.emailVerified && !user.isAnonymous) && firstFireLoad" class="view" key="confirm">
-        <span>{{ l["Please confirm your e-mail address."] }}</span>
+        <span>Please confirm your e-mail address.</span>
         <div>
           <ButtonApp value="Resend confirmation e-mail" @click="resend"/>
         </div>
@@ -65,7 +65,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['l']),
     ...mapState(['authState', 'user', 'firstFireLoad']),
   },
   watch: {

@@ -11,6 +11,11 @@
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
       :onSortableAdd="onSortableAdd"
+
+      inputPlaceholder='Tag name...'
+      :getItemRef='getItemRef'
+      
+      @add='addTag'
       @buttonAdd='buttonAdd'
       @update='update'
     />
@@ -22,6 +27,8 @@
 
 import RendererVue from '../Renderer.vue'
 
+import { tagRef } from '@/utils/firestore'
+
 import { mapState, mapGetters } from 'vuex'
 
 import utilsTag from '@/utils/tag'
@@ -32,6 +39,13 @@ export default {
   },
   props: ['active', 'viewType'],
   methods: {
+    getItemRef() {
+      return tagRef()
+    },
+    addTag(obj) {
+      this.$store.dispatch('tag/addTagInRootByIndex', obj)
+    },
+    
     update(ids) {
       this.$store.dispatch('tag/updateOrder', ids)
     },
@@ -58,7 +72,6 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getSubTagsByParentId: 'tag/getSubTagsByParentId',
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
-      l: 'l',
       isDesktop: 'isDesktop',
       sortedRootTags: 'tag/sortedRootTags',
     }),
@@ -89,6 +102,10 @@ export default {
               parent: tag.id, tagId, ids
             })
           }
+          tag.inputPlaceholder = 'Subtag name...'
+          tag.fallbackItem = obj => ({...obj, parent: tag.id})
+          tag.getItemRef = () => tagRef()
+          tag.onItemAdd = obj => this.$store.dispatch('tag/addSubTagByIndex', obj)
 
           tag.mapSubTagNumbers = tag => ({
               total: getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,

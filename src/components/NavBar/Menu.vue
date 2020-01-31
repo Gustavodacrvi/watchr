@@ -10,7 +10,6 @@
             handle="globe"
             :circle='true'
             handleColor="var(--fade)"
-            :options='languages'
           />
           <VersionApp class="version"/>
         </div>
@@ -18,13 +17,13 @@
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Sidebar class="Sidebar" v-if="appSection" key="app"/>
         <div v-else key="links" class="nav-links">
-          <router-link class="cursor link rb" to="/">{{ l['Home'] }}</router-link>
-          <router-link class="cursor link rb" to="/user">{{ l['User'] }}</router-link>
-          <router-link class="cursor link rb" to="/support/overview">{{ l['Support'] }}</router-link>
-          <span class="cursor link rb" @click="pop('Signin')">{{ l['Sign in'] }}</span>
-          <span class="cursor link rb" @click="pop('Signup')">{{ l['Sign up'] }}</span>
-          <span class="cursor link rb" @click="profile" @click.stop @touchstart.stop.passive>{{ l["Profile"] }}</span>
-          <span v-if="user && user.isAnonymous" class="cursor link rb" @click="$store.dispatch('logOut')">{{ l['Log out'] }}</span>
+          <router-link class="cursor link rb" to="/">Home</router-link>
+          <router-link class="cursor link rb" to="/user">User</router-link>
+          <router-link class="cursor link rb" to="/support/overview">Support</router-link>
+          <span class="cursor link rb" @click="pop('Signin')">Sign in</span>
+          <span class="cursor link rb" @click="pop('Signup')">Sign up</span>
+          <span class="cursor link rb" @click="profile" @click.stop @touchstart.stop.passive>Profile</span>
+          <span v-if="user && user.isAnonymous" class="cursor link rb" @click="$store.dispatch('logOut')">Log out</span>
         </div>
       </transition>
       <ActionButtons class="action-buttons" v-if="appSection"/>
@@ -71,25 +70,10 @@ export default {
         this.$router.go(-1)
       })
     },
-    saveLang(lang) {
-      this.$store.commit('saveLang', lang)
-    },
   },
   computed: {
     ...mapState(['user']),
-    ...mapGetters(['l', 'isDesktop']),
-    languages() {
-      return [
-        {
-          name: 'English',
-          callback: () => this.saveLang('en'),
-        },
-        {
-          name: 'Português(Brasil)',
-          callback: () => this.saveLang('pt-br'),
-        },
-      ]
-    },
+    ...mapGetters(['isDesktop']),
   }
 }
 

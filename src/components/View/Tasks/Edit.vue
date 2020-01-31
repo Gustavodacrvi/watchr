@@ -57,7 +57,7 @@
             <Tag v-if="task.priority"
               icon="priority"
               :color="getPriorityColor"
-              :value="l[task.priority]"
+              value="task.priority"
               @click="task.priority = ''"
             />
             <Tag v-if="task.folder"
@@ -116,14 +116,14 @@
             @view="viewFile(f, 'tasks', task.id)"
           />
         </div>
-        <span v-if="isEditingFiles" class="files show" :class="{show}" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
+        <span v-if="isEditingFiles" class="files show" :class="{show}" style="opacity: .4;margin-left: 8px">Note: file upload/delete operations won't work while offline.</span>
         <div class="options hide" :class="{show}">
           <transition name="btn">
             <ButtonApp v-if="showingOptions && doesntHaveChecklist"
               class="add-checklist-button"
               style="margin-left: 4px;margin-top: 0px;opacity: .6"
               type="card"
-              :value="l['Add checklist']"
+              value="Add checklist"
               @click="addChecklist"
             />
           </transition>
@@ -580,7 +580,7 @@ export default {
               })
               .catch(() => {
                 this.$store.commit('pushToast', {
-                  name: this.l['An error occurred while editing files.'],
+                  name: 'An error occurred while editing files.',
                   seconds: 4,
                   type: 'error',
                 })
@@ -628,7 +628,6 @@ export default {
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
-      l: 'l',
       isDesktop: 'isDesktop',
       platform: 'platform',
       getTagsById: 'tag/getTagsById',
@@ -677,7 +676,7 @@ export default {
         comp: 'TimePicker',
         content: {
           callback: this.selectDuration,
-          msg: this.l['Task duration'] + ':',
+          msg: 'Task duration:',
           format: '24hr',
         }
       }
@@ -730,7 +729,7 @@ export default {
     },
     buttonText() {
       if (this.btnText) return this.btnText
-      return this.l['Add task']
+      return 'Add task'
     },
     atLeastOnSpecialTag() {
       const t = this.task
@@ -738,16 +737,16 @@ export default {
     },
     calendarStr() {
       if (this.task.calendar)
-        return utils.parseCalendarObjectToString(this.task.calendar, this.l, this.userInfo)
+        return utils.parseCalendarObjectToString(this.task.calendar, this.userInfo)
       return null
     },
     deadlineStr() {
       if (this.task.deadline)
-        return utils.getHumanReadableDate(this.task.deadline, this.l)
+        return utils.getHumanReadableDate(this.task.deadline)
     },
     taskDurationStr() {
       if (this.task.taskDuration)
-        return this.l['Takes '] + utils.formatQuantity(this.task.taskDuration)
+        return 'Takes ' + utils.formatQuantity(this.task.taskDuration)
       return null
     },
     getTaskName() {

@@ -4,9 +4,9 @@
       <LogoApp :width='isntOnIndexPage ? "30px" : "45px"' :class="{'illustration-colors': isntOnIndexPage}" :trans='true'/>
       <span class="watchr"><b>watchr</b></span>
     </div>
-    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('home')}" to="/">{{ l['Home'] }}</router-link>
-    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('user')}" to="/user">{{ l['User'] }}</router-link>
-    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support/overview">{{ l['Support'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('home')}" to="/">{{ 'Home' }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('user')}" to="/user">{{ 'User' }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support/overview">{{ 'Support' }}</router-link>
     <div class="line"></div>
     <div class="icons">
       <DropIcon style="z-index: 3"
@@ -17,16 +17,8 @@
         :options="dropLinks"
         @handle-toggle='v => isLinksIconDropOpen = v'
       />
-      <DropIcon style="z-index: 2"
-        class="drop"
-        handle="globe"
-        handleColor="var(--fade)"
-        :circle='true'
-        :options="languages"
-        @handle-toggle='v => isLanguagesIconDropOpen = v'
-      />
       <VersionApp style="position: relative;z-index: 1"/>
-      <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
+      <ButtonApp v-if="user && user.isAnonymous" class="no-back" value="Sign in" @click="upgradeUser"/>
     </div>
   </div>
 </template>
@@ -61,9 +53,6 @@ export default {
     stopNavHide() {
       this.$store.commit('toggleAllowNavHide', !(this.isLinksIconDropOpen || this.isLanguagesIconDropOpen))
     },
-    saveLang(lang) {
-      this.$store.commit('saveLang', lang)
-    },
     upgradeUser() {
       this.$store.dispatch('pushPopup', {
         comp: 'Signup',
@@ -78,21 +67,8 @@ export default {
   },
   computed: {
     ...mapState(['user']),
-    ...mapGetters(['l']),
     isntOnIndexPage() {
       return this.$route.path !== '/'
-    },
-    languages() {
-      return [
-        {
-          name: 'English',
-          callback: () => this.saveLang('en'),
-        },
-        {
-          name: 'Português(Brasil)',
-          callback: () => this.saveLang('pt-br'),
-        },
-      ]
     },
   },
   watch: {

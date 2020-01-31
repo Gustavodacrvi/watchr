@@ -402,13 +402,12 @@ export default {
     }),
     ...mapGetters({
       tasks: 'task/tasks',
-      l: 'l',
       isDesktop: 'isDesktop',
       platform: 'platform',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
     }),
     title() {
-      return utils.getHumanReadableDate(this.active, this.l)
+      return utils.getHumanReadableDate(this.active)
     },
     todayDay() {
       return mom(TOD_STR, 'Y-M-D').format('D')

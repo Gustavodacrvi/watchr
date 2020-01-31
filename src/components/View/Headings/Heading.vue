@@ -244,7 +244,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['l', 'isDesktop']),
+    ...mapGetters(['isDesktop']),
     renderHeight() {
       return ((this.length * this.itemHeight) + 4) + 'px'
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="Signin popup cb shadow rb scroll" :class="platform">
     <div class="tac title">
-      <h3 class="pc">{{ l['Are you sure?'] }}</h3>
+      <h3 class="pc">Are you sure?</h3>
     </div>
     <div class="content">
       <div class="mt">
@@ -9,11 +9,11 @@
       </div>
       <div class="mt">
         <ButtonApp
-          :value="l['Yes, I am aware of the consequences']"
+          value="Yes, I am aware of the consequences"
           @click="go"
         />
         <ButtonApp class="mt"
-          :value="l['No, I changed my mind']"
+          value="No, I changed my mind"
           @click="close"
         />
       </div>
@@ -44,7 +44,7 @@ export default {
   },
   computed: {
     ...mapState(['popup']),
-    ...mapGetters(['platform', 'l', 'isDesktop']),
+    ...mapGetters(['platform', 'isDesktop']),
     atLeastOneEmpty() {
       const { eMail, password } = this
       return eMail === '' || password === ''

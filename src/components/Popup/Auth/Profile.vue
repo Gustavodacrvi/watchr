@@ -56,7 +56,7 @@
             </div>
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
-              :name='l["Use 1:00pm format"]'
+              name='Use 1:00pm format'
               :value='pmFormat'
               @input="togglepmFormat"
             />
@@ -67,17 +67,17 @@
             />
             <h3 class="title">View</h3>
             <CheckboxApp class="rb"
-              :name='l["Always open tag filters"]'
+              name='Always open tag filters'
               :value='tagFilters'
               @input="toggleTagFilters"
             />
             <CheckboxApp class="rb"
-              :name='l["Always open list filters"]'
+              name='Always open list filters'
               :value='listFilters'
               @input="toggleListFilters"
             />
             <CheckboxApp class="rb"
-              :name='l["Always open folder filters"]'
+              name='Always open folder filters'
               :value='folderFilters'
               @input="toggleFolderFilters"
             />
@@ -85,14 +85,14 @@
           <div v-else class="Sidebar" key="sidebar">
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
-              :name='l["Go to the last visited view on app start instead of the first smart view"]'
+              name='Go to the last visited view on app start instead of the first smart view'
               :value='goToLastViewOnEnter'
               @input="toggleGoToLastViewOnEnter"
             />
             <h4 class="title">Enabled Sections</h4>
             <CheckboxApp v-for="s in sections" :key="s.name"
               class="rb"
-              :name="l[s.name]"
+              name="s.name"
               :value='!isHided(s.name)'
               :icon='s.icon'
               :color='s.color'
@@ -101,7 +101,7 @@
             <h4 class="title">Enabled Smart Views</h4>
             <CheckboxApp v-for="s in sidebarSmartViews" :key="s.name"
               class="rb"
-              :name="l[s.name]"
+              name="s.name"
               :value='!isSmartViewHided(s.name)'
               :icon='s.icon'
               :color='s.color'
@@ -296,7 +296,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop', 'l']),
+    ...mapGetters(['platform', 'isDesktop']),
     ...mapState(['user', 'userInfo']),
     changedOptions() {
       this.forceUpdate
@@ -316,7 +316,7 @@ export default {
     },
     displayName() {
       if (this.user.displayName) return this.user.displayName
-      return this.l['Add username']
+      return 'Add username'
     },
     userHidedSections() {
       if (this.userInfo.hidedSections) return this.userInfo.hidedSections.slice()

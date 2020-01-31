@@ -50,7 +50,7 @@ export default {
         this.status = 'VideoApp'
       else {
         this.$store.commit('pushToast', {
-          name: this.l['File not supported.'],
+          name: 'File not supported.',
           seconds: 4,
           type: 'error',
         })
@@ -66,7 +66,7 @@ export default {
     error() {
       this.status = 'ErrorComponent'
       this.$store.commit('pushToast', {
-        name: this.l['An error occurred while downloading file'],
+        name: 'An error occurred while downloading file',
         seconds: 4,
         type: 'error',
       })
@@ -77,7 +77,6 @@ export default {
   },
   computed: {
     ...mapState(['fileURL']),
-    ...mapGetters(['l']),
   },
 }
 

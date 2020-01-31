@@ -104,15 +104,15 @@ export default {
 }
 
 .toast.success {
-  border: .5px solid var(--green);
+  border: 1px solid var(--primary);
 }
 
 .toast.error {
-  border: .5px solid var(--red);
+  border: 1px solid var(--red);
 }
 
 .toast.warning {
-  border: .5px solid var(--yellow);
+  border: 1px solid var(--yellow);
 }
 
 .hasCallback {

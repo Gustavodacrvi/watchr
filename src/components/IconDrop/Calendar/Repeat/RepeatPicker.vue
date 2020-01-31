@@ -1,6 +1,6 @@
 <template>
   <div class="RepeatPicker" :class="platform">
-    <span>{{ l["Repeat:"] }}   </span>
+    <span>Repeat:   </span>
     <AuthOptions class='special-options' style="z-index: 3"
       :options='data.repeatOptions'
       :active='data.activeRepeatOption'
@@ -9,28 +9,28 @@
     />
     <div class="margin"></div>
     <div class="special-options" v-if="data.activeRepeatOption === 'After completion'">
-      {{ l['Repeat'] }}
+      Repeat
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       {{ l['days after task completion.'] }}
+       days after task completion.
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Daily'">
-      {{ l['Every'] }}
+      Every
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       {{ l['days.'] }}
+       days.
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Weekly'">
-      {{ l['Every'] }}
+      Every
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       {{ l['weeks.'] }}
+       weeks.
        <div class="days margin">
         <span v-for="d of getDays" :key="d"
           class="option cursor week"
@@ -40,12 +40,12 @@
       </div>
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Monthly'">
-      {{ l['Every'] }}
+      Every
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       {{ l['months on the'] }}
+       months on the
       <AuthOptions
         :options='computedMonthDayOptions'
         :active='data.monthDay'
@@ -60,12 +60,12 @@
       />
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Yearly'">
-      {{ l['Every'] }}
+      Every
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       {{ l['years on the'] }} 
+       years on the 
        <AuthOptions
         :options='computedMonthDayOptions'
         :active='data.monthDay'
@@ -89,7 +89,7 @@
     <div class="hr"></div>
     <div class="extra-options margin">
       <div class="cont">
-        {{ l['Begins:'] }}
+        Begins:
       </div>
       <div class="cont">
         <span class="option rb cursor" @click="getBeginDate">
@@ -100,7 +100,7 @@
     {{data.time}}
     <div class="extra-options margin">
       <div class="cont">
-        {{ l['Time:'] }}
+        Time:
       </div>
       <div class="cont">
         <span class="option rb cursor" @click="getTimeInput">
@@ -110,7 +110,7 @@
     </div>
     <div class="extra-options margin">
       <div class="cont">
-        {{ l['Ends:'] }}
+        Ends:
       </div>
       <div class="cont">
         <AuthOptions
@@ -125,7 +125,7 @@
             v-model="data.endTimes"
             width='15px'
           />
-           <span>&nbsp;{{ l['times'] }}</span>
+           <span>&nbsp;times</span>
         </template>
         <template  class="special-options" v-else-if="data.ends === 'On date'">
           <span>&nbsp;</span>
@@ -405,7 +405,6 @@ export default {
     ...mapState({
       userInfo: state => state.userInfo,
     }),
-    ...mapGetters(['platform', 'l']),
     getDays() {
       return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     },
@@ -420,7 +419,7 @@ export default {
           return this.data.time
         return mom(this.data.time, 'H:m').format('h:m A')
       }
-      return this.l['No time']
+      return 'No time'
     },
   },
   watch: {

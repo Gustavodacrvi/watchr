@@ -3,7 +3,7 @@
 <!--     <div>
       <HeaderInfo
         icon="sleep"
-        :info="`${l['Defered to']}:`"
+        :info="`${Defered to'}:`"
         :content="defer"
         :left="deferDaysLeft"
         @click="$parent.$parent.$emit('remove-defer-date')"
@@ -66,13 +66,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      l: 'l',
       userInfo: 'userInfo',
 
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
     deadlineHumanReadable() {
-      return this.deadline ? utils.getHumanReadableDate(this.deadline, this.l) : null
+      return this.deadline ? utils.getHumanReadableDate(this.deadline) : null
     },
     deadlineDaysLeft() {
       return this.deadline ? this.getListDeadlineDaysLeftStr(this.deadline, TOD_STR) : null

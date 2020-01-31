@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l" id="app" :class="{hidePassive}">
+  <div id="app" :class="{hidePassive}">
     <transition name="fade-t">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
@@ -198,7 +198,7 @@ export default {
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos']),
-    ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'getInitialSmartView', 'needsUpdate']),
+    ...mapGetters(['isDesktop', 'isStandAlone', 'getInitialSmartView', 'needsUpdate']),
     isReady() {
       return this.$store.state.googleCalendarReady
     },

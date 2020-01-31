@@ -3,7 +3,7 @@
     <DropInput
       back-color='var(--card)'
       :disable-auto-select='true'
-      :placeholder="['List name'] + '...'"
+      placeholder="List name..."
       :value='name'
       @input='v => name = v'
       :focus="true"
@@ -39,7 +39,6 @@ export default {
   computed: {
     ...mapGetters({
       platform: 'platform',
-      l: 'l',
       lists: 'list/lists',
     }),
     ...mapState({
@@ -51,8 +50,8 @@ export default {
       return this.payload.editing === true
     },
     title() {
-      if (!this.isEditing) return this.l['Add list']
-      return this.l['Edit list']
+      if (!this.isEditing) return 'Add list'
+      return 'Edit list'
     },
     isSmartList() {
       const lists = [
@@ -78,7 +77,7 @@ export default {
         const list = this.lists.find(el => el.name === this.name)
         if (this.isSmartList)
           toast({
-            name: this.l[`This is a special list type.`],
+            name: `This is a special list type.`,
             type: 'error',
             seconds: 4,
           })
@@ -88,7 +87,7 @@ export default {
             ...this.payload,
           })
           toast({
-            name: this.l[`List added successfully!`],
+            name: `List added successfully!`,
             type: 'success',
             seconds: 2,
           })
@@ -98,21 +97,21 @@ export default {
             id: this.payload.id,
           })
           toast({
-            name: this.l[`List edited successfully!`],
+            name: `List edited successfully!`,
             type: 'success',
             seconds: 2,
           })
           this.$store.dispatch('closePopup')
         } else {
           toast({
-            name: this.l[`This list already exists!`],
+            name: `This list already exists!`,
             type: 'error',
             seconds: 3,
           })
         }
       } else {
         toast({
-          name: this.l['Fill in all the required fields.'],
+          name: 'Fill in all the required fields.',
           type: 'error',
           seconds: 3,
         })

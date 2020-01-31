@@ -1,7 +1,7 @@
 <template>
   <div class="tasks">
     <div class="mar">
-      {{ l['Must be in at least one of the lists:'] }}
+      Must be in at least one of the lists:
       <Options
         :options='options.inclusiveOR.map(el => el.name)'
         :active='getinclusiveORActive'
@@ -14,7 +14,7 @@
       />
     </div>
     <div class="mar">
-      {{ l["Can't be in any of the lists:"] }}
+      Can't be in any of the lists:
       <Options
         :options='options.exclusive.map(el => el.name)'
         :active='getExclusiveActive'
@@ -56,17 +56,16 @@ export default {
   },
   computed: {
     ...mapGetters({
-      l: 'l',
       sortedLists: 'list/sortedLists',
     }),
     getinclusiveORActive() {
       if (this.options.inclusiveOR.length === 0)
-        return this.l['No lists selected']
+        return 'No lists selected'
       return this.options.inclusiveOR[this.options.inclusiveOR.length - 1].name
     },
     getExclusiveActive() {
       if (this.options.exclusive.length === 0)
-        return this.l['No lists selected']
+        return 'No lists selected'
       return this.options.exclusive[this.options.exclusive.length - 1].name
     },
     inclusiveOrOptions() {

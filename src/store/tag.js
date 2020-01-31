@@ -80,7 +80,35 @@ export default {
     },
   },
   actions: {
-    addTag(c, {name, index, ids, parent}) {
+    addTagInRootByIndex({rootState}, {ids, item, newItemRef}) {
+      const b = fire.batch()
+
+      const writes = []
+
+      setTag(b, item, newItemRef, rootState, writes)
+      
+      setInfo(b, {tags: ids}, writes)
+
+      cacheBatchedItems(b, writes)
+      
+      b.commit()
+    },
+    addSubTagByIndex({rootState}, {ids, item, newItemRef}) {
+      const b = fire.batch()
+        
+      const writes = []
+      
+      setTag(b, item, newItemRef, rootState, writes)
+      
+      setTag(b, {
+        order: ids,
+      }, tagRef(item.parent), rootState, writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    addTag({rootState}, {name, index, ids, parent}) {
       if (!parent) parent = null
       const obj = {
         createdFire: serverTimestamp(),
@@ -92,71 +120,38 @@ export default {
       if (index === undefined) {
         const b = fire.batch()
         
-        setTag(b, obj, tagRef())
+        setTag(b, obj, tagRef(), rootState)
         
-        b.commit()
-      } else if (!parent) {
-        const b = fire.batch()
-
-        const writes = []
-  
-        const ord = ids.slice()
-        const ref = tagRef()
-        setTag(b, obj, ref, writes)
-        
-        ord.splice(index, 0, ref.id)
-        setInfo(b, {tags: ord}, writes)
-
-        cacheBatchedItems(b, writes)
-        
-        b.commit()
-      } else {
-        const b = fire.batch()
-        
-        const writes = []
-        
-        const order = ids.slice()
-        
-        const ref = tagRef()
-        setTag(b, obj, ref, writes)
-        order.splice(index, 0, ref.id)
-        
-        setTag(b, {
-          order,
-        }, tagRef(parent), writes)
-
-        cacheBatchedItems(b, writes)
-
         b.commit()
       }
     },
-    saveTag({commit}, tag) {
+    saveTag({commit, rootState}, tag) {
       const b = fire.batch()
 
-      setTag(b, tag, tagRef(tag.id))
+      setTag(b, tag, tagRef(tag.id), rootState)
       commit('change', [tag.id], {root: true})
 
       b.commit()
     },
-    moveTagBetweenTags({commit}, {tagId, ids, parent}) {
+    moveTagBetweenTags({commit, rootState}, {tagId, ids, parent}) {
       const b = fire.batch()
 
       const writes = []
 
-      setTag(b, {order: ids}, tagRef(parent), writes)
-      setTag(b, {parent}, tagRef(tagId), writes)
+      setTag(b, {order: ids}, tagRef(parent), rootState, writes)
+      setTag(b, {parent}, tagRef(tagId), rootState, writes)
       commit('change', [parent, tagId], {root: true})
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    moveTagToRoot({commit}, {tagId, ids}) {
+    moveTagToRoot({commit, rootState}, {tagId, ids}) {
       const b = fire.batch()
 
       const writes = []
 
-      setTag(b, {parent: null}, tagRef(tagId), writes)
+      setTag(b, {parent: null}, tagRef(tagId), rootState, writes)
       setInfo(b, {tags: ids}, writes)
       commit('change', [tagId], {root: true})
 
@@ -164,7 +159,7 @@ export default {
 
       b.commit()
     },
-    async addTaskByIndex({commit}, {ids, index, task, tagId, newTaskRef}) {
+    async addTaskByIndex({commit, rootState}, {ids, index, task, tagId, newTaskRef}) {
       const b = fire.batch()
 
       const writes = []
@@ -174,18 +169,18 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
-      }, newTaskRef, writes)
+      }, rootState, newTaskRef, writes)
 
       ids.splice(index, 0, newTaskRef.id)
 
-      setTag(b, {tasks: ids}, tagRef(tagId), writes)
+      setTag(b, {tasks: ids}, tagRef(tagId), rootState, writes)
       commit('change', [newTaskRef.id], {root: true})
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    deleteTag(c, {id, tasks}) {
+    deleteTag({rootState}, {id, tasks}) {
       const b = fire.batch()
       const ts = tasks.filter(t => t.tags && t.tags.includes(id))
       
@@ -193,18 +188,18 @@ export default {
       
       batchSetTasks(b, {
         tags: fd().arrayRemove(id)
-      }, ts.map(el => el.id), writes)
+      }, ts.map(el => el.id), rootState, writes)
 
-      deleteTag(b, id, writes)
+      deleteTag(b, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    moveTagBelow({}, {tagId, target}) {
+    moveTagBelow({rootState}, {tagId, target}) {
       const b = fire.batch()
       
-      setTag(b, {parent: target}, tagRef(tagId))
+      setTag(b, {parent: target}, tagRef(tagId), rootState)
 
       b.commit()
     },

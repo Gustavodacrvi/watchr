@@ -124,7 +124,6 @@ export default {
   },
   computed: {
     ...mapState(['iconDrop']),
-    ...mapGetters(['l']),
   },
   watch: {
     str() {

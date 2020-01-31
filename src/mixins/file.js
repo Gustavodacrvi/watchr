@@ -35,7 +35,7 @@ export default {
         this.$store.commit('readFile', url)
       }).catch(err => {
         this.$store.commit('pushToast', {
-          name: this.l["An error occurred while downloading file"],
+          name: "An error occurred while downloading file",
           seconds: 4,
           type: 'error',
         })
@@ -58,7 +58,7 @@ export default {
         })
       }).catch(err => {
         this.$store.commit('pushToast', {
-          name: this.l["An error occurred while downloading file"],
+          name: "An error occurred while downloading file",
           seconds: 4,
           type: 'error',
         })

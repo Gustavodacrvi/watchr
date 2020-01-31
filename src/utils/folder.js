@@ -2,10 +2,9 @@
 export default {
   getFolderOptions: (folder, toggle, onToggle) => ({dispatch, getters, lists, tasks}) => {
     // toggle is a boolean
-    const l = getters['l']
     const obj = [
       {
-        name: l['Edit folder'],
+        name: 'Edit folder',
         icon: 'pen',
         callback: () => dispatch('pushPopup', {
           comp: "AddFolder",
@@ -18,7 +17,7 @@ export default {
         }),
       },
       {
-        name: l["Toggle favorite"],
+        name: "Toggle favorite",
         icon: 'heart',
         callback: () => {
           dispatch('folder/saveFolder', {
@@ -27,7 +26,7 @@ export default {
         }
       },
       {
-        name: l['Add files'],
+        name: 'Add files',
         icon: 'file',
         callback: () => ({
           comp: 'Files',
@@ -44,7 +43,7 @@ export default {
         }),
       },
       {
-        name: l['Delete folder'],
+        name: 'Delete folder',
         icon: 'trash',
         important: true,
         callback: () => dispatch('folder/deleteFolderById', {
@@ -55,7 +54,7 @@ export default {
     ]
     if (toggle !== undefined)
       obj.unshift({
-        name: l['Toggle folder'],
+        name: 'Toggle folder',
         icon: 'folder',
         callback: () => {
           if (onToggle) onToggle()

@@ -7,7 +7,7 @@
   >
     <div>
       <Icon class="search" icon="search" width="16px"/>
-      <span class="search-msg">{{ l['Search'] }}</span>
+      <span class="search-msg">Search</span>
     </div>
     <CircleBubble
       innerColor='var(--light-gray)'
@@ -28,7 +28,7 @@ export default {
     Icon: IconVue,
   },
   computed: {
-    ...mapGetters(['l', 'platform']),
+    ...mapGetters(['platform']),
   }
 }
 

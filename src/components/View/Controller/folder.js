@@ -42,7 +42,7 @@ export default {
         if (this.viewFolder) {
           if (this.$store.getters['folder/getFoldersByName']([name])[0])
             this.pushToast({
-              name: this.l['This folder already exists!'],
+              name: 'This folder already exists!',
               seconds: 4,
               type: 'error',
             })
