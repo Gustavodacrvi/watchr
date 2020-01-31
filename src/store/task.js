@@ -729,7 +729,7 @@ export default {
     }, true),
   },
   actions: {
-    addTask({}, obj) {
+    addTask({rootState}, obj) {
       const b = fire.batch()
 
       setTask(b, {
@@ -737,11 +737,11 @@ export default {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, taskRef()).then(() => {
+      }, rootState, taskRef()).then(() => {
         b.commit()
       })
     },
-    addMultipleTasks(c, tasks) {
+    addMultipleTasks({rootState}, tasks) {
       const b = fire.batch()
 
       const writes = []
@@ -756,7 +756,7 @@ export default {
             created: mom().format('Y-M-D HH:mm ss'),
             userId: uid(),
             id: ref.id,
-          }, ref, writes)
+          }, rootState, ref, writes)
         )
       }
 
@@ -765,16 +765,16 @@ export default {
         b.commit()
       })
     },
-    saveTask(c, obj) {
+    saveTask({rootState}, obj) {
       const b = fire.batch()
-      setTask(b, obj, taskRef(obj.id)).then(() => {
+      setTask(b, obj, rootState, taskRef(obj.id)).then(() => {
         b.commit()
       })
     },
-    deleteTasks(c, ids) {
+    deleteTasks({rootState}, ids) {
       const b = fire.batch()
 
-      batchDeleteTasks(b, ids)
+      batchDeleteTasks(b, ids, rootState)
 
       b.commit()
     },
@@ -797,7 +797,7 @@ export default {
 
       b.commit()
     },
-    convertTasksToListByIndex(c, {tasks, folderId, order, savedLists, indicies}) {
+    convertTasksToListByIndex({rootState}, {tasks, folderId, order, savedLists, indicies}) {
       const tasksWithConflictingListNames = {}
 
       tasks.forEach(task => {
@@ -812,7 +812,7 @@ export default {
       tasks.forEach(task => {
 
         const list = listRef(task.id)
-        deleteTask(b, task.id, writes)
+        deleteTask(b, task.id, rootState, writes)
 
         const subIds = []
         if (task.checklist)
@@ -831,7 +831,7 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }, taskRef(t.id), writes)
+            }, rootState, taskRef(t.id), writes)
             subIds.push(t.id)
           }
 
@@ -856,7 +856,7 @@ export default {
       
       b.commit()
     },
-    convertToList(c, {task, savedLists}) {
+    convertToList({rootState}, {task, savedLists}) {
       const existingList = savedLists.find(l => l.name === task.name)
       if (!existingList) {
         const b = fire.batch()
@@ -870,7 +870,7 @@ export default {
         const writes = []
   
         const list = listRef()
-        deleteTask(b, task.id, writes)
+        deleteTask(b, task.id, rootState, writes)
         
         const ids = []
         if (task.checklist)
@@ -890,7 +890,7 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }, taskRef(t.id), writes)
+            }, rootState, taskRef(t.id), writes)
             ids.push(t.id)
           }
   
@@ -913,7 +913,7 @@ export default {
         b.commit()
       }
     },
-    completeTasks({commit}, tasks) {
+    completeTasks({commit, rootState}, tasks) {
       const b = fire.batch()
 
       const writes = []
@@ -946,14 +946,14 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, taskRef(t.id), writes)
+        }, rootState, taskRef(t.id), writes)
         commit('change', [t.id], {root: true})
       }
       cacheBatchedItems(b, writes)
       
       b.commit()
     },
-    uncompleteTasks({commit}, tasks) {
+    uncompleteTasks({commit, rootState}, tasks) {
       const b = fire.batch()
 
       const writes = []
@@ -972,14 +972,14 @@ export default {
           checkDate: null,
           fullCheckDate: null,
           calendar: c,
-        }, taskRef(t.id), writes)
+        }, rootState, taskRef(t.id), writes)
         commit('change', [t.id], {root: true})
       }
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    async cancelTasks({}, ids) {
+    async cancelTasks({rootState}, ids) {
       const b = fire.batch()
 
       const tod = mom()
@@ -993,11 +993,11 @@ export default {
         completedFire: null,
         completeDate: null,
         completed: false,
-      }, ids)
+      }, ids, rootState)
 
       b.commit()
     },
-    async uncancelTasks({}, ids) {
+    async uncancelTasks({rootState}, ids) {
       const b = fire.batch()
 
       await batchSetTasks(b, {
@@ -1007,48 +1007,48 @@ export default {
         checkDate: null,
         fullCancelDate: null,
         fullCheckDate: null,
-      }, ids)
+      }, ids, rootState)
 
       b.commit()
     },
-    async saveTasksById({commit}, {ids, task}) {
+    async saveTasksById({commit, rootState}, {ids, task}) {
       const b = fire.batch()
 
-      await batchSetTasks(b, task, ids)
+      await batchSetTasks(b, task, ids, rootState)
       commit('change', ids, {root: true})
 
       b.commit()
     },
-    async addTagsToTasksById({commit}, {ids, tagIds}) {
+    async addTagsToTasksById({commit, rootState}, {ids, tagIds}) {
       const b = fire.batch()
 
       await batchSetTasks(b, {
         tags: fd().arrayUnion(...tagIds),
-      }, ids)
+      }, ids, rootState)
       commit('change', ids, {root: true})
 
       b.commit()
     },
-    async addListToTasksById({commit}, {ids, listId}) {
+    async addListToTasksById({commit, rootState}, {ids, listId}) {
       const b = fire.batch()
 
       await batchSetTasks(b, {
         list: listId,
         folder: null,
         heading: null,
-      }, ids)
+      }, ids, rootState)
       commit('change', ids, {root: true})
 
       b.commit()
     },
-    async addFolderToTasksById({commit}, {ids, folderId}) {
+    async addFolderToTasksById({commit, rootState}, {ids, folderId}) {
       const b = fire.batch()
 
       await batchSetTasks(b, {
         list: null,
         folder: folderId,
         heading: null,
-      }, ids)
+      }, ids, rootState)
       commit('change', ids, {root: true})
       
       b.commit()
@@ -1060,7 +1060,7 @@ export default {
         ...task, files: [],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
-      }, taskRef())
+      }, rootState, taskRef())
 
       b.commit()
     },

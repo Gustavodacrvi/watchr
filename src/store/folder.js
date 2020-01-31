@@ -134,7 +134,7 @@ export default {
 
       b.commit()
     },
-    moveTasksToFolder({getters}, {ids, taskIds, folderId, smartView}) {
+    moveTasksToFolder({getters, rootState}, {ids, taskIds, folderId, smartView}) {
       const fold = getters.getFoldersById([folderId])[0]
       const b = fire.batch()
 
@@ -148,7 +148,7 @@ export default {
         list: null,
         folder: folderId,
         heading: null,
-      }, taskIds, writes)
+      }, taskIds, rootState, writes)
 
       setFolder(b, {
         smartViewsOrders: views,
@@ -167,7 +167,7 @@ export default {
         folder: folderId,
         list: null,
         heading: null,
-      }, taskIds, writes)
+      }, taskIds, rootState, writes)
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
@@ -177,7 +177,7 @@ export default {
 
       b.commit()
     },
-    async addTaskByIndex(c, {ids, index, task, folderId, newTaskRef}) {
+    async addTaskByIndex({rootState}, {ids, index, task, folderId, newTaskRef}) {
       const b = fire.batch()
 
       const writes = []
@@ -193,7 +193,7 @@ export default {
 
       b.commit()
     },
-    deleteFolderById({getters}, {id, lists, tasks}) {
+    deleteFolderById({getters, rootState}, {id, lists, tasks}) {
       const b = fire.batch()
 
       const folderLists = getters.getListsByFolderId({id, lists})
@@ -207,7 +207,7 @@ export default {
 
       batchSetTasks(b, {
         folder: null,
-      }, folderTasks.map(el => el.id), writes)
+      }, folderTasks.map(el => el.id), rootState, writes)
     
       deleteFolder(b, id, writes)
 

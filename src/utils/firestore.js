@@ -2,6 +2,8 @@
 import { fire, auth } from '../store/index'
 import fb from 'firebase/app'
 
+import utils from './index'
+
 export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
 export const userRef = id => fire.collection('users').doc(id ? id : uid())
@@ -21,7 +23,7 @@ export const tagColl = () => userRef().collection('tags')
 export const tagRef = id => id ? tagColl().doc(id) : tagColl().doc()
 export const filterColl = () => userRef().collection('filters')
 export const filterRef = id => id ? filterColl().doc(id) : filterColl().doc()
-export const setTask = (batch, task, ref, writes) => {
+export const setTask = (batch, task, rootState, ref, writes) => {
   return new Promise((solve, reject) => {
     const save = () => {
       const obj = {
@@ -29,6 +31,17 @@ export const setTask = (batch, task, ref, writes) => {
         cloud_function_edit: false, id: ref.id,
         userId: uid(),
       }
+
+      const allTasks = rootState.task.tasks
+      const taskStore = allTasks[ref.id]
+      if (taskStore)
+        utils.findChangesBetweenObjs(taskStore, obj)
+      else
+        rootState.task.tasks = {
+          ...allTasks,
+          [ref.id]: obj,
+        }
+      
       if (!writes)
         batch.set(cacheRef(), {
           tasks: {
@@ -63,14 +76,14 @@ export const cacheBatchedItems = (batch, writes) => {
 
   batch.set(cacheRef(), obj, {merge: true})
 }
-export const batchSetTasks = (batch, task, ids, rootWrites) => {
+export const batchSetTasks = (batch, task, ids, rootState, rootWrites) => {
   return new Promise(async solve => {
     const promises = []
   
     const writes = rootWrites || []
     ids.forEach(id => {
       promises.push(
-        setTask(batch, task, taskRef(id), writes)
+        setTask(batch, task, rootState, taskRef(id), writes)
       )
     })
     
@@ -215,7 +228,12 @@ export const deleteList = (batch, id, writes) => {
     })
   batch.delete(listRef(id))
 }
-export const deleteTask = (batch, id, writes) => {
+export const deleteTask = (batch, id, rootState, writes) => {
+  rootState.task.tasks = {
+    ...rootState.task.tasks,
+    [id]: undefined,
+  }
+  
   if (!writes)
     batch.set(cacheRef(), {
       tasks: {
@@ -229,9 +247,9 @@ export const deleteTask = (batch, id, writes) => {
     })
   batch.delete(taskRef(id))
 }
-export const batchDeleteTasks = (batch, ids) => {
+export const batchDeleteTasks = (batch, ids, rootState) => {
   for (const id of ids)
-    deleteTask(batch, id, true)
+    deleteTask(batch, id, rootState, true)
   batch.set(cacheRef(), {
     tasks: {
       ...ids.reduce((obj, id) => ({...obj, [id]: fd().delete()}), {})

@@ -164,7 +164,7 @@ export default {
 
       b.commit()
     },
-    async addTaskByIndex({commit}, {ids, index, task, tagId, newTaskRef}) {
+    async addTaskByIndex({commit, rootState}, {ids, index, task, tagId, newTaskRef}) {
       const b = fire.batch()
 
       const writes = []
@@ -174,7 +174,7 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
-      }, newTaskRef, writes)
+      }, rootState, newTaskRef, writes)
 
       ids.splice(index, 0, newTaskRef.id)
 
@@ -185,7 +185,7 @@ export default {
 
       b.commit()
     },
-    deleteTag(c, {id, tasks}) {
+    deleteTag({rootState}, {id, tasks}) {
       const b = fire.batch()
       const ts = tasks.filter(t => t.tags && t.tags.includes(id))
       
@@ -193,7 +193,7 @@ export default {
       
       batchSetTasks(b, {
         tags: fd().arrayRemove(id)
-      }, ts.map(el => el.id), writes)
+      }, ts.map(el => el.id), rootState, writes)
 
       deleteTag(b, id, writes)
 

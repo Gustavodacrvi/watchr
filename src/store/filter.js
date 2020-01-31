@@ -72,14 +72,14 @@ export default {
         batch.commit()
       }
     },
-    addTaskByIndex(c, {ids, index, task, filterId, newTaskRef}) {
+    addTaskByIndex({rootState}, {ids, index, task, filterId, newTaskRef}) {
       const batch = fire.batch()
       setTask(batch, {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
-      }, newTaskRef).then(() => {
+      }, rootState, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
   
         batch.update(filterRef(filterId), {tasks: ids})

@@ -307,7 +307,12 @@ export default {
           }
         }
         
-        if (change) onFoundChange(k, val)
+        if (change) {
+          if (onFoundChange)
+            onFoundChange(k, val)
+          else
+            Vue.set(oldObj, k, val)
+        }
       }
     }
   },
