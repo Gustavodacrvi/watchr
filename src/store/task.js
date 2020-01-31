@@ -846,11 +846,11 @@ export default {
           tasks: subIds,
           headings: [],
           headingsOrder: [],
-        }, list, writes)
+        }, list, rootState, writes)
         
       })
 
-      setFolder(b, {order}, folderRef(folderId), writes)
+      setFolder(b, {order}, folderRef(folderId), rootState, writes)
 
       cacheBatchedItems(b, writes)
       
@@ -906,7 +906,7 @@ export default {
           tasks: ids,
           headings: [],
           headingsOrder: [],
-        }, list, writes)
+        }, list, rootState, writes)
 
         cacheBatchedItems(b, writes)
   

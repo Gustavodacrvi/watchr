@@ -449,28 +449,28 @@ export default {
         notes: list.notes || null,
         tasks: newRootTasks.map(t => t.newId),
         userId: uid(),
-      }, newListRef, writes)
+      }, newListRef, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    addListInFolderByIndexFromView(c, {list, newItemRef, ids, folderId}) {
+    addListInFolderByIndexFromView({rootState}, {list, newItemRef, ids, folderId}) {
       const b = fire.batch()
 
       const writes = []
 
-      setFolder(b, {order: ids}, folderRef(folderId), writes)
+      setFolder(b, {order: ids}, folderRef(folderId), rootState, writes)
 
       list.folder = folderId
 
-      setList(b, list, newItemRef, writes)
+      setList(b, list, newItemRef, rootState, writes)
 
       cacheBatchedItems(b, writes)
       
       b.commit()
     },
-    addList({}, {name, ids, index, folderId}) {
+    addList({rootState}, {name, ids, index, folderId}) {
       const batch = fire.batch()
       
       let folder = folderId
@@ -486,11 +486,11 @@ export default {
         tasks: [],
       }
       if (index === undefined && folder === null) {
-        setList(batch, obj, listRef())
+        setList(batch, obj, listRef(), rootState)
       } else if (index !== undefined && folder === null) {
         const ord = ids.slice()
         const ref = listRef()
-        setList(batch, obj, ref)
+        setList(batch, obj, ref, rootState)
         ord.splice(index, 0, ref.id)
         setInfo(batch, {
           lists: ord,
@@ -500,14 +500,14 @@ export default {
         const ref = listRef()
         ord.splice(index, 0, ref.id)
 
-        setFolder(batch, {order: ord}, folderRef(folder))
+        setFolder(batch, {order: ord}, folderRef(folder), rootState)
 
-        setList(batch, obj, ref)
+        setList(batch, obj, ref, rootState)
       }
 
       batch.commit()
     },
-    completeLists(c, lists) {
+    completeLists({rootState}, lists) {
       const batch = fire.batch()
 
       for (const l of lists) {
@@ -537,13 +537,13 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, listRef(l.id))
+        }, listRef(l.id), rootState)
 
       }
       
       batch.commit()
     },
-    uncompleteLists(c, lists) {
+    uncompleteLists({rootState}, lists) {
       const batch = fire.batch()
 
       for (const l of lists) {
@@ -559,12 +559,12 @@ export default {
           checkDate: null,
           fullCheckDate: null,
           calendar: c,
-        }, listRef(l.id))
+        }, listRef(l.id), rootState)
       }
 
       batch.commit()
     },
-    async cancelLists({}, ids) {
+    async cancelLists({rootState}, ids) {
       const b = fire.batch()
 
       const tod = mom()
@@ -577,11 +577,11 @@ export default {
         completedFire: null,
         completeDate: null,
         completed: false,
-      }, ids)
+      }, ids, rootState)
 
       b.commit()
     },
-    async uncancelLists({}, ids) {
+    async uncancelLists({rootState}, ids) {
       const b = fire.batch()
 
       await batchSetLists(b, {
@@ -590,7 +590,7 @@ export default {
         checkDate: null,
         fullCancelDate: null,
         fullCheckDate: null,
-      }, ids)
+      }, ids, rootState)
 
       b.commit()
     },
@@ -607,7 +607,7 @@ export default {
 
       setList(batch, {
         headings: heads,
-      }, listRef(listId))
+      }, listRef(listId), rootState)
       
       const newList = listRef()
       setList(batch, {
@@ -620,7 +620,7 @@ export default {
         headings: [],
         headingsOrder: [],
         tasks: taskIds,
-      }, newList)
+      }, newList, rootState)
       for (const id of taskIds)
         setTask(batch, {
           list: newList.id,
@@ -632,39 +632,39 @@ export default {
 
     // EDIT
     
-    saveList(c, list) {
+    saveList({rootState}, list) {
       const b = fire.batch()
       
-      setList(b, list, listRef(list.id))
+      setList(b, list, listRef(list.id), rootState)
 
       b.commit()
     },
-    saveListsById(c, {list, ids}) {
+    saveListsById({rootState}, {list, ids}) {
       const b = fire.batch()
 
       const writes = []
       
-      ids.forEach(id => setList(b, list, listRef(id), writes))
+      ids.forEach(id => setList(b, list, listRef(id), rootState, writes))
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    editListTags(c, {tagIds, listId}) {
+    editListTags({rootState}, {tagIds, listId}) {
       const b = fire.batch()
       
       setList(b, {
         tags: tagIds,
-      }, listRef(listId))
+      }, listRef(listId), rootState)
   
       b.commit()
     },
-    removeListTag(c, {tagId, listId}) {
+    removeListTag({rootState}, {tagId, listId}) {
       const b = fire.batch()
       
       setList(b, {
         tags: fd().arrayRemove(tagId),
-      }, listRef(listId))
+      }, listRef(listId), rootState)
   
       b.commit()
     },
@@ -710,7 +710,7 @@ export default {
       const views = {}
       views[viewName] = ids
 
-      setFolder(b, {smartViewsOrders: views}, folderRef(folderId), writes)
+      setFolder(b, {smartViewsOrders: views}, folderRef(folderId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -752,7 +752,7 @@ export default {
         headingsOrder: [],
         tasks: [],
         ...list,
-      }, newListRef, writes)
+      }, newListRef, rootState, writes)
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
 
@@ -778,7 +778,7 @@ export default {
 
       setList(b, {
         smartViewsOrders: views,
-      }, listRef(listId), writes)
+      }, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -819,7 +819,7 @@ export default {
         ...task,
       }, rootState, newTaskRef, writes)
 
-      setList(b, {tasks: ids}, listRef(listId), writes)
+      setList(b, {tasks: ids}, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -921,7 +921,7 @@ export default {
 
       setList(b, {
         smartViewsOrders: views,
-      }, listRef(listId), writes)
+      }, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -948,13 +948,13 @@ export default {
       setList(b, {
         headings: listHeadings,
         headingsOrder: headings,
-      }, listRef(listId), writes)
+      }, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    saveHeadingName({getters}, {listId, headingId, name}) {
+    saveHeadingName({getters, rootState}, {listId, headingId, name}) {
       const list = getters.getListsById([listId])[0]
       const b = fire.batch()
       
@@ -962,11 +962,11 @@ export default {
       const i = heads.findIndex(el => el.id === headingId)
       heads[i].name = name
 
-      setList(b, {headings: heads}, listRef(listId))
+      setList(b, {headings: heads}, listRef(listId), rootState)
 
       b.commit()
     },
-    saveHeadingNotes({getters}, {listId, notes, heading}) {
+    saveHeadingNotes({getters, rootState}, {listId, notes, heading}) {
       const list = getters.getListsById([listId])[0]
       const b = fire.batch()
       
@@ -975,7 +975,7 @@ export default {
       heads[i].notes = notes
       setList(b, {
         headings: heads,
-      }, listRef(listId))
+      }, listRef(listId), rootState)
 
       b.commit()
     },
@@ -992,7 +992,7 @@ export default {
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === headingId)
       heads[i].tasks = ids
-      setList(b, {headings: heads}, listRef(listId), writes)
+      setList(b, {headings: heads}, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -1007,7 +1007,7 @@ export default {
         heading: null,
       }, taskIds, rootState, writes)
 
-      setList(b, {tasks: ids}, listRef(listId), writes)
+      setList(b, {tasks: ids}, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -1027,31 +1027,31 @@ export default {
         heading: null,
       }, savedTasks.map(el => el.id), rootState, writes)
 
-      setList(b, {headings: heads}, listRef(listId), writes)
+      setList(b, {headings: heads}, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
       
       b.commit()
     },
-    updateHeadingsTaskIds({getters}, {listId, headingId, ids}) {
+    updateHeadingsTaskIds({getters, rootState}, {listId, headingId, ids}) {
       const list = getters.getListsById([listId])[0]
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === headingId)
       heads[i].tasks = ids
       const b = fire.batch()
       
-      setList(b, {headings: heads}, listRef(listId))
+      setList(b, {headings: heads}, listRef(listId), rootState)
 
       b.commit()
     },
-    updateListHeadings(c, {ids, listId}) {
+    updateListHeadings({rootState}, {ids, listId}) {
       const b = fire.batch()
       
-      setList(batch, {headingsOrder: ids}, listRef(listId))
+      setList(batch, {headingsOrder: ids}, listRef(listId), rootState)
 
       b.commit()
     },
-    saveSmartViewHeadingTasksOrder({getters}, {ids, listId, smartView}) {
+    saveSmartViewHeadingTasksOrder({getters, rootState}, {ids, listId, smartView}) {
       const list = getters.getListsById([listId])[0]
       let views = list.smartViewsOrders
       if (!views) views = {}
@@ -1060,7 +1060,7 @@ export default {
       
       setList(b, {
         smartViewsOrders: views,
-      }, listRef(listId))
+      }, listRef(listId), rootState)
 
       b.commit()
     },
@@ -1077,7 +1077,7 @@ export default {
 
       b.commit()
     },
-    addListByIndexSmartViewOrderListIds(c, {list, newItemRef, ids, viewName}) {
+    addListByIndexSmartViewOrderListIds({rootState}, {list, newItemRef, ids, viewName}) {
       const b = fire.batch()
       
       const writes = []
@@ -1094,7 +1094,7 @@ export default {
         tasks: [],
         userId: uid(),
         ...list,
-      }, newItemRef, writes)
+      }, newItemRef, rootState, writes)
       
       setInfo(b, {
         viewOrders: {
@@ -1139,7 +1139,7 @@ export default {
       setList(b, {
         headingsOrder: order,
         headings: heads,
-      }, listRef(listId), writes)
+      }, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -1185,7 +1185,7 @@ export default {
       heads[i].tasks = ids
       setList(b, {
         headings: heads,
-      }, listRef(listId), writes)
+      }, listRef(listId), rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -1209,7 +1209,7 @@ export default {
         heading: null,
       }, ids, rootState, writes)
 
-      deleteList(b, listId, writes)
+      deleteList(b, listId, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -1236,7 +1236,7 @@ export default {
           heading: null,
         }, taskIds, rootState, writes)
 
-        deleteList(b, id, writes)
+        deleteList(b, id, rootState, writes)
         
       })
 
@@ -1278,7 +1278,7 @@ export default {
       setList(b, {
         ...list, id: listId, userId: uid(),
         users: [uid()],
-      }, newListRef, writes)
+      }, newListRef, rootState, writes)
 
       cacheBatchedItems(b, writes)
 

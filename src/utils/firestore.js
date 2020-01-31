@@ -93,12 +93,12 @@ export const batchSetTasks = (batch, task, ids, rootState, rootWrites) => {
     solve()
   })
 }
-export const batchSetLists = (batch, list, ids, rootWrites) => {
+export const batchSetLists = (batch, list, ids, rootState, rootWrites) => {
   return new Promise(async solve => {
   
     const writes = rootWrites || []
     ids.forEach(id => {
-      setList(batch, list, listRef(id), writes)
+      setList(batch, list, listRef(id), rootState, writes)
     })
     
     if (!rootWrites)
@@ -107,12 +107,23 @@ export const batchSetLists = (batch, list, ids, rootWrites) => {
   })
 }
 
-export const setTag = (batch, tag, ref, writes) => {
+export const setTag = (batch, tag, ref, rootState, writes) => {
   const obj = {
     ...tag, id: ref.id,
     cloud_function_edit: false,
     userId: uid(),
   }
+
+  const allTag = rootState.tag.tags
+  const tagStore = allTag[ref.id]
+  if (tagStore)
+    utils.findChangesBetweenObjs(tagStore, obj)
+  else
+    rootState.tag.tags = {
+      ...allTag,
+      [ref.id]: obj,
+    }
+  
   if (!writes)
     batch.set(cacheRef(), {
       tags: {
@@ -127,12 +138,23 @@ export const setTag = (batch, tag, ref, writes) => {
   batch.set(ref, obj, {merge: true})
 }
 
-export const setFolder = (batch, folder, ref, writes) => {
+export const setFolder = (batch, folder, ref, rootState, writes) => {
   const obj = {
     ...folder, id: ref.id,
     cloud_function_edit: false,
     userId: uid(),
   }
+
+  const allFolders = rootState.folder.folders
+  const folderStore = allFolders[ref.id]
+  if (folderStore)
+    utils.findChangesBetweenObjs(folderStore, obj)
+  else
+    rootState.folder.folders = {
+      ...allFolders,
+      [ref.id]: obj,
+    }
+  
   if (!writes)
     batch.set(cacheRef(), {
       folders: {
@@ -146,12 +168,23 @@ export const setFolder = (batch, folder, ref, writes) => {
     })
   batch.set(ref, obj, {merge: true})
 }
-export const setList = (batch, list, ref, writes) => {
+export const setList = (batch, list, ref, rootState, writes) => {
   const obj = {
     ...list, id: ref.id,
     cloud_function_edit: false,
     userId: uid(),
   }
+
+  const allLists = rootState.list.lists
+  const listStore = allLists[ref.id]
+  if (listStore)
+    utils.findChangesBetweenObjs(listStore, obj)
+  else
+    rootState.list.lists = {
+      ...allLists,
+      [ref.id]: obj,
+    }
+  
   if (!writes)
     batch.set(cacheRef(), {
       lists: {
@@ -200,7 +233,12 @@ export const setInfo = (batch, info, writes) => {
     , obj, {merge: true})
 }
 
-export const deleteTag = (batch, id, writes) => {
+export const deleteTag = (batch, id, rootState, writes) => {
+  rootState.tag.tags = {
+    ...rootState.tag.tags,
+    [id]: undefined,
+  }
+  
   if (!writes)
     batch.set(cacheRef(), {
       tags: {
@@ -214,7 +252,12 @@ export const deleteTag = (batch, id, writes) => {
     })
   batch.delete(tagRef(id))
 }
-export const deleteList = (batch, id, writes) => {
+export const deleteList = (batch, id, rootState, writes) => {
+  rootState.list.lists = {
+    ...rootState.list.lists,
+    [id]: undefined,
+  }
+  
   if (!writes)
     batch.set(cacheRef(), {
       lists: {
@@ -256,7 +299,12 @@ export const batchDeleteTasks = (batch, ids, rootState) => {
     },
   }, {merge: true})
 }
-export const deleteFolder = (batch, id, writes) => {
+export const deleteFolder = (batch, id, rootState, writes) => {
+  rootState.folder.folders = {
+    ...rootState.folder.folders,
+    [id]: undefined,
+  }
+  
   if (!writes)
     batch.set(cacheRef(), {
       folders: {

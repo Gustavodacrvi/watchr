@@ -80,7 +80,7 @@ export default {
     },
   },
   actions: {
-    addTag(c, {name, index, ids, parent}) {
+    addTag({rootState}, {name, index, ids, parent}) {
       if (!parent) parent = null
       const obj = {
         createdFire: serverTimestamp(),
@@ -92,7 +92,7 @@ export default {
       if (index === undefined) {
         const b = fire.batch()
         
-        setTag(b, obj, tagRef())
+        setTag(b, obj, tagRef(), rootState)
         
         b.commit()
       } else if (!parent) {
@@ -102,7 +102,7 @@ export default {
   
         const ord = ids.slice()
         const ref = tagRef()
-        setTag(b, obj, ref, writes)
+        setTag(b, obj, ref, rootState, writes)
         
         ord.splice(index, 0, ref.id)
         setInfo(b, {tags: ord}, writes)
@@ -118,45 +118,45 @@ export default {
         const order = ids.slice()
         
         const ref = tagRef()
-        setTag(b, obj, ref, writes)
+        setTag(b, obj, ref, rootState, writes)
         order.splice(index, 0, ref.id)
         
         setTag(b, {
           order,
-        }, tagRef(parent), writes)
+        }, tagRef(parent), rootState, writes)
 
         cacheBatchedItems(b, writes)
 
         b.commit()
       }
     },
-    saveTag({commit}, tag) {
+    saveTag({commit, rootState}, tag) {
       const b = fire.batch()
 
-      setTag(b, tag, tagRef(tag.id))
+      setTag(b, tag, tagRef(tag.id), rootState)
       commit('change', [tag.id], {root: true})
 
       b.commit()
     },
-    moveTagBetweenTags({commit}, {tagId, ids, parent}) {
+    moveTagBetweenTags({commit, rootState}, {tagId, ids, parent}) {
       const b = fire.batch()
 
       const writes = []
 
-      setTag(b, {order: ids}, tagRef(parent), writes)
-      setTag(b, {parent}, tagRef(tagId), writes)
+      setTag(b, {order: ids}, tagRef(parent), rootState, writes)
+      setTag(b, {parent}, tagRef(tagId), rootState, writes)
       commit('change', [parent, tagId], {root: true})
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    moveTagToRoot({commit}, {tagId, ids}) {
+    moveTagToRoot({commit, rootState}, {tagId, ids}) {
       const b = fire.batch()
 
       const writes = []
 
-      setTag(b, {parent: null}, tagRef(tagId), writes)
+      setTag(b, {parent: null}, tagRef(tagId), rootState, writes)
       setInfo(b, {tags: ids}, writes)
       commit('change', [tagId], {root: true})
 
@@ -178,7 +178,7 @@ export default {
 
       ids.splice(index, 0, newTaskRef.id)
 
-      setTag(b, {tasks: ids}, tagRef(tagId), writes)
+      setTag(b, {tasks: ids}, tagRef(tagId), rootState, writes)
       commit('change', [newTaskRef.id], {root: true})
 
       cacheBatchedItems(b, writes)
@@ -195,16 +195,16 @@ export default {
         tags: fd().arrayRemove(id)
       }, ts.map(el => el.id), rootState, writes)
 
-      deleteTag(b, id, writes)
+      deleteTag(b, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    moveTagBelow({}, {tagId, target}) {
+    moveTagBelow({rootState}, {tagId, target}) {
       const b = fire.batch()
       
-      setTag(b, {parent: target}, tagRef(tagId))
+      setTag(b, {parent: target}, tagRef(tagId), rootState)
 
       b.commit()
     },
