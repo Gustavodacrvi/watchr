@@ -133,11 +133,6 @@ export default {
           }
             
           this.addEdit(i)
-          
-/*           this.$emit('buttonAdd', {
-            index: i,
-            ids: this.getIds,
-          }) */
         } else if (type === 'sidebar-element') {
           if (this.onSortableAdd)
             this.onSortableAdd(this.folder, item.dataset.id, this.getIds)
@@ -151,18 +146,21 @@ export default {
   },
   methods: {
     addItem(name) {
-      if (this.getItemRef && this.fallbackItem) {
+      if (this.getItemRef) {
         const newItemRef = this.getItemRef()
         const id = newItemRef.id
         const index = this.items.findIndex(el => el.isEdit)
 
-        const item = this.fallbackItem({
+        let item = {
           name,
           id,
           userId: uid(),
           createdFire: serverTimestamp(),
           created: mom().format('Y-M-D HH:mm ss'),
-        })
+        }
+
+        if (this.fallbackItem)
+          item = this.fallbackItem(item)
         this.addedItem = id
 
         this.items.splice(index, 0, item)

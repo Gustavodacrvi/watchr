@@ -472,10 +472,40 @@ export default {
     },
     addListInFolderByIndex({rootState}, {ids, item, newItemRef}) {
       const b = fire.batch()
-      
-      setFolder(b, {order: ids}, folderRef(item.folder), rootState)
 
-      setList(b, item, newItemRef, rootState)
+      const writes = []
+      
+      setFolder(b, {order: ids}, folderRef(item.folder), rootState, writes)
+
+      setList(b, {
+        ...item,
+        smartViewsOrders: {},
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+      }, newItemRef, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    addListInRootByIndex({rootState}, {ids, item, newItemRef}) {
+      const b = fire.batch()
+
+      const writes = []
+      
+      setList(b, {
+        ...item,
+        smartViewsOrders: {},
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+      }, newItemRef, rootState, writes)
+      setInfo(b, {
+        lists: ids,
+      }, writes)
+
+      cacheBatchedItems(b, writes)
 
       b.commit()
     },
@@ -496,14 +526,6 @@ export default {
       }
       if (index === undefined && folder === null) {
         setList(b, obj, listRef(), rootState)
-      } else if (index !== undefined && folder === null) {
-        const ord = ids.slice()
-        const ref = listRef()
-        setList(b, obj, ref, rootState)
-        ord.splice(index, 0, ref.id)
-        setInfo(b, {
-          lists: ord,
-        })
       }
 
       b.commit()

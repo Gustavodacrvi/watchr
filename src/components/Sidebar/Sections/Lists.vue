@@ -12,10 +12,15 @@
       :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
       :mapHelpIcon='getListIcon'
+      inputPlaceholder='List name...'
       :mapString='mapString'
       :onSortableAdd="rootAdd"
+
+      :getItemRef='getItemRef'
+      
       @buttonAdd='buttonAdd'
       @update='update'
+      @add='addListInRoot'
     />
     <transition-group
       class="folders-root"
@@ -140,6 +145,9 @@ export default {
     },
     addList(obj) {
       this.$store.dispatch('list/addListInFolderByIndex', obj)
+    },
+    addListInRoot(obj) {
+      this.$store.dispatch('list/addListInRootByIndex', obj)
     },
     
     enter(el) {
