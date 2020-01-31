@@ -69,6 +69,8 @@ export default {
       items: [],
       hasEdit: false,
       addedItem: null,
+
+      updateTimeout: null,
     }
   },
   created() {
@@ -269,18 +271,23 @@ export default {
   },
   watch: {
     list(items) {
-      items = items.slice()
-
-      if (this.hasEdit && this.addedItem) {
-        const oldEditIndex = this.items.findIndex(el => el.isEdit)
-        if (oldEditIndex > -1)
-          this.items.splice(oldEditIndex, 1)
-        const itemIndex = items.findIndex(el => el.id === this.addedItem)
-        if (itemIndex > -1) {
-          items.splice(itemIndex + 1, 0, {isEdit: true})
+      if (this.updateTimeout)
+        clearTimeout(this.updateTimeout)
+      
+      this.updateTimeout = setTimeout(() => {
+        items = items.slice()
+  
+        if (this.hasEdit && this.addedItem) {
+          const oldEditIndex = this.items.findIndex(el => el.isEdit)
+          if (oldEditIndex > -1)
+            this.items.splice(oldEditIndex, 1)
+          const itemIndex = items.findIndex(el => el.id === this.addedItem)
+          if (itemIndex > -1) {
+            items.splice(itemIndex + 1, 0, {isEdit: true})
+          }
         }
-      }
-      this.items = items
+        this.items = items
+      }, 250)
     },
   }
 }

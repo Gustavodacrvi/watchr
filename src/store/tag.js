@@ -80,6 +80,19 @@ export default {
     },
   },
   actions: {
+    addTagInRootByIndex({rootState}, {ids, item, newItemRef}) {
+      const b = fire.batch()
+
+      const writes = []
+
+      setTag(b, item, newItemRef, rootState, writes)
+      
+      setInfo(b, {tags: ids}, writes)
+
+      cacheBatchedItems(b, writes)
+      
+      b.commit()
+    },
     addTag({rootState}, {name, index, ids, parent}) {
       if (!parent) parent = null
       const obj = {
@@ -95,22 +108,7 @@ export default {
         setTag(b, obj, tagRef(), rootState)
         
         b.commit()
-      } else if (!parent) {
-        const b = fire.batch()
-
-        const writes = []
-  
-        const ord = ids.slice()
-        const ref = tagRef()
-        setTag(b, obj, ref, rootState, writes)
-        
-        ord.splice(index, 0, ref.id)
-        setInfo(b, {tags: ord}, writes)
-
-        cacheBatchedItems(b, writes)
-        
-        b.commit()
-      } else {
+      } else if (parent) {
         const b = fire.batch()
         
         const writes = []

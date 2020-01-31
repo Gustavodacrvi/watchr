@@ -12,6 +12,10 @@
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
       :onSortableAdd="onSortableAdd"
+
+      :getItemRef='getItemRef'
+      
+      @add='addTag'
       @buttonAdd='buttonAdd'
       @update='update'
     />
@@ -23,6 +27,8 @@
 
 import RendererVue from '../Renderer.vue'
 
+import { tagRef } from '@/utils/firestore'
+
 import { mapState, mapGetters } from 'vuex'
 
 import utilsTag from '@/utils/tag'
@@ -33,6 +39,13 @@ export default {
   },
   props: ['active', 'viewType'],
   methods: {
+    getItemRef() {
+      return tagRef()
+    },
+    addTag(obj) {
+      this.$store.dispatch('tag/addTagInRootByIndex', obj)
+    },
+    
     update(ids) {
       this.$store.dispatch('tag/updateOrder', ids)
     },
