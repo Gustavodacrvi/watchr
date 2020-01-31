@@ -6,7 +6,7 @@ import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 export default {
-  props: ['multiSelectOptions', 'comp', 'isSelecting', 'viewName', 'viewNameValue', ],
+  props: ['multiSelectOptions', 'comp', 'isSelecting', 'viewName', 'viewNameValue', 'waitForAnotherItemComplete'],
   data() {
     return {
       startX: 0,
@@ -312,7 +312,7 @@ export default {
         this.completed = !this.completed
         if (this.completed)
           this.dispatchCompleteItem()
-        else this.dispatchUncompleteItem
+        else this.dispatchUncompleteItem()
       }
     },
     cancelItem(force = false) {

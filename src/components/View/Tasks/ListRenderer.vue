@@ -24,6 +24,7 @@
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
           :comp='comp'
+          :waitForAnotherItemComplete='waitForAnotherTaskCompleteAnimation'
 
           @de-select='deSelectItem'
           @select='selectItem'
@@ -31,6 +32,7 @@
           @add-heading-after='addHeadingAfterSelection'
           @go='moveItemHandlerSelection'
           @change-time='changeTime'
+
 
           :data-id='item.id'
           :data-name='item.name'
@@ -169,6 +171,9 @@ export default {
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
+
+      completeAnimationStack: [],
+      completeAnimationSettimeout: null,
     }
   },
   created() {
@@ -198,6 +203,19 @@ export default {
     }
   },
   methods: {
+    waitForAnotherTaskCompleteAnimation(hideTaskFunc) {
+      this.completeAnimationStack.push(hideTaskFunc)
+
+      if (this.completeAnimationSettimeout)
+        clearTimeout(this.completeAnimationSettimeout)
+      
+      this.completeAnimationSettimeout = setTimeout(() => {
+        for (const animate of this.completeAnimationStack)
+          animate()
+        this.completeAnimationStack = []
+      }, 2250)
+    },
+    
     getHeadingsItemsIds(ids) {
       this.headingsItemsIds = ids
     },

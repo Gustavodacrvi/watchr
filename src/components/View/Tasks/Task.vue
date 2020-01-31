@@ -280,16 +280,23 @@ export default {
       }
       s.height = this.itemHeight + 'px'
       s.minHeight = this.itemHeight + 'px'
-      requestAnimationFrame(() => {
-        const dur = this.completeAnimation ? 999 : 0
-        
+
+      const hideTask = () => {
         s.transitionDuration = '.25s'
-        s.transitionDelay = `.${dur}s`
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
 
-        if (this.completeAnimation) {
+        setTimeout(() => {
+          this.completeAnimation = false
+          done()
+        }, 253)
+      }
+      
+      requestAnimationFrame(() => {
+        if (!this.completeAnimation) {
+          hideTask()
+        } else {
           l.transitionDuration = `.2s`
           n.transitionDuration = `.2s`
 
@@ -297,12 +304,10 @@ export default {
           l.border = '2px solid var(--txt)'
 
           n.opacity = '.4'
+
+          this.waitForAnotherItemComplete(hideTask)
         }
         
-        setTimeout(() => {
-          done()
-          this.completeAnimation = false
-        }, 250 + dur)
       })
     },
     taskEnter(el, done) {
