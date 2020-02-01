@@ -33,9 +33,9 @@ service cloud.firestore {
         allow update: if didntChangeConstant();
       }
       match /lists/{list} {
-        allow create: if isSignedInAndVerified() && isValidDoc(list);
+        allow create: if isSignedInAndVerified() && isValidList(list);
         allow update, read, delete: if isOwnerAndVerified();
-        allow update: if didntChangeConstant();
+        allow update: if didntChangeConstant() && isValidList(list);
       }
       match /stats/{info} {
         allow create: if isSignedInAndVerified() && isValidDoc(info);
@@ -43,9 +43,9 @@ service cloud.firestore {
         allow update: if didntChangeConstant();
       }
       match /folders/{fold} {
-        allow create: if isSignedInAndVerified() && isValidDoc(fold);
+        allow create: if isSignedInAndVerified() && isValidFolder(fold);
         allow update, read, delete: if isOwnerAndVerified();
-        allow update: if didntChangeConstant();
+        allow update: if didntChangeConstant() && isValidFolder(fold);
       }
 
 			function isSignedIn() {
@@ -128,6 +128,39 @@ service cloud.firestore {
               (!('displayName' in incomingData()) && !('email' in incomingData()) && incomingData().isAnonymous == true)
             )
           )
+      }
+      function isValidList(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().name is string &&
+          incomingData().created is string &&
+          incomingData().createdFire is timestamp &&
+          (!('smartViewsOrders' in incomingData()) || incomingData().smartViewsOrders is set) &&
+          isArrayOrUndefined('files', 30) &&
+          isArrayOrUndefined('tags', 50) &&
+          isArrayOrUndefined('tasks', 50) &&
+          isNullStringOrUndefined('notes') &&
+          isNullStringOrUndefined('folder') &&
+          (
+            (!('calendar' in incomingData()) || incomingData().calendar == null) ||
+            (
+              incomingData().calendar.type == 'specific' ||
+              incomingData().calendar.type == 'after completion' ||
+              incomingData().calendar.type == 'someday' ||
+              incomingData().calendar.type == 'daily' ||
+              incomingData().calendar.type == 'weekly' ||
+              incomingData().calendar.type == 'monthly' ||
+              incomingData().calendar.type == 'yearly'
+            )
+          )
+      }
+      function isValidFolder(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().name is string &&
+          isArrayOrUndefined('files', 30) &&
+          isArrayOrUndefined('tasks', 50) &&
+          isArrayOrUndefined('order', 50)
       }
       function isValidTask(id) {
         return
