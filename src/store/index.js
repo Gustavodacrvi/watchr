@@ -459,8 +459,6 @@ const store = new Vuex.Store({
     createUser(s, user) {
       const b = fire.batch()
 
-      console.log({...utils.getRelevantUserData(user),})
-      
       const ref = fire.collection('users').doc(user.uid)
       b.set(ref, {
         ...utils.getRelevantUserData(user),

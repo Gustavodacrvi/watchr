@@ -2,10 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
-    	allow create: if isSignedIn() && isValidUserDoc();
+    	allow create: if isSignedIn() && isValidUserDoc(userId);
       allow read: if isVerified();
       allow delete, update: if isOwnerAndVerified();
-      allow update: if isValidUserDoc();
+      allow update: if isValidUserDoc(userId);
       
       match /tasks/{task} {
         allow create: if isSignedInAndVerified() && isValidTask(task);
@@ -81,15 +81,18 @@ service cloud.firestore {
           existingData().id == incomingData().id
       }
 
-      function isArrayOrUndefined(fieldName) {
-        return (!(fieldName in incomingData()) || incomingData()[fieldName] is list)
+      function isArrayOrUndefined(fieldName, max) {
+        return (!(fieldName in incomingData()) || (incomingData()[fieldName] is list && incomingData()[fieldName].size() < (max + 1)))
       }
-      function isUndefinedOrString(fieldName) {
-        return (!(fieldName in incomingData()) || incomingData()[fieldName] is string)
+      function isNullStringOrUndefined(fieldName) {
+        return
+          !(fieldName in incomingData()) ||
+          incomingData()[fieldName] is string || incomingData()[fieldName] == null
       }
 
-      function isValidUserDoc() {
+      function isValidUserDoc(bracketId) {
         return
+          incomingData().userId == bracketId &&
           incomingData().userId == request.auth.uid &&
           ((incomingData().photoURL is string) || (incomingData().photoURL == null)) &&
           (incomingData().size() > 1 && incomingData().size() < 6) &&
@@ -106,7 +109,31 @@ service cloud.firestore {
         return
           isValidDoc(id) &&
           incomingData().name is string &&
-          isArrayOrUndefined('files')
+          incomingData().created is string &&
+          incomingData().createdFire is timestamp &&
+          isArrayOrUndefined('files', 30) &&
+          isArrayOrUndefined('checklist', 50) &&
+          isArrayOrUndefined('order', 50) &&
+          isArrayOrUndefined('tags', 50) &&
+          isNullStringOrUndefined('folder') &&
+          isNullStringOrUndefined('taskDuration') &&
+          isNullStringOrUndefined('priority') &&
+          isNullStringOrUndefined('heading') &&
+          isNullStringOrUndefined('notes') &&
+          isNullStringOrUndefined('list') &&
+          incomingData().size() < 30 &&
+          (
+            (!('calendar' in incomingData()) || incomingData().calendar == null) ||
+            (
+              incomingData().calendar.type == 'specific' ||
+              incomingData().calendar.type == 'after completion' ||
+              incomingData().calendar.type == 'someday' ||
+              incomingData().calendar.type == 'daily' ||
+              incomingData().calendar.type == 'weekly' ||
+              incomingData().calendar.type == 'monthly' ||
+              incomingData().calendar.type == 'yearly'
+            )
+          )
       }
     }
   }
