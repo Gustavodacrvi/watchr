@@ -13,7 +13,7 @@ service cloud.firestore {
         allow update: if didntChangeConstant() && isValidTask(task);
       }
       match /info/{info} {
-        allow create: if isSignedInAndVerified() && isValidDoc(info);
+        allow create: if isSignedInAndVerified() && isInfoValid(info);
         allow read, update: if isOwnerAndVerified();
         allow update: if didntChangeConstant();
       }
@@ -23,9 +23,9 @@ service cloud.firestore {
         allow update: if didntChangeConstant();
       }
       match /tags/{tag} {
-        allow create: if isSignedInAndVerified() && isValidDoc(tag);
+        allow create: if isSignedInAndVerified() && isValidTag(tag);
         allow read, update, delete: if isOwnerAndVerified();
-        allow update: if didntChangeConstant();
+        allow update: if didntChangeConstant() && isValidTag(tag);
       }
       match /filters/{tag} {
         allow create: if isSignedInAndVerified() && isValidDoc(tag);
@@ -89,7 +89,31 @@ service cloud.firestore {
           !(fieldName in incomingData()) ||
           incomingData()[fieldName] is string || incomingData()[fieldName] == null
       }
+      function isNullOrBollean(fieldName) {
+        return
+          (!(fieldName in incomingData()) || incomingData()[fieldName] == null || incomingData()[fieldName] == true || incomingData()[fieldName] == false)
+      }
 
+      function isInfoValid(bracketId) {
+        return
+          isValidDoc(bracketId) &&
+          isNullOrBollean('ungroupTasksInHeadings') &&
+          isNullOrBollean('disablePmFormat') &&
+          isArrayOrUndefined('hidedViews', 30) &&
+          isArrayOrUndefined('hidedSections', 30) &&
+          (!('calendarOrders' in incomingData()) || incomingData().calendarOrders is set) &&
+          incomingData().size() < 10
+      }
+      function isValidTag(bracketId) {
+        return
+          isValidDoc(bracketId) &&
+          incomingData().name is string &&
+          incomingData().created is string &&
+          incomingData().createdFire is timestamp &&
+          isNullStringOrUndefined('parent') &&
+          isArrayOrUndefined('order') &&
+          incomingData().size() < 10
+      }
       function isValidUserDoc(bracketId) {
         return
           incomingData().userId == bracketId &&
