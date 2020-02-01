@@ -6,7 +6,7 @@
     <div v-if="!isUpgrading" class="card cursor rb" @click="guest">
       <span>Sign in as a guest</span>
     </div>
-    <div class="tac">
+    <div class="tac mar">
       <h3>OR</h3>
     </div>
   </div>
@@ -24,7 +24,6 @@ export default {
   props: ['isUpgrading'],
   created() {
     provider = new firebase.auth.GoogleAuthProvider()
-    firebase.auth().languageCode = this.lang
   },
   methods: {
     async google() {
@@ -33,7 +32,6 @@ export default {
       const toast = (t) => this.$store.commit('pushToast', t)
 
       const authInstance = gapi.auth2.getAuthInstance()
-      console.log(authInstance, authInstance.isSignedIn)
       
       const googleUser = await authInstance.signIn()
 
@@ -90,7 +88,6 @@ export default {
     },
   },
   computed: {
-    ...mapState(['lang']),
     ...mapGetters(['platform', 'isDesktop'])
   },
 }
@@ -124,6 +121,14 @@ export default {
 .google:hover {
   background-color: var(--red);
   color: white;
+}
+
+</style>
+
+<style scoped>
+
+.mar {
+  margin: 8px;
 }
 
 </style>

@@ -459,14 +459,17 @@ const store = new Vuex.Store({
     createUser(s, user) {
       const b = fire.batch()
 
+      console.log({...utils.getRelevantUserData(user),})
+      
       const ref = fire.collection('users').doc(user.uid)
       b.set(ref, {
         ...utils.getRelevantUserData(user),
       }, {merge: true})
       b.set(ref.collection('cache').doc('cache'), {
         userId: user.uid,
+        id: 'cache',
       }, {merge: true})
-
+      
       return b.commit()
     },
     createAnonymousUser(c, userId) {
@@ -477,6 +480,7 @@ const store = new Vuex.Store({
         ...utils.getRelevantUserData(userId),
       }, {merge: true})
       b.set(ref.collection('cache').doc('cache'), {
+        id: 'cache',
         userId: userId,
       })
 
@@ -510,6 +514,7 @@ store.commit('saveUser', null)
 
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
+  console.log(user)
 
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)

@@ -2,47 +2,111 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
-    	allow read, create: if isSignedIn();
-      allow delete, update: if isOwner();
+    	allow create: if isSignedIn() && isValidUserDoc();
+      allow read: if isVerified();
+      allow delete, update: if isOwnerAndVerified();
+      allow update: if isValidUserDoc();
       
+      match /tasks/{task} {
+        allow create: if isSignedInAndVerified() && isValidTask(task);
+        allow read, delete, update: if isOwnerAndVerified();
+        allow update: if didntChangeConstant() && isValidTask(task);
+      }
       match /info/{info} {
-        allow create: if isSignedIn();
-        allow read, update: if isOwner();
+        allow create: if isSignedInAndVerified() && isValidDoc(info);
+        allow read, update: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
       match /cache/{cache} {
-        allow create: if isSignedIn();
-        allow update, read: if isOwner();
-      }
-      match /tasks/{task} {
-        allow create: if isSignedIn();
-        allow read, delete, update: if isOwner();
+        allow create: if isSignedIn() && isValidDoc(cache);
+        allow update, read: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
       match /tags/{tag} {
-        allow create: if isSignedIn();
-        allow read, update, delete: if isOwner();
+        allow create: if isSignedInAndVerified() && isValidDoc(tag);
+        allow read, update, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
       match /filters/{tag} {
-        allow create: if isSignedIn();
-        allow read, update, delete: if isOwner();
+        allow create: if isSignedInAndVerified() && isValidDoc(tag);
+        allow read, update, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
-      match /lists/{li} {
-        allow create: if isSignedIn();
-        allow update, read, delete: if isOwner();
+      match /lists/{list} {
+        allow create: if isSignedInAndVerified() && isValidDoc(list);
+        allow update, read, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
-      match /stats/{li} {
-        allow create: if isSignedIn();
-        allow update, read, delete: if isOwner();
+      match /stats/{info} {
+        allow create: if isSignedInAndVerified() && isValidDoc(info);
+        allow update, read, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
       match /folders/{fold} {
-        allow create: if isSignedIn();
-        allow update, read, delete: if isOwner();
+        allow create: if isSignedInAndVerified() && isValidDoc(fold);
+        allow update, read, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
 
+			function isSignedIn() {
+        return request.auth.uid != null;
+      }
       function isOwner() {
         return isSignedIn() && (request.auth.uid == resource.data.userId);
       }
-      function isSignedIn() {
-        return request.auth.uid != null;
+      function isVerified() {
+      	return isSignedIn() && request.auth.token.email_verified
+      }
+      function isSignedInAndVerified() {
+        return isSignedIn() && isVerified()
+      }
+      function isOwnerAndVerified() {
+      	return isOwner() && isVerified()
+      }
+
+      function incomingData() {
+        return request.resource.data
+      }
+      function existingData() {
+        return resource.data
+      }
+      function isValidDoc(id) {
+        return
+          incomingData().userId == request.auth.uid &&
+          incomingData().id == id
+      }
+      function didntChangeConstant() {
+        return
+          existingData().userId == incomingData().userId &&
+          existingData().id == incomingData().id
+      }
+
+      function isArrayOrUndefined(fieldName) {
+        return (!(fieldName in incomingData()) || incomingData()[fieldName] is list)
+      }
+      function isUndefinedOrString(fieldName) {
+        return (!(fieldName in incomingData()) || incomingData()[fieldName] is string)
+      }
+
+      function isValidUserDoc() {
+        return
+          incomingData().userId == request.auth.uid &&
+          ((incomingData().photoURL is string) || (incomingData().photoURL == null)) &&
+          (incomingData().size() > 1 && incomingData().size() < 6) &&
+          (
+            (
+              (('displayName' in incomingData()) && (incomingData().displayName.size() < 75) && ('email' in incomingData()) && (incomingData().email.size() < 75)) && (incomingData().isAnonymous == false)
+            ) ||
+            (
+              (!('displayName' in incomingData()) && !('email' in incomingData()) && incomingData().isAnonymous == true)
+            )
+          )
+      }
+      function isValidTask(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().name is string &&
+          isArrayOrUndefined('files')
       }
     }
   }
