@@ -2,47 +2,195 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
-    	allow read, create: if isSignedIn();
-      allow delete, update: if isOwner();
+    	allow create: if isSignedIn() && isValidUserDoc(userId);
+      allow read: if isVerified();
+      allow delete, update: if isOwnerAndVerified();
+      allow update: if isValidUserDoc(userId);
       
+      match /tasks/{task} {
+        allow create: if isSignedInAndVerified() && isValidTask(task);
+        allow read, delete, update: if isOwnerAndVerified();
+        allow update: if didntChangeConstant() && isValidTask(task);
+      }
       match /info/{info} {
-        allow create: if isSignedIn();
-        allow read, update: if isOwner();
+        allow create: if isSignedInAndVerified() && isInfoValid(info);
+        allow read, update: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
       match /cache/{cache} {
-        allow create: if isSignedIn();
-        allow update, read: if isOwner();
-      }
-      match /tasks/{task} {
-        allow create: if isSignedIn();
-        allow read, delete, update: if isOwner();
+        allow create: if isSignedIn() && isValidDoc(cache);
+        allow update, read: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
       match /tags/{tag} {
-        allow create: if isSignedIn();
-        allow read, update, delete: if isOwner();
+        allow create: if isSignedInAndVerified() && isValidTag(tag);
+        allow read, update, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant() && isValidTag(tag);
       }
       match /filters/{tag} {
-        allow create: if isSignedIn();
-        allow read, update, delete: if isOwner();
+        allow create: if isSignedInAndVerified() && isValidDoc(tag);
+        allow read, update, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
-      match /lists/{li} {
-        allow create: if isSignedIn();
-        allow update, read, delete: if isOwner();
+      match /lists/{list} {
+        allow create: if isSignedInAndVerified() && isValidList(list);
+        allow update, read, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant() && isValidList(list);
       }
-      match /stats/{li} {
-        allow create: if isSignedIn();
-        allow update, read, delete: if isOwner();
+      match /stats/{info} {
+        allow create: if isSignedInAndVerified() && isValidDoc(info);
+        allow update, read, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant();
       }
       match /folders/{fold} {
-        allow create: if isSignedIn();
-        allow update, read, delete: if isOwner();
+        allow create: if isSignedInAndVerified() && isValidFolder(fold);
+        allow update, read, delete: if isOwnerAndVerified();
+        allow update: if didntChangeConstant() && isValidFolder(fold);
       }
 
+			function isSignedIn() {
+        return request.auth.uid != null;
+      }
       function isOwner() {
         return isSignedIn() && (request.auth.uid == resource.data.userId);
       }
-      function isSignedIn() {
-        return request.auth.uid != null;
+      function isVerified() {
+      	return isSignedIn() && request.auth.token.email_verified
+      }
+      function isSignedInAndVerified() {
+        return isSignedIn() && isVerified()
+      }
+      function isOwnerAndVerified() {
+      	return isOwner() && isVerified()
+      }
+
+      function incomingData() {
+        return request.resource.data
+      }
+      function existingData() {
+        return resource.data
+      }
+      function isValidDoc(id) {
+        return
+          incomingData().userId == request.auth.uid &&
+          incomingData().id == id
+      }
+      function didntChangeConstant() {
+        return
+          existingData().userId == incomingData().userId &&
+          existingData().id == incomingData().id
+      }
+
+      function isArrayOrUndefined(fieldName, max) {
+        return (!(fieldName in incomingData()) || (incomingData()[fieldName] is list && incomingData()[fieldName].size() < (max + 1)))
+      }
+      function isNullStringOrUndefined(fieldName) {
+        return
+          !(fieldName in incomingData()) ||
+          incomingData()[fieldName] is string || incomingData()[fieldName] == null
+      }
+      function isNullOrBollean(fieldName) {
+        return
+          (!(fieldName in incomingData()) || incomingData()[fieldName] == null || incomingData()[fieldName] == true || incomingData()[fieldName] == false)
+      }
+
+      function isInfoValid(bracketId) {
+        return
+          isValidDoc(bracketId) &&
+          isNullOrBollean('ungroupTasksInHeadings') &&
+          isNullOrBollean('disablePmFormat') &&
+          isArrayOrUndefined('hidedViews', 30) &&
+          isArrayOrUndefined('hidedSections', 30) &&
+          (!('calendarOrders' in incomingData()) || incomingData().calendarOrders is set) &&
+          incomingData().size() < 10
+      }
+      function isValidTag(bracketId) {
+        return
+          isValidDoc(bracketId) &&
+          incomingData().name is string &&
+          incomingData().created is string &&
+          incomingData().createdFire is timestamp &&
+          isNullStringOrUndefined('parent') &&
+          isArrayOrUndefined('order') &&
+          incomingData().size() < 10
+      }
+      function isValidUserDoc(bracketId) {
+        return
+          incomingData().userId == bracketId &&
+          incomingData().userId == request.auth.uid &&
+          ((incomingData().photoURL is string) || (incomingData().photoURL == null)) &&
+          (incomingData().size() > 1 && incomingData().size() < 6) &&
+          (
+            (
+              (('displayName' in incomingData()) && (incomingData().displayName.size() < 75) && ('email' in incomingData()) && (incomingData().email.size() < 75)) && (incomingData().isAnonymous == false)
+            ) ||
+            (
+              (!('displayName' in incomingData()) && !('email' in incomingData()) && incomingData().isAnonymous == true)
+            )
+          )
+      }
+      function isValidList(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().name is string &&
+          incomingData().created is string &&
+          incomingData().createdFire is timestamp &&
+          (!('smartViewsOrders' in incomingData()) || incomingData().smartViewsOrders is set) &&
+          isArrayOrUndefined('files', 30) &&
+          isArrayOrUndefined('tags', 50) &&
+          isArrayOrUndefined('tasks', 50) &&
+          isNullStringOrUndefined('notes') &&
+          isNullStringOrUndefined('folder') &&
+          (
+            (!('calendar' in incomingData()) || incomingData().calendar == null) ||
+            (
+              incomingData().calendar.type == 'specific' ||
+              incomingData().calendar.type == 'after completion' ||
+              incomingData().calendar.type == 'someday' ||
+              incomingData().calendar.type == 'daily' ||
+              incomingData().calendar.type == 'weekly' ||
+              incomingData().calendar.type == 'monthly' ||
+              incomingData().calendar.type == 'yearly'
+            )
+          )
+      }
+      function isValidFolder(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().name is string &&
+          isArrayOrUndefined('files', 30) &&
+          isArrayOrUndefined('tasks', 50) &&
+          isArrayOrUndefined('order', 50)
+      }
+      function isValidTask(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().name is string &&
+          incomingData().created is string &&
+          incomingData().createdFire is timestamp &&
+          isArrayOrUndefined('files', 30) &&
+          isArrayOrUndefined('checklist', 50) &&
+          isArrayOrUndefined('order', 50) &&
+          isArrayOrUndefined('tags', 50) &&
+          isNullStringOrUndefined('folder') &&
+          isNullStringOrUndefined('taskDuration') &&
+          isNullStringOrUndefined('priority') &&
+          isNullStringOrUndefined('heading') &&
+          isNullStringOrUndefined('notes') &&
+          isNullStringOrUndefined('list') &&
+          incomingData().size() < 30 &&
+          (
+            (!('calendar' in incomingData()) || incomingData().calendar == null) ||
+            (
+              incomingData().calendar.type == 'specific' ||
+              incomingData().calendar.type == 'after completion' ||
+              incomingData().calendar.type == 'someday' ||
+              incomingData().calendar.type == 'daily' ||
+              incomingData().calendar.type == 'weekly' ||
+              incomingData().calendar.type == 'monthly' ||
+              incomingData().calendar.type == 'yearly'
+            )
+          )
       }
     }
   }

@@ -7,7 +7,6 @@
       <SigninOptions/>
       <InputApp
         placeholder='E-mail:'
-        :focus="true"
         :value='eMail'
         @input='v => eMail = v'
         @cancel="$emit('close')"

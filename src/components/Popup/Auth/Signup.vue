@@ -10,7 +10,6 @@
       />
       <InputApp
         placeholder='Username(Optional):'
-        :focus="true"
         :value='username'
         @input='v => username = v'
         @cancel="$emit('close')"
