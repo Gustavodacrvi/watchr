@@ -192,7 +192,7 @@ export default {
         s.transitionDuration = '.4s'
         w.transitionDuration = '.4s'
 
-        s.marginTop = '20px'
+        s.marginTop = '14px'
         s.marginBottom = 0
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'

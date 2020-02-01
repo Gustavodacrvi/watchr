@@ -21,6 +21,12 @@
       <span class="name-wrapper">
         <span class="name" key="nam"><b>{{ name }}</b></span>
       </span>
+      <Icon
+        class="arrow passive primary-hover"
+        icon='tiny-arrow'
+        :class="{showCont}"
+        @click.native.stop='toggle'
+      />
       <CircleBubble
         innerColor='var(--light-gray)'
         outerColor='var(--fade)'
@@ -126,6 +132,10 @@ export default {
     },
     toggle() {
       this.showing = !this.showing
+      this.$store.dispatch('folder/saveFolder', {
+        id: this.id,
+        defaultShowing: this.showing,
+      })
     },
     edit() {
       this.$store.dispatch('pushPopup', {
@@ -249,6 +259,19 @@ export default {
   align-items: center;
   width: 40px;
   height: 100%;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transition-duration: .2s;
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.arrow.showCont {
+  top: 55%;
+  transform: translateY(-50%) rotate(0deg);
 }
 
 .name-wrapper {

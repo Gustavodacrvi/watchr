@@ -512,7 +512,6 @@ store.commit('saveUser', null)
 
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
-  console.log(user)
 
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)

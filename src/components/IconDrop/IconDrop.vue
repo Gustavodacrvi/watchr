@@ -123,9 +123,8 @@ export default {
             s.height = oldHeight
             setTimeout(() => {
               s.transitionDuration = '.2s'
-              console.log(width, height)
-              s.width = width
-              s.height = height
+              s.width = width === '0px' ? 'auto' : width
+              s.height = height === '0px' ? 'auto' : height
             }, 125)
           })
         }, 210)

@@ -58,10 +58,6 @@ export default {
         icon: 'folder',
         callback: () => {
           if (onToggle) onToggle()
-          dispatch('folder/saveFolder', {
-            id: folder.id,
-            defaultShowing: !toggle,
-          })
         }
       })
 

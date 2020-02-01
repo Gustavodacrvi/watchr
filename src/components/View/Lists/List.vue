@@ -24,7 +24,7 @@
           />
         </div>
       </div>
-      <div v-if="!isEditing"
+      <div
         class="cont-wrapper item-handle rb"
         :class='{doneTransition}'
         ref="cont-wrapper"
@@ -62,7 +62,7 @@
             />
           </div>
           <div class="name">
-            <div class="list-name-wrapper">
+            <div v-if="!isEditing" class="list-name-wrapper">
               <transition
                 appear
                 @enter='infoEnter'
@@ -73,25 +73,26 @@
               {{ item.name }}
               <span v-if="listTasksLength" class="list-inf fade">{{ listTasksLength }}</span>
             </div>
+            <input v-else class="input"
+              v-model="name"
+
+              ref='input'
+              @keydown="keydown"
+            />
           </div>
-          <div class="info">
-            <template>
-              <Icon v-if="deadlineStr" class="deadline list-inf icon"
-                icon='deadline'
-                width='16px'
-              />
-              <span v-if="deadlineStr" class='list-inf deadline'>{{ deadlineStr }}</span>
-            </template>
-            <span v-if="calendarStr" class="list-inf">{{ calendarStr }}</span>
-          </div>
+          <transition name="fade-t">
+            <div v-show="!isEditing" class="info">
+              <template>
+                <Icon v-if="deadlineStr" class="deadline list-inf icon"
+                  icon='deadline'
+                  width='16px'
+                />
+                <span v-if="deadlineStr" class='list-inf deadline'>{{ deadlineStr }}</span>
+              </template>
+              <span v-if="calendarStr" class="list-inf">{{ calendarStr }}</span>
+            </div>
+          </transition>
         </div>
-      </div>
-      <div v-else>
-        <ListEdit
-          :name='item.name'
-          @save='save'
-          @cancel='isEditing = false'
-        />
       </div>
     </div>
   </transition>
@@ -126,12 +127,16 @@ export default {
     return {
       isEditing: false,
       doneTransition: false,
+      name: this.item.name,
 
       options: [],
     }
   },
   mounted() {
     this.getListOptions()
+  },
+  beforeDestroy() {
+    window.removeEventListener('pointerdown', this.hide)
   },
   methods: {
     ...mapActions(['getOptions']),
@@ -148,6 +153,19 @@ export default {
       this.$store.dispatch('list/uncancelLists', [this.item.id])
     },
     
+    keydown(evt) {
+      const {key} = evt
+
+      if (key === "Escape")
+        this.hide()
+      else if (key === 'Enter') {
+        this.saveList({
+          name: this.name,
+        })
+        this.hide()
+      }
+
+    },
     enter(el, done) {
       const cont = this.$refs['cont-wrapper']
       if (cont) {
@@ -169,9 +187,20 @@ export default {
         }
       }
     },
+    hide() {
+      this.isEditing = false
+      this.name = this.item.name
+      window.removeEventListener('pointerdown', this.hide)
+    },
+    focus() {
+      setTimeout(() => this.$refs.input.focus())
+    },
     click() {
-      if (this.isDesktop && !this.isSelecting)
+      if (this.isDesktop && !this.isSelecting) {
         this.isEditing = true
+        this.focus()
+        window.addEventListener('pointerdown', this.hide)
+      }
     },
     leave(el, done) {
       this.doneTransition = false
@@ -419,6 +448,12 @@ export default {
 
 .isItemSelected .back {
   opacity: 0;
+}
+
+.input {
+  outline: none;
+  width: 100%;
+  padding-right: 10px;
 }
 
 .back {

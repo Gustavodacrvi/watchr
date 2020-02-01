@@ -185,7 +185,7 @@ export default {
       await setTask(b, {
         userId: uid(),
         ...task,
-      }, newTaskRef, writes)
+      }, rootState, newTaskRef, writes)
       ids.splice(index, 0, newTaskRef.id)
       setFolder(b, {tasks: ids}, folderRef(folderId), rootState, writes)
 
