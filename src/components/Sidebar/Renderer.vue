@@ -35,6 +35,7 @@
           @add='addItem'
 
           :placeholder='inputPlaceholder'
+          data-id='isEdit'
         />
       </template>
     </transition-group>
@@ -263,7 +264,13 @@ export default {
       return this.$el.getElementsByClassName('sidebar-renderer-root')[0]
     },
     getIds() {
-      return this.items.filter(el => !el.isEdit).map(el => el.id)
+      const childNodes = this.draggableRoot.childNodes
+      const ids = []
+      for (const node of childNodes) {
+        if (node && node.dataset && node.dataset.id !== 'floating-button' && node.dataset.id !== 'isEdit')
+          ids.push(node.dataset.id)
+      }
+      return ids
     },
     apply() {
       return this.$store.state.apply.bool
