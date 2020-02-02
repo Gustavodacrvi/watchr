@@ -112,6 +112,7 @@ import boxCheckFilled from '@/assets/icons/box-check-filled.svg'
 import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
 import circleClose from '@/assets/icons/circle-close.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
+import laterLists from '@/assets/icons/later-lists.svg'
 
 import { mapGetters } from 'vuex'
 
@@ -130,6 +131,7 @@ export default {
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
         pomo, pie, check,
+        "later-lists": laterLists,
         "box-close": boxClose,
         "circle-close": circleClose,
         "circle-check-filled": circleCheckFilled,
