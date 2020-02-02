@@ -1415,7 +1415,6 @@ export default {
   margin-top: -4px;
 }
 
-
 .component {
   z-index: 3;
 }

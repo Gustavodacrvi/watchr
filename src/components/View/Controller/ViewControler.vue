@@ -463,10 +463,11 @@ export default {
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
         arr.push({
-          name: utils.getHumanReadableDate(date),
+          name: date,
           id: date,
           calendarEvents: date,
           showHeading: true,
+          dateType: true,
 
           sort: sortHeading,
           filter: filterFunction,
@@ -568,7 +569,18 @@ export default {
           return 0
         })
 
+        const calendar = this.calendarOrders
+
         for (const date of dates) {
+          const itemsOrder = (calendar[date] && calendar[date].tasks) || []
+
+          const updateIds = ids => {
+            this.$store.dispatch('task/saveCalendarOrder', {
+              ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
+              date,
+            })  
+          }
+          
           const filter = pipeBooleanFilters(
             list => this.isLaterList(list, date),
             list => list.calendar.specific === date
@@ -576,7 +588,6 @@ export default {
 
           const dispatch = this.$store.dispatch
           arr.push({
-            disableSortableMount: true,
             name: date,
             id: date,
             dateType: true,
@@ -588,9 +599,29 @@ export default {
             editComp: 'ListEdit',
             itemPlaceholder: 'List name...',
             
-            sort: tasks => utilsTask.sortTasksByTaskDate(tasks),
+            sort: lists => this.sortArray(itemsOrder, lists),
             options: lists => [],
             filter,
+
+            updateIds,
+            fallbackItem: (list, force) => {
+              if (force || !list.calendar) {
+                list.calendar = {
+                  type: 'specific',
+                  editDate: mom().format('Y-M-D'),
+                  begins: mom().format('Y-M-D'),
+                  specific: date,
+                }
+              }
+              return list
+            },
+            onAddItem: obj => {
+              this.$store.dispatch('list/addListByIndexCalendarOrder', {
+                ...obj,
+                ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
+                date,
+              })
+            }
           })
         }
 
@@ -623,8 +654,9 @@ export default {
 
         const dispatch = this.$store.dispatch
         arr.push({
+          dateType: true,
           disableSortableMount: true,
-          name: utils.getHumanReadableDate(date),
+          name: date,
           sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullCheckDate'), 
           options: tasks => [
             {

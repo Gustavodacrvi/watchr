@@ -17,7 +17,7 @@
           @mouseenter="onHover = true"
           @mouseleave="onHover = false"
         >
-          <div v-if="!dateType" class="header">
+          <div v-if="!dateType || !isValidMom" class="header">
             <span>
               <Icon v-if="hasProgress" class="icon"
                 icon="tasks"
@@ -268,7 +268,10 @@ export default {
       return this.getMom.format('dddd')
     },
     getMom() {
-      return mom(this.name)
+      return mom(this.name, 'Y-M-D')
+    },
+    isValidMom() {
+      return this.getMom.isValid()
     },
     renderHeight() {
       return ((this.length * this.itemHeight) + 4) + 'px'
@@ -342,7 +345,7 @@ export default {
 }
 
 .big-name {
-  font-size: 1.8em;
+  font-size: 1.6em;
 }
 
 .header-wrapper {

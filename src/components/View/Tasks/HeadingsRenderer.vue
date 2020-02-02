@@ -186,8 +186,8 @@ export default {
       s.borderBoddom = '0px solid var(--back-color)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.4s'
-        w.transitionDuration = '.4s'
+        s.transitionDuration = '.2s'
+        w.transitionDuration = '.2s'
 
         s.marginTop = '14px'
         s.marginBottom = 0
@@ -202,9 +202,17 @@ export default {
     leave(el, done) {
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
+      let c = el.getElementsByClassName('cont')[0]
 
-      s.transitionDuration = '.4s'
-      w.transitionDuration = '.4s'
+      if (c) {
+        c = c.style
+        c.transitionDuration = '.2s'
+        c.height = 0
+        c.overflow = 'hidden'
+      }
+
+      s.transitionDuration = '.2s'
+      w.transitionDuration = '.2s'
       w.opacity = 0
       w.height = 0
       w.overflow = 'hidden'
