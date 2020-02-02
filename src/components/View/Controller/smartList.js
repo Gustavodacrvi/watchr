@@ -21,10 +21,6 @@ export default {
         }
       }
     },
-    disableSortableMount() {
-      const n = this.viewName
-      return n === 'Upcoming' || n === 'Later lists'
-    },
     rootFallbackItem() {
       return task => task
     },
@@ -88,10 +84,15 @@ export default {
     saveNotes() {},
     addHeading() {},
     onSortableAdd() {
+      const n = this.viewName
+
+      if (n === 'Upcoming' || n === 'Completed' || n === 'Later lists')
+        return null
+      
       return (evt, taskIds, type, ids) => {
         if (this.isSmartOrderViewType)
           this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
-            taskIds, view: this.viewName, ids,
+            taskIds, view: n, ids,
           })
         else {
           this.$store.dispatch('list/removeTasksFromSmartViewCalendarHeading', {
@@ -104,6 +105,10 @@ export default {
     
     
     updateHeadingIds() {
+      const n = this.viewName
+      if (n === 'Upcoming' || n === 'Completed' || n === 'Later lists')
+        return null
+      
       if (this.isSmartOrderViewType)
         return ids => {
             this.$store.dispatch('list/updateHeadingsViewOrder', {

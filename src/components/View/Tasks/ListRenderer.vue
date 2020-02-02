@@ -93,6 +93,7 @@
       :itemCompletionCompareDate='itemCompletionCompareDate'
       :mainFallbackItem='mainFallbackItem'
       :scheduleObject='scheduleObject'
+      :disableSortableMount='disableSortableMount'
       :onAddExistingItem='onAddExistingItem'
       :getItemFirestoreRef='getItemFirestoreRef'
       :showHeadingFloatingButton='showHeadingFloatingButton'
@@ -421,7 +422,8 @@ export default {
           pull: (e,j,item) => {
             const d = item.dataset
             if (e.el.dataset.name === 'sidebar-renderer') return 'clone'
-            if (d.type === 'Task') return true
+            if (d.type === 'Task' && this.comp === "Task") return true
+            if (d.type === 'List' && this.comp === 'List') return true
             return false
           },
           put: (j,o,item) => {
@@ -430,7 +432,8 @@ export default {
             if (type === 'headingbutton' || type === 'add-task-floatbutton') return true
             if (type === 'sidebar-element') return true
             if (!this.onSortableAdd) return false
-            if (type === 'Task') return true
+            if (type === 'Task' && this.comp === "Task") return true
+            if (type === 'List' && this.comp === 'List') return true
             if (type === 'subtask') return true
             return false
           }
@@ -503,7 +506,7 @@ export default {
           const indicies = evt.newIndicies.map(el => el.index)
           if (indicies.length === 0) indicies.push(evt.newIndex)
           
-          if (type === 'Task' && this.comp === 'List') {
+          if ((type === 'Task' || type === 'List') && this.comp === 'List') {
             this.onSortableAdd(items, ids, indicies, this.getIds(true))
           } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
             this.removeEdit()

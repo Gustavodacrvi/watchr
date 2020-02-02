@@ -43,7 +43,6 @@
     :extraListView='extraListView'
     :removeHeaderTag='removeHeaderTag'
     :saveHeaderName='saveHeaderName'
-    :disableSortableMount='disableSortableMount'
 
     @save-schedule='saveSchedule'
     @save-notes='saveNotes'
@@ -590,6 +589,7 @@ export default {
           arr.push({
             name: date,
             id: date,
+            calendarEvents: date,
             dateType: true,
 
             listType: true,
@@ -620,6 +620,17 @@ export default {
                 ...obj,
                 ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
                 date,
+              })
+            },
+            onSortableAdd: (evt, itemsIds, type, ids) => {
+              this.$store.dispatch('list/saveListsById', {
+                ids: itemsIds,
+                list: {calendar: {
+                  type: 'specific',
+                  editDate: mom().format('Y-M-D'),
+                  begins: mom().format('Y-M-D'),
+                  specific: date,
+                }},
               })
             }
           })
