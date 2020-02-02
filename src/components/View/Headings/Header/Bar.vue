@@ -140,6 +140,7 @@ export default {
         Statistics: 'pie',
         Upcoming: 'calendar',
         Completed: 'circle-check',
+        "Later lists": 'later-lists',
       }
       return obj[this.viewName]
     },

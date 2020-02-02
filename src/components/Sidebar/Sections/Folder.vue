@@ -56,7 +56,7 @@ import folderUtils from "@/utils/folder"
 import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
-  props: ['name', 'id', 'defaultShowing', 'movingFolder', 'folder', 'viewName', 'viewType', 'listLength'],
+  props: ['name', 'id', 'defaultShowing', 'folder', 'viewName', 'viewType', 'listLength'],
   components: {
     Icon, IconDrop,
   },
@@ -166,6 +166,10 @@ export default {
         s.transitionDuration = '.25s'
         s.height = this.getFolderContHeight
         s.opacity = 1
+
+        setTimeout(() => {
+          s.height = 'auto'
+        }, 255)
       })
     },
     contLeave(el) {
@@ -186,7 +190,7 @@ export default {
     ...mapState(['selectedItems', 'isOnControl']),
     ...mapGetters(['isDesktop', 'platform']),
     showCont() {
-      return this.showing && !this.movingFolder
+      return this.showing
     },
     options() {
       return folderUtils.getFolderOptions({

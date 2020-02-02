@@ -60,7 +60,7 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
-    'selectEverythingToggle',
+    'selectEverythingToggle', 'disableSortableMount',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',

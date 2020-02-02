@@ -43,6 +43,7 @@
     :extraListView='extraListView'
     :removeHeaderTag='removeHeaderTag'
     :saveHeaderName='saveHeaderName'
+    :disableSortableMount='disableSortableMount'
 
     @save-schedule='saveSchedule'
     @save-notes='saveNotes'
@@ -122,6 +123,8 @@ export default {
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getCalendarOrderSmartViewListsOrder: 'list/getCalendarOrderSmartViewListsOrder',
       isTaskInList: 'task/isTaskInList',
+      getLaterLists: 'list/getLaterLists',
+      isLaterList: 'list/isLaterList',
       isTaskLastDeadlineDay: 'task/isTaskLastDeadlineDay',
       getEndsTodayLists: 'list/getEndsTodayLists',
       getBeginsTodayLists: 'list/getBeginsTodayLists',
@@ -542,6 +545,57 @@ export default {
         filter: task => task.calendar && task.calendar.type === 'weekly',
         id: 'weekly tasks'
       })
+      return arr
+    },
+    laterListsHeadings() {
+      const arr = []
+
+      const laterLists = this.getLaterLists()
+
+      if (laterLists.length > 0) {
+
+        const set = new Set()
+        for (const t of laterLists)
+          set.add(t.calendar.specific)
+        const dates = Array.from(set)
+        dates.sort((a, b) => {
+          const ta = mom(a, 'Y-M-D')
+          const tb = mom(b, 'Y-M-D')
+          if (ta.isAfter(tb, 'day'))
+            return 1
+          if (ta.isBefore(tb, 'day'))
+            return -1
+          return 0
+        })
+
+        for (const date of dates) {
+          const filter = pipeBooleanFilters(
+            list => this.isLaterList(list, date),
+            list => list.calendar.specific === date
+          )
+
+          const dispatch = this.$store.dispatch
+          arr.push({
+            disableSortableMount: true,
+            name: date,
+            id: date,
+            dateType: true,
+
+            listType: true,
+            directFiltering: true,
+
+            comp: 'List',
+            editComp: 'ListEdit',
+            itemPlaceholder: 'List name...',
+            
+            sort: tasks => utilsTask.sortTasksByTaskDate(tasks),
+            options: lists => [],
+            filter,
+          })
+        }
+
+      }
+      
       return arr
     },
     completedHeadingsOptions() {

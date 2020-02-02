@@ -227,6 +227,14 @@ export default {
           })
         },
       },
+      isLaterList: {
+        getter(c, list) {
+          return list.calendar && list.calendar.type === 'specific' && mom(list.calendar.specific, 'Y-M-D').isAfter(mom(TOD_DATE, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
     }),
     ...MemoizeGetters('lists', {
       getEndsTodayLists: {
@@ -240,14 +248,6 @@ export default {
         },
         cache(args) {
           return JSON.stringify(args[0])
-        },
-      },
-      isLaterList: {
-        getter(c, list) {
-          return list.calendar && list.calendar.type === 'specific' && mom(list.calendar.specific, 'Y-M-D').isAfter(mom(TOD_DATE, 'Y-M-D'), 'day')
-        },
-        cache(args) {
-          return JSON.stringify(args[0].calendar)
         },
       },
       getLaterLists: {

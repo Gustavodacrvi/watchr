@@ -15,7 +15,6 @@
         :headingEditOptions='headingEditOptions'
         :color='h.color ? h.color : ""'
         :options='h.options ? h.options(h.nonFiltered) : []'
-        :movingHeading='movingHeading'
         :length='h.items.length'
 
         @option-click='v => getOptionClick(h)(v)'
@@ -95,7 +94,6 @@ export default {
   data() {
     return {
       sortable: null,
-      movingHeading: false,
 
       itemsIdsObj: {}
     }
@@ -137,12 +135,6 @@ export default {
               const ids = this.getHeadingsIds()
               if (this.updateHeadingIds)
                 this.updateHeadingIds(ids)
-            },
-            onStart: evt => {
-              this.movingHeading = true
-            },
-            onEnd: evt => {
-              this.movingHeading = false
             },
           })
         }

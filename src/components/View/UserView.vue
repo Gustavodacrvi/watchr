@@ -130,6 +130,7 @@ export default {
       if (this.viewType !== 'list') return false
       switch (this.viewName) {
         case 'Today': return true
+        case 'Later lists': return true
         case 'Calendar': return true
         case 'Pomodoro': return true
         case 'Statistics': return true

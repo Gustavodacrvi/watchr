@@ -17,7 +17,7 @@
           @mouseenter="onHover = true"
           @mouseleave="onHover = false"
         >
-          <div class="header">
+          <div v-if="!dateType" class="header">
             <span>
               <Icon v-if="hasProgress" class="icon"
                 icon="tasks"
@@ -32,6 +32,12 @@
               />
               <h3 class="name" :class="{hasIcon}" :style="{color: getHeadingColor}">{{ name }}</h3>
             </span>
+          </div>
+          <div v-else class="header">
+            <div>
+              <span class="big-name">{{ bigName }}</span>
+              <span class="week-day">{{ weekDay }}</span>
+            </div>
           </div>
         </div>
         <CalendarEvents v-if="calendarEvents" :date='calendarEvents'/>
@@ -72,11 +78,15 @@ import { mapGetters } from 'vuex'
 
 import utils from '@/utils/'
 
+import mom from 'moment'
+
+const tod = mom()
+
 export default {
   mixins: [
     Defer(),
   ],
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon'],
   components: {
     IconDrop: IconDropVue, CalendarEvents,
     Icon: IconVue,
@@ -245,6 +255,21 @@ export default {
   },
   computed: {
     ...mapGetters(['isDesktop']),
+    bigName() {
+      const m = this.getMom
+
+      if (m.isSame(tod, 'month'))
+        return m.format('D')
+      if (m.isSame(tod, 'year'))
+        return m.format('MMM D')
+      return m.format('MMM D Y')
+    },
+    weekDay() {
+      return this.getMom.format('dddd')
+    },
+    getMom() {
+      return mom(this.name)
+    },
     renderHeight() {
       return ((this.length * this.itemHeight) + 4) + 'px'
     },
@@ -252,7 +277,7 @@ export default {
       return this.isDesktop ? 38 : 50
     },
     renderCont() {
-      return this.defer(2) && this.showing && !this.movingHeading
+      return this.defer(2) && this.showing
     },
     showIconDrop() {
       const isDesktop = this.$store.getters.isDesktop
@@ -308,6 +333,16 @@ export default {
 
 .Heading:hover {
   z-index: 2;
+}
+
+.week-day {
+  margin-left: 6px;
+  font-size: 1.05em;
+  color: var(--fade);
+}
+
+.big-name {
+  font-size: 1.8em;
 }
 
 .header-wrapper {
