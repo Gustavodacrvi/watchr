@@ -1,5 +1,6 @@
 <template>
   <div class="FileHandler">
+    <FileDragDrop :onDrop='onDrop'/>
     <File v-for="f in getFiles" :key="f"
       :name="f"
       :status='getFileStatus(f)'
@@ -7,16 +8,16 @@
       @download="downloadFile(f, storageFolder, id)"
       @view="viewFile(f, storageFolder, id)"
     />
-    <AuthButton v-if='isEditingFiles'
-      type='dark'
-      value='Save changes'
-      @click="saveCompFiles"
-    />
     <transition name="progress-t">
       <div v-if="saving" class="progress">
         <div class="progress-line" :style="{width: `${uploadProgress}%`}"></div>
       </div>
     </transition>
+    <AuthButton v-if='isEditingFiles'
+      type='dark'
+      value='Save changes'
+      @click="saveCompFiles"
+    />
   </div>
 </template>
 
@@ -46,6 +47,12 @@ export default {
       const files = this.files
       this.saveFiles(this.getFilesToRemove, this.addedFiles, this.id, this.storageFolder).then(res => {
         this.$emit('save', files)
+        this.addedFiles = []
+        this.$store.commit('pushToast', {
+          name: 'Changes saved.',
+          seconds: 2,
+          type: 'success',
+        })
         this.saving = false
       }).catch(() => {
         this.saving = false
@@ -71,7 +78,7 @@ export default {
   margin-top: 4px;
   border-radius: 14px;
   overflow: hidden;
-  background-color: var(--dark);
+  box-shadow: 0 2px 20px var(--primary);
   transition: height .1s, margin-top .1s;
 }
 

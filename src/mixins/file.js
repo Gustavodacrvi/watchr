@@ -15,17 +15,24 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.files = (this.defaultFiles && this.defaultFiles.slice()) || []
-    }, 100)
+    this.getDefaultFiles(true)
   },
   methods: {
+    getDefaultFiles(time) {
+      setTimeout(() => {
+        this.files = (this.defaultFiles && this.defaultFiles.slice()) || []
+      }, time ? 100 : 0)
+    },
     getFileStatus(fileName) {
       if (this.addedFiles.find(el => el.name === fileName))
         return 'update'
       if (this.defaultFiles.includes(fileName) && !this.files.includes(fileName))
         return 'remove'
       return ''
+    },
+    onDrop(files) {
+      for (const f of files)
+        this.addFile(f)
     },
     addFile(file) {
       if (!this.files.includes(file.name))
@@ -166,6 +173,11 @@ export default {
           !this.files.includes(f) &&
           !this.addedFiles.find(added => added.name === f))
       return []
+    },
+  },
+  watch: {
+    defaultFiles() {
+      this.getDefaultFiles(false)
     },
   }
 }

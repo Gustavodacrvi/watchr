@@ -403,10 +403,6 @@ export default {
           })
       }
     },
-    onDrop(files) {
-      for (const f of files)
-        this.addFile(f)
-    },
     saveChecklist() {
       if (this.defaultTask && this.task.checklist)
         this.$store.dispatch('task/saveTask', {
