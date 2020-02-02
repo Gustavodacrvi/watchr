@@ -708,12 +708,17 @@ export default {
   
       b.commit()
     },
-    removeListTag({rootState}, {tagId, listId}) {
+    removeListTag({rootState}, {tagId, list}) {
       const b = fire.batch()
+
+      const tags = list.tags.slice()
+
+      const i = tags.indexOf(tagId)
+      tags.splice(i, 1)
       
       setList(b, {
-        tags: fd().arrayRemove(tagId),
-      }, listRef(listId), rootState)
+        tags,
+      }, listRef(list.id), rootState)
   
       b.commit()
     },

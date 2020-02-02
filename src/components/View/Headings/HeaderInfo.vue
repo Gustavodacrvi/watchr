@@ -15,7 +15,7 @@
           @enter='contentEnter'
           @leave='contentLeave'
         >
-          <span class="cont" v-if="content">{{ content }}</span>
+          <span v-if="content" class="cont">{{ content }}</span>
         </transition>
         <transition
           @enter='contentEnter'
@@ -87,12 +87,14 @@ export default {
       s.transitionDuration = 0
       s.width = 0
       s.marginLeft = 0
+      s.opacity = 0
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
 
         s.width = width
         s.marginLeft = '6px'
+        s.opacity = 1
 
         setTimeout(done, 305)
       })
@@ -101,12 +103,22 @@ export default {
     contentLeave(el, done) {
       const s = el.style
       
-      s.transitionDuration = '.3s'
 
-      s.width = 0
-      s.marginLeft = 0
+      const {width} = getComputedStyle(el)
 
-      setTimeout(done, 305)
+      s.transitionDuration = 0
+      s.width = width
+      s.opacity = 1
+      s.marginLeft = '6px'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.3s'
+        s.width = 0
+        s.marginLeft = 0
+        s.opacity = 0
+  
+        setTimeout(done, 305)
+      })
     },
   },
   watch: {
@@ -134,7 +146,11 @@ export default {
 }
 
 .cont {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
   margin-left: 6px;
+  overflow: hidden;
 }
 
 .icon {

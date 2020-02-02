@@ -247,31 +247,75 @@ export default {
     headerInfo() {
       //getListDeadlineDaysLeftStr
       const list = this.viewList
+      if (!list)
+        return null
       
-      let deadlineStr = list.deadline ? utils.getHumanReadableDate(list.deadline) : null
+      const listId = list.id
+      const parseDate = utils.getHumanReadableDate
+
+      const specificDate = list.calendar ? utils.parseCalendarObjectToString(list.calendar, this.userInfo) : null
+      
+      let deadlineStr = list.deadline ? parseDate(list.deadline) : null
       if (deadlineStr === 'Today')
         deadlineStr = null
 
       const save = this.listsaveList
+      const dispatch = this.$store.dispatch
       
       if (list)
-        return [
-          {
-            icon: 'deadline',
-            content: deadlineStr,
-            title: 'Add deadline',
-            right: list.deadline ? this.getListDeadlineDaysLeftStr(list.deadline, TOD_DATE) : null,
-            options: {
-              comp: 'CalendarPicker',
-              content: {
-                onlyDates: true,
-                noTime: true,
-                allowNull: true,
-                callback: ({specific}) => save({deadline: specific})
+        return {
+          tags: {
+            names: this.listgetListTags.map(el => el.name),
+            remove: name => dispatch('list/removeListTag', {
+              list,
+              tagId: this.listgetListTags.find(el => el.name === name).id
+            }),
+          },
+          icons: [
+            {
+              icon: 'deadline',
+              content: deadlineStr,
+              title: 'Add deadline',
+              right: list.deadline ? this.getListDeadlineDaysLeftStr(list.deadline, TOD_DATE) : null,
+              options: {
+                comp: 'CalendarPicker',
+                content: {
+                  onlyDates: true,
+                  noTime: true,
+                  allowNull: true,
+                  callback: ({specific}) => save({deadline: specific})
+                },
               },
             },
-          },
-        ]
+            {
+              icon: 'calendar',
+              content: specificDate,
+              title: 'Add date',
+              options: {
+                comp: "CalendarPicker",
+                content: {repeat: true, disableDaily: true, callback: calendar => save({calendar})}},
+            },
+            {
+              icon: 'tag',
+              title: 'Add tags',
+              options: {
+                allowSearch: true,
+                select: true,
+                onSave: names => {
+                  dispatch('list/editListTags', {
+                    tagIds: this.tags.filter(el => names.includes(el.name)).map(el => el.id),
+                    listId,
+                  })
+                },
+                selected: (list.tags && list.tags.map(id => this.tags.find(el => el.id === id).name)) || [],
+                links: this.tags.map(el => ({
+                  name: el.name,
+                  icon: 'tag',
+                })),
+              },
+            },
+          ]
+        }
     },
     saveHeaderContent() {
       const save = obj => {

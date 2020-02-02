@@ -15,7 +15,7 @@
       :viewNameValue='viewNameValue'
       :saveHeaderName='saveHeaderName'
     />
-    <Info class="tags" v-if="defer(2)"
+    <Info v-if="defer(2)"
       :headerInfo='headerInfo'
     />
     <FilterTags v-if="defer(4)"
