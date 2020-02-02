@@ -55,12 +55,14 @@
           :showHeadingName="h.showHeadingName"
           :scheduleObject='scheduleObject'
           :onSortableAdd='h.onSortableAdd'
+          :addedHeading='justAddedHeading'
           :isLast='(i + 1) === headings.length'
           @add-heading='addHeading'
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
           @change-time='changeTime'
           @items-ids='ids => getItemsIds(ids, i)'
+          @added-heading-complete-mount='addedHeadingCompleteMount'
 
           :header="h"
           :addItem="h.onAddItem"
@@ -88,7 +90,7 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
+  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 'justAddedHeading',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {
@@ -110,6 +112,9 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    addedHeadingCompleteMount() {
+      this.$emit("added-heading-complete-mount")
+    },
     getItemsIds(ids, i) {
       this.itemsIdsObj = {
         ...this.itemsIdsObj,

@@ -649,6 +649,8 @@ export default {
         name: oldHeading.name,
         notes: oldHeading.notes,
         headings: [],
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
         headingsOrder: [],
         tasks: taskIds,
       }, newList, rootState)

@@ -126,6 +126,9 @@ const store = new Vuex.Store({
 
     isFirstSnapshot: true,
     changedIds: [],
+
+    clipboardTask: null,
+    toggleClipboardPaste: false,
   },
   getters: {
     ...Memoize(null, {
@@ -230,6 +233,12 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    pasteTask(state) {
+      state.toggleClipboardPaste = !state.toggleClipboardPaste
+    },
+    addTaskToClipboard(state, clipboardTask) {
+      state.clipboardTask = clipboardTask
+    },
     saveCalendarList(state, list) {
       state.calendarList = list
     },

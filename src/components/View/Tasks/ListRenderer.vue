@@ -97,11 +97,13 @@
       :getItemFirestoreRef='getItemFirestoreRef'
       :showHeadingFloatingButton='showHeadingFloatingButton'
       :movingButton='movingButton'
+      :justAddedHeading='justAddedHeading'
       :updateHeadingIds='updateHeadingIds'
       :itemPlaceholder='itemPlaceholder'
       :disableFallback='disableFallback'
 
       @change-time='changeTime'
+      @added-heading-complete-mount='justAddedHeading = null'
       @go='moveItemHandlerSelection'
       @add-heading='addHeadingFromRootHeadings'
       @headings-items-ids='getHeadingsItemsIds'
@@ -137,7 +139,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton',  'addedHeading', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast'],
   components: {
@@ -171,6 +173,7 @@ export default {
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
+      justAddedHeading: false,
 
       completeAnimationStack: [],
       completeAnimationSettimeout: null,
@@ -182,6 +185,10 @@ export default {
     this.updateView()
   },
   mounted() {
+    if (this.header && this.header.name === this.addedHeading) {
+      this.addEditComp(0)
+      this.$emit('added-heading-complete-mount')
+    }
     this.getCompHeight()
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
@@ -235,6 +242,7 @@ export default {
       this.$emit('change-time', args)
     },
     addHeadingFromRootHeadings(obj) {
+      this.justAddedHeading = obj.name
       this.$emit("add-heading", obj)
     },
     moveItemHandlerSelection(bool) {
@@ -711,6 +719,8 @@ export default {
           name, index: this.headingPosition,
           headings,
         })
+        if (this.isRoot)
+          this.justAddedHeading = name
       }
     },
     click(event) {
@@ -770,11 +780,11 @@ export default {
 
       return t
     },
-    add(item) {
+    add(item, targetIndex, forceFallback) {
       if (item.name) {
         let t = item
         if (!this.disableFallback)
-          t = this.fallbackItem(item)
+          t = this.fallbackItem(item, forceFallback)
 
         let shouldRender = false
         const isNotEditingFiles = !t.handleFiles
@@ -796,7 +806,7 @@ export default {
           created: mom().format('Y-M-D HH:mm ss'),
         }
 
-        const index = this.getListRendererPosition()
+        const index = targetIndex || this.getListRendererPosition()
 
         if (shouldRender) {
           this.lazyItems.splice(index, 0, t)
@@ -890,8 +900,8 @@ export default {
       selectedType: state => state.selectedType,
       isOnShift: state => state.isOnShift,
       pressingKey: state => state.pressingKey,
-      mainSelectionIndex: state => state.mainSelectionIndex,
       mainSelection: state => state.mainSelection,
+      toggleClipboardPaste: state => state.toggleClipboardPaste,
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
@@ -923,7 +933,7 @@ export default {
       return this.isRoot & this.showSomedayButton && this.getItems.filter(el => !el.isEdit).length > 0
     },
     showMoreItemsMessage() {
-      return `'Show ${this.nonEditLazyTasks.length - 3} more items...`
+      return `Show ${this.nonEditLazyTasks.length - 3} more items...`
     },
     showMoreItemsButton() {
       return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditLazyTasks.length > 3
@@ -989,6 +999,13 @@ export default {
       const removedEls = this.selectedElements.filter(el => el && !ids.find(id => id === el.dataset.id))
       for (const el of removedEls)
         this.deSelectItem(el)
+    },
+    toggleClipboardPaste() {
+      const task = this.$store.state.clipboardTask
+      if (task && this.getMainSelectionIndex > -1) {
+        this.$store.commit('addTaskToClipboard', null)
+        this.add(task, this.getMainSelectionIndex + 1, true)
+      }
     },
     items(newArr) {
       if (this.waitingUpdateTimeout) {

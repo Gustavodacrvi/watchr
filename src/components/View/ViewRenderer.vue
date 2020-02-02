@@ -324,6 +324,7 @@ export default {
             break
           }
         }
+        
         if (this.isOnControl) {
           switch (key) {
             case "a": {
@@ -332,6 +333,19 @@ export default {
               setTimeout(() => {
                 this.selectEverythingToggle = false
               })
+              break
+            }
+            case 'c': {
+              if (fallbackItems && fallbackItems.length === 1 && this.shortcutsType === 'Task') {
+                this.$store.commit('addTaskToClipboard', this.getTasksById(fallbackItems)[0])
+              }
+              break
+            }
+            case 'v': {
+              if (fallbackItems && fallbackItems.length === 1 && this.shortcutsType === 'Task') {
+                this.$store.commit('pasteTask')
+              }
+              break
             }
           }
         }
@@ -339,9 +353,7 @@ export default {
         utils.saveByShortcut(this, false, key, p, (type, item) => {
           const dispatch = this.$store.dispatch
   
-          const isTask = this.shortcutsType === 'Task'
-
-          if (isTask) {
+          if (this.shortcutsType === 'Task') {
   
             if (fallbackItems)
               switch (type) {
