@@ -26,14 +26,11 @@
     :tasksOrder='tasksOrder'
     :onSortableAdd='onSortableAdd'
     :viewNameValue='viewNameValue'
-    :deadline='deadline'
+    :headerInfo='headerInfo'
     :saveHeaderContent='saveHeaderContent'
     :mainFallbackItem='mainFallbackItem'
     :showHeading='showHeading'
-    :headerTags='headerTags'
-    :headerCalendar='headerCalendar'
     :itemCompletionCompareDate='itemCompletionCompareDate'
-    :files='files'
     :headingsPagination='headingsPagination'
     :configFilterOptions='configFilterOptions'
     :smartComponent='smartComponent'
@@ -45,13 +42,9 @@
     :saveHeaderName='saveHeaderName'
 
     @save-schedule='saveSchedule'
-    @save-notes='saveNotes'
     @add-task='addTask'
     @add-heading='addHeading'
     @update-ids='updateIds'
-    @remove-defer-date='removeDeferDate'
-    @remove-deadline='removeDeadline'
-    @remove-repeat='removeRepeat'
     @sidebar='sidebar'
     
     @slide='slide'
@@ -150,6 +143,7 @@ export default {
       filterTasksByCompletionDate: 'task/filterTasksByCompletionDate',
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
+      getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
       getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),

@@ -5,6 +5,8 @@ import { pipeBooleanFilters, memoize } from '@/utils/memo'
 import utils from '@/utils/'
 import mom from 'moment'
 
+const TOD_DATE = mom().format('Y-M-D')
+
 export default {
   computed: {
     addTask() {
@@ -242,8 +244,34 @@ export default {
         return this.getTagsById(list.tags)
       return []
     },
-    headerTags() {
-      return this.listgetListTags.map(el => el.name)
+    headerInfo() {
+      //getListDeadlineDaysLeftStr
+      const list = this.viewList
+      
+      let deadlineStr = list.deadline ? utils.getHumanReadableDate(list.deadline) : null
+      if (deadlineStr === 'Today')
+        deadlineStr = null
+
+      const save = this.listsaveList
+      
+      if (list)
+        return [
+          {
+            icon: 'deadline',
+            content: deadlineStr,
+            title: 'Add deadline',
+            right: list.deadline ? this.getListDeadlineDaysLeftStr(list.deadline, TOD_DATE) : null,
+            options: {
+              comp: 'CalendarPicker',
+              content: {
+                onlyDates: true,
+                noTime: true,
+                allowNull: true,
+                callback: ({specific}) => save({deadline: specific})
+              },
+            },
+          },
+        ]
     },
     saveHeaderContent() {
       const save = obj => {
@@ -257,16 +285,6 @@ export default {
         if (obj.deadline !== undefined)
           save(obj)
       }
-    },
-    deadline() {
-      const list = this.viewList
-      return list ? list.deadline : null
-    },
-    headerCalendar() {
-      const list = this.viewList
-      if (list)
-        return list.calendar
-      return null
     },
     headerOptions() {
       const list = this.viewList

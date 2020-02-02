@@ -24,7 +24,6 @@
         :viewName="viewName"
         :options="getHeaderOptions"
         :optionsHandle='headerHandle'
-        :headerTags="headerTags"
 
         @tag='selectTag'
         @priority='selectPriority'
@@ -137,7 +136,7 @@ export default {
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
-  'headerOptions', 'deadline', 'headerTags', 'headerCalendar', 'files',
+  'headerOptions', 'headerInfo',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'getCalendarOrderDate',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
