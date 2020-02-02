@@ -1,30 +1,34 @@
 <template>
-  <div class="Notes" :class="{hasNotes: notes}">
-    <span v-if="isDesktop && notes && editingNote" class="msg">Shift + Enter to save</span>
-    <p v-if="notes && !editingNote" class="saved-notes" @click="editingNote = true" :class="platform" v-html='parsedNotes'></p>
-    <textarea v-show="notes && editingNote" @click.stop
-    :value='note'
-    @input='v => note = v.target.value'
-    ref="notes"
-    class="notes"
-    @keyup="keyup"
-    @keydown="noteKeydown"
-  ></textarea>
-  <div v-if="!isDesktop && notes && editingNote">
-    <AuthButton
-      type='card'
-      value='Save notes'
-      @click="saveNotes"
-    />
-  </div>
-</div>
+  <transition
+    appear
+    @enter='enter'
+    @leave='leave'
+  >
+    <div v-show="notes !== undefined" class="Notes" ref='root'>
+      <textarea class="text" ref='text'
+        v-model="name"
+        placeholder="Notes..."
+        rows="1"
+
+        @focus="focus"
+        @blur="blur"
+        @keydown="keydown"
+      />
+      <span v-if="isDesktop && editing" class="save-msg">Press Shift + Enter to save</span>
+      <AuthButton v-else-if="editing"
+        type='card'
+        value='Save notes'
+        @click="save"
+      />
+    </div>
+  </transition>
 </template>
 
 <script>
 
 import AuthButton from '@/components/Auth/Button.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils'
 
@@ -35,75 +39,79 @@ export default {
   props: ['notes'],
   data() {
     return {
-      editingNote: false,
-      note: this.notes,
-      shift: false,
+      name: this.notes,
+      editing: false,
     }
   },
   mounted() {
-    this.fixHeight()
-    window.addEventListener('click', this.windowClick)
-  },
-  beforeDestroy() {
-    window.removeEventListener('click', this.windowClick)
+    setTimeout(() => {
+      this.fixHeight()
+    })
   },
   methods: {
-    windowClick(evt) {
-      let found = false
-      for (const node of evt.path)
-        if (node === this.$el)
-          found = true
-      if (!found) this.editingNote = false
+    focus() {
+      this.editing = true
     },
-    keyup({key}) {
-      if (key === 'Shift') this.shift = false
+    blur() {
+      this.editing = false
     },
-    focusOnNotes() {
-      setTimeout(() => {
-        const el = this.$refs.notes
-        if (el) el.focus()
-      }, 100)
+    keydown(evt) {
+      const {key} = evt
+      if (this.isOnShift && key === "Enter") {
+        evt.preventDefault()
+        this.save()
+      }
+    },
+    save() {
+      this.$refs.text.blur()
+      this.editing = false
+      this.$emit('save', this.name)
     },
     fixHeight() {
+      const txt = this.$refs.text
+
+      txt.style.height = ''
+      txt.style.height = txt.scrollHeight + 'px'
+
+      this.$refs.root.style = txt.scrollHeight + 'px'
+    },
+    enter(el, done) {
+
+      const s = el.style
+
+      const height = el.scrollHeight + 'px'
+      s.transitionDuration = 0
+      s.height = 'auto'
+      s.opacity = 0
+
       requestAnimationFrame(() => {
-        const el = this.$refs.notes
-        if (el) {
-          el.style.height = '5px'
-          el.style.height = (el.scrollHeight) + 'px'
-        }
+        s.transitionDuration = '.25s'
+        s.height = height
+        s.opacity = 1
+
+        setTimeout(done, 255)
+        
       })
+
     },
-    saveNotes() {
-      this.$emit('save-notes', this.note.trim())
-      this.editingNote = false
-    },
-    noteKeydown(evt) {
-      this.fixHeight()
-      const {key} = evt
-      if (key === 'Shift') this.shift = true
-      else if (key === 'Enter' && this.shift) this.saveNotes()
-    },
-    hide() {
-      this.editing = false
-      this.editingNote = false
+    leave(el, done) {
+      const s = el.style
+
+      s.transitionDuration = '.25s'
+      s.height = 0
+      s.opacity = 0
+
+      setTimeout(done, 255)
     },
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop']),
-    parsedNotes() {
-      return utils.parseHTMLStr(this.notes)
-    },
+    ...mapState(['isOnShift', 'isDesktop'])
   },
   watch: {
-    editingNote() {
+    name() {
       this.fixHeight()
-      if (this.editingNote)
-        this.focusOnNotes()
     },
-    notes() {
-      this.note = this.notes
-    },
-  }
+  },
 }
 
 </script>
@@ -114,31 +122,21 @@ export default {
   position: relative;
 }
 
-.hasNotes {
-  margin: 16px 0 !important;
-}
-
-.msg {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  opacity: .4;
-  font-size: .7em;
-}
-
-.saved-notes {
-  margin: 0;
+.text {
   white-space: pre-line;
+  resize: none;
+  width: 100%;
+  padding: 0;
+  border: 0 none white;
+  outline: none;
 }
 
-.notes {
-  background-color: var(--back-color);
-  border: none;
-  font-size: 1em;
-  width: 100%;
-  outline: none;
-  resize: none;
-  overflow: hidden;
+.save-msg {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  font-size: .8em;
+  color: var(--fade);
 }
 
 </style>

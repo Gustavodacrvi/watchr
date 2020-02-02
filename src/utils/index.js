@@ -9,8 +9,6 @@ import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 let contextMenuRunned = false
 
-import { mergeWith, isEqual } from 'lodash'
-
 export default {
   calendarObjNaturalCalendarInput(str, disablePmFormat) {
     const tod = mom()

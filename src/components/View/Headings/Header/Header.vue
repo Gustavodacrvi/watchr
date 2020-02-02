@@ -9,7 +9,6 @@
       :viewName='viewName'
       :extraIcons='extraIcons'
       :options='options'
-      :notes='notes'
       :icon='icon'
       :optionsHandle='optionsHandle'
       :viewNameValue='viewNameValue'
@@ -35,13 +34,11 @@
       :inclusiveTags='inclusiveTags'
       :exclusiveTags='exclusiveTags'
     />
-    <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>
   </div>
 </template>
 
 <script>
 
-import NotesApp from './../Notes.vue'
 import HeaderFiles from './HeaderFiles.vue'
 import Info from './Info.vue'
 import HeaderBar from './Bar.vue'
@@ -59,7 +56,6 @@ export default {
     FilterTags,
     HeaderBar,
     HeaderFiles,
-    NotesApp,
     Info,
   },
   methods: {

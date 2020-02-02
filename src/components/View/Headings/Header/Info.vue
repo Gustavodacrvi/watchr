@@ -18,7 +18,7 @@
       @enter='tagsEnter'
       @leave='tagsLeave'
     >
-      <div v-if="headerInfo && headerInfo.tags && headerInfo.tags.names" key="tag"
+      <div v-if="headerInfo && headerInfo.tags && headerInfo.tags.names && headerInfo.tags.names.length > 0" key="tag"
         class="tags-wrapper"
       >
         <Tag v-for="n in headerInfo.tags.names" :key="n"
@@ -29,19 +29,24 @@
         />
       </div>
     </transition>
+    <Notes v-if="headerInfo && headerInfo.notes && headerInfo.notes.name !== undefined"
+      :notes='headerInfo.notes.name'
+      @save='headerInfo.notes.save'
+    />
   </div>
 </template>
 
 <script>
 
-// calendar, files, tags
+// files
 
 import HeaderInfo from './../HeaderInfo.vue'
 import Tag from '../../Tag.vue'
+import Notes from '../Notes.vue'
 
 export default {
   components: {
-    HeaderInfo, Tag,
+    HeaderInfo, Tag, Notes,
   },
   props: ['headerInfo'],
   methods: {

@@ -264,6 +264,10 @@ export default {
       
       if (list)
         return {
+          notes: {
+            name: list.notes || null,
+            save: this.listsaveNotes,
+          },
           tags: {
             names: this.listgetListTags.map(el => el.name),
             remove: name => dispatch('list/removeListTag', {
