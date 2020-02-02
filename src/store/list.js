@@ -242,6 +242,22 @@ export default {
           return JSON.stringify(args[0])
         },
       },
+      isLaterList: {
+        getter(c, list) {
+          return list.calendar && list.calendar.type === 'specific' && mom(list.calendar.specific, 'Y-M-D').isAfter(mom(TOD_DATE, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
+      getLaterLists: {
+        react: [
+          'calendar',
+        ],
+        getter({getters}) {
+          return getters.lists.filter(getters.isLaterList)
+        },
+      },
       getBeginsTodayLists: {
         react: [
           'completed',

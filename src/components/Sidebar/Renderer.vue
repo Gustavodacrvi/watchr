@@ -214,6 +214,7 @@ export default {
       return this.mapString(el)
     },
     getProgress(el) {
+      if (el.stopProgress) return undefined
       if (!this.mapProgress) return undefined
       return this.mapProgress(el)
     },
@@ -249,8 +250,9 @@ export default {
       })
     },
     getIcon(el) {
+      if (el.icon)
+        return el.icon
       if (this.icon) return this.icon
-      return el.icon
     },
     getIconColor(el) {
       if (this.iconColor) return this.iconColor
