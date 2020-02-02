@@ -37,6 +37,7 @@
       :defaultFiles='headerInfo.files.names'
       :storageFolder='headerInfo.files.storageFolder'
       :id='headerInfo.files.id'
+      @save='headerInfo.files.save'
     />
   </div>
 </template>
@@ -70,7 +71,7 @@ export default {
 
         s.height = '35px'
         s.opacity = 1
-        s.margin = '6px 0'
+        s.margin = '8px 0'
 
         setTimeout(done, 255)
       })
@@ -102,7 +103,7 @@ export default {
         s.transitionDuration = '.25s'
 
         s.height = '22px'
-        s.margin = '6px 0'
+        s.margin = '8px 0'
         s.opacity = 1
 
         setTimeout(done, 255)

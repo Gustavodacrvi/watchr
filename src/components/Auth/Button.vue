@@ -1,23 +1,61 @@
 <template>
-  <button class="Button cbd" :class="getType" @click="$emit('click')">{{ value }}
-    <CircleBubble
-      innerColor='var(--light-gray)'
-      outerColor='var(--fade)'
-      opacity='0'
-    />
-  </button>  
+  <transition
+    appear
+    @enter='enter'
+    @leave='leave'
+  >
+    <button class="Button cbd" :class="getType" @click="$emit('click')">{{ value }}
+      <CircleBubble
+        innerColor='var(--light-gray)'
+        outerColor='var(--fade)'
+        opacity='0'
+      />
+    </button>  
+  </transition>
 </template>
 
 <script>
 
 export default {
   props: ['value', 'type'],
+  methods: {
+    enter(el, done) {
+      const s = el.style
+
+      const {height} = getComputedStyle(el)
+
+      s.transitionDuration = 0
+      s.height = 0
+      s.opacity = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+        s.height = height
+        s.opacity = 1
+
+        setTimeout(done, 205)
+      })
+    },
+    leave(el, done) {
+
+      const s = el.style
+
+      const {height, width} = getComputedStyle(el)
+
+      s.transitionDuration = '.2s'
+      s.height = 0
+      s.opacity = 0
+
+      setTimeout(done, 205)
+
+    },
+  },
   computed: {
     getType() {
       if (!this.type) return 'normal'
       return this.type
-    }
-  } 
+    },
+  },
 }
 
 </script>
@@ -88,11 +126,11 @@ export default {
 }
 
 .dark {
-  background-color: var(--back-color);
+  background-color: var(--sidebar-color);
 }
 
 .dark:hover {
-  background-color: var(--dark);
+  background-color: var(--light-gray);
 }
 
 .card {

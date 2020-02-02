@@ -257,6 +257,7 @@ export default {
             names: list.files || [],
             storageFolder: 'lists',
             id: list.id,
+            save: files => save({files}),
           },
           notes: {
             name: list.notes || null,

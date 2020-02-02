@@ -5,13 +5,36 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="File rb cursor" :class="status"
+    <div class="File rb" :class="status"
       @click.stop
+      @dblclick="$emit('view')"
+
+      @mouseenter="hover = true"
+      @mouseleave="hover = false"
     >
       <span class="icon-wrapper">
         <Icon icon='file' style="opacity: .6;"/>
       </span>
       <span class="name">{{ name }}</span>
+      <transition name="fade-t">
+        <div v-if="hover || !isDesktop" class="info">
+          <Icon
+            class="icon remove-highlight cursor primary-hover"
+            icon='import'
+            title='Download file'
+            :circle='true'
+            @click.native="$emit('download')"
+          />
+          <Icon
+            class="icon remove-highlight cursor primary-hover"
+            icon='trash'
+            color='var(--red)'
+            title='Delete file'
+            :circle='true'
+            @click.native="$emit('delete')"
+          />
+        </div>
+      </transition>
     </div>
   </transition>
 </template>
@@ -29,8 +52,10 @@ export default {
   components: {
     Icon,
   },
-  mounted() {
-    utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
+  data() {
+    return {
+      hover: false,
+    }
   },
   methods: {
     enter(el, done) {
@@ -44,7 +69,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
         s.opacity = 1
-        s.height = '25px'
+        s.height = '30px'
 
         setTimeout(done, 205);
         
@@ -63,30 +88,7 @@ export default {
     },
   },
   computed: {
-    options() {
-      const obj = []
-      if (!this.disableDelete) {
-        obj.push({
-          name: 'Delete file',
-          icon: 'trash',
-          important: true,
-          callback: () => {this.$emit('delete')}
-        })
-      }
-      if (this.status !== 'update') {
-        obj.unshift(        {
-            name: 'Download file',
-            icon: 'import',
-            callback: () => {this.$emit('download')}
-          })
-        obj.unshift({
-            name: 'View file',
-            icon: 'file',
-            callback: () => {this.$emit('view')}
-          })
-      }
-    return obj
-    },
+    ...mapGetters(['isDesktop']),
   },
 }
 
@@ -97,8 +99,9 @@ export default {
 .File {
   display: flex;
   align-items: center;
-  height: 25px;
+  height: 30px;
   transition-duration: .15s;
+  position: relative;
 }
 
 .File:hover {
@@ -122,6 +125,17 @@ export default {
 
 .remove {
   opacity: .2 !important;
+}
+
+.info {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.icon + .icon {
+  margin-left: 6px;
 }
 
 </style>

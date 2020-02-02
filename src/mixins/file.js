@@ -11,11 +11,12 @@ export default {
     return {
       addedFiles: [],
       files: [],
+      uploadProgress: null,
     }
   },
   mounted() {
     setTimeout(() => {
-      this.files = this.defaultFiles.slice() || []
+      this.files = (this.defaultFiles && this.defaultFiles.slice()) || []
     }, 100)
   },
   methods: {

@@ -275,7 +275,6 @@ export default {
       toReplace: null,
       readyToRemove: false,
       savingTask: false,
-      uploadProgress: null,
       optionsType: '',
       options: [],
 
