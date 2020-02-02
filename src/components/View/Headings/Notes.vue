@@ -15,7 +15,7 @@
         @keydown="keydown"
       />
       <span v-if="isDesktop && editing" class="save-msg">Press Shift + Enter to save</span>
-      <AuthButton v-else-if="editing"
+      <AuthButton v-else-if="!isDesktop && editing"
         type='card'
         value='Save notes'
         @click="save"
@@ -105,7 +105,8 @@ export default {
     },
   },
   computed: {
-    ...mapState(['isOnShift', 'isDesktop'])
+    ...mapState(['isOnShift']),
+    ...mapGetters(['isDesktop']),
   },
   watch: {
     name() {
@@ -120,9 +121,11 @@ export default {
 
 .Notes {
   position: relative;
+  min-height: 25px;
 }
 
 .text {
+  min-height: 25px;
   white-space: pre-line;
   resize: none;
   width: 100%;

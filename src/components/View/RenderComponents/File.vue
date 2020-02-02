@@ -1,11 +1,19 @@
 
 <template>
-  <div class="File rb cursor" :class="status" @click.stop>
-    <span class="icon-wrapper">
-      <Icon icon='file' style="opacity: .6;" width="12px"/>
-    </span>
-    <span class="name">{{ name }}</span>
-  </div>
+  <transition
+    appear
+    @enter='enter'
+    @leave='leave'
+  >
+    <div class="File rb cursor" :class="status"
+      @click.stop
+    >
+      <span class="icon-wrapper">
+        <Icon icon='file' style="opacity: .6;"/>
+      </span>
+      <span class="name">{{ name }}</span>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -23,6 +31,36 @@ export default {
   },
   mounted() {
     utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
+  },
+  methods: {
+    enter(el, done) {
+
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.opacity = 0
+      s.height = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+        s.opacity = 1
+        s.height = '25px'
+
+        setTimeout(done, 205);
+        
+      })
+
+    },
+    leave(el, done) {
+
+      const s = el.style
+
+      s.transitionDuration = '.2s'
+      s.opacity = 0
+      s.height = 0
+
+      setTimeout(done, 205)
+    },
   },
   computed: {
     options() {
@@ -59,7 +97,7 @@ export default {
 .File {
   display: flex;
   align-items: center;
-  min-height: 25px;
+  height: 25px;
   transition-duration: .15s;
 }
 
@@ -83,7 +121,7 @@ export default {
 }
 
 .remove {
-  opacity: .2;
+  opacity: .2 !important;
 }
 
 </style>

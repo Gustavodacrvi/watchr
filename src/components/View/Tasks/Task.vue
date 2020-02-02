@@ -104,7 +104,7 @@
                       :progress='checklistPieProgress'
                     />
                     <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
-                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="12px"/>
+                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="14px"/>
                     <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
                   </span>
                 </div>
@@ -128,6 +128,7 @@
               notesPlaceholder="Notes..."
               btnText="Save task"
               :defaultTask='item'
+              :defaultFiles='item.files || []'
               :taskHeight='itemHeight'
               :showCancel='true'
               :editAction='editAction'

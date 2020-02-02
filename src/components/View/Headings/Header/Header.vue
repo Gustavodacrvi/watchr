@@ -39,7 +39,6 @@
 
 <script>
 
-import HeaderFiles from './HeaderFiles.vue'
 import Info from './Info.vue'
 import HeaderBar from './Bar.vue'
 import FilterTags from './FilterTags.vue'
@@ -55,7 +54,6 @@ export default {
   components: {
     FilterTags,
     HeaderBar,
-    HeaderFiles,
     Info,
   },
   methods: {

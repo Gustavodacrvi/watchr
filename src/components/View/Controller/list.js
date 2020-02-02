@@ -215,17 +215,6 @@ export default {
       }
       return null
     },
-    files() {
-      const list = this.viewList
-      if (list) {
-        return {
-          id: list.id,
-          storageFolder: 'lists',
-          files: list.files,
-        }
-      }
-      return null
-    },
     tasksOrder() {
       const list = this.viewList
       if (list && list.tasks)
@@ -264,6 +253,11 @@ export default {
       
       if (list)
         return {
+          files: {
+            names: list.files || [],
+            storageFolder: 'lists',
+            id: list.id,
+          },
           notes: {
             name: list.notes || null,
             save: this.listsaveNotes,

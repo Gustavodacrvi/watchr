@@ -33,6 +33,11 @@
       :notes='headerInfo.notes.name'
       @save='headerInfo.notes.save'
     />
+    <FileHandler v-if='headerInfo && headerInfo.files && headerInfo.files.names'
+      :defaultFiles='headerInfo.files.names'
+      :storageFolder='headerInfo.files.storageFolder'
+      :id='headerInfo.files.id'
+    />
   </div>
 </template>
 
@@ -40,6 +45,7 @@
 
 // files
 
+import FileHandler from './../../RenderComponents/FileHandler.vue'
 import HeaderInfo from './../HeaderInfo.vue'
 import Tag from '../../Tag.vue'
 import Notes from '../Notes.vue'
@@ -47,6 +53,7 @@ import Notes from '../Notes.vue'
 export default {
   components: {
     HeaderInfo, Tag, Notes,
+    FileHandler,
   },
   props: ['headerInfo'],
   methods: {

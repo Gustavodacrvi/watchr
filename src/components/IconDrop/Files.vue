@@ -44,7 +44,7 @@
 
 <script>
 
-import FileApp from '@/components/View/Tasks/File.vue'
+import FileApp from '@/components/View/RenderComponents/File.vue'
 import ButtonApp from '@/components/Auth/Button.vue'
 
 import FileMixin from '@/mixins/file.js'
