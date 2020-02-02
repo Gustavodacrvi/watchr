@@ -174,11 +174,16 @@ export default {
     },
 
     enter(el, done) {
+      if (!this.isDesktop)
+        done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
 
+      const isFirst = this.headings[0].id === el.dataset.id
+
       s.transitionDuration = 0
       w.transitionDuration = 0
+      w.marginTop = 0
       w.opacity = 0
       s.height = 0
       s.margin = 0
@@ -189,17 +194,20 @@ export default {
         s.transitionDuration = '.2s'
         w.transitionDuration = '.2s'
 
-        s.marginTop = '14px'
         s.marginBottom = 0
+        if (!isFirst)
+          w.marginTop = '50px'
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
         s.padding = '0 6px'
         s.overflow = 'hidden'
-        setTimeout(done, 400)
+        setTimeout(done, 205)
       })
     },
     leave(el, done) {
+      if (this.isChangingViewName || !this.isDesktop)
+        done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
       let c = el.getElementsByClassName('cont')[0]
@@ -222,16 +230,13 @@ export default {
       s.padding = 0
       s.borderBoddom = '0px solid var(--back-color)'
 
-      setTimeout(done, 400)
+      setTimeout(done, 205)
     },
   },
   computed: {
     ...mapGetters(['isDesktop']),
     emptyHeadings() {
       return []
-    },
-    runHeadingsTransition() {
-      return this.isDesktop || this.isChangingViewName
     },
     getLazyHeadingsIds() {
       return this.headings.map(el => el.id)

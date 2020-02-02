@@ -92,7 +92,8 @@ export default {
           if (name === 'folders-root') return false
           if (name === 'sidebar-renderer') return true
           if (name === 'item-renderer') return 'clone'
-        }, put: (l,j,item) => {
+        },
+        put: (l,j,item) => {
           const type = item.dataset.type
 
           if (type === 'Task') return true

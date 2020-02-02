@@ -6,7 +6,7 @@ import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 export default {
-  props: ['multiSelectOptions', 'comp', 'isSelecting', 'viewName', 'viewNameValue', 'waitForAnotherItemComplete'],
+  props: ['multiSelectOptions', 'comp', 'isSelecting', 'viewName', 'viewNameValue', 'waitForAnotherItemComplete', 'movingItem'],
   data() {
     return {
       startX: 0,
@@ -340,7 +340,7 @@ export default {
       return this.item.id === this.mainSelection
     },
     isItemSelected() {
-      return this.selectedItems.includes(this.item.id)
+      return !this.movingItem && this.selectedItems.includes(this.item.id)
     },
   },
   watch: {

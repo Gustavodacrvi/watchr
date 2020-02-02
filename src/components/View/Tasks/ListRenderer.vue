@@ -7,7 +7,7 @@
     </transition>
     <div
       class="front item-renderer-root"
-      :class="{dontHaveItems: lazyItems.length === 0}"
+      :class="{dontHaveItems: lazyItems.length === 0, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       :style="inflate"
       ref='item-renderer-root'
 
@@ -24,6 +24,7 @@
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
           :comp='comp'
+          :movingItem='movingItem'
           :waitForAnotherItemComplete='waitForAnotherTaskCompleteAnimation'
 
           @de-select='deSelectItem'
@@ -164,6 +165,7 @@ export default {
       hasEdit: null,
       edit: null,
       focusToggle: false,
+      movingItem: false,
 
       lastSelectedId: null,
       lastHeadingName: null,
@@ -421,7 +423,8 @@ export default {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
-            if (e.el.dataset.name === 'sidebar-renderer') return 'clone'
+            if (e.el.dataset.name === 'sidebar-renderer') return true
+            if (e.el.dataset.name === 'folders-root') return true
             if (d.type === 'Task' && this.comp === "Task") return true
             if (d.type === 'List' && this.comp === 'List') return true
             return false
@@ -607,7 +610,7 @@ export default {
         onEnd: evt => {
           if (!cancel) {
             const handle = obj => this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', obj)
-            
+
             if (moveIsSmart)
               handle({
                 type: moveId,
@@ -621,16 +624,20 @@ export default {
               })
           }
           
-          if (this.isDesktop && this.comp === 'Task')
+          if (this.isDesktop && this.comp === 'Task') {
+            this.movingItem = false
             this.$store.commit('movingTask', false)
+          }
         },
         onStart: evt => {
           cancel = true
           lastToElement = null
           moveIsSmart = null
 
-          if (this.isDesktop && this.comp === 'Task')
+          if (this.isDesktop && this.comp === 'Task') {
+            this.movingItem = true
             this.$store.commit('movingTask', true)
+          }
           
           if (!this.isDesktop)
             window.navigator.vibrate(100)
@@ -695,7 +702,7 @@ export default {
         const length = headinsgWithItems.length
         let timeout = this.isDesktop ? 155 : 230
 
-        if (length < 5 || this.viewName === 'Upcoming') timeout = 200
+        if (length < 5 || this.viewName === 'Upcoming') timeout = 175
         
         const add = (head) => {
           this.lazyHeadings.push(head)
@@ -1136,10 +1143,15 @@ export default {
   z-index: 2;
   overflow: visible;
   height: 100%;
+  transition-duration: .2s;
 }
 
 .dontHaveItems {
   min-height: 15px;
+}
+
+.isRootAndHaveItems {
+  margin: 50px 0;
 }
 
 </style>
