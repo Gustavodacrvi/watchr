@@ -1185,9 +1185,20 @@ export default {
       } else {
         return [
           {
-            name: 'No date',
-            icon: 'bloqued',
-            callback: () => this.saveDates(null, ids)
+            name: 'Move to list',
+            icon: 'tasks',
+            callback: () => {return {
+              allowSearch: true,
+              links: this.getIconDropOptionsLists,
+            }}
+          },
+          {
+            name: 'Move to folder',
+            icon: 'folder',
+            callback: () => {return {
+              allowSearch: true,
+              links: this.getIconDropOptionsFolders,
+            }}
           },
           {
             type: 'optionsList',
@@ -1223,6 +1234,11 @@ export default {
                   comp: "CalendarPicker",
                   content: {callback: date => this.saveDates(date, ids)}}},
               },
+              {
+                id: 'No date',
+                icon: 'bloqued',
+                callback: () => this.saveDates(null, ids)
+              },
             ]
           },
           {
@@ -1256,54 +1272,10 @@ export default {
             ],
           },
           {
-            name: 'More options',
-            icon: 'settings-h',
-            callback: () => [
-              {
-                name: 'Repeat task',
-                icon: 'repeat',
-                callback: () => [
-                  {
-                    name: 'Repeat weekly',
-                    icon: 'repeat',
-                    callback: () => ({
-                      comp: 'WeeklyPicker',
-                      content: {callback: date => this.saveDates(date, ids)},
-                    }),
-                  },
-                  {
-                    name: 'Repeat periodically',
-                    icon: 'repeat',
-                    callback: () => ({
-                      comp: 'PeriodicPicker',
-                      content: {callback: date => this.saveDates(date, ids)},
-                    }),
-                  },
-                ],
-              },
-              {
-                name: 'Move to list',
-                icon: 'tasks',
-                callback: () => {return {
-                  allowSearch: true,
-                  links: this.getIconDropOptionsLists,
-                }}
-              },
-              {
-                name: 'Move to folder',
-                icon: 'folder',
-                callback: () => {return {
-                  allowSearch: true,
-                  links: this.getIconDropOptionsFolders,
-                }}
-              },
-              {
-                name: 'Delete task',
-                icon: 'trash',
-                important: true,
-                callback: () => dispatch('task/deleteTasks', ids)
-              }
-            ]
+            name: 'Delete task',
+            icon: 'trash',
+            important: true,
+            callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
       }

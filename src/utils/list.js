@@ -160,6 +160,7 @@ export default {
               content: {repeat: true, disableDaily: true, callback: saveCalendarDate}}},
           },
           {
+            id: 'asdf',
             icon: 'bloqued',
             callback: () => saveCalendarDate(null),
           }
