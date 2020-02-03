@@ -737,7 +737,7 @@ export default {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, rootState, taskRef()).then(() => {
+      }, rootState).then(() => {
         b.commit()
       })
     },
@@ -756,7 +756,7 @@ export default {
             created: mom().format('Y-M-D HH:mm ss'),
             userId: uid(),
             id: ref.id,
-          }, rootState, ref, writes)
+          }, rootState, ref.id, writes)
         )
       }
 
@@ -767,7 +767,7 @@ export default {
     },
     saveTask({rootState}, obj) {
       const b = fire.batch()
-      setTask(b, obj, rootState, taskRef(obj.id)).then(() => {
+      setTask(b, obj, rootState, obj.id).then(() => {
         b.commit()
       })
     },
@@ -831,7 +831,7 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }, rootState, taskRef(t.id), writes)
+            }, rootState, t.id, writes)
             subIds.push(t.id)
           }
 
@@ -846,11 +846,11 @@ export default {
           tasks: subIds,
           headings: [],
           headingsOrder: [],
-        }, list, rootState, writes)
+        }, list.id, rootState, writes)
         
       })
 
-      setFolder(b, {order}, folderRef(folderId), rootState, writes)
+      setFolder(b, {order}, folderId, rootState, writes)
 
       cacheBatchedItems(b, writes)
       
@@ -890,7 +890,7 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }, rootState, taskRef(t.id), writes)
+            }, rootState, t.id, writes)
             ids.push(t.id)
           }
   
@@ -908,7 +908,7 @@ export default {
           tasks: ids,
           headings: [],
           headingsOrder: [],
-        }, list, rootState, writes)
+        }, list.id, rootState, writes)
 
         cacheBatchedItems(b, writes)
   
@@ -948,7 +948,7 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, rootState, taskRef(t.id), writes)
+        }, rootState, t.id, writes)
         commit('change', [t.id], {root: true})
       }
 
@@ -975,7 +975,7 @@ export default {
           checkDate: null,
           fullCheckDate: null,
           calendar: c,
-        }, rootState, taskRef(t.id), writes)
+        }, rootState, t.id, writes)
         commit('change', [t.id], {root: true})
       }
       cacheBatchedItems(b, writes)
@@ -1063,7 +1063,7 @@ export default {
         ...task, files: [],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
-      }, rootState, taskRef())
+      }, rootState)
 
       b.commit()
     },

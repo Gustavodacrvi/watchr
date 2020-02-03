@@ -3,6 +3,7 @@
     <TaskEdit
       placeholder="Task name..."
       notesPlaceholder="Notes..."
+      :quickAdd='true'
       @save='add'
       @cancel="$emit('close')"
     />

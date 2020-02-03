@@ -50,7 +50,6 @@ export default {
             contentType: f.type,
           })
           const url = await sto.ref(str).getDownloadURL()
-          console.log(url)
           await this.$store.dispatch('updateProfilePic', url)
           this.$store.commit('pushToast', {
             name: 'Successfully updated profile photo.',

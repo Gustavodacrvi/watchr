@@ -81,7 +81,7 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         ...fold,
         defaultShowing: true,
-      }, folderRef(), rootState)
+      }, undefined, rootState)
 
       b.commit()
     },
@@ -99,14 +99,14 @@ export default {
       
       setFolder(b, {
         order: ids,
-      }, folderRef(id), rootState)
+      }, id, rootState)
 
       b.commit()
     },
     saveFolder({rootState}, fold) {
       const b = fire.batch()
       
-      setFolder(b, fold, folderRef(fold.id), rootState)
+      setFolder(b, fold, fold.id, rootState)
 
       b.commit()
     },
@@ -116,7 +116,7 @@ export default {
       const writes = []
 
       setInfo(b, {lists: ids}, writes)
-      setList(b, {folder: null}, listRef(id), rootState, writes)
+      setList(b, {folder: null}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -127,8 +127,8 @@ export default {
 
       const writes = []
 
-      setFolder(b, {order: ids}, folderRef(folder), rootState, writes)
-      setList(b, {folder}, listRef(id), rootState, writes)
+      setFolder(b, {order: ids}, folder, rootState, writes)
+      setList(b, {folder}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -152,7 +152,7 @@ export default {
 
       setFolder(b, {
         smartViewsOrders: views,
-      }, folderRef(folderId), rootState, writes)
+      }, folderId, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -185,9 +185,9 @@ export default {
       await setTask(b, {
         userId: uid(),
         ...task,
-      }, rootState, newTaskRef, writes)
+      }, rootState, newTaskRef.id, writes)
       ids.splice(index, 0, newTaskRef.id)
-      setFolder(b, {tasks: ids}, folderRef(folderId), rootState, writes)
+      setFolder(b, {tasks: ids}, folderId, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -223,7 +223,7 @@ export default {
 
       const batch = fire.batch()
 
-      setFolder(batch, {smartViewsOrders: views}, folderRef(folderId), rootState)
+      setFolder(batch, {smartViewsOrders: views}, folderId, rootState)
 
       batch.commit()
     },

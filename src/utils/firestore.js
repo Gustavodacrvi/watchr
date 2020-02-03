@@ -23,8 +23,9 @@ export const tagColl = () => userRef().collection('tags')
 export const tagRef = id => id ? tagColl().doc(id) : tagColl().doc()
 export const filterColl = () => userRef().collection('filters')
 export const filterRef = id => id ? filterColl().doc(id) : filterColl().doc()
-export const setTask = (batch, task, rootState, ref, writes) => {
+export const setTask = (batch, task, rootState, id, writes) => {
   return new Promise((solve, reject) => {
+    const ref = taskRef(id)
     const save = () => {
       const obj = {
         ...task, handleFiles: null,
@@ -83,7 +84,7 @@ export const batchSetTasks = (batch, task, ids, rootState, rootWrites) => {
     const writes = rootWrites || []
     ids.forEach(id => {
       promises.push(
-        setTask(batch, task, rootState, taskRef(id), writes)
+        setTask(batch, task, rootState, id, writes)
       )
     })
     
@@ -98,7 +99,7 @@ export const batchSetLists = (batch, list, ids, rootState, rootWrites) => {
   
     const writes = rootWrites || []
     ids.forEach(id => {
-      setList(batch, list, listRef(id), rootState, writes)
+      setList(batch, list, id, rootState, writes)
     })
     
     if (!rootWrites)
@@ -107,7 +108,8 @@ export const batchSetLists = (batch, list, ids, rootState, rootWrites) => {
   })
 }
 
-export const setTag = (batch, tag, ref, rootState, writes) => {
+export const setTag = (batch, tag, id, rootState, writes) => {
+  const ref = tagRef(id)
   const obj = {
     ...tag, id: ref.id,
     userId: uid(),
@@ -137,7 +139,8 @@ export const setTag = (batch, tag, ref, rootState, writes) => {
   batch.set(ref, obj, {merge: true})
 }
 
-export const setFolder = (batch, folder, ref, rootState, writes) => {
+export const setFolder = (batch, folder, id, rootState, writes) => {
+  const ref = folderRef(id)
   const obj = {
     ...folder, id: ref.id,
     userId: uid(),
@@ -166,7 +169,8 @@ export const setFolder = (batch, folder, ref, rootState, writes) => {
     })
   batch.set(ref, obj, {merge: true})
 }
-export const setList = (batch, list, ref, rootState, writes) => {
+export const setList = (batch, list, id, rootState, writes) => {
+  const ref = listRef(id)
   const obj = {
     ...list, id: ref.id,
     userId: uid(),

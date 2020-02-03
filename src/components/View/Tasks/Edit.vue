@@ -241,7 +241,7 @@ import FileMixin from '@/mixins/file.js'
 
 export default {
   mixins: [FileMixin],
-  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction', 'fallbackItem'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'quickAdd', 'focusToggle', 'taskHeight', 'editAction', 'fallbackItem'],
   components: {
     FileDragDrop,
     DropInput: DropInputVue, FileApp,
@@ -461,7 +461,8 @@ export default {
           s.height = '35px'
         else
           s.height = height + 'px'
-        s.margin = '75px 0'
+        if (!this.quickAdd)
+          s.margin = '75px 0'
         setTimeout(() => {
           this.show = true
         }, 290)
