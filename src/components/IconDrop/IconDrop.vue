@@ -52,7 +52,7 @@ import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
 import TimePicker from './Calendar/TimePicker.vue'
 import Confirm from './Confirm.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center'],
@@ -179,6 +179,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['isDesktop']),
     getComp() {
       if (this.opt && this.opt.comp) return this.opt.comp
       return 'ListIcons'

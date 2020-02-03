@@ -74,8 +74,11 @@ const store = new Vuex.Store({
     },
     iconDrop: null,
     user: {
+      uid: null,
       displayName: null,
       email: null,
+      photoURL: null,
+      providerData: null,
     },
     userInfo: {
       pomo: null,
@@ -383,12 +386,25 @@ const store = new Vuex.Store({
       if (!getters.isDesktop && !persistOnTheSameView)
         router.go(-1)
     },
+    updateProfilePic(c, photoURL) {
+      return Promise.all([
+        auth.currentUser.updateProfile({
+          photoURL,
+        }),
+        userRef().set({
+          photoURL,
+        }, {merge: true})
+      ])
+    },
     deleteProfilePic() {
       const str = `images/${auth.currentUser.uid}.jpg`
-      sto.ref(str).delete().then(() => {
+      return sto.ref(str).delete().then(() => {
         auth.currentUser.updateProfile({
           photoURL: '',
-        }).then(() => location.reload())
+        })
+        userRef().set({
+          photoURL: null,
+        }, {merge: true})
       })
     },
     setInfo(c, obj) {
@@ -493,13 +509,6 @@ const store = new Vuex.Store({
 
       return b.commit()
     },
-    addRecentCollaborators({state}, user) {
-      const add = !state.userInfo.recentUsers || !state.userInfo.recentUsers[user.userId]
-      if (add)
-        fire.collection('users').doc(uid()).update({
-          recentUsers: {[user.userId]: user},
-        })
-    },
   }
 })
 
@@ -521,6 +530,8 @@ store.commit('saveUser', null)
 
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
+
+  console.log(user.photoURL)
 
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)

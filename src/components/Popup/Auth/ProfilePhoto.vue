@@ -3,6 +3,7 @@
     class="ProfilePhoto"
     :class='{doesntHavePhoto: !url}'
     :style="{backgroundImage: `url('${url}')`, width: getProfileWidth, height: getProfileWidth}"
+    @click.stop
   >
     <Icon v-if="!url"
       icon='user'
@@ -15,18 +16,79 @@
 <script>
 
 import Icon from "@/components/Icon.vue"
+
+import utils from '@/utils'
+
 import { mapState } from 'vuex'
 
+import firebase from 'firebase/app'
+import 'firebase/storage'
+
+const sto = firebase.storage()
+
 export default {
-  props: ['photoURL', 'size'],
+  props: ['photoURL', 'size', 'display'],
   components: {
     Icon,
+  },
+  mounted() {
+    this.bindContext()
+  },
+  methods: {
+    bindContext() {
+      utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
+    },
+    removePhoto() {
+      this.$store.dispatch('deleteProfilePic')
+    },
+    async changePhoto(files) {
+      const f = files[0]
+      if (f) {
+        const str = `images/${this.user.uid}`
+        try {
+          await sto.ref(str).put(f, {
+            contentType: f.type,
+          })
+          const url = await sto.ref(str).getDownloadURL()
+          console.log(url)
+          await this.$store.dispatch('updateProfilePic', url)
+          this.$store.commit('pushToast', {
+            name: 'Successfully updated profile photo.',
+            seconds: 3,
+            type: 'success',
+          })
+        } catch (err) {
+          sto.ref(str).delete()
+          this.$store.commit('pushToast', {
+            name: err.message,
+            seconds: 3,
+            type: 'error',
+          })
+        }
+      }
+    },
   },
   computed: {
     ...mapState(['user']),
     url() {
-      return null
-      return this.photoURL || this.user.photoURL
+      return this.photoURL || this.user.photoURL || this.getProviderPhotoURL
+    },
+    options() {
+      const opt = [
+        {
+          name: 'Change photo',
+          file: true,
+          accept: 'image/*',
+          handleFiles: this.changePhoto,
+        },
+      ]
+      if (this.url)
+        opt.push({
+          name: 'Remove photo',
+          callback: () => this.removePhoto()
+        })
+      if (!this.display)
+        return opt
     },
     getIconSize() {
       switch (this.size) {
@@ -39,6 +101,9 @@ export default {
         case 'normal': return '75px'
         default: return '75px'
       }
+    },
+    getProviderPhotoURL() {
+      return this.user && this.user.providerData && this.user.providerData.map(el => el.photoURL)[0]
     },
   },
 }
@@ -53,6 +118,8 @@ export default {
   justify-content: center;
   align-items: center;
   background-position: center;
+  background-size: cover;
+  cursor: pointer;
 }
 
 .doesntHavePhoto {
