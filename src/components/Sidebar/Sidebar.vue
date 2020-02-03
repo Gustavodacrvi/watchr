@@ -94,13 +94,19 @@
         <div class="footer" :class="[platform, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop">
+              <Icon v-for="i in getHidedSectionsIcons" :key='i.icon'
+                class="sect-icon cursor remove-highlight primary-hover"
+                :icon='i.icon'
+                :circle='true'
+                @click="i.callback"
+              />
               <transition name="icon-t">
                 <IconDrop v-if="showIconDropdown"
                   class="right passive"
                   handle='settings-h'
                   :circle='true'
                   handleColor='var(--fade)'
-                  :options="getOptions"
+                  :options="getSectionOptions"
                 />
               </transition>
             </div>
@@ -497,24 +503,15 @@ export default {
       if (!this.userInfo.hidedViews) return this.links
       return this.links.filter(link => !this.userInfo.hidedViews.includes(link.name))
     },
-    getOptions() {
-      const opt = this.getSectionOptions.slice()
-
-      if (this.hidedSections.length > 0) {
-        opt.push({type: 'hr', name: 'division'})
-        const sect = [...this.hidedSections.filter(el => el !== this.section && el !== 'Filters')]
-        if (this.isSingleSection && this.notHidedSections[0].name !== this.section)
-          sect.unshift(this.notHidedSections[0].name)
-        for (const s of sect) {
-          opt.push({
-            name: s,
-            icon: this.getIconByType(s),
-            callback: () => {this.section = s}
-          })
-        }
-      }
-
-      return opt.slice()
+    getHidedSectionsIcons() {
+      const sect = [...this.hidedSections.filter(el => el !== this.section && el !== 'Filters')]
+      if (this.isSingleSection && this.notHidedSections[0].name !== this.section)
+        sect.unshift(this.notHidedSections[0].name)
+      return sect.map(el => ({
+        name: el,
+        icon: this.getIconByType(el),
+        callback: () => {this.section = el}
+      }))
     },
     hidedSections() {
       if (this.userInfo && this.userInfo.hidedSections) return this.userInfo.hidedSections
@@ -810,6 +807,10 @@ export default {
 .showing .inner-footer {
   background-color: var(--sidebar-color);
   box-shadow: 0 -3px 4px var(--sidebar-color);
+}
+
+.sect-icon {
+  margin-right: 8px;
 }
 
 .mobile .showing .inner-footer {

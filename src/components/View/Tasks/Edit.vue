@@ -454,12 +454,14 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
+      s.margin = 0
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         if (height < 36)
           s.height = '35px'
         else
           s.height = height + 'px'
+        s.margin = '75px 0'
         setTimeout(() => {
           this.show = true
         }, 290)
@@ -492,6 +494,7 @@ export default {
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'
+        s.margin = 0
         s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       })
     },

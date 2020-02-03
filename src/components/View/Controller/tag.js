@@ -83,6 +83,14 @@ export default {
         return tag.tasks
       return []
     },
+    headerInfo() {
+      return {
+        notes: {
+          name: this.taggetViewNotes || null,
+          save: this.tagsaveNotes,
+        },
+      }
+    },
     headingsOptions() {
       return []
     },

@@ -1,7 +1,7 @@
 
 <template>
   <div class="Folder AppbarElement" :class="platform">
-    <div class="header rb cursor handle-folder AppbarElement-link DRAG-AND-DROP-EL"
+    <div class="header rb handle-folder AppbarElement-link DRAG-AND-DROP-EL"
       :class="{isActive}"
       @click="go"
       @mouseenter="headerHover = true"
@@ -22,15 +22,10 @@
         <span class="name" key="nam"><b>{{ name }}</b></span>
       </span>
       <Icon
-        class="arrow passive primary-hover"
+        class="arrow passive cursor primary-hover"
         icon='tiny-arrow'
         :class="{showCont}"
         @click.native.stop='toggle'
-      />
-      <CircleBubble
-        innerColor='var(--light-gray)'
-        outerColor='var(--fade)'
-        opacity='0'
       />
     </div>
     <div class="cont" :class="{showCont}">

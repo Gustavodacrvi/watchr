@@ -85,11 +85,13 @@ export default {
       s.transitionDuration = 0
       s.height = 'auto'
       s.opacity = 0
+      s.marginTop = 0
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         s.height = height
         s.opacity = 1
+        s.marginTop = this.heading ? 0 : '10px'
 
         setTimeout(done, 255)
         
@@ -102,6 +104,7 @@ export default {
       s.transitionDuration = '.25s'
       s.height = 0
       s.opacity = 0
+      s.marginTop = 0
 
       setTimeout(done, 255)
     },
@@ -111,6 +114,9 @@ export default {
     ...mapGetters(['isDesktop']),
   },
   watch: {
+    notes() {
+      this.name = this.notes
+    },
     name() {
       this.fixHeight()
     },
@@ -125,10 +131,12 @@ export default {
   position: relative;
   min-height: 25px;
   transition-duration: .2s;
+  margin-top: 10px
 }
 
 .heading {
   margin-bottom: 16px;
+  margin-top: 0;
 }
 
 .heading .text {

@@ -11,7 +11,7 @@
       :data-disabled='disableAction'
     >
       <div
-        class="link-inner-wrapper rb item-handle cursor remove-highlight"
+        class="link-inner-wrapper rb item-handle remove-highlight"
         :class="{notSmartActive: !isSmart && isActive, 'ignore-item': ignore, onHover: hover, isActive}"
 
         @mouseenter="hover = true"
@@ -23,6 +23,7 @@
       >
         <div class="icon-wrapper">
           <Icon class="main-icon"
+            :class="{cursor: icon === 'tasks'}"
             :style="iconStyle"
             :icon="icon"
             :progress='progress'
@@ -48,11 +49,6 @@
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
         </div>
-        <CircleBubble class="bubble"
-          innerColor='var(--light-gray)'
-          outerColor='var(--fade)'
-          opacity='0'
-        />
       </div>
       <Icon v-if="hasSubList"
         class="toggle-icon cursor remove-highlight primary-hover"
