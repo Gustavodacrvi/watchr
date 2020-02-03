@@ -89,7 +89,7 @@ export default {
     headerOptions() {
       const tag = this.viewTag
       if (tag)
-        return utilsTag.tagOptions(tag)
+        return utilsTag.tagOptions(tag, true)
       return null
     },
     getViewNotes() {

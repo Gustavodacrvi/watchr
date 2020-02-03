@@ -250,6 +250,14 @@ export default {
           return JSON.stringify(args[0])
         },
       },
+      getListHeadingsById: {
+        react: [
+          'headings'
+        ],
+        getter({getters}, id) {
+          return getters.lists.find(el => el.id === id).headings
+        },
+      },
       getLaterLists: {
         react: [
           'calendar',

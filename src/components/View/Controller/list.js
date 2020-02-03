@@ -136,7 +136,8 @@ export default {
       const arr = []
       const viewList = this.viewList
       if (viewList) {
-        for (const h of viewList.headings) {
+        const headings = this.$store.getters['list/getListHeadingsById'](viewList.id)
+        for (const h of headings) {
           const pipedFilter = task => this.isTaskInHeading(task, h)
           const sort = tasks => this.$store.getters.checkMissingIdsAndSortArr(h.tasks, tasks)
 
@@ -234,7 +235,6 @@ export default {
       return []
     },
     headerInfo() {
-      //getListDeadlineDaysLeftStr
       const list = this.viewList
       if (!list)
         return null

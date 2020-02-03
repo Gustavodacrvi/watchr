@@ -29,49 +29,43 @@ export default {
         },
       },
       {
-        name: 'More options',
-        icon: 'settings-h',
-        callback: () => [
-          {
-            name: 'Uncomplete tasks',
-            icon: 'circle',
-            callback: () => dispatch('list/uncompleteHeadingTasks', {
-              listId, headingId: h.id, savedTasks: store.getters['task/tasks'],
+        name: 'Uncomplete tasks',
+        icon: 'circle',
+        callback: () => dispatch('list/uncompleteHeadingTasks', {
+          listId, headingId: h.id, savedTasks: store.getters['task/tasks'],
+        })
+      },
+      {
+        name: 'Duplicate heading',
+        icon: 'copy',
+        callback: () => dispatch('list/duplicateHeading', {
+            listId, headingId: h.id, name, tasks: headingTasks.slice(),
+          })
+      },
+      {
+        name: "Convert to list",
+        icon: 'tasks',
+        important: true,
+        callback: () => {
+          if (store.getters['list/lists'].some(l => l.name === h.name))
+            toast({
+              name: 'There is already a list with this heading name.',
+              seconds: 3,
+              type: 'error',
             })
-          },
-          {
-            name: 'Duplicate heading',
-            icon: 'copy',
-            callback: () => dispatch('list/duplicateHeading', {
-                listId, headingId: h.id, name, tasks: headingTasks.slice(),
-              })
-          },
-          {
-            name: "Convert to list",
-            icon: 'tasks',
-            important: true,
-            callback: () => {
-              if (store.getters['list/lists'].some(l => l.name === h.name))
-                toast({
-                  name: 'There is already a list with this heading name.',
-                  seconds: 3,
-                  type: 'error',
-                })
-              else dispatch('list/convertHeadingToList', {
-                  listId, headingId: h.id, taskIds: headingTasks.map(el => el.id)
-                })
-            }
-          },
-          {
-            name: 'Delete heading',
-            icon: 'trash',
-            important: true,
-            callback: () => dispatch('list/deleteHeadingFromList', {
-              listId, headingId: h.id, savedTasks: headingTasks,
+          else dispatch('list/convertHeadingToList', {
+              listId, headingId: h.id, taskIds: headingTasks.map(el => el.id)
             })
-          },
-        ]
-      }
+        }
+      },
+      {
+        name: 'Delete heading',
+        icon: 'trash',
+        important: true,
+        callback: () => dispatch('list/deleteHeadingFromList', {
+          listId, headingId: h.id, savedTasks: headingTasks,
+        })
+      },
     ]
   },
   listOptions: (list, isInListView = false) => ({tasks, getters, dispatch, router}) => {

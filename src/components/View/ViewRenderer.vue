@@ -1201,6 +1201,26 @@ export default {
             }}
           },
           {
+            name: 'Deadline',
+            icon: 'deadline',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                onlyDates: true,
+                noTime: true,
+                allowNull: true,
+                callback: ({specific}) => {
+                  this.$store.dispatch('task/saveTasksById', {
+                    ids: this.selectedItems,
+                    task: {
+                      deadline: specific,
+                    }
+                  })
+                }
+              }
+            })
+          },
+          {
             type: 'optionsList',
             name: 'Schedule',
             options: [
@@ -1272,7 +1292,7 @@ export default {
             ],
           },
           {
-            name: 'Delete task',
+            name: 'Delete tasks',
             icon: 'trash',
             important: true,
             callback: () => dispatch('task/deleteTasks', ids)

@@ -501,47 +501,41 @@ export default {
           ],
         },
         {
+          name: 'Copy task',
+          icon: 'copy',
+          callback: () => this.copyItem()
+        },
+        {
+          name: 'Move to list',
+          icon: 'tasks',
+          callback: () => this.listOptions
+        },
+        {
+          name: 'Convert to list',
+          icon: 'tasks',
+          callback: () => {
+            const existingList = this.savedLists.find(l => l.name === this.item.name)
+            if (existingList)
+              this.$store.commit('pushToast', {
+                name: 'There is already another list with this name.',
+                seconds: 3,
+                type: 'error',
+              })
+            else
+              dispatch('task/convertToList', {task: this.item, savedLists: this.savedLists})
+          }
+        },
+        {
+          name: 'Move to folder',
+          icon: 'folder',
+          callback: () => this.folderOptions
+        },
+        {
             name: 'Delete task',
             icon: 'trash',
             important: true,
             callback: () => dispatch('task/deleteTasks', [this.item.id])
           },
-        {
-          name: 'More options',
-          icon: 'settings-h',
-          callback: () => [
-            {
-              name: 'Copy task',
-              icon: 'copy',
-              callback: () => this.copyItem()
-            },
-            {
-              name: 'Move to list',
-              icon: 'tasks',
-              callback: () => this.listOptions
-            },
-            {
-              name: 'Convert to list',
-              icon: 'tasks',
-              callback: () => {
-                const existingList = this.savedLists.find(l => l.name === this.item.name)
-                if (existingList)
-                  this.$store.commit('pushToast', {
-                    name: 'There is already another list with this name.',
-                    seconds: 3,
-                    type: 'error',
-                  })
-                else
-                  dispatch('task/convertToList', {task: this.item, savedLists: this.savedLists})
-              }
-            },
-            {
-              name: 'Move to folder',
-              icon: 'folder',
-              callback: () => this.folderOptions
-            },
-          ]
-        },
       ]
       return arr
     },

@@ -41,7 +41,11 @@
           </div>
         </div>
         <CalendarEvents v-if="calendarEvents" :date='calendarEvents'/>
-        <NotesApp :notes="notes" @save-notes="saveNote"/>
+        <NotesApp v-if="notes"
+          :notes="notes"
+          :heading='true'
+          @save="saveNote"
+        />
         <transition
           @enter='enterCont'
           @leave='leaveCont'

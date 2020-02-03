@@ -201,7 +201,7 @@ export default {
 }
 
 .ListIcons {
-  max-height: 485px;
+  max-height: 350px;
 }
 
 .overflow {
@@ -213,7 +213,7 @@ export default {
   align-items: center;
   transition-duration: .15s;
   white-space: nowrap;
-  height: 38px;
+  height: 32px;
   border-radius: 8px;
   margin: 0 18px;
   overflow: hidden;

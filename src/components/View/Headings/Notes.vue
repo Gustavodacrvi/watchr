@@ -4,7 +4,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div v-show="notes !== undefined" class="Notes" ref='root'>
+    <div v-if="notes !== undefined" class="Notes" :class="{heading}" ref='root'>
       <textarea class="text" ref='text'
         v-model="name"
         placeholder="Notes..."
@@ -36,7 +36,7 @@ export default {
   components: {
     AuthButton,
   },
-  props: ['notes'],
+  props: ['notes', 'heading'],
   data() {
     return {
       name: this.notes,
@@ -46,7 +46,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.fixHeight()
-    })
+    }, 80)
   },
   methods: {
     focus() {
@@ -70,10 +70,12 @@ export default {
     fixHeight() {
       const txt = this.$refs.text
 
-      txt.style.height = ''
-      txt.style.height = txt.scrollHeight + 'px'
-
-      this.$refs.root.style = txt.scrollHeight + 'px'
+      if (txt) {
+        txt.style.height = ''
+        txt.style.height = txt.scrollHeight + 'px'
+  
+        this.$refs.root.style = txt.scrollHeight + 'px'
+      }
     },
     enter(el, done) {
 
@@ -122,6 +124,15 @@ export default {
 .Notes {
   position: relative;
   min-height: 25px;
+  transition-duration: .2s;
+}
+
+.heading {
+  margin-bottom: 16px;
+}
+
+.heading .text {
+  margin-top: 12px;
 }
 
 .text {
@@ -132,6 +143,7 @@ export default {
   padding: 0;
   border: 0 none white;
   outline: none;
+  transition: margin-top .2s;
 }
 
 .save-msg {

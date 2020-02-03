@@ -553,23 +553,6 @@ export default {
       const dispatch = this.$store.dispatch
       const arr = [
         {
-          name: 'Sort lists by name',
-          icon: 'sort-name',
-          callback: () => dispatch('list/sortListsByName'),
-        },
-        {
-          name: 'Add folder',
-          icon: 'folder',
-          callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
-        },
-        {
-          name: 'Add list',
-          icon: 'tasks',
-          callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),
-        },
-      ]
-      if (this.isDesktop) {
-        arr.splice(1, 0, {
           name: 'Import from template',
           icon: 'import',
           file: true,
@@ -590,42 +573,23 @@ export default {
               }
             }).catch(bug)
           }
-        },)
-      }
-      const inner = []
-      if (!this.showDefered) {
-        inner.unshift({
-          name: "Show defered lists",
-          icon: 'sleep',
-          callback: () => this.showDefered = true
-        })
-      } else {
-        inner.unshift({
-          name: 'Hide defered lists',
+        },
+        {
+          name: 'Sort lists by name',
+          icon: 'sort-name',
+          callback: () => dispatch('list/sortListsByName'),
+        },
+        {
+          name: 'Add folder',
+          icon: 'folder',
+          callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
+        },
+        {
+          name: 'Add list',
           icon: 'tasks',
-          callback: () => this.showDefered = false
-        })
-      }
-      if (!this.showRepeat) {
-        inner.unshift({
-          name: 'Show periodic lists',
-          icon: 'repeat',
-          callback: () => this.showRepeat = true
-        })
-      } else {
-        inner.unshift({
-          name: 'Hide periodic lists',
-          icon: 'repeat',
-          callback: () => this.showRepeat = false
-        })
-      }
-      if (inner.length > 0) {
-        arr.push({
-          name: 'More options',
-          icon: 'settings-h',
-          callback: () => inner,
-        })
-      }
+          callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),
+        },
+      ]
       return arr
     },
     Filters() {
