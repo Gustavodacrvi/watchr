@@ -21,6 +21,9 @@
       </span>
       <span class="name-wrapper">
         <span class="name"><b>{{ name }}</b></span>
+        <ProfilePhotos class="photos"
+          :group='id'
+        />
       </span>
       <Icon
         class="arrow passive cursor primary-hover"
@@ -46,8 +49,13 @@
 
 import folderMixin from "@/mixins/folder"
 
+import ProfilePhotos from "@/components/View/RenderComponents/GroupProfilePhotos.vue"
+
 export default {
   mixins: [folderMixin],
+  components: {
+    ProfilePhotos,
+  },
   methods: {
     click() {
       // this.$router.push('/user?folder=' + this.name)
@@ -73,4 +81,13 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/folder.css">
+</style>
+
+<style scoped>
+
+.photos {
+  margin-left: 10px;
+  margin-top: 2px;
+}
+
 </style>

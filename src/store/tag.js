@@ -129,7 +129,6 @@ export default {
       const b = fire.batch()
 
       setTag(b, tag, tag.id, rootState)
-      commit('change', [tag.id], {root: true})
 
       b.commit()
     },
@@ -140,7 +139,6 @@ export default {
 
       setTag(b, {order: ids}, parent, rootState, writes)
       setTag(b, {parent}, tagId, rootState, writes)
-      commit('change', [parent, tagId], {root: true})
 
       cacheBatchedItems(b, writes)
 
@@ -153,7 +151,6 @@ export default {
 
       setTag(b, {parent: null}, tagId, rootState, writes)
       setInfo(b, {tags: ids}, writes)
-      commit('change', [tagId], {root: true})
 
       cacheBatchedItems(b, writes)
 
@@ -174,7 +171,6 @@ export default {
       ids.splice(index, 0, newTaskRef.id)
 
       setTag(b, {tasks: ids}, tagId, rootState, writes)
-      commit('change', [newTaskRef.id], {root: true})
 
       cacheBatchedItems(b, writes)
 

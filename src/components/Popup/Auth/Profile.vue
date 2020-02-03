@@ -123,7 +123,7 @@
 
 import AuthButton from '@/components/Auth/Button.vue'
 import CheckboxApp from '@/components/Auth/Checkbox.vue'
-import ProfilePhoto from './ProfilePhoto.vue'
+import ProfilePhoto from '@/components/View/RenderComponents/ProfilePhoto.vue'
 
 import { mapGetters, mapState } from 'vuex'
 

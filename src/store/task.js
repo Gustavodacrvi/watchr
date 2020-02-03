@@ -950,7 +950,6 @@ export default {
           fullCancelDate: null,
           calendar,
         }, rootState, t.id, writes)
-        commit('change', [t.id], {root: true})
       }
 
       cacheBatchedItems(b, writes)
@@ -977,7 +976,6 @@ export default {
           fullCheckDate: null,
           calendar: c,
         }, rootState, t.id, writes)
-        commit('change', [t.id], {root: true})
       }
       cacheBatchedItems(b, writes)
 
@@ -1019,7 +1017,6 @@ export default {
       const b = fire.batch()
 
       await batchSetTasks(b, task, ids, rootState)
-      commit('change', ids, {root: true})
 
       b.commit()
     },
@@ -1029,7 +1026,6 @@ export default {
       await batchSetTasks(b, {
         tags: fd().arrayUnion(...tagIds),
       }, ids, rootState)
-      commit('change', ids, {root: true})
 
       b.commit()
     },
@@ -1041,7 +1037,6 @@ export default {
         folder: null,
         heading: null,
       }, ids, rootState)
-      commit('change', ids, {root: true})
 
       b.commit()
     },
@@ -1053,7 +1048,6 @@ export default {
         folder: folderId,
         heading: null,
       }, ids, rootState)
-      commit('change', ids, {root: true})
       
       b.commit()
     },

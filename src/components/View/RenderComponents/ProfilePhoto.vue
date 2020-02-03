@@ -92,12 +92,13 @@ export default {
     getIconSize() {
       switch (this.size) {
         case 'normal': return '28px'
-        default: return '28px'
+        default: return '12px'
       }
     },
     getProfileWidth() {
       switch (this.size) {
         case 'normal': return '75px'
+        case 'small': return '23px'
         default: return '75px'
       }
     },
