@@ -1,8 +1,7 @@
 
 export default {
-  getFolderOptions: (folder, toggle, onToggle) => ({dispatch, getters, lists, tasks}) => {
-    // toggle is a boolean
-    const obj = [
+  getFolderOptions: (folder) => ({dispatch, getters, lists, tasks}) => {
+    return [
       {
         name: 'Edit folder',
         icon: 'pen',
@@ -35,15 +34,5 @@ export default {
         })
       },
     ]
-    if (toggle !== undefined)
-      obj.unshift({
-        name: 'Toggle folder',
-        icon: 'folder',
-        callback: () => {
-          if (onToggle) onToggle()
-        }
-      })
-
-    return obj
   }
 }

@@ -66,7 +66,7 @@ export default {
     options() {
       return folderUtils.getFolderOptions({
         ...this.item, id: this.id, name: this.name,
-      }, this.showing, this.toggle)
+      })
     },
   },
 }

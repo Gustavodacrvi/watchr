@@ -460,6 +460,7 @@ const store = new Vuex.Store({
         }
         
       })
+      if (userId)
       fire.collectionGroup('groupCache').
         where(`users.${userId}`, '==', true)
         .onSnapshot(snap => {
@@ -468,7 +469,7 @@ const store = new Vuex.Store({
             const changes = snap.docChanges()
             
             changes.forEach(change => {
-              const newGroup = {...change.doc.data(), id: change.doc.id}
+              const newGroup = change.doc.data()
               
               if (change.type === 'added') {
                 const el = state.group.groups.find(el => el.id === change.doc.id)

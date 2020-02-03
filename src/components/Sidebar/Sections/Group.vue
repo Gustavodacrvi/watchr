@@ -51,6 +51,8 @@ import folderMixin from "@/mixins/folder"
 
 import ProfilePhotos from "@/components/View/RenderComponents/GroupProfilePhotos.vue"
 
+import groupUtils from '@/utils/group'
+
 export default {
   mixins: [folderMixin],
   components: {
@@ -69,12 +71,9 @@ export default {
     },
   },
   computed: {
-/*     options() {
-      return []
-      return folderUtils.getFolderOptions({
-        ...this.item, id: this.id, name: this.name,
-      }, this.showing, this.toggle)
-    }, */
+    options() {
+      return groupUtils.getFolderOptions(this.item)
+    },
   },
 }
 

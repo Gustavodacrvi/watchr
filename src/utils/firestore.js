@@ -173,6 +173,20 @@ export const setFolder = (batch, folder, id, rootState, writes) => {
     })
   batch.set(ref, obj, {merge: true})
 }
+export const setGroupInfo = (batch, group, id, rootState) => {
+  const infoRef = groupInfoRef(id)
+  const cacheRef = groupCacheRef(id)
+
+  const allGroups = rootState.group.groups
+  const i = rootState.group.groups.findIndex(el => el.id === id)
+  utils.findChangesBetweenObjs(allGroups[i], {
+    ...allGroups[i],
+    ...group,
+  })
+
+  batch.set(infoRef, group, {merge: true})
+  batch.set(cacheRef, group, {merge: true})
+}
 export const addGroup = (batch, name, rootState) => {
   const ref = groupRef()
   const infoRef = groupInfoRef(ref.id)
@@ -182,13 +196,13 @@ export const addGroup = (batch, name, rootState) => {
   const u = rootState.user
   
   const groupObj = {
-    name,
     id: ref.id,
     userId,
   }
 
   const infoObj = {
     ...groupObj,
+    name,
     users: {
       [userId]: true,
     },
@@ -203,10 +217,10 @@ export const addGroup = (batch, name, rootState) => {
   }
 
   const allGroups = rootState.group.groups
-  rootState.group.groups = {
+  rootState.group.groups = [
     ...allGroups,
-    [ref.id]: infoObj,
-  }
+    infoObj,
+  ]
 
   batch.set(ref, groupObj, {merge: true})
   batch.set(infoRef, infoObj, {merge: true})

@@ -158,7 +158,7 @@ service cloud.firestore {
         allow create: if
           isSignedInAndVerified() &&
           isValidDoc(groupId) &&
-          isValidGroupInfoDoc(groupId) &&
+          isValidGroupInfoDoc() &&
           incomingData().size() == 5;
         allow read: if
           isSignedInAndVerified() &&
@@ -167,14 +167,14 @@ service cloud.firestore {
           isSignedInAndVerified() &&
           isInGroup() &&
           didntChangeConstant() &&
-          isValidGroupInfoDoc(groupId) &&
+          isValidGroupInfoDoc() &&
           incomingData().size() == 5;
       }
       match /groupCache/groupCache {
         allow create: if
           isSignedInAndVerified() &&
           isValidDoc(groupId) &&
-          isValidGroupCacheDoc(groupId);
+          isValidGroupCacheDoc();
         allow read: if
           isSignedInAndVerified() &&
           isInGroup();
@@ -182,7 +182,7 @@ service cloud.firestore {
           isSignedInAndVerified() &&
           isInGroup() &&
           didntChangeConstant() &&
-          isValidGroupCacheDoc(groupId);
+          isValidGroupCacheDoc();
       }
 
       function isInGroup() {
@@ -196,19 +196,18 @@ service cloud.firestore {
       function isValidGroupDoc(id) {
         return
           isValidDoc(id) &&
-          incomingData().name is string &&
-          incomingData().size() == 3
+          incomingData().size() == 2
       }
-      function isValidGroupCacheDoc(id) {
+      function isValidGroupCacheDoc() {
         return
-          isValidGroupInfoDoc(id) &&
+          isValidGroupInfoDoc() &&
           incomingData().size() > 4 &&
           incomingData().size() < 8 &&
 
           (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
           (!('lists' in incomingData()) || incomingData().lists is map && incomingData().lists.size() < 2001)
       }
-      function isValidGroupInfoDoc(id) {
+      function isValidGroupInfoDoc() {
         return
           incomingData().userId is string &&
           incomingData().id is string &&

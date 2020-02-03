@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks } from '../utils/firestore'
+import { uid, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks, setGroupInfo } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
@@ -71,19 +71,12 @@ export default {
 
       b.commit()
     },
-    updateGroupsOrder(c, ids) {
-      const b = fire.batch()
-      
-      setInfo(b, {
-        groups: ids,
-      })
-
-      b.commit()
-    },
     saveGroup({rootState}, gro) {
       const b = fire.batch()
       
-      setGroup(b, gro, gro.id, rootState)
+      setGroupInfo(b, {
+        name: gro.name,
+      }, gro.id, rootState)
 
       b.commit()
     },
