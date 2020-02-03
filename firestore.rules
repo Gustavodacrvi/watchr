@@ -95,6 +95,7 @@ service cloud.firestore {
           isArrayOrUndefined('tasks', 50) &&
           isNullStringOrUndefined('notes') &&
           isNullStringOrUndefined('folder') &&
+          isNullStringOrUndefined('group') &&
           (
             (!('calendar' in incomingData()) || incomingData().calendar == null) ||
             (
@@ -127,6 +128,7 @@ service cloud.firestore {
           isArrayOrUndefined('order', 50) &&
           isArrayOrUndefined('tags', 50) &&
           isNullStringOrUndefined('folder') &&
+          isNullStringOrUndefined('group') &&
           isNullStringOrUndefined('taskDuration') &&
           isNullStringOrUndefined('priority') &&
           isNullStringOrUndefined('heading') &&

@@ -583,6 +583,11 @@ export default {
           callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
         },
         {
+          name: 'Add group',
+          icon: 'group',
+          callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
+        },
+        {
           name: 'Add list',
           icon: 'tasks',
           callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),

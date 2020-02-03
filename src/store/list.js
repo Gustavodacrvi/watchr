@@ -18,6 +18,7 @@ export default {
   namespaced: true,
   state: {
     lists: {},
+    groupLists: {},
   },
   getters: {
     lists(state) {

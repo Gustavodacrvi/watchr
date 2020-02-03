@@ -17,6 +17,7 @@ export default {
   namespaced: true,
   state: {
     tasks: {},
+    groupTasks: {},
   },
   getters: {
     tasks(state) {
