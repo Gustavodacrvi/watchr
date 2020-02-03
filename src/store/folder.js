@@ -25,6 +25,23 @@ export default {
         return rootGetters.checkMissingIdsAndSortArr(order, d.folders)
       return []
     },
+    sortedFoldersAndGroups(s, d, state, rootGetters) {
+      const {userInfo} = state
+      let order = userInfo.folders
+      if (!order) order = []
+
+      const groups = state.group.groups
+      const folders = d.folders
+
+      groups.forEach(el => el.isGroup = true)
+      
+      if (userInfo)
+        return rootGetters.checkMissingIdsAndSortArr(order, [
+          ...folders,
+          ...groups,
+        ])
+      return []
+    },
     ...MemoizeGetters('folders', {
       getFolderTaskOrderById({state, getters}, folderId) {
         const fold = getters.folders.find(f => f.id === folderId)

@@ -31,9 +31,9 @@
 
       data-name='folders-root'
     >
-      <FolderApp v-for="f in laseredFolders" :key="f.id"
+      <FolderApp v-for="f in laseredFoldersAndGrups" :key="f.id"
         v-bind="f"
-        :folder='f'
+        :item='f'
         :viewName='viewName'
         :viewType='viewType'
         :listLength='f.list.length'
@@ -231,7 +231,7 @@ export default {
       tasks: 'task/tasks',
       isDesktop: 'isDesktop',
       isTaskInList: 'task/isTaskInList',
-      sortedFolders: 'folder/sortedFolders',
+      sortedFoldersAndGroups: 'folder/sortedFoldersAndGroups',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       getListsByFolderId: 'folder/getListsByFolderId',
@@ -240,12 +240,19 @@ export default {
       filterSidebarLists: 'list/filterSidebarLists',
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
-    laseredFolders() {
-      const sortedFolders = this.sortedFolders
-      sortedFolders.forEach(fold => {
-        fold.list = this.filterSidebarLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
+    laseredFoldersAndGrups() {
+      const sortedFoldersAndGroups = this.sortedFoldersAndGroups
+      sortedFoldersAndGroups.forEach(fold => {
+        if (!fold.isGroup) {
+          fold.list = this.filterSidebarLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
+
+          fold.comp = "Folder"
+        } else {
+          fold.comp = "Group"
+          fold.list = []
+        }
       })
-      return sortedFolders
+      return sortedFoldersAndGroups
     },
     sortedLists() {
       return this.$store.getters['list/sortedLists']
