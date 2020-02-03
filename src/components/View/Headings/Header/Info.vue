@@ -11,6 +11,11 @@
           :key="item.icon"
           v-bind="item"
         />
+        <HeaderInfo v-if="hasFileHandler"
+          :key="hasFileHandler + 'asdf'"
+          icon='file'
+          @add='getHeaderInfoFile'
+        />
       </div>
     </transition>
     <transition
@@ -33,10 +38,12 @@
       :notes='headerInfo.notes.name'
       @save='headerInfo.notes.save'
     />
-    <FileHandler v-if='headerInfo && headerInfo.files && headerInfo.files.names'
+    <FileHandler v-if='hasFileHandler'
       :defaultFiles='headerInfo.files.names'
       :storageFolder='headerInfo.files.storageFolder'
       :id='headerInfo.files.id'
+      :fileToggle='fileToggle'
+      @empty-toggle='emptyToggle'
       @save='headerInfo.files.save'
     />
   </div>
@@ -56,8 +63,20 @@ export default {
     HeaderInfo, Tag, Notes,
     FileHandler,
   },
+  data() {
+    return {
+      fileToggle: null,
+    }
+  },
   props: ['headerInfo'],
   methods: {
+    emptyToggle() {
+      this.fileToggle = null
+    },
+    getHeaderInfoFile(file) {
+      this.fileToggle = file
+    },
+    
     enter(el, done) {
       const s = el.style
 
@@ -120,6 +139,11 @@ export default {
       s.margin = 0
 
       setTimeout(done, 255)
+    },
+  },
+  computed: {
+    hasFileHandler() {
+      return this.headerInfo && this.headerInfo.files && this.headerInfo.files.names
     },
   },
 }

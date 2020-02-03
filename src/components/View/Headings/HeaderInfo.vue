@@ -7,9 +7,14 @@
     <div class="header-info rb"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
-      @click.stop
+      @click.stop='click'
     >
-      <Icon class="icon faded" :icon="icon" :title='title'/>
+      <Icon
+        class="icon faded"
+        :icon="icon"
+        :title='title'
+        :width='icon === "file" ? "18px" : undefined'
+      />
       <span v-show="content || right">
         <transition
           @enter='contentEnter'
@@ -24,6 +29,12 @@
           <span v-if="right" class="faded cont">{{ right }}</span>
         </transition>
       </span>
+      <input v-show="false"
+        ref='file'
+        type='file'
+        @click.stop
+        @change='handleFile'
+      >
     </div>
   </transition>
 </template>
@@ -51,6 +62,16 @@ export default {
     bindContext() {
       if (this.options)
         utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
+    },
+    click() {
+      if (this.icon === 'file' && this.fileInput)
+        this.fileInput.click()
+    },
+    handleFile() {
+      const inp = this.fileInput
+      if (inp.files[0])
+        this.$emit('add', inp.files[0])
+      inp.value = ''
     },
 
     enter(el, done) {
@@ -119,6 +140,11 @@ export default {
   
         setTimeout(done, 305)
       })
+    },
+  },
+  computed: {
+    fileInput() {
+      return this.$refs['file']
     },
   },
   watch: {

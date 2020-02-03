@@ -177,8 +177,8 @@ export default {
     },
     handleFile() {
       const inp = this.fileInput
-      if (inp.files[0])
-        this.$emit('add', inp.files[0])
+      if (inp.files.length > 0)
+        this.$emit('add', inp.files)
       inp.value = ''
     },
     enter(cir) {

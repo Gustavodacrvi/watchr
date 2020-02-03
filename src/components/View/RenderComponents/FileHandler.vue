@@ -35,7 +35,7 @@ export default {
     FileDragDrop,
     File, AuthButton,
   },
-  props: ['storageFolder', 'id'],
+  props: ['storageFolder', 'id', 'fileToggle'],
   data() {
     return {
       saving: false,
@@ -64,6 +64,12 @@ export default {
       })
     },
   },
+  watch: {
+    fileToggle() {
+      this.addFile(this.fileToggle)
+      this.$emit('empty-toggle')
+    },
+  },
 }
 
 
@@ -78,7 +84,6 @@ export default {
   margin-top: 4px;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 20px var(--primary);
   transition: height .1s, margin-top .1s;
 }
 
