@@ -48,52 +48,6 @@ service cloud.firestore {
         allow update: if didntChangeConstant() && isValidFolder(fold);
       }
 
-			function isSignedIn() {
-        return request.auth.uid != null;
-      }
-      function isOwner() {
-        return isSignedIn() && (request.auth.uid == resource.data.userId);
-      }
-      function isVerified() {
-      	return isSignedIn() && request.auth.token.email_verified
-      }
-      function isSignedInAndVerified() {
-        return isSignedIn() && isVerified()
-      }
-      function isOwnerAndVerified() {
-      	return isOwner() && isVerified()
-      }
-
-      function incomingData() {
-        return request.resource.data
-      }
-      function existingData() {
-        return resource.data
-      }
-      function isValidDoc(id) {
-        return
-          incomingData().userId == request.auth.uid &&
-          incomingData().id == id
-      }
-      function didntChangeConstant() {
-        return
-          existingData().userId == incomingData().userId &&
-          existingData().id == incomingData().id
-      }
-
-      function isArrayOrUndefined(fieldName, max) {
-        return (!(fieldName in incomingData()) || (incomingData()[fieldName] is list && incomingData()[fieldName].size() < (max + 1)))
-      }
-      function isNullStringOrUndefined(fieldName) {
-        return
-          !(fieldName in incomingData()) ||
-          incomingData()[fieldName] is string || incomingData()[fieldName] == null
-      }
-      function isNullOrBollean(fieldName) {
-        return
-          (!(fieldName in incomingData()) || incomingData()[fieldName] == null || incomingData()[fieldName] == true || incomingData()[fieldName] == false)
-      }
-
       function isInfoValid(bracketId) {
         return
           isValidDoc(bracketId) &&
@@ -192,6 +146,92 @@ service cloud.firestore {
             )
           )
       }
+    }
+
+    match /groups/{groupId} {
+      allow create: if isSignedInAndVerified() && isValidGroupDoc(groupId);
+      allow delete: if isOwner();
+
+      match /info/{info} {
+        allow create: if isSignedInAndVerified() && isValidDoc(info) && isValidGroupInfoDoc(info);
+        allow list: if isSignedInAndVerified() && isInGroup();
+        allow update: if isSignedInAndVerified() && isInGroup() && didntChangeConstant() && isValidGroupInfoDoc(info);
+      }
+
+      function isInGroup() {
+        return
+          isOwner() ||
+          (
+            existingData().users[request.auth.uid] == true &&
+            existingData().profiles[request.auth.uid] is map
+          )
+      }
+      function isValidGroupDoc(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().size() == 2
+      }
+      function isValidGroupInfoDoc(id) {
+        return
+          incomingData().size() == 4 &&
+        
+          incomingData().userId is string &&
+          incomingData().id is string &&
+
+          incomingData().users is map &&
+          incomingData().users[incomingData().userId] == true &&
+          incomingData().users.size() < 21 &&
+
+          incomingData().profiles is map &&
+          incomingData().profiles[incomingData().userId] is map &&
+          incomingData().profiles.size() < 21 &&
+          incomingData().profiles.size() == incomingData().users.size()
+      }
+    }
+
+    function isSignedIn() {
+      return request.auth.uid != null;
+    }
+    function isOwner() {
+      return isSignedIn() && (request.auth.uid == resource.data.userId);
+    }
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified
+    }
+    function isSignedInAndVerified() {
+      return isSignedIn() && isVerified()
+    }
+    function isOwnerAndVerified() {
+      return isOwner() && isVerified()
+    }
+    function incomingData() {
+      return request.resource.data
+    }
+    function existingData() {
+      return resource.data
+    }
+    function isValidDoc(id) {
+      return
+        incomingData().userId == request.auth.uid &&
+        incomingData().id == id
+    }
+    function didntChangeConstant() {
+      return
+        existingData().userId == incomingData().userId &&
+        existingData().id == incomingData().id
+    }
+
+    function isArrayOrUndefined(fieldName, max) {
+      return (!(fieldName in incomingData()) || (incomingData()[fieldName] is list && incomingData()[fieldName].size() < (max + 1)))
+    }
+    function isNullStringOrUndefined(fieldName) {
+      return
+        !(fieldName in incomingData()) ||
+        incomingData()[fieldName] is string || incomingData()[fieldName] == null
+    }
+    function isNullOrBollean(fieldName) {
+      return
+        (!(fieldName in incomingData()) || incomingData()[fieldName] == null || incomingData()[fieldName] == true || incomingData()[fieldName] == false)
     }
   }
 }
