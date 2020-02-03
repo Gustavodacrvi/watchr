@@ -26,23 +26,6 @@ export default {
         }
       },
       {
-        name: 'Add files',
-        icon: 'file',
-        callback: () => ({
-          comp: 'Files',
-          content: {
-            storageFolder: 'folders',
-            id: folder.id,
-            savedFiles: folder.files ? folder.files : [],
-            callback: files => {
-              dispatch('folder/saveFolder', {
-                id: folder.id, files,
-              })
-            }
-          },
-        }),
-      },
-      {
         name: 'Delete folder',
         icon: 'trash',
         important: true,

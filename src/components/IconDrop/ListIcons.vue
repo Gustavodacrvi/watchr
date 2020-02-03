@@ -322,6 +322,11 @@ export default {
   position: absolute;
 }
 
+.values {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
 .abs-btn {
   position: absolute;
   left: 0;
