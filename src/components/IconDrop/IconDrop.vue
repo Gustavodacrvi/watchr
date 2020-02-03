@@ -152,7 +152,7 @@ export default {
       }
     },
     toggleIconDrop() {
-      if (!this.center) {
+      if (!this.center && this.isDesktop) {
         this.showingCont = true
         this.showing = !this.showing
       }

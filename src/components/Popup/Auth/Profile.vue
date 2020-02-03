@@ -36,23 +36,28 @@
       <div class="cont">
         <transition name="fade-t" mode="out-in">
           <div v-if="option === 'General'" class="General" key="general">
-            <div>
-              <AuthButton
-                type="card"
-                :class="{white: user.displayName}"
-                style='margin-top: 0'
-                :value="displayName"
-                @click="addDisplayName"
-              />
-            </div>
-            <div>
-              <AuthButton
-                type="card"
-                class="white"
-                style='margin-top: 0'
-                :value="user.email"
-                @click="changeEmail"
-              />
+            <div class="profile-wrapper">
+              <ProfilePhoto/>
+              <span>
+                <div>
+                  <AuthButton
+                    type="card"
+                    :class="{white: user.displayName}"
+                    style='margin-top: 0'
+                    :value="displayName"
+                    @click="addDisplayName"
+                  />
+                </div>
+                <div>
+                  <AuthButton
+                    type="card"
+                    class="white"
+                    style='margin-top: 0'
+                    :value="user.email"
+                    @click="changeEmail"
+                  />
+                </div>
+              </span>
             </div>
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
@@ -92,7 +97,7 @@
             <h4 class="title">Enabled Sections</h4>
             <CheckboxApp v-for="s in sections" :key="s.name"
               class="rb"
-              name="s.name"
+              :name="s.name"
               :value='!isHided(s.name)'
               :icon='s.icon'
               :color='s.color'
@@ -101,7 +106,7 @@
             <h4 class="title">Enabled Smart Views</h4>
             <CheckboxApp v-for="s in sidebarSmartViews" :key="s.name"
               class="rb"
-              name="s.name"
+              :name="s.name"
               :value='!isSmartViewHided(s.name)'
               :icon='s.icon'
               :color='s.color'
@@ -118,11 +123,13 @@
 
 import AuthButton from '@/components/Auth/Button.vue'
 import CheckboxApp from '@/components/Auth/Checkbox.vue'
+import ProfilePhoto from './ProfilePhoto.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
+    ProfilePhoto,
     AuthButton, CheckboxApp,
   },
   data() {
@@ -405,6 +412,10 @@ export default {
 .cont {
   margin: 14px;
   margin-bottom: 40px;
+}
+
+.profile-wrapper {
+  display: flex;
 }
 
 .option {

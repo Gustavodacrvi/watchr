@@ -106,6 +106,7 @@ export default {
       this.mountSortable()
   },
   beforeDestroy() {
+    this.$emit('headings-items-ids', [])
     if (this.sortable)
       this.sortable.destroy()
   },
@@ -244,6 +245,7 @@ export default {
   },
   watch: {
     viewName() {
+      this.itemsIdsObj = {}
       if (this.sortable)
         this.sortable.options.disabled = !this.updateHeadingIds
     },

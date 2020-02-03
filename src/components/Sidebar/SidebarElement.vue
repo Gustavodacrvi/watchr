@@ -1,10 +1,10 @@
 <template>
-  <div class="AppbarElement AppbarElement-link rb"
+  <div class="SidebarElement SidebarElement-link rb"
     :tabindex="tabindex"
     :class="[platform, {hasSubList}]"
   >
     <div
-      class="link-wrapper AppbarElement-link rb DRAG-AND-DROP-EL"
+      class="link-wrapper SidebarElement-link rb DRAG-AND-DROP-EL"
       :data-type='type'
       :data-id='id'
       :data-smart='isSmart'
@@ -357,9 +357,10 @@ export default {
   height: 42px;
 }
 
-.AppbarElement {
+.SidebarElement {
   outline: none;
   position: relative;
+  user-select: none;
   transition: background-color .15s, height .3s;
 }
 

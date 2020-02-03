@@ -95,9 +95,10 @@
           <div class="inner-footer">
             <div class="drop">
               <Icon v-for="i in getHidedSectionsIcons" :key='i.icon'
-                class="sect-icon cursor remove-highlight primary-hover"
+                class="sect-icon passive cursor remove-highlight primary-hover"
                 :icon='i.icon'
                 :circle='true'
+                color='var(--fade)'
                 @click="i.callback"
               />
               <transition name="icon-t">
@@ -810,7 +811,7 @@ export default {
 }
 
 .sect-icon {
-  margin-right: 8px;
+  margin-right: 12px;
 }
 
 .mobile .showing .inner-footer {

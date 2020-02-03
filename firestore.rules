@@ -111,7 +111,7 @@ service cloud.firestore {
           incomingData().created is string &&
           incomingData().createdFire is timestamp &&
           isNullStringOrUndefined('parent') &&
-          isArrayOrUndefined('order') &&
+          isArrayOrUndefined('order', 1000) &&
           incomingData().size() < 10
       }
       function isValidUserDoc(bracketId) {
