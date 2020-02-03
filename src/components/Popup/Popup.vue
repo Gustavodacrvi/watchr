@@ -33,6 +33,7 @@ import AddHeadingNote from './Lists/AddHeadingNote.vue'
 import Updates from './Updates.vue'
 import FastSearch from './FastSearch.vue'
 import AddFolder from './Folder/AddFolder.vue'
+import AddGroup from './Group/AddGroup.vue'
 import RecentData from './Statistics/RecentData.vue'
 import Shortcuts from './Shortcuts.vue'
 
@@ -44,7 +45,7 @@ export default {
     AddListNote, AddTagNote, Icon, AddList, AddFilter,
     AddTask, Updates, ChangeUsername, ChangeEmail,
     Confirm, AddHeadingNote, AddFolder, Profile,
-    RecentData, Shortcuts,
+    RecentData, Shortcuts, AddGroup,
   },
   methods: {
     closeMobilePopup() {

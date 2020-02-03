@@ -7,6 +7,7 @@ import utils from './index'
 export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
 export const userRef = id => fire.collection('users').doc(id ? id : uid())
+export const groupColl = id => fire.collection('groups')
 export const infoRef = () => userRef().collection('info').doc('info')
 export const cacheRef = id => fire.collection('users').doc(id ? id : uid()).collection('cache').doc('cache')
 export const setCache = obj => cacheRef().set(obj, {merge: true})
@@ -16,6 +17,9 @@ export const serverTimestamp = () => fb.firestore.FieldValue.serverTimestamp()
 export const statsColl = () => userRef().collection('stats')
 export const folderColl = () => userRef().collection('folders')
 export const taskRef = id => id ? taskColl().doc(id) : taskColl().doc()
+export const groupRef = id => id ? groupColl().doc(id) : groupColl().doc()
+export const groupInfoRef = groupId => groupRef(groupId).collection('info').doc('info')
+export const groupCacheRef = groupId => groupRef(groupId).collection('groupCache').doc('groupCache')
 export const pomoDoc = () => statsColl().doc('pomo')
 export const listRef = id => id ? listColl().doc(id) : listColl().doc()
 export const folderRef = id => id ? folderColl().doc(id) : folderColl().doc()
@@ -168,6 +172,45 @@ export const setFolder = (batch, folder, id, rootState, writes) => {
       [ref.id]: obj,
     })
   batch.set(ref, obj, {merge: true})
+}
+export const addGroup = (batch, name, rootState) => {
+  const ref = groupRef()
+  const infoRef = groupInfoRef(ref.id)
+  const cacheRef = groupCacheRef(ref.id)
+
+  const userId = uid()
+  const u = rootState.user
+  
+  const groupObj = {
+    name,
+    id: ref.id,
+    userId,
+  }
+
+  const infoObj = {
+    ...groupObj,
+    users: {
+      [userId]: true,
+    },
+    profiles: {
+      [userId]: {
+        userId,
+        displayName: u.displayName,
+        photoURL: u.photoURL || null,
+        email: u.email,
+      },
+    }
+  }
+
+  const allGroups = rootState.group.groups
+  rootState.group.groups = {
+    ...allGroups,
+    [ref.id]: infoObj,
+  }
+
+  batch.set(ref, groupObj, {merge: true})
+  batch.set(infoRef, infoObj, {merge: true})
+  batch.set(cacheRef, infoObj, {merge: true})
 }
 export const setList = (batch, list, id, rootState, writes) => {
   const ref = listRef(id)

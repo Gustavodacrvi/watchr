@@ -460,11 +460,11 @@ const store = new Vuex.Store({
         }
         
       })
-
       fire.collectionGroup('groupCache').
-        where(`users.${userId}`, '==', true).onSnapshot(snap => {
+        where(`users.${userId}`, '==', true)
+        .onSnapshot(snap => {
           const isFromHere = snap.metadata.hasPendingWrites
-          if (isFromHere) {
+          if (!isFromHere) {
             const changes = snap.docChanges()
             
             changes.forEach(change => {
@@ -473,7 +473,7 @@ const store = new Vuex.Store({
               if (change.type === 'added') {
                 const el = state.group.groups.find(el => el.id === change.doc.id)
                 if (!el) {
-                  state.group.groups.push(newDoc)
+                  state.group.groups.push(newGroup)
                   state.task.groupTasks = {
                     ...state.task.groupTasks,
                     ...newGroup.tasks,
@@ -500,10 +500,10 @@ const store = new Vuex.Store({
               } else {
                 const i = state.group.groups.findIndex(el => el.id === change.doc.id)
         
-                utils.findChangesBetweenObjs(state.group.groups[i], newDoc, undefined, ['tasks', 'lists'])
+                utils.findChangesBetweenObjs(state.group.groups[i], newGroup, undefined, ['tasks', 'lists'])
 
-                utils.updateVuexObject(state.group, 'groupTasks', newDoc.tasks || {}, task => task.group === newDoc.id)
-                utils.updateVuexObject(state.group, 'groupLists', newDoc.lists || {}, list => list.group === newDoc.id)
+                utils.updateVuexObject(state.group, 'groupTasks', newGroup.tasks || {}, task => task.group === newGroup.id)
+                utils.updateVuexObject(state.group, 'groupLists', newGroup.lists || {}, list => list.group === newGroup.id)
               }
             })
           }
@@ -575,7 +575,7 @@ auth.onAuthStateChanged((user) => {
 
   const dispatch = store.dispatch
   const loadData = () => {
-    dispatch('getData', user.id)
+    dispatch('getData', user.uid)
   }
   const toast = (t) => store.commit('pushToast', t)
 

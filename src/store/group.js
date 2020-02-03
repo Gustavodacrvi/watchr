@@ -5,34 +5,27 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, deleteFolder, setFolder, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks } from '../utils/firestore'
+import { uid, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
   namespaced: true,
   state: {
-    groups: {},
+    groups: [],
   },
   getters: {
     groups(state) {
       const keys = Object.keys(state.groups).filter(k => state.groups[k])
       return keys.map(k => state.groups[k])
     },
-    sortedGroups(state, d, {userInfo}, rootGetters) {
-      let order = userInfo.groups
-      if (!order) order = []
-      if (userInfo)
-        return rootGetters.checkMissingIdsAndSortArr(order, d.groups)
-      return []
-    },
     ...MemoizeGetters('groups', {
-      getFolderTaskOrderById({state, getters}, groupId) {
+      getGroupTaskOrderById({state, getters}, groupId) {
         const gro = getters.groups.find(f => f.id === groupId)
         if (gro && gro.tasks)
           return gro.tasks
         return []
       },
-      getListsByFolderId: {
+      getListsByGroupId: {
         react: [
           'order'
         ],
@@ -71,17 +64,10 @@ export default {
     },
   },
   actions: {
-    addFolder({rootState}, gro) {
+    addGroup({rootState}, gro) {
       const b = fire.batch()
       
-      setFolder(b, {
-        tasks: [],
-        files: [],
-        createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        ...gro,
-        defaultShowing: true,
-      }, undefined, rootState)
+      addGroup(b, gro.name, rootState)
 
       b.commit()
     },
@@ -94,19 +80,10 @@ export default {
 
       b.commit()
     },
-    updateOrder({rootState}, {id, ids}) {
+    saveGroup({rootState}, gro) {
       const b = fire.batch()
       
-      setFolder(b, {
-        order: ids,
-      }, id, rootState)
-
-      b.commit()
-    },
-    saveFolder({rootState}, gro) {
-      const b = fire.batch()
-      
-      setFolder(b, gro, gro.id, rootState)
+      setGroup(b, gro, gro.id, rootState)
 
       b.commit()
     },
@@ -127,14 +104,14 @@ export default {
 
       const writes = []
 
-      setFolder(b, {order: ids}, group, rootState, writes)
+      setGroup(b, {order: ids}, group, rootState, writes)
       setList(b, {group}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    moveTasksToFolder({getters, rootState}, {ids, taskIds, groupId, smartView}) {
+    moveTasksToGroup({getters, rootState}, {ids, taskIds, groupId, smartView}) {
       const gro = getters.getGroupsById([groupId])[0]
       const b = fire.batch()
 
@@ -150,7 +127,7 @@ export default {
         heading: null,
       }, taskIds, rootState, writes)
 
-      setFolder(b, {
+      setGroup(b, {
         smartViewsOrders: views,
       }, groupId, rootState, writes)
 
@@ -158,7 +135,7 @@ export default {
 
       b.commit()
     },
-    moveTasksToFolderCalendarOrder({rootState}, {ids, taskIds, date, groupId}) {
+    moveTasksToGroupCalendarOrder({rootState}, {ids, taskIds, date, groupId}) {
       const b = fire.batch()
 
       const writes = []
@@ -187,16 +164,16 @@ export default {
         ...task,
       }, rootState, newTaskRef.id, writes)
       ids.splice(index, 0, newTaskRef.id)
-      setFolder(b, {tasks: ids}, groupId, rootState, writes)
+      setGroup(b, {tasks: ids}, groupId, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    deleteFolderById({getters, rootState}, {id, lists, tasks}) {
+    deleteGroupById({getters, rootState}, {id, lists, tasks}) {
       const b = fire.batch()
 
-      const groupLists = getters.getListsByFolderId({id, lists})
+      const groupLists = getters.getListsByGroupId({id, lists})
       const groupTasks = tasks.filter(t => t.group === id)
 
       const writes = []
@@ -209,7 +186,7 @@ export default {
         group: null,
       }, groupTasks.map(el => el.id), rootState, writes)
     
-      deleteFolder(b, id, rootState, writes)
+      deleteGroup(b, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -223,7 +200,7 @@ export default {
 
       const batch = fire.batch()
 
-      setFolder(batch, {smartViewsOrders: views}, groupId, rootState)
+      setGroup(batch, {smartViewsOrders: views}, groupId, rootState)
 
       batch.commit()
     },
