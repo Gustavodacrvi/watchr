@@ -429,7 +429,7 @@ export default {
   transition-duration: .15s;
 }
 
-.active {
+.active, .day:hover {
   background-color: var(--light-gray);
   color: var(--primary);
 }

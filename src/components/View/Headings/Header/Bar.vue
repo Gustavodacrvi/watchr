@@ -64,12 +64,11 @@ export default {
     HeaderSearch,
     Icon, IconDrop,
   },
-  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'viewNameValue', 'notes', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
+  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
   data() {
     return {
       editing: false,
       title: this.viewNameValue,
-      note: this.notes,
     }
   },
   created() {
@@ -140,6 +139,7 @@ export default {
         Statistics: 'pie',
         Upcoming: 'calendar',
         Completed: 'circle-check',
+        "Later lists": 'later-lists',
       }
       return obj[this.viewName]
     },
@@ -175,7 +175,6 @@ export default {
     },
     viewNameValue() {
       this.title = this.viewNameValue
-      this.note = this.notes
     },
     editing() {
       if (this.editing)

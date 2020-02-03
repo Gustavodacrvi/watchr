@@ -104,7 +104,7 @@
                       :progress='checklistPieProgress'
                     />
                     <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
-                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="12px"/>
+                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="14px"/>
                     <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
                   </span>
                 </div>
@@ -128,6 +128,7 @@
               notesPlaceholder="Notes..."
               btnText="Save task"
               :defaultTask='item'
+              :defaultFiles='item.files || []'
               :taskHeight='itemHeight'
               :showCancel='true'
               :editAction='editAction'
@@ -420,11 +421,6 @@ export default {
           },
         },
         {
-          name: 'No date',
-          icon: 'bloqued',
-          callback: () => this.saveCalendarDate(null)
-        },
-        {
           name: 'Deadline',
           icon: 'deadline',
           callback: () => ({
@@ -467,6 +463,11 @@ export default {
                 comp: "CalendarPicker",
                 content: {callback: this.saveCalendarDate}}},
             },
+            {
+              icon: 'bloqued',
+              id: 'asdf',
+              callback: () => this.saveCalendarDate(null)
+            },
           ]
         },
         {
@@ -500,75 +501,41 @@ export default {
           ],
         },
         {
-          name: 'More options',
-          icon: 'settings-h',
-          callback: () => [
-            {
-              name: 'Repeat task',
-              icon: 'repeat',
-              callback: () => [
-                {
-                  name: 'Repeat weekly',
-                  icon: 'repeat',
-                  callback: () => ({
-                    comp: 'WeeklyPicker',
-                    content: {callback: this.saveCalendarDate},
-                  }),
-                },
-                {
-                  name: 'Repeat periodically',
-                  icon: 'repeat',
-                  callback: () => ({
-                    comp: 'PeriodicPicker',
-                    content: {callback: this.saveCalendarDate},
-                  }),
-                },
-              ],
-            },
-            {
-              name: 'Copy task',
-              icon: 'copy',
-              callback: () => this.copyItem()
-            },
-            {
-              name: 'Lists',
-              icon: 'tasks',
-              callback: () => [
-                {
-                  name: 'Move to list',
-                  icon: 'tasks',
-                  callback: () => this.listOptions
-                },
-                {
-                  name: 'Convert to list',
-                  icon: 'tasks',
-                  callback: () => {
-                    const existingList = this.savedLists.find(l => l.name === this.item.name)
-                    if (existingList)
-                      this.$store.commit('pushToast', {
-                        name: 'There is already another list with this name.',
-                        seconds: 3,
-                        type: 'error',
-                      })
-                    else
-                      dispatch('task/convertToList', {task: this.item, savedLists: this.savedLists})
-                  }
-                },
-              ]
-            },
-            {
-              name: 'Move to folder',
-              icon: 'folder',
-              callback: () => this.folderOptions
-            },
-            {
-              name: 'Delete task',
-              icon: 'trash',
-              important: true,
-              callback: () => dispatch('task/deleteTasks', [this.item.id])
-            }
-          ]
+          name: 'Copy task',
+          icon: 'copy',
+          callback: () => this.copyItem()
         },
+        {
+          name: 'Move to list',
+          icon: 'tasks',
+          callback: () => this.listOptions
+        },
+        {
+          name: 'Convert to list',
+          icon: 'tasks',
+          callback: () => {
+            const existingList = this.savedLists.find(l => l.name === this.item.name)
+            if (existingList)
+              this.$store.commit('pushToast', {
+                name: 'There is already another list with this name.',
+                seconds: 3,
+                type: 'error',
+              })
+            else
+              dispatch('task/convertToList', {task: this.item, savedLists: this.savedLists})
+          }
+        },
+        {
+          name: 'Move to folder',
+          icon: 'folder',
+          callback: () => this.folderOptions
+        },
+        {
+            name: 'Delete task',
+            icon: 'trash',
+            important: true,
+            callback: () => dispatch('task/deleteTasks', [this.item.id])
+          },
       ]
       return arr
     },

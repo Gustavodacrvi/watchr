@@ -5,6 +5,8 @@ import { pipeBooleanFilters, memoize } from '@/utils/memo'
 import utils from '@/utils/'
 import mom from 'moment'
 
+const TOD_DATE = mom().format('Y-M-D')
+
 export default {
   computed: {
     addTask() {
@@ -134,7 +136,8 @@ export default {
       const arr = []
       const viewList = this.viewList
       if (viewList) {
-        for (const h of viewList.headings) {
+        const headings = this.$store.getters['list/getListHeadingsById'](viewList.id)
+        for (const h of headings) {
           const pipedFilter = task => this.isTaskInHeading(task, h)
           const sort = tasks => this.$store.getters.checkMissingIdsAndSortArr(h.tasks, tasks)
 
@@ -213,17 +216,6 @@ export default {
       }
       return null
     },
-    files() {
-      const list = this.viewList
-      if (list) {
-        return {
-          id: list.id,
-          storageFolder: 'lists',
-          files: list.files,
-        }
-      }
-      return null
-    },
     tasksOrder() {
       const list = this.viewList
       if (list && list.tasks)
@@ -242,8 +234,87 @@ export default {
         return this.getTagsById(list.tags)
       return []
     },
-    headerTags() {
-      return this.listgetListTags.map(el => el.name)
+    headerInfo() {
+      const list = this.viewList
+      if (!list)
+        return null
+      
+      const listId = list.id
+      const parseDate = utils.getHumanReadableDate
+
+      const specificDate = list.calendar ? utils.parseCalendarObjectToString(list.calendar, this.userInfo) : null
+      
+      let deadlineStr = list.deadline ? parseDate(list.deadline) : null
+      if (deadlineStr === 'Today')
+        deadlineStr = null
+
+      const save = this.listsaveList
+      const dispatch = this.$store.dispatch
+      
+      if (list)
+        return {
+          files: {
+            names: list.files || [],
+            storageFolder: 'lists',
+            id: list.id,
+            save: files => save({files}),
+          },
+          notes: {
+            name: list.notes || null,
+            save: this.listsaveNotes,
+          },
+          tags: {
+            names: this.listgetListTags.map(el => el.name),
+            remove: name => dispatch('list/removeListTag', {
+              list,
+              tagId: this.listgetListTags.find(el => el.name === name).id
+            }),
+          },
+          icons: [
+            {
+              icon: 'deadline',
+              content: deadlineStr,
+              title: 'Add deadline',
+              right: list.deadline ? this.getListDeadlineDaysLeftStr(list.deadline, TOD_DATE) : null,
+              options: {
+                comp: 'CalendarPicker',
+                content: {
+                  onlyDates: true,
+                  noTime: true,
+                  allowNull: true,
+                  callback: ({specific}) => save({deadline: specific})
+                },
+              },
+            },
+            {
+              icon: 'calendar',
+              content: specificDate,
+              title: 'Add date',
+              options: {
+                comp: "CalendarPicker",
+                content: {repeat: true, disableDaily: true, callback: calendar => save({calendar})}},
+            },
+            {
+              icon: 'tag',
+              title: 'Add tags',
+              options: {
+                allowSearch: true,
+                select: true,
+                onSave: names => {
+                  dispatch('list/editListTags', {
+                    tagIds: this.tags.filter(el => names.includes(el.name)).map(el => el.id),
+                    listId,
+                  })
+                },
+                selected: (list.tags && list.tags.map(id => this.tags.find(el => el.id === id).name)) || [],
+                links: this.tags.map(el => ({
+                  name: el.name,
+                  icon: 'tag',
+                })),
+              },
+            },
+          ]
+        }
     },
     saveHeaderContent() {
       const save = obj => {
@@ -257,16 +328,6 @@ export default {
         if (obj.deadline !== undefined)
           save(obj)
       }
-    },
-    deadline() {
-      const list = this.viewList
-      return list ? list.deadline : null
-    },
-    headerCalendar() {
-      const list = this.viewList
-      if (list)
-        return list.calendar
-      return null
     },
     headerOptions() {
       const list = this.viewList

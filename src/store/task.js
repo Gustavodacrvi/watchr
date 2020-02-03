@@ -897,6 +897,8 @@ export default {
         setList(b, {
           folder,
           userId: uid(),
+          createdFire: serverTimestamp(),
+          created: mom().format('Y-M-D HH:mm ss'),
           users: [uid()],
           smartViewsOrders: {},
           name: task.name,

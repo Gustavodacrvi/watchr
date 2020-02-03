@@ -101,7 +101,7 @@ service cloud.firestore {
           isNullOrBollean('disablePmFormat') &&
           isArrayOrUndefined('hidedViews', 30) &&
           isArrayOrUndefined('hidedSections', 30) &&
-          (!('calendarOrders' in incomingData()) || incomingData().calendarOrders is set) &&
+          (!('calendarOrders' in incomingData()) || incomingData().calendarOrders is map) &&
           incomingData().size() < 10
       }
       function isValidTag(bracketId) {
@@ -135,7 +135,7 @@ service cloud.firestore {
           incomingData().name is string &&
           incomingData().created is string &&
           incomingData().createdFire is timestamp &&
-          (!('smartViewsOrders' in incomingData()) || incomingData().smartViewsOrders is set) &&
+          (!('smartViewsOrders' in incomingData()) || incomingData().smartViewsOrders is map) &&
           isArrayOrUndefined('files', 30) &&
           isArrayOrUndefined('tags', 50) &&
           isArrayOrUndefined('tasks', 50) &&

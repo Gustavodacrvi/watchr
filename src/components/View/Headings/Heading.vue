@@ -17,7 +17,7 @@
           @mouseenter="onHover = true"
           @mouseleave="onHover = false"
         >
-          <div class="header">
+          <div v-if="!dateType || !isValidMom" class="header">
             <span>
               <Icon v-if="hasProgress" class="icon"
                 icon="tasks"
@@ -33,9 +33,19 @@
               <h3 class="name" :class="{hasIcon}" :style="{color: getHeadingColor}">{{ name }}</h3>
             </span>
           </div>
+          <div v-else class="header">
+            <div>
+              <span class="big-name">{{ bigName }}</span>
+              <span class="week-day">{{ weekDay }}</span>
+            </div>
+          </div>
         </div>
         <CalendarEvents v-if="calendarEvents" :date='calendarEvents'/>
-        <NotesApp :notes="notes" @save-notes="saveNote"/>
+        <NotesApp v-if="notes"
+          :notes="notes"
+          :heading='true'
+          @save="saveNote"
+        />
         <transition
           @enter='enterCont'
           @leave='leaveCont'
@@ -72,11 +82,15 @@ import { mapGetters } from 'vuex'
 
 import utils from '@/utils/'
 
+import mom from 'moment'
+
+const tod = mom()
+
 export default {
   mixins: [
     Defer(),
   ],
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon'],
   components: {
     IconDrop: IconDropVue, CalendarEvents,
     Icon: IconVue,
@@ -245,6 +259,24 @@ export default {
   },
   computed: {
     ...mapGetters(['isDesktop']),
+    bigName() {
+      const m = this.getMom
+
+      if (m.isSame(tod, 'month'))
+        return m.format('D')
+      if (m.isSame(tod, 'year'))
+        return m.format('MMM D')
+      return m.format('MMM D Y')
+    },
+    weekDay() {
+      return this.getMom.format('dddd')
+    },
+    getMom() {
+      return mom(this.name, 'Y-M-D')
+    },
+    isValidMom() {
+      return this.getMom.isValid()
+    },
     renderHeight() {
       return ((this.length * this.itemHeight) + 4) + 'px'
     },
@@ -252,7 +284,7 @@ export default {
       return this.isDesktop ? 38 : 50
     },
     renderCont() {
-      return this.defer(2) && this.showing && !this.movingHeading
+      return this.defer(2) && this.showing
     },
     showIconDrop() {
       const isDesktop = this.$store.getters.isDesktop
@@ -301,20 +333,32 @@ export default {
 }
 
 .Heading {
-  margin: 14px 0;
   position: relative;
   z-index: 1;
+}
+
+.Heading + .Heading {
+  margin-top: 50px;
 }
 
 .Heading:hover {
   z-index: 2;
 }
 
+.week-day {
+  margin-left: 6px;
+  font-size: 1.05em;
+  color: var(--fade);
+}
+
+.big-name {
+  font-size: 1.6em;
+}
+
 .header-wrapper {
   padding: 0 6px;
   display: flex;
   align-items: center;
-  margin-top: 20px;
   margin-bottom: 0px;
   border-bottom: 1.5px solid var(--light-gray);
   height: 50px;

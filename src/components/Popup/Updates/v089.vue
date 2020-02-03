@@ -9,7 +9,7 @@
     <h3>Task deadlines</h3>
     <br>
 
-    <li>You can add deadlines to list just like in lists.</li>
+    <li>You can add deadlines to list just like in tasks.</li>
     <br>
 
     <h3>Extra Smart View Headings</h3>

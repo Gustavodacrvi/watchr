@@ -1,16 +1,9 @@
 
 
 export default {
-  tagOptions: tag => ({dispatch, getters, tags, tasks, commit}) => {
+  tagOptions: (tag, isFromView = false) => ({dispatch, getters, tags, tasks, commit}) => {
     const showDelete = !tags.some(el => el.parent === tag.id)
     const opt = [
-      {
-        name: 'Edit tag',
-        icon: 'pen',
-        callback: () => dispatch('pushPopup', {
-            comp: 'AddTag', payload: {...tag, editing: true}, naked: true
-          })
-      },
       {
         name: 'Add subtag',
         icon: 'arrow',
@@ -48,7 +41,15 @@ export default {
         }
       },
     ]
-    if (!tag.notes)
+    if (!isFromView)
+      opt.unshift(      {
+        name: 'Edit tag',
+        icon: 'pen',
+        callback: () => dispatch('pushPopup', {
+            comp: 'AddTag', payload: {...tag, editing: true}, naked: true
+          })
+      })
+    if (!isFromView)
       opt.push({
         name: 'Add notes',
         icon: 'note',

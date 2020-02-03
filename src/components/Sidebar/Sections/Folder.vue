@@ -1,7 +1,7 @@
 
 <template>
   <div class="Folder AppbarElement" :class="platform">
-    <div class="header rb cursor handle-folder AppbarElement-link DRAG-AND-DROP-EL"
+    <div class="header rb handle-folder AppbarElement-link DRAG-AND-DROP-EL"
       :class="{isActive}"
       @click="go"
       @mouseenter="headerHover = true"
@@ -22,15 +22,10 @@
         <span class="name" key="nam"><b>{{ name }}</b></span>
       </span>
       <Icon
-        class="arrow passive primary-hover"
+        class="arrow passive cursor primary-hover"
         icon='tiny-arrow'
         :class="{showCont}"
         @click.native.stop='toggle'
-      />
-      <CircleBubble
-        innerColor='var(--light-gray)'
-        outerColor='var(--fade)'
-        opacity='0'
       />
     </div>
     <div class="cont" :class="{showCont}">
@@ -56,7 +51,7 @@ import folderUtils from "@/utils/folder"
 import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
-  props: ['name', 'id', 'defaultShowing', 'movingFolder', 'folder', 'viewName', 'viewType', 'listLength'],
+  props: ['name', 'id', 'defaultShowing', 'folder', 'viewName', 'viewType', 'listLength'],
   components: {
     Icon, IconDrop,
   },
@@ -166,6 +161,10 @@ export default {
         s.transitionDuration = '.25s'
         s.height = this.getFolderContHeight
         s.opacity = 1
+
+        setTimeout(() => {
+          s.height = 'auto'
+        }, 255)
       })
     },
     contLeave(el) {
@@ -186,7 +185,7 @@ export default {
     ...mapState(['selectedItems', 'isOnControl']),
     ...mapGetters(['isDesktop', 'platform']),
     showCont() {
-      return this.showing && !this.movingFolder
+      return this.showing
     },
     options() {
       return folderUtils.getFolderOptions({

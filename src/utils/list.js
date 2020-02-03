@@ -29,52 +29,46 @@ export default {
         },
       },
       {
-        name: 'More options',
-        icon: 'settings-h',
-        callback: () => [
-          {
-            name: 'Uncomplete tasks',
-            icon: 'circle',
-            callback: () => dispatch('list/uncompleteHeadingTasks', {
-              listId, headingId: h.id, savedTasks: store.getters['task/tasks'],
+        name: 'Uncomplete tasks',
+        icon: 'circle',
+        callback: () => dispatch('list/uncompleteHeadingTasks', {
+          listId, headingId: h.id, savedTasks: store.getters['task/tasks'],
+        })
+      },
+      {
+        name: 'Duplicate heading',
+        icon: 'copy',
+        callback: () => dispatch('list/duplicateHeading', {
+            listId, headingId: h.id, name, tasks: headingTasks.slice(),
+          })
+      },
+      {
+        name: "Convert to list",
+        icon: 'tasks',
+        important: true,
+        callback: () => {
+          if (store.getters['list/lists'].some(l => l.name === h.name))
+            toast({
+              name: 'There is already a list with this heading name.',
+              seconds: 3,
+              type: 'error',
             })
-          },
-          {
-            name: 'Duplicate heading',
-            icon: 'copy',
-            callback: () => dispatch('list/duplicateHeading', {
-                listId, headingId: h.id, name, tasks: headingTasks.slice(),
-              })
-          },
-          {
-            name: "Convert to list",
-            icon: 'tasks',
-            important: true,
-            callback: () => {
-              if (store.getters['list/lists'].some(l => l.name === h.name))
-                toast({
-                  name: 'There is already a list with this heading name.',
-                  seconds: 3,
-                  type: 'error',
-                })
-              else dispatch('list/convertHeadingToList', {
-                  listId, headingId: h.id, taskIds: headingTasks.map(el => el.id)
-                })
-            }
-          },
-          {
-            name: 'Delete heading',
-            icon: 'trash',
-            important: true,
-            callback: () => dispatch('list/deleteHeadingFromList', {
-              listId, headingId: h.id, savedTasks: headingTasks,
+          else dispatch('list/convertHeadingToList', {
+              listId, headingId: h.id, taskIds: headingTasks.map(el => el.id)
             })
-          },
-        ]
-      }
+        }
+      },
+      {
+        name: 'Delete heading',
+        icon: 'trash',
+        important: true,
+        callback: () => dispatch('list/deleteHeadingFromList', {
+          listId, headingId: h.id, savedTasks: headingTasks,
+        })
+      },
     ]
   },
-  listOptions: (list, removeGoToListOption = false) => ({tasks, getters, dispatch, router}) => {
+  listOptions: (list, isInListView = false) => ({tasks, getters, dispatch, router}) => {
     const listId = list.id
 
     const isTaskInRoot = task => getters['task/isTaskInListRoot'](task)
@@ -104,9 +98,18 @@ export default {
       editDate: TOD_STR,
       begins: TOD_STR,
     })
-    const savedTags = getters['tag/tags']
-    
-    let opt = [
+    const deleteList = {
+      name: 'Delete list',
+      icon: 'trash',
+      important: true,
+      callback: () => {
+        dispatch('list/deleteList', {
+          listId, tasks: tasks.filter(isTaskInList),
+        })
+      }
+    }
+
+    const nonInListOptions = [
       {
         name: 'Deadline',
         icon: 'deadline',
@@ -119,11 +122,6 @@ export default {
             callback: ({specific}) => saveList({deadline: specific})
           }
         })
-      },
-      {
-        name: 'No date',
-        icon: 'bloqued',
-        callback: () => saveCalendarDate(null)
       },
       {
         type: 'optionsList',
@@ -155,116 +153,21 @@ export default {
               comp: "CalendarPicker",
               content: {repeat: true, disableDaily: true, callback: saveCalendarDate}}},
           },
+          {
+            id: 'asdf',
+            icon: 'bloqued',
+            callback: () => saveCalendarDate(null),
+          }
         ]
       },
       {
-        name: "Edit list",
+        name: 'Edit list name',
         icon: 'pen',
-        callback: () => [
-          {
-            name: 'Edit list name',
-            icon: 'pen',
-            callback: () => pop({comp: 'AddList', payload: {...list, editing: true}, naked: true})
-          },
-/*           {
-            name: 'Repeat list',
-            icon: 'repeat',
-            callback: () => {return {
-              comp: 'CalendarPicker',
-              content: {callback: date => {
-              if (date && date.type && date.type !== 'specific' && date.type !== 'someday') {
-                dispatch('list/saveList', {
-                  id: listId, calendar: date,
-                })
-              }
-              else if (date === null)
-                dispatch('list/saveList', {
-                  id: listId, calendar: null,
-                })
-              }
-            }}},
-          }, */
-/*           {
-            name: 'Defer date',
-            icon: 'sleep',
-            callback: () => {return {
-              comp: 'CalendarPicker',
-              content: {callback: date => {
-              if (date && date.type === 'specific')
-                dispatch('list/saveList', {
-                  id: listId, deferDate: date.specific,
-                })
-              else if (date === null)
-                dispatch('list/saveList', {
-                  id: listId, deferDate: null,
-                })
-              }
-            }}},
-          }, */
-          {
-            name: 'Add notes',
-            icon: 'note',
-            callback: () => dispatch('pushPopup', {
-              comp: 'AddListNote',
-              payload: listId,
-              naked: true
-            })
-          },
-          {
-            name: 'Add files',
-            icon: 'file',
-            callback: () => ({
-              comp: 'Files',
-              content: {
-                storageFolder: 'lists',
-                id: listId,
-                savedFiles: list.files ? list.files : [],
-                callback: files => {
-                  dispatch('list/saveList', {
-                    id: listId, files,
-                  })
-                }
-              },
-            }),
-          },
-          {
-            name: 'Add tags',
-            icon: 'tag',
-            callback: () => ({
-              allowSearch: true,
-              select: true,
-              onSave: names => {
-                dispatch('list/editListTags', {
-                  tagIds: savedTags.filter(el => names.includes(el.name)).map(el => el.id),
-                  listId,
-                })
-              },
-              selected: (list.tags && list.tags.map(id => savedTags.find(el => el.id === id).name)) || [],
-              links: savedTags.map(el => ({
-                name: el.name,
-                icon: 'tag',
-              })),
-            }),
-          },
-/*           {
-            name: 'Add deadline',
-            icon: 'deadline',
-            callback: () => {return {
-              comp: 'CalendarPicker',
-              content: {callback: date => {
-              if (date && date.type === 'specific')
-                dispatch('list/saveList', {
-                  id: listId, deadline: date.specific,
-                })
-              else if (date === null)
-                dispatch('list/saveList', {
-                  id: listId, deadline: null,
-                })
-              }
-            }}},
-          }, */
-        ]
+        callback: () => pop({comp: 'AddList', payload: {...list, editing: true}, naked: true})
       },
+    ]
+    
+    let opt = [
       {
         name: "Toggle favorite",
         icon: 'heart',
@@ -276,14 +179,17 @@ export default {
       },
     ]
 
-    if (!removeGoToListOption)
+
+    if (!isInListView) {
+      opt = [...nonInListOptions, ...opt]
       opt.unshift(      {
         name: 'Go to list',
         icon: 'tasks',
         callback: () => {
           router.push(`user?list=${list.name}`) 
         },
-      },)
+      })
+    }
     
     const moreOptions = [
       {
@@ -305,21 +211,17 @@ export default {
           list, tasks: tasks.filter(isTaskInList),
         })}
       })
-    moreOptions.push({
-      name: 'Delete list',
-      icon: 'trash',
-      important: true,
-      callback: () => {
-        dispatch('list/deleteList', {
-          listId, tasks: tasks.filter(isTaskInList),
-        })
-      }
-    })
-    opt = [...opt, {
-      name: 'More options',
-      icon: 'settings-h',
-      callback: () => moreOptions
-    }]
+    if (!isInListView) {
+      opt.push(deleteList)
+      opt = [...opt, {
+        name: 'More options',
+        icon: 'settings-h',
+        callback: () => moreOptions
+      }]
+    } else {
+      opt = [...opt, ...moreOptions]
+      opt.push(deleteList)
+    }
     return opt
   },
 }

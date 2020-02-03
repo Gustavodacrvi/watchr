@@ -84,10 +84,15 @@ export default {
     saveNotes() {},
     addHeading() {},
     onSortableAdd() {
+      const n = this.viewName
+
+      if (n === 'Upcoming' || n === 'Completed' || n === 'Later lists')
+        return null
+      
       return (evt, taskIds, type, ids) => {
         if (this.isSmartOrderViewType)
           this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
-            taskIds, view: this.viewName, ids,
+            taskIds, view: n, ids,
           })
         else {
           this.$store.dispatch('list/removeTasksFromSmartViewCalendarHeading', {
@@ -100,6 +105,10 @@ export default {
     
     
     updateHeadingIds() {
+      const n = this.viewName
+      if (n === 'Upcoming' || n === 'Completed' || n === 'Later lists')
+        return null
+      
       if (this.isSmartOrderViewType)
         return ids => {
             this.$store.dispatch('list/updateHeadingsViewOrder', {
@@ -121,6 +130,8 @@ export default {
     },
     mainFilter() {
       const n = this.viewName
+      if (n === 'Later lists')
+        return () => false
       if (this.viewType === 'search')
         return task => this.doesTaskIncludeText(task, n)
       if (n === 'Calendar')
@@ -195,6 +206,7 @@ export default {
         case 'Someday': {
           return heads
         }
+        case 'Later lists': return this.laterListsHeadings
         case 'Anytime': {
           return heads
         }
@@ -229,6 +241,7 @@ export default {
       if (this.isSmart) {
         switch (this.viewName) {
           case 'Today': return 'star'
+          case 'Later lists': return 'later-lists'
           case 'Tomorrow': return 'sun'
           case 'Inbox': return 'inbox'
           case 'Calendar': return 'calendar-star'

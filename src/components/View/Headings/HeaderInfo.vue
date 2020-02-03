@@ -1,17 +1,40 @@
 <template>
   <transition
+    appear
     @enter='enter'
     @leave='leave'
   >
-    <div v-show="content" class="header-info rb"
+    <div class="header-info rb"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
-      @click.stop
+      @click.stop='click'
     >
-      <Icon class="mg faded" :icon="icon"/>
-      <span class="mg">{{ content }}</span>
-      <span class="mg"></span>
-      <span class="faded">{{ left }}</span>
+      <Icon
+        class="icon faded"
+        :icon="icon"
+        :title='title'
+        :width='icon === "file" ? "18px" : undefined'
+      />
+      <span v-show="content || right">
+        <transition
+          @enter='contentEnter'
+          @leave='contentLeave'
+        >
+          <span v-if="content" class="cont">{{ content }}</span>
+        </transition>
+        <transition
+          @enter='contentEnter'
+          @leave='contentLeave'
+        >
+          <span v-if="right" class="faded cont">{{ right }}</span>
+        </transition>
+      </span>
+      <input v-show="false"
+        ref='file'
+        type='file'
+        @click.stop
+        @change='handleFile'
+      >
     </div>
   </transition>
 </template>
@@ -23,7 +46,7 @@ import Icon from '@/components/Icon.vue'
 import utils from '@/utils'
 
 export default {
-  props: ['content', 'props', 'left', 'icon', 'options'],
+  props: ['content', 'right', 'icon', 'options', 'title'],
   components: {
     Icon,
   },
@@ -38,31 +61,90 @@ export default {
   methods: {
     bindContext() {
       if (this.options)
-        utils.bindOptionsToEventListener(this.$el, this.options(this.save), this, 'click')
+        utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
     },
-    save(obj) {
-      this.$emit('save', obj)
+    click() {
+      if (this.icon === 'file' && this.fileInput)
+        this.fileInput.click()
+    },
+    handleFile() {
+      const inp = this.fileInput
+      if (inp.files[0])
+        this.$emit('add', inp.files[0])
+      inp.value = ''
     },
 
-    enter(el) {
+    enter(el, done) {
       const s = el.style
 
       s.transitionDuration = '0s'
       s.opacity = '0'
       s.height = '0px'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.25s'
         s.height = '35px'
         s.opacity = '1'
+
+        setTimeout(done, 255)
       })
     },
-    leave(el) {
+    leave(el, done) {
       const s = el.style
       s.transitionDuration = '.15s'
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'
       s.opacity = '0'
+
+      setTimeout(done, 255)
+    },
+
+    contentEnter(el, done) {
+
+      const s = el.style
+
+      const {width} = getComputedStyle(el)
+      
+      s.transitionDuration = 0
+      s.width = 0
+      s.marginLeft = 0
+      s.opacity = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.3s'
+
+        s.width = width
+        s.marginLeft = '6px'
+        s.opacity = 1
+
+        setTimeout(done, 305)
+      })
+
+    },
+    contentLeave(el, done) {
+      const s = el.style
+      
+
+      const {width} = getComputedStyle(el)
+
+      s.transitionDuration = 0
+      s.width = width
+      s.opacity = 1
+      s.marginLeft = '6px'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.3s'
+        s.width = 0
+        s.marginLeft = 0
+        s.opacity = 0
+  
+        setTimeout(done, 305)
+      })
+    },
+  },
+  computed: {
+    fileInput() {
+      return this.$refs['file']
     },
   },
   watch: {
@@ -76,10 +158,6 @@ export default {
 
 <style scoped>
 
-.mg {
-  margin-right: 6px;
-}
-
 .faded {
   opacity: .6;
 }
@@ -91,11 +169,22 @@ export default {
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
-  transition: transform .15s;
+}
+
+.cont {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  margin-left: 6px;
+  overflow: hidden;
+}
+
+.icon {
+  transform: translateY(2px);
 }
 
 .header-info:hover {
-  background-color: var(--card);
+  background-color: var(--light-gray);
 }
 
 .header-info:active {

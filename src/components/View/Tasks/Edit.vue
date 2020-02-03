@@ -107,7 +107,7 @@
           @convert-task='convertTask'
           @is-adding-toggle='v => isAddingChecklist = v'
         />
-        <div class="files show" :class="{show}" v-if="getFiles.length > 0">
+        <div class="files show" :class="{show, hasFiles: files.length > 0}">
           <FileApp v-for="f in getFiles" :key="f"
             :name="f"
             :status='getFileStatus(f)'
@@ -178,6 +178,16 @@
                 title='Add date'
                 :center='true'
               />
+              <Icon
+                class="opt-icon primary-hover cursor"
+                style="margin-right: 7px;margin-top: 2px"
+                width="21px"
+                :circle='true'
+                icon='file'
+                :file='true'
+                @add='addFile'
+                title='Add files'
+              />
               <IconDrop
                 handle="deadline"
                 width="22px"
@@ -219,7 +229,7 @@ import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import ChecklistVue from './Checklist/Checklist.vue'
-import FileApp from './File.vue'
+import FileApp from './../RenderComponents/File.vue'
 import FileDragDrop from './../RenderComponents/FileDragDrop.vue'
 
 import { mapGetters, mapState } from 'vuex'
@@ -260,14 +270,11 @@ export default {
         tags: [],
         checklist: [],
         order: [],
-        files: [],
       },
       fromIconDrop: false,
       toReplace: null,
       readyToRemove: false,
       savingTask: false,
-      uploadProgress: null,
-      addedFiles: [],
       optionsType: '',
       options: [],
 
@@ -291,9 +298,6 @@ export default {
       if (t.order)
         this.task.order = t.order.slice()
       else this.task.order = []
-      if (t.files)
-        this.task.files = t.files.slice()
-      else this.task.files = []
       if (t.heading) {
         this.task.headingId = t.heading
         this.task.heading = this.listHeadingName
@@ -399,10 +403,6 @@ export default {
           })
       }
     },
-    onDrop(files) {
-      for (const f of files)
-        this.addFile(f)
-    },
     saveChecklist() {
       if (this.defaultTask && this.task.checklist)
         this.$store.dispatch('task/saveTask', {
@@ -454,12 +454,14 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
+      s.margin = 0
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         if (height < 36)
           s.height = '35px'
         else
           s.height = height + 'px'
+        s.margin = '75px 0'
         setTimeout(() => {
           this.show = true
         }, 290)
@@ -492,6 +494,7 @@ export default {
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'
+        s.margin = 0
         s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       })
     },
@@ -535,7 +538,7 @@ export default {
     },
     save() {
       const t = this.task
-      if (this.defaultTask)
+      if (this.defaultTask && !this.isEditingFiles)
         this.leave(this.$el)
       if (t.name) {
         if (t.folder) {
@@ -569,7 +572,7 @@ export default {
           tags: this.tagIds,
           name: n.trim(), heading,
           calendar,
-          files: this.task.files,
+          files: this.files,
           handleFiles: this.isEditingFiles ? taskId => {
             return new Promise((solve, reject) => {
               this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId, 'tasks')
@@ -1055,6 +1058,11 @@ export default {
 }
 
 .files {
+  margin: 0;
+  transition-duration: .2s;
+}
+
+.hasFiles {
   margin: 24px 10px;
 }
 

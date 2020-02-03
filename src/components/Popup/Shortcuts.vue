@@ -132,6 +132,14 @@
         <span>Use calendar on selection</span>
         <span class="tag">Alt + S</span>
       </div>
+      <div class="line">
+        <span>Copy task</span>
+        <span class="tag">Control + C</span>
+      </div>
+      <div class="line">
+        <span>Paste task</span>
+        <span class="tag">Control + V</span>
+      </div>
 
       <h3 class="pc">View</h3>
       <div class="line">

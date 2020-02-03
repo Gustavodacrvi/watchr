@@ -11,8 +11,8 @@
       :data-disabled='disableAction'
     >
       <div
-        class="link-inner-wrapper rb item-handle cursor remove-highlight"
-        :class="{notSmartActive: !isSmart && isActive, onHover: hover, isActive}"
+        class="link-inner-wrapper rb item-handle remove-highlight"
+        :class="{notSmartActive: !isSmart && isActive, 'ignore-item': ignore, onHover: hover, isActive}"
 
         @mouseenter="hover = true"
         @mouseleave="hover = false"
@@ -23,6 +23,7 @@
       >
         <div class="icon-wrapper">
           <Icon class="main-icon"
+            :class="{cursor: icon === 'tasks'}"
             :style="iconStyle"
             :icon="icon"
             :progress='progress'
@@ -48,11 +49,6 @@
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
         </div>
-        <CircleBubble class="bubble"
-          innerColor='var(--light-gray)'
-          outerColor='var(--fade)'
-          opacity='0'
-        />
       </div>
       <Icon v-if="hasSubList"
         class="toggle-icon cursor remove-highlight primary-hover"
@@ -106,7 +102,7 @@ export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
-  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'inputPlaceholder'],
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     Icon: IconVue,

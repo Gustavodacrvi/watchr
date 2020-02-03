@@ -24,7 +24,6 @@
         :viewName="viewName"
         :options="getHeaderOptions"
         :optionsHandle='headerHandle'
-        :headerTags="headerTags"
 
         @tag='selectTag'
         @priority='selectPriority'
@@ -137,7 +136,7 @@ export default {
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
-  'headerOptions', 'deadline', 'headerTags', 'headerCalendar', 'files',
+  'headerOptions', 'headerInfo',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'getCalendarOrderDate',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
@@ -324,6 +323,7 @@ export default {
             break
           }
         }
+        
         if (this.isOnControl) {
           switch (key) {
             case "a": {
@@ -332,6 +332,19 @@ export default {
               setTimeout(() => {
                 this.selectEverythingToggle = false
               })
+              break
+            }
+            case 'c': {
+              if (fallbackItems && fallbackItems.length === 1 && this.shortcutsType === 'Task') {
+                this.$store.commit('addTaskToClipboard', this.getTasksById(fallbackItems)[0])
+              }
+              break
+            }
+            case 'v': {
+              if (fallbackItems && fallbackItems.length === 1 && this.shortcutsType === 'Task') {
+                this.$store.commit('pasteTask')
+              }
+              break
             }
           }
         }
@@ -339,9 +352,7 @@ export default {
         utils.saveByShortcut(this, false, key, p, (type, item) => {
           const dispatch = this.$store.dispatch
   
-          const isTask = this.shortcutsType === 'Task'
-
-          if (isTask) {
+          if (this.shortcutsType === 'Task') {
   
             if (fallbackItems)
               switch (type) {
@@ -1174,9 +1185,40 @@ export default {
       } else {
         return [
           {
-            name: 'No date',
-            icon: 'bloqued',
-            callback: () => this.saveDates(null, ids)
+            name: 'Move to list',
+            icon: 'tasks',
+            callback: () => {return {
+              allowSearch: true,
+              links: this.getIconDropOptionsLists,
+            }}
+          },
+          {
+            name: 'Move to folder',
+            icon: 'folder',
+            callback: () => {return {
+              allowSearch: true,
+              links: this.getIconDropOptionsFolders,
+            }}
+          },
+          {
+            name: 'Deadline',
+            icon: 'deadline',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                onlyDates: true,
+                noTime: true,
+                allowNull: true,
+                callback: ({specific}) => {
+                  this.$store.dispatch('task/saveTasksById', {
+                    ids: this.selectedItems,
+                    task: {
+                      deadline: specific,
+                    }
+                  })
+                }
+              }
+            })
           },
           {
             type: 'optionsList',
@@ -1212,6 +1254,11 @@ export default {
                   comp: "CalendarPicker",
                   content: {callback: date => this.saveDates(date, ids)}}},
               },
+              {
+                id: 'No date',
+                icon: 'bloqued',
+                callback: () => this.saveDates(null, ids)
+              },
             ]
           },
           {
@@ -1245,54 +1292,10 @@ export default {
             ],
           },
           {
-            name: 'More options',
-            icon: 'settings-h',
-            callback: () => [
-              {
-                name: 'Repeat task',
-                icon: 'repeat',
-                callback: () => [
-                  {
-                    name: 'Repeat weekly',
-                    icon: 'repeat',
-                    callback: () => ({
-                      comp: 'WeeklyPicker',
-                      content: {callback: date => this.saveDates(date, ids)},
-                    }),
-                  },
-                  {
-                    name: 'Repeat periodically',
-                    icon: 'repeat',
-                    callback: () => ({
-                      comp: 'PeriodicPicker',
-                      content: {callback: date => this.saveDates(date, ids)},
-                    }),
-                  },
-                ],
-              },
-              {
-                name: 'Move to list',
-                icon: 'tasks',
-                callback: () => {return {
-                  allowSearch: true,
-                  links: this.getIconDropOptionsLists,
-                }}
-              },
-              {
-                name: 'Move to folder',
-                icon: 'folder',
-                callback: () => {return {
-                  allowSearch: true,
-                  links: this.getIconDropOptionsFolders,
-                }}
-              },
-              {
-                name: 'Delete task',
-                icon: 'trash',
-                important: true,
-                callback: () => dispatch('task/deleteTasks', ids)
-              }
-            ]
+            name: 'Delete tasks',
+            icon: 'trash',
+            important: true,
+            callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
       }
@@ -1380,7 +1383,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 65px;
+  margin: 0 85px;
   min-height: 100%;
   position: relative;
   display: flex;
@@ -1402,7 +1405,6 @@ export default {
   margin: 0 8px;
   margin-top: -4px;
 }
-
 
 .component {
   z-index: 3;

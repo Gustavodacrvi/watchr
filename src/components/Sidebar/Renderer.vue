@@ -92,7 +92,8 @@ export default {
           if (name === 'folders-root') return false
           if (name === 'sidebar-renderer') return true
           if (name === 'item-renderer') return 'clone'
-        }, put: (l,j,item) => {
+        },
+        put: (l,j,item) => {
           const type = item.dataset.type
 
           if (type === 'Task') return true
@@ -214,6 +215,7 @@ export default {
       return this.mapString(el)
     },
     getProgress(el) {
+      if (el.stopProgress) return undefined
       if (!this.mapProgress) return undefined
       return this.mapProgress(el)
     },
@@ -249,8 +251,9 @@ export default {
       })
     },
     getIcon(el) {
+      if (el.icon)
+        return el.icon
       if (this.icon) return this.icon
-      return el.icon
     },
     getIconColor(el) {
       if (this.iconColor) return this.iconColor

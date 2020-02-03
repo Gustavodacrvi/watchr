@@ -6,25 +6,45 @@ import utils from '@/utils/'
 import 'firebase/storage'
 
 export default {
+  props: ['defaultFiles'],
+  data() {
+    return {
+      addedFiles: [],
+      files: [],
+      uploadProgress: null,
+    }
+  },
+  mounted() {
+    this.getDefaultFiles(true)
+  },
   methods: {
+    getDefaultFiles(time) {
+      setTimeout(() => {
+        this.files = (this.defaultFiles && this.defaultFiles.slice()) || []
+      }, time ? 100 : 0)
+    },
     getFileStatus(fileName) {
       if (this.addedFiles.find(el => el.name === fileName))
         return 'update'
-      if (this.defaultTask && this.defaultTask.files && this.defaultTask.files.includes(fileName) && !this.task.files.includes(fileName))
+      if (this.defaultFiles.includes(fileName) && !this.files.includes(fileName))
         return 'remove'
       return ''
     },
+    onDrop(files) {
+      for (const f of files)
+        this.addFile(f)
+    },
     addFile(file) {
-      if (!this.task.files.includes(file.name))
-        this.task.files.push(file.name)
+      if (!this.files.includes(file.name))
+        this.files.push(file.name)
       if (!this.addedFiles.find(el => el.name === file.name))
         this.addedFiles.push(file)
     },
     deleteFile(fileName) {
-      const i = this.task.files.findIndex(el => el === fileName)
+      const i = this.files.findIndex(el => el === fileName)
       const found = i > -1
       if (found)
-        this.task.files.splice(i, 1)
+        this.files.splice(i, 1)
       if (found && this.addedFiles.find(f => f.name === fileName)) {
         const j = this.addedFiles.findIndex(f => f.name === fileName)
         this.addedFiles.splice(j, 1)
@@ -121,7 +141,7 @@ export default {
         ]).then(() => {
           solve()
           this.task.addedFiles = []
-          this.task.files = []
+          this.files = []
           this.savingTask = false
           this.uploadProgress = null
           if (this.defaultTask)
@@ -138,21 +158,26 @@ export default {
     },
     getFiles() {
       let files
-      if (this.defaultTask && this.defaultTask.files)
-        files = [...this.defaultTask.files.filter(el => {
-          return !this.task.files.includes(el)
-        }), ...this.task.files]
-      else files = this.task.files.slice()
+      if (this.defaultFiles)
+        files = [...this.defaultFiles.filter(el => {
+          return !this.files.includes(el)
+        }), ...this.files]
+      else files = this.files.slice()
       files.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
       return files
     },
     getFilesToRemove() {
       // check if removed file is being updated with a new file on the addedFiles
-      if (this.defaultTask && this.defaultTask.files)
-        return this.defaultTask.files.filter(f =>
-          !this.task.files.includes(f) &&
+      if (this.defaultFiles)
+        return this.defaultFiles.filter(f =>
+          !this.files.includes(f) &&
           !this.addedFiles.find(added => added.name === f))
       return []
+    },
+  },
+  watch: {
+    defaultFiles() {
+      this.getDefaultFiles(false)
     },
   }
 }

@@ -83,13 +83,21 @@ export default {
         return tag.tasks
       return []
     },
+    headerInfo() {
+      return {
+        notes: {
+          name: this.taggetViewNotes || null,
+          save: this.tagsaveNotes,
+        },
+      }
+    },
     headingsOptions() {
       return []
     },
     headerOptions() {
       const tag = this.viewTag
       if (tag)
-        return utilsTag.tagOptions(tag)
+        return utilsTag.tagOptions(tag, true)
       return null
     },
     getViewNotes() {

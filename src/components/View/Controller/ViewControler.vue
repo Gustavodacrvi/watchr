@@ -26,14 +26,11 @@
     :tasksOrder='tasksOrder'
     :onSortableAdd='onSortableAdd'
     :viewNameValue='viewNameValue'
-    :deadline='deadline'
+    :headerInfo='headerInfo'
     :saveHeaderContent='saveHeaderContent'
     :mainFallbackItem='mainFallbackItem'
     :showHeading='showHeading'
-    :headerTags='headerTags'
-    :headerCalendar='headerCalendar'
     :itemCompletionCompareDate='itemCompletionCompareDate'
-    :files='files'
     :headingsPagination='headingsPagination'
     :configFilterOptions='configFilterOptions'
     :smartComponent='smartComponent'
@@ -45,13 +42,9 @@
     :saveHeaderName='saveHeaderName'
 
     @save-schedule='saveSchedule'
-    @save-notes='saveNotes'
     @add-task='addTask'
     @add-heading='addHeading'
     @update-ids='updateIds'
-    @remove-defer-date='removeDeferDate'
-    @remove-deadline='removeDeadline'
-    @remove-repeat='removeRepeat'
     @sidebar='sidebar'
     
     @slide='slide'
@@ -122,6 +115,8 @@ export default {
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getCalendarOrderSmartViewListsOrder: 'list/getCalendarOrderSmartViewListsOrder',
       isTaskInList: 'task/isTaskInList',
+      getLaterLists: 'list/getLaterLists',
+      isLaterList: 'list/isLaterList',
       isTaskLastDeadlineDay: 'task/isTaskLastDeadlineDay',
       getEndsTodayLists: 'list/getEndsTodayLists',
       getBeginsTodayLists: 'list/getBeginsTodayLists',
@@ -148,6 +143,7 @@ export default {
       filterTasksByCompletionDate: 'task/filterTasksByCompletionDate',
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
+      getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
       getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
@@ -460,10 +456,11 @@ export default {
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
         arr.push({
-          name: utils.getHumanReadableDate(date),
+          name: date,
           id: date,
           calendarEvents: date,
           showHeading: true,
+          dateType: true,
 
           sort: sortHeading,
           filter: filterFunction,
@@ -544,6 +541,99 @@ export default {
       })
       return arr
     },
+    laterListsHeadings() {
+      const arr = []
+
+      const laterLists = this.getLaterLists()
+
+      if (laterLists.length > 0) {
+
+        const set = new Set()
+        for (const t of laterLists)
+          set.add(t.calendar.specific)
+        const dates = Array.from(set)
+        dates.sort((a, b) => {
+          const ta = mom(a, 'Y-M-D')
+          const tb = mom(b, 'Y-M-D')
+          if (ta.isAfter(tb, 'day'))
+            return 1
+          if (ta.isBefore(tb, 'day'))
+            return -1
+          return 0
+        })
+
+        const calendar = this.calendarOrders
+
+        for (const date of dates) {
+          const itemsOrder = (calendar[date] && calendar[date].tasks) || []
+
+          const updateIds = ids => {
+            this.$store.dispatch('task/saveCalendarOrder', {
+              ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
+              date,
+            })  
+          }
+          
+          const filter = pipeBooleanFilters(
+            list => this.isLaterList(list, date),
+            list => list.calendar.specific === date
+          )
+
+          const dispatch = this.$store.dispatch
+          arr.push({
+            name: date,
+            id: date,
+            calendarEvents: date,
+            dateType: true,
+
+            listType: true,
+            directFiltering: true,
+
+            comp: 'List',
+            editComp: 'ListEdit',
+            itemPlaceholder: 'List name...',
+            
+            sort: lists => this.sortArray(itemsOrder, lists),
+            options: lists => [],
+            filter,
+
+            updateIds,
+            fallbackItem: (list, force) => {
+              if (force || !list.calendar) {
+                list.calendar = {
+                  type: 'specific',
+                  editDate: mom().format('Y-M-D'),
+                  begins: mom().format('Y-M-D'),
+                  specific: date,
+                }
+              }
+              return list
+            },
+            onAddItem: obj => {
+              this.$store.dispatch('list/addListByIndexCalendarOrder', {
+                ...obj,
+                ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
+                date,
+              })
+            },
+            onSortableAdd: (evt, itemsIds, type, ids) => {
+              this.$store.dispatch('list/saveListsById', {
+                ids: itemsIds,
+                list: {calendar: {
+                  type: 'specific',
+                  editDate: mom().format('Y-M-D'),
+                  begins: mom().format('Y-M-D'),
+                  specific: date,
+                }},
+              })
+            }
+          })
+        }
+
+      }
+      
+      return arr
+    },
     completedHeadingsOptions() {
       const arr = []
       const filtered = this.tasks.filter(task => this.isTaskInView(task, 'Completed'))
@@ -569,8 +659,9 @@ export default {
 
         const dispatch = this.$store.dispatch
         arr.push({
+          dateType: true,
           disableSortableMount: true,
-          name: utils.getHumanReadableDate(date),
+          name: date,
           sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullCheckDate'), 
           options: tasks => [
             {

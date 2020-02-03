@@ -227,6 +227,14 @@ export default {
           })
         },
       },
+      isLaterList: {
+        getter(c, list) {
+          return list.calendar && list.calendar.type === 'specific' && mom(list.calendar.specific, 'Y-M-D').isAfter(mom(TOD_DATE, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
     }),
     ...MemoizeGetters('lists', {
       getEndsTodayLists: {
@@ -240,6 +248,22 @@ export default {
         },
         cache(args) {
           return JSON.stringify(args[0])
+        },
+      },
+      getListHeadingsById: {
+        react: [
+          'headings'
+        ],
+        getter({getters}, id) {
+          return getters.lists.find(el => el.id === id).headings
+        },
+      },
+      getLaterLists: {
+        react: [
+          'calendar',
+        ],
+        getter({getters}) {
+          return getters.lists.filter(getters.isLaterList)
         },
       },
       getBeginsTodayLists: {
@@ -649,6 +673,8 @@ export default {
         name: oldHeading.name,
         notes: oldHeading.notes,
         headings: [],
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
         headingsOrder: [],
         tasks: taskIds,
       }, newList, rootState)
@@ -690,12 +716,17 @@ export default {
   
       b.commit()
     },
-    removeListTag({rootState}, {tagId, listId}) {
+    removeListTag({rootState}, {tagId, list}) {
       const b = fire.batch()
+
+      const tags = list.tags.slice()
+
+      const i = tags.indexOf(tagId)
+      tags.splice(i, 1)
       
       setList(b, {
-        tags: fd().arrayRemove(tagId),
-      }, listRef(listId), rootState)
+        tags,
+      }, listRef(list.id), rootState)
   
       b.commit()
     },

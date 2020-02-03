@@ -15,7 +15,6 @@
         :headingEditOptions='headingEditOptions'
         :color='h.color ? h.color : ""'
         :options='h.options ? h.options(h.nonFiltered) : []'
-        :movingHeading='movingHeading'
         :length='h.items.length'
 
         @option-click='v => getOptionClick(h)(v)'
@@ -55,12 +54,14 @@
           :showHeadingName="h.showHeadingName"
           :scheduleObject='scheduleObject'
           :onSortableAdd='h.onSortableAdd'
+          :addedHeading='justAddedHeading'
           :isLast='(i + 1) === headings.length'
           @add-heading='addHeading'
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
           @change-time='changeTime'
           @items-ids='ids => getItemsIds(ids, i)'
+          @added-heading-complete-mount='addedHeadingCompleteMount'
 
           :header="h"
           :addItem="h.onAddItem"
@@ -88,12 +89,11 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
+  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 'justAddedHeading',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {
       sortable: null,
-      movingHeading: false,
 
       itemsIdsObj: {}
     }
@@ -110,6 +110,9 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    addedHeadingCompleteMount() {
+      this.$emit("added-heading-complete-mount")
+    },
     getItemsIds(ids, i) {
       this.itemsIdsObj = {
         ...this.itemsIdsObj,
@@ -132,12 +135,6 @@ export default {
               const ids = this.getHeadingsIds()
               if (this.updateHeadingIds)
                 this.updateHeadingIds(ids)
-            },
-            onStart: evt => {
-              this.movingHeading = true
-            },
-            onEnd: evt => {
-              this.movingHeading = false
             },
           })
         }
@@ -177,11 +174,16 @@ export default {
     },
 
     enter(el, done) {
+      if (!this.isDesktop)
+        done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
 
+      const isFirst = this.headings[0].id === el.dataset.id
+
       s.transitionDuration = 0
       w.transitionDuration = 0
+      w.marginTop = 0
       w.opacity = 0
       s.height = 0
       s.margin = 0
@@ -189,25 +191,36 @@ export default {
       s.borderBoddom = '0px solid var(--back-color)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.4s'
-        w.transitionDuration = '.4s'
+        s.transitionDuration = '.2s'
+        w.transitionDuration = '.2s'
 
-        s.marginTop = '14px'
         s.marginBottom = 0
+        if (!isFirst)
+          w.marginTop = '50px'
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
         s.padding = '0 6px'
         s.overflow = 'hidden'
-        setTimeout(done, 400)
+        setTimeout(done, 205)
       })
     },
     leave(el, done) {
+      if (this.isChangingViewName || !this.isDesktop)
+        done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
+      let c = el.getElementsByClassName('cont')[0]
 
-      s.transitionDuration = '.4s'
-      w.transitionDuration = '.4s'
+      if (c) {
+        c = c.style
+        c.transitionDuration = '.2s'
+        c.height = 0
+        c.overflow = 'hidden'
+      }
+
+      s.transitionDuration = '.2s'
+      w.transitionDuration = '.2s'
       w.opacity = 0
       w.height = 0
       w.overflow = 'hidden'
@@ -217,16 +230,13 @@ export default {
       s.padding = 0
       s.borderBoddom = '0px solid var(--back-color)'
 
-      setTimeout(done, 400)
+      setTimeout(done, 205)
     },
   },
   computed: {
     ...mapGetters(['isDesktop']),
     emptyHeadings() {
       return []
-    },
-    runHeadingsTransition() {
-      return this.isDesktop || this.isChangingViewName
     },
     getLazyHeadingsIds() {
       return this.headings.map(el => el.id)

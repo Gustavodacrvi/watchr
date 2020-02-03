@@ -50,7 +50,6 @@ import ListIcons from './ListIcons.vue'
 import CalendarPicker from './Calendar.vue'
 import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
 import TimePicker from './Calendar/TimePicker.vue'
-import Files from './Files.vue'
 import Confirm from './Confirm.vue'
 
 import { mapGetters } from 'vuex'
@@ -59,7 +58,7 @@ export default {
   props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center'],
   components: {
     Icon, ListIcons, CalendarPicker,
-    Files, TimePicker, RepeatPicker,
+    TimePicker, RepeatPicker,
     Confirm,
   },
   data() {
@@ -118,16 +117,16 @@ export default {
           s.width = 'auto'
           s.height = 'auto'
           requestAnimationFrame(() => {
-            const {height, width} = getComputedStyle(cont)
+            const {height, width} = getComputedStyle(this.$el.getElementsByClassName('icon-drop-content')[0])
             s.width = oldWidth
             s.height = oldHeight
             setTimeout(() => {
               s.transitionDuration = '.2s'
-              s.width = width === '0px' ? 'auto' : width
-              s.height = height === '0px' ? 'auto' : height
+              s.width = width
+              s.height = height
             }, 125)
           })
-        }, 210)
+        }, 275)
         this.showingCont = false
         setTimeout(() => {
           this.showingCont = true

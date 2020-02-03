@@ -6,7 +6,7 @@
       iconColor='var(--primary)'
       :disableSelection='true'
       :enableSort="true"
-      :list="rootLists"
+      :list="getRootLists"
       :active="active"
       :viewType="viewType"
       :mapProgress='getListProgress'
@@ -25,7 +25,7 @@
     <transition-group
       class="folders-root"
       tag="div"
-      :class="{isDragginInnerList}"
+      :class="{isDragginInnerList, hasRootLists: getRootLists.length}"
       @enter='enter'
       @leave='leave'
 
@@ -33,7 +33,6 @@
     >
       <FolderApp v-for="f in laseredFolders" :key="f.id"
         v-bind="f"
-        :movingFolder='movingFolder'
         :folder='f'
         :viewName='viewName'
         :viewType='viewType'
@@ -99,7 +98,6 @@ export default {
   props: ['active', 'viewName', 'viewType', 'showDefered', 'showRepeat'],
   data() {
     return {
-      movingFolder: false,
       isDragginInnerList: false,
       sortable: null,
     }
@@ -117,6 +115,7 @@ export default {
         return false
       }},
       delay: 225,
+      filter: '.ignore-item',
       animation: 80,
       delayOnTouchOnly: true,
       handle: '.handle-folder',
@@ -124,12 +123,6 @@ export default {
       onUpdate: (evt) => {
         const ids = this.getFolderIds()
         this.$store.dispatch('folder/updateFoldersOrder', ids)
-      },
-      onStart: evt => {
-        this.movingFolder = true
-      },
-      onEnd: evt => {
-        this.movingFolder = false
       },
     })
   },
@@ -242,6 +235,7 @@ export default {
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       getListsByFolderId: 'folder/getListsByFolderId',
+      getLaterLists: 'list/getLaterLists',
 
       filterSidebarLists: 'list/filterSidebarLists',
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
@@ -271,6 +265,26 @@ export default {
       const arr = []
       for (const f of lists) if (!f.folder) arr.push(f)
       
+      return arr
+    },
+    getRootLists() {
+      let arr = this.rootLists.slice()
+
+      const laterLists = this.getLaterLists()
+      const length = laterLists.length
+      if (length) {
+        arr.push({
+          icon: 'later-lists',
+          ignore: true,
+          name: `${length} later list${length === 1 ? '' : 's'}`,
+          id: 'later lists',
+          stopProgress: true,
+          callback: () => {
+            this.$router.push('/user?list=Later lists')
+          }
+        })
+      }
+
       return arr
     },
     filteredLists() {
@@ -304,8 +318,8 @@ export default {
 
 <style scoped>
 
-.folders-root {
-  margin-top: 12px;
+.hasRootLists {
+  margin-top: 28px;
 }
 
 .folders-root {

@@ -1,12 +1,12 @@
 
 const computed = [
-  'icon', 'showEmptyHeadings', 'updateHeadingIds', 'headingEditOptions', 'savedSchedule', 'headerOptions', 'getViewNotes', 'getPieProgress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackItem', 'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'deadline', 'mainFallbackItem', 'showHeading', 'headerTags', 'headerCalendar', 'itemCompletionCompareDate', 'files', 'headingsPagination', 'saveHeaderContent', 'configFilterOptions', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent', 'showHeadadingFloatingButton', 'extraListView', 'removeListHandlerWhenThereArentLists',
-  'removeHeaderTag', 'saveHeaderName'
+  'icon', 'showEmptyHeadings', 'updateHeadingIds', 'headingEditOptions', 'savedSchedule', 'headerOptions', 'getViewNotes', 'getPieProgress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackItem', 'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'mainFallbackItem', 'showHeading', 'itemCompletionCompareDate',
+  'headerInfo', 'headingsPagination', 'saveHeaderContent', 'configFilterOptions', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent', 'showHeadadingFloatingButton', 'extraListView', 'removeListHandlerWhenThereArentLists',
+  'removeHeaderTag', 'saveHeaderName', 'disableSortableMount',
 ]
 
-const methods = ['save-notes', 'save-schedule',
-'add-task', 'add-heading', 'update-ids', 'remove-defer-date',
-'remove-deadline', 'remove-repeat']
+const methods = ['save-schedule',
+'add-task', 'add-heading', 'update-ids']
 
 const getComputedProperties = () => {
   const obj = {}

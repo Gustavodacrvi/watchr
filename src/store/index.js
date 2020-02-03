@@ -48,7 +48,7 @@ import { userRef, cacheRef, setInfo } from "../utils/firestore"
 
 const uid = () => auth.currentUser.uid
 
-const version = '089'
+const version = '090'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -126,6 +126,9 @@ const store = new Vuex.Store({
 
     isFirstSnapshot: true,
     changedIds: [],
+
+    clipboardTask: null,
+    toggleClipboardPaste: false,
   },
   getters: {
     ...Memoize(null, {
@@ -230,6 +233,12 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    pasteTask(state) {
+      state.toggleClipboardPaste = !state.toggleClipboardPaste
+    },
+    addTaskToClipboard(state, clipboardTask) {
+      state.clipboardTask = clipboardTask
+    },
     saveCalendarList(state, list) {
       state.calendarList = list
     },
