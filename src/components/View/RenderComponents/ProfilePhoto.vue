@@ -1,9 +1,9 @@
 <template>
   <div
     class="ProfilePhoto"
-    :class='{doesntHavePhoto: !url}'
+    :class='{doesntHavePhoto: !url, edit: !display}'
     :style="{backgroundImage: `url('${url}')`, width: getProfileWidth, height: getProfileWidth}"
-    @click.stop
+    @click='click'
   >
     <Icon v-if="!url"
       icon='user'
@@ -36,7 +36,12 @@ export default {
   },
   methods: {
     bindContext() {
-      utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
+      if (!this.display)
+        utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
+    },
+    click(evt) {
+      if (!this.display)
+        evt.stopPropagation()
     },
     removePhoto() {
       this.$store.dispatch('deleteProfilePic')
@@ -119,6 +124,9 @@ export default {
   align-items: center;
   background-position: center;
   background-size: cover;
+}
+
+.edit {
   cursor: pointer;
 }
 

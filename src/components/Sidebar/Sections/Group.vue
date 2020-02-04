@@ -26,7 +26,7 @@
         />
       </span>
       <Icon
-        class="arrow passive cursor primary-hover"
+        class="arrow passive primary-hover"
         icon='tiny-arrow'
         :class="{showCont: showing}"
         @click.native.stop='toggle'

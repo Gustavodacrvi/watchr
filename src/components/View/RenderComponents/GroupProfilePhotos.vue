@@ -1,8 +1,12 @@
 <template>
-  <div class="GroupProfilePhotos">
+  <div class="GroupProfilePhotos"
+    :class="{isOwner}"
+    @click="click"
+  >
     <Photo
       :photoURL='ownerURL'
       size='small'
+      :display='true'
     />
   </div>
 </template>
@@ -18,8 +22,18 @@ export default {
   components: {
     Photo,
   },
+  methods: {
+    click() {
+      if (this.isOwner)
+        this.$store.dispatch('pushPopup', {
+          comp: 'InvitePeople',
+          payload: this.group,
+        })
+    },
+  },
   computed: {
     ...mapState({
+      userId: state => state.user.uid,
       groups: state => state.group.groups,
     }),
     groupInfo() {
@@ -27,7 +41,10 @@ export default {
     },
     ownerURL() {
       return this.groupInfo.profiles[this.groupInfo.userId].photoURL
-    }
+    },
+    isOwner() {
+      return this.userId === this.userId
+    },
   },
 }
 
@@ -38,6 +55,10 @@ export default {
 .GroupProfilePhotos {
   display: inline-flex;
   align-items: center;
+}
+
+.isOwner {
+  cursor: pointer;
 }
 
 </style>
