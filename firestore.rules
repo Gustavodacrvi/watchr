@@ -187,7 +187,23 @@ service cloud.firestore {
           didntChangeConstant() &&
           isValidGroupCacheDoc();
       }
+      match /invites/{inviteId} {
+        allow create: if
+          isSignedInAndVerified() &&
+          isValidDoc(inviteId) &&
+          isValidInviteDoc(groupId) &&
+          isGroupOwner(groupId);
+        allow read: if
+          isSignedInAndVerified() &&
+          (isOwner() || isInviteTarget())
+        allow delete: if isSignedInAndVerified() && isOwner()
+      }
 
+      function isInviteTarget() {
+        return
+          existingData().to == request.auth.uid &&
+          existingData().denied == false
+      }
       function isInGroup() {
         return
           isOwner() ||
@@ -195,6 +211,28 @@ service cloud.firestore {
             existingData().users[request.auth.uid] == true &&
             existingData().profiles[request.auth.uid] is map
           )
+      }
+      function isGroupOwner(groupId) {
+        return get(/databases/$(database)/documents/groups/$(groupId)).data.userId == request.auth.uid
+      }
+      function isValidInviteDoc(groupId) {
+        return
+          incomingData().groupId == groupId &&
+          incomingData().userId is string &&
+          incomingData().id is string &&
+
+          incomingData().created is string &&
+          incomingData().createdFire is timestamp &&
+
+          incomingData().groupName is string &&
+          incomingData().ownerProfile is map &&
+          incomingData().ownerProfile.uid == incomingData().userId &&
+          incomingData().ownerProfile.size() == 4 &&
+          incomingData().to is string &&
+          incomingData().to != incomingData().userId &&
+          incomingData().denied == false &&
+
+          incomingData().size() == 9
       }
       function isValidGroupDoc(id) {
         return

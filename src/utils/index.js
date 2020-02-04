@@ -264,6 +264,14 @@ export default {
       if (obj.hasOwnProperty(k))
         obj[k] = {...obj[k], id: k}
   },
+  getUserProfileData(user) {
+    return {
+      displayName: user.displayName,
+      email: user.email,
+      uid: user.uid || user.userId,
+      photoURL: user.photoURL,
+    }
+  },
   updateVuexObject(state, objName, source, filter) {
     const target = state[objName]
     const targetKeys = Object.keys(target)

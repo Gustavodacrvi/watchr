@@ -42,6 +42,7 @@ import list from './list'
 import filter from './filter'
 import folder from './folder'
 import group from './group'
+import invites from './invites'
 import pomo from './pomo'
 
 import utils from '@/utils'
@@ -62,7 +63,7 @@ if (lastVersion === null) {
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter, folder,
-    pomo, group,
+    pomo, group, invites,
   },
   state: {
     lastVersion,
@@ -461,54 +462,69 @@ const store = new Vuex.Store({
         
       })
       if (userId)
-      fire.collectionGroup('groupCache').
-        where(`users.${userId}`, '==', true)
-        .onSnapshot(snap => {
-          const isFromHere = snap.metadata.hasPendingWrites
-          if (!isFromHere) {
-            const changes = snap.docChanges()
-            
-            changes.forEach(change => {
-              const newGroup = change.doc.data()
+        fire.collectionGroup('groupCache').
+          where(`users.${userId}`, '==', true)
+          .onSnapshot(snap => {
+            const isFromHere = snap.metadata.hasPendingWrites
+            if (!isFromHere) {
+              const changes = snap.docChanges()
               
-              if (change.type === 'added') {
-                const el = state.group.groups.find(el => el.id === change.doc.id)
-                if (!el) {
-                  state.group.groups.push(newGroup)
-                  state.task.groupTasks = {
-                    ...state.task.groupTasks,
-                    ...newGroup.tasks,
+              changes.forEach(change => {
+                const newGroup = change.doc.data()
+                
+                if (change.type === 'added') {
+                  const el = state.group.groups.find(el => el.id === change.doc.id)
+                  if (!el) {
+                    state.group.groups.push(newGroup)
+                    state.task.groupTasks = {
+                      ...state.task.groupTasks,
+                      ...newGroup.tasks,
+                    }
+                    state.list.groupTasks = {
+                      ...state.list.groupListss,
+                      ...newGroup.lists,
+                    }
                   }
-                  state.list.groupTasks = {
-                    ...state.list.groupListss,
-                    ...newGroup.lists,
-                  }
+                } else if (change.type === 'removed') {
+                  const index = state.group.groups.findIndex(el => el.id === change.doc.id)
+                  state.group.groups.splice(index, 1)
+
+                  let keys = Object.keys(state.task.groupTasks)
+                  for (const k of keys)
+                    if (state.task.groupTasks[k].group === change.doc.id)
+                      state.task.groupTasks[k] = undefined
+                  state.task.groupTasks = {...state.task.groupTasks}
+                  keys = Object.keys(state.list.groupLists)
+                  for (const k of keys)
+                    if (state.list.groupLists[k].group === change.doc.id)
+                      state.list.groupLists[k] = undefined
+                  state.list.groupLists = {...state.list.groupLists}
+                } else {
+                  const i = state.group.groups.findIndex(el => el.id === change.doc.id)
+          
+                  utils.findChangesBetweenObjs(state.group.groups[i], newGroup, undefined, ['tasks', 'lists'])
+
+                  utils.updateVuexObject(state.group, 'groupTasks', newGroup.tasks || {}, task => task.group === newGroup.id)
+                  utils.updateVuexObject(state.group, 'groupLists', newGroup.lists || {}, list => list.group === newGroup.id)
                 }
-              } else if (change.type === 'removed') {
-                const index = state.group.groups.findIndex(el => el.id === change.doc.id)
-                state.group.groups.splice(index, 1)
+              })
+            }
+          })
+      
+      if (userId)
+        fire.collectionGroup('invites')
+          .where('to', '==', userId)
+          .where('denied', '==', false)
+          .onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state.invites, snap.docChanges(), 'toMe')
+          })
 
-                let keys = Object.keys(state.task.groupTasks)
-                for (const k of keys)
-                  if (state.task.groupTasks[k].group === change.doc.id)
-                    state.task.groupTasks[k] = undefined
-                state.task.groupTasks = {...state.task.groupTasks}
-                keys = Object.keys(state.list.groupLists)
-                for (const k of keys)
-                  if (state.list.groupLists[k].group === change.doc.id)
-                    state.list.groupLists[k] = undefined
-                state.list.groupLists = {...state.list.groupLists}
-              } else {
-                const i = state.group.groups.findIndex(el => el.id === change.doc.id)
-        
-                utils.findChangesBetweenObjs(state.group.groups[i], newGroup, undefined, ['tasks', 'lists'])
-
-                utils.updateVuexObject(state.group, 'groupTasks', newGroup.tasks || {}, task => task.group === newGroup.id)
-                utils.updateVuexObject(state.group, 'groupLists', newGroup.lists || {}, list => list.group === newGroup.id)
-              }
-            })
-          }
-        })
+      if (userId)
+        fire.collectionGroup('invites')
+          .where('userId', '==', userId)
+          .onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state.invites, snap.docChanges(), 'fromMe')
+          })
     },
     update({}, info) {
       const b = fire.batch()

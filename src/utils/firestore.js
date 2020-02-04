@@ -27,6 +27,7 @@ export const tagColl = () => userRef().collection('tags')
 export const tagRef = id => id ? tagColl().doc(id) : tagColl().doc()
 export const filterColl = () => userRef().collection('filters')
 export const filterRef = id => id ? filterColl().doc(id) : filterColl().doc()
+export const inviteRef = groupId => groupRef(groupId).collection('invites').doc()
 export const setTask = (batch, task, rootState, id, writes) => {
   return new Promise((solve, reject) => {
     const ref = taskRef(id)
