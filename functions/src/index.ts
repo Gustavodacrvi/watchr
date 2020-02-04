@@ -1,7 +1,10 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
+const firebase_tools = require('firebase-tools')
+
 const firebase = admin.initializeApp();
+
 // const db = admin.firestore()
 // const FieldValue = admin.firestore.FieldValue
 
@@ -66,6 +69,17 @@ export const deleteTagsCache = functions.firestore
   .document("users/{userId}/tags/{docId}")
   .onDelete((a, b) => deleteCache(a, b, 'tags'))
 
+
+export const deleteGroupCollection = functions.firestore
+  .document('groups/{groupId}/groupCache/groupCache')
+  .onDelete((snap, context) => {
+    return firebase_tools.firestore
+            .delete(`groups/${context.params.groupId}`, {
+              project: process.env.GCLOUD_PROJECT,
+              recursive: true,
+              yes: true,
+            })
+  })
 
 /*
       const { userId } = context.params
