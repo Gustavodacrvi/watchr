@@ -150,6 +150,35 @@ service cloud.firestore {
       }
     }
 
+    match /{groupId=**}/groupCache/{cacheId} {
+      allow create: if
+        isSignedInAndVerified() &&
+        isValidDoc() &&
+        isValidGroupCacheDoc();
+      allow list: if
+        isSignedInAndVerified() &&
+        isInGroup();
+      allow delete: if
+        isSignedInAndVerified() &&
+        isOwner()
+      allow update: if
+        isSignedInAndVerified() &&
+        isInGroup() &&
+        didntChangeConstant() &&
+        isValidGroupCacheDoc();
+    }
+    match /{groupId=**}/invites/{inviteId} {
+      allow create: if
+        isSignedInAndVerified() &&
+        isValidDoc(inviteId) &&
+        isValidInviteDoc(groupId) &&
+        isGroupOwner(groupId);
+      allow list: if
+        isSignedInAndVerified() &&
+        (isOwner() || isInviteTarget())
+      allow delete: if isSignedInAndVerified() && isOwner()
+      }
+
     match /groups/{groupId} {
       allow create: if isSignedInAndVerified() && isValidGroupDoc(groupId);
       allow delete: if isOwner();
@@ -170,100 +199,71 @@ service cloud.firestore {
           isValidGroupInfoDoc() &&
           incomingData().size() == 5;
       }
-      match /groupCache/groupCache {
-        allow create: if
-          isSignedInAndVerified() &&
-          isValidDoc(groupId) &&
-          isValidGroupCacheDoc();
-        allow read: if
-          isSignedInAndVerified() &&
-          isInGroup();
-        allow delete: if
-          isSignedInAndVerified() &&
-          isOwner()
-        allow update: if
-          isSignedInAndVerified() &&
-          isInGroup() &&
-          didntChangeConstant() &&
-          isValidGroupCacheDoc();
-      }
-      match /invites/{inviteId} {
-        allow create: if
-          isSignedInAndVerified() &&
-          isValidDoc(inviteId) &&
-          isValidInviteDoc(groupId) &&
-          isGroupOwner(groupId);
-        allow read: if
-          isSignedInAndVerified() &&
-          (isOwner() || isInviteTarget())
-        allow delete: if isSignedInAndVerified() && isOwner()
-      }
-
-      function isInviteTarget() {
-        return
-          existingData().to == request.auth.uid &&
-          existingData().denied == false
-      }
-      function isInGroup() {
-        return
-          isOwner() ||
-          (
-            existingData().users[request.auth.uid] == true &&
-            existingData().profiles[request.auth.uid] is map
-          )
-      }
-      function isGroupOwner(groupId) {
-        return get(/databases/$(database)/documents/groups/$(groupId)).data.userId == request.auth.uid
-      }
-      function isValidInviteDoc(groupId) {
-        return
-          incomingData().groupId == groupId &&
-          incomingData().userId is string &&
-          incomingData().id is string &&
-
-          incomingData().created is string &&
-          incomingData().createdFire is timestamp &&
-
-          incomingData().groupName is string &&
-          incomingData().ownerProfile is map &&
-          incomingData().ownerProfile.uid == incomingData().userId &&
-          incomingData().ownerProfile.size() == 4 &&
-          incomingData().to is string &&
-          incomingData().to != incomingData().userId &&
-          incomingData().denied == false &&
-
-          incomingData().size() == 9
-      }
-      function isValidGroupDoc(id) {
-        return
-          isValidDoc(id) &&
-          incomingData().size() == 2
-      }
-      function isValidGroupCacheDoc() {
-        return
-          isValidGroupInfoDoc() &&
-          incomingData().size() > 4 &&
-          incomingData().size() < 8 &&
-
-          (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
-          (!('lists' in incomingData()) || incomingData().lists is map && incomingData().lists.size() < 2001)
-      }
-      function isValidGroupInfoDoc() {
-        return
-          incomingData().userId is string &&
-          incomingData().id is string &&
-          incomingData().name is string &&
-
-          incomingData().users is map &&
-          incomingData().users[incomingData().userId] == true &&
-          incomingData().users.size() < 21 &&
-
-          incomingData().profiles is map &&
-          incomingData().profiles[incomingData().userId] is map &&
-          incomingData().profiles.size() < 21 &&
-          incomingData().profiles.size() == incomingData().users.size()
-      }
     }
+
+    function isInviteTarget() {
+      return
+        existingData().to == request.auth.uid &&
+        existingData().denied == false
+    }
+    function isInGroup() {
+      return existingData().users[request.auth.uid] == true
+    }
+    function isGroupOwner(groupId) {
+      return get(/databases/$(database)/documents/groups/$(groupId)).data.userId == request.auth.uid
+    }
+    function isValidInviteDoc(groupId) {
+      return
+        incomingData().groupId == groupId &&
+        incomingData().userId is string &&
+        incomingData().id is string &&
+
+        incomingData().created is string &&
+        incomingData().createdFire is timestamp &&
+
+        incomingData().groupName is string &&
+        incomingData().ownerProfile is map &&
+        incomingData().ownerProfile.uid == incomingData().userId &&
+        incomingData().ownerProfile.size() == 4 &&
+        incomingData().targetProfile is map &&
+        incomingData().targetProfile.uid == incomingData().to &&
+        incomingData().targetProfile.size() == 4 &&
+        incomingData().to is string &&
+        incomingData().to != incomingData().userId &&
+        incomingData().denied == false &&
+
+        incomingData().size() == 10
+    }
+    function isValidGroupDoc(id) {
+      return
+        isValidDoc(id) &&
+        incomingData().size() == 2
+    }
+    function isValidGroupCacheDoc() {
+      return
+        isValidGroupInfoDoc() &&
+        incomingData().size() > 4 &&
+        incomingData().size() < 8 &&
+
+        (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
+        (!('lists' in incomingData()) || incomingData().lists is map && incomingData().lists.size() < 2001)
+    }
+    function isValidGroupInfoDoc() {
+      return
+        incomingData().userId is string &&
+        incomingData().id is string &&
+        incomingData().name is string &&
+
+        incomingData().users is map &&
+        incomingData().users[incomingData().userId] == true &&
+        incomingData().users.size() < 21 &&
+
+        incomingData().profiles is map &&
+        incomingData().profiles[incomingData().userId] is map &&
+        incomingData().profiles.size() < 21 &&
+        incomingData().profiles.size() == incomingData().users.size()
+    }
+
 
     function isSignedIn() {
       return request.auth.uid != null;

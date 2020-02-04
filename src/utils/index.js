@@ -326,6 +326,7 @@ export default {
     changes.forEach(change => {
       const newDoc = {...change.doc.data(), id: change.doc.id}
 
+      console.log(change.type)
       if (change.type === 'added') {
         const el = state[arrName].find(el => el.id === change.doc.id)
         if (!el)

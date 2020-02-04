@@ -61,6 +61,10 @@ export default {
       const split = str.split(' ')
       this.name = split[split.length - 1]
     },
+    alreadySentFromThisGroup(email) {
+      console.log(this.sentInvites)
+      return this.sentInvites.some(i => i.targetProfile.email === email)
+    },
     async findEmail() {
       if (this.lastTryTime !== null && (new Date() - this.lastTryTime <= 1500)) 
         return;
@@ -72,13 +76,15 @@ export default {
                     || this.pastShared.find(el => el.displayName === this.name)
 
         if (user) {
-          if (user.email === this.inviteEmail) {
+          console.log(3)
+          if (user.email === this.inviteEmail || this.alreadySentFromThisGroup(user.email)) {
             this.alreadySentToast()
             return;
           }
           this.sendInvite(user)
         } else {
-          if (this.name === this.inviteEmail) {
+          console.log(4)
+          if (this.name === this.inviteEmail || this.alreadySentFromThisGroup(this.name)) {
             this.alreadySentToast()
             return;
           }
@@ -102,7 +108,7 @@ export default {
   
         const ref = inviteRef(this.groupId)
   
-        const obj = {
+        b.set(ref, {
           userId: this.user.uid,
           id: ref.id,
           createdFire: serverTimestamp(),
@@ -111,11 +117,10 @@ export default {
           groupName: this.group.name,
           groupId: this.group.id,
           ownerProfile: utils.getUserProfileData(this.user),
+          targetProfile: user,
           to: user.userId,
           denied: false,
-        }
-  
-        b.set(ref, obj)
+        })
   
         setInfo(b, {
           pastShared: {
@@ -143,6 +148,8 @@ export default {
   computed: {
     ...mapGetters({
       platform: 'platform',
+
+      getSentInvitesByGroupId: 'invites/getSentInvitesByGroupId',
     }),
     ...mapState({
       groupId: state => state.popup.payload,
@@ -150,6 +157,9 @@ export default {
       userInfo: state => state.userInfo,
       user: state => state.user,
     }),
+    sentInvites() {
+      return this.getSentInvitesByGroupId(this.groupId)
+    },
     group() {
       return this.groups.find(el => el.id === this.groupId)
     },

@@ -462,8 +462,8 @@ const store = new Vuex.Store({
         
       })
       if (userId)
-        fire.collectionGroup('groupCache').
-          where(`users.${userId}`, '==', true)
+        fire.collectionGroup('groupCache')
+          .where(`users.${userId}`, '==', true)
           .onSnapshot(snap => {
             const isFromHere = snap.metadata.hasPendingWrites
             if (!isFromHere) {
