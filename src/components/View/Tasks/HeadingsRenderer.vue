@@ -7,7 +7,7 @@
         @enter='enter'
         @leave='leave'
       >
-      <HeadingVue v-for="(h, i) in headings" :key="h.id"
+      <HeadingVue v-for="(h, i) in getHeadings" :key="h.id"
         :header='h'
 
         v-bind="h"
@@ -15,7 +15,7 @@
         :headingEditOptions='headingEditOptions'
         :color='h.color ? h.color : ""'
         :options='h.options ? h.options(h.nonFiltered) : []'
-        :length='h.items.length'
+        :length='h.length'
 
         @option-click='v => getOptionClick(h)(v)'
         @save-notes='v => getNotesOption(h)(v)'
@@ -236,6 +236,21 @@ export default {
   },
   computed: {
     ...mapGetters(['isDesktop']),
+    getHeadings() {
+      const heads = this.headings
+
+      heads.forEach(h => {
+        if (this.showAllHeadingsItems)
+          h.length = h.items.length
+        else {
+          h.length = 4
+          if (h.items.length < 3)
+            h.length = h.items.length
+        }
+      })
+
+      return heads
+    },
     emptyHeadings() {
       return []
     },

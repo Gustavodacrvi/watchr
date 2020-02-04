@@ -163,25 +163,10 @@ export default {
 
       b.commit()
     },
-    deleteGroupById({getters, rootState}, {id, lists, tasks}) {
+    delete({rootState}, groupId) {
       const b = fire.batch()
 
-      const groupLists = getters.getListsByGroupId({id, lists})
-      const groupTasks = tasks.filter(t => t.group === id)
-
-      const writes = []
-      
-      batchSetLists(b, {
-        group: null,
-      }, groupLists.map(el => el.id), rootState, writes)
-
-      batchSetTasks(b, {
-        group: null,
-      }, groupTasks.map(el => el.id), rootState, writes)
-    
-      deleteGroup(b, id, rootState, writes)
-
-      cacheBatchedItems(b, writes)
+      deleteGroup(b, groupId, rootState)
 
       b.commit()
     },

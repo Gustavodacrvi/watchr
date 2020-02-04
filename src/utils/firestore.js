@@ -187,6 +187,22 @@ export const setGroupInfo = (batch, group, id, rootState) => {
   batch.set(infoRef, group, {merge: true})
   batch.set(cacheRef, group, {merge: true})
 }
+export const deleteGroup = (b, groupId, rootState) => {
+  const cacheRef = groupCacheRef(groupId)
+
+  const allGroups = rootState.group.groups
+  const groupTasks = rootState.task.groupTasks
+  const i = allGroups.findIndex(el => el.id === groupId)
+  rootState.group.groups.splice(i, 1)
+
+  const keys = Object.keys(groupTasks)
+  for (const k of keys)
+    if (groupTasks[k].group === groupId)
+      rootState.task.groupTasks[k] = undefined
+  rootState.task.groupTasks = {...rootState.task.groupTasks}
+
+  b.delete(cacheRef)
+}
 export const addGroup = (batch, name, rootState) => {
   const ref = groupRef()
   const infoRef = groupInfoRef(ref.id)

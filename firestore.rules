@@ -178,6 +178,9 @@ service cloud.firestore {
         allow read: if
           isSignedInAndVerified() &&
           isInGroup();
+        allow delete: if
+          isSignedInAndVerified() &&
+          isOwner()
         allow update: if
           isSignedInAndVerified() &&
           isInGroup() &&
