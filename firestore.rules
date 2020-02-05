@@ -174,8 +174,12 @@ service cloud.firestore {
       allow list: if
         isSignedInAndVerified() &&
         (isOwner() || isInviteTarget())
-      allow delete: if isSignedInAndVerified() && isOwner()
-      }
+      allow delete: if isSignedInAndVerified() && isOwner();
+      allow update: if
+        isSignedInAndVerified() &&
+        existingData().to == request.auth.uid &&
+        onlyChangedDeniedField();
+    }
 
     match /groups/{groupId} {
       allow create: if isSignedInAndVerified() && isValidGroupDoc(groupId);
@@ -209,6 +213,23 @@ service cloud.firestore {
     }
     function isGroupOwner(groupPath) {
       return get(/databases/$(database)/documents/$(groupPath)).data.userId == request.auth.uid
+    }
+    function onlyChangedDeniedField() {
+      return
+        existingData().groupId == incomingData().groupId &&
+        existingData().userId == incomingData().userId &&
+        existingData().id == incomingData().id &&
+
+        existingData().created == incomingData().created &&
+        existingData().createdFire == incomingData().createdFire &&
+
+        existingData().groupName == incomingData().groupName &&
+        existingData().ownerProfile == incomingData().ownerProfile &&
+        existingData().targetProfile == incomingData().targetProfile &&
+        existingData().to == incomingData().to &&
+        (incomingData().denied == false || incomingData().denied == true) &&
+
+        incomingData().size() == 10
     }
     function isValidInviteDoc() {
       return

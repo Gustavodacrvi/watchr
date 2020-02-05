@@ -27,7 +27,7 @@ import 'firebase/storage'
 const sto = firebase.storage()
 
 export default {
-  props: ['photoURL', 'size', 'display'],
+  props: ['photoURL', 'size', 'display', 'stopAuthFallback'],
   components: {
     Icon,
   },
@@ -75,6 +75,8 @@ export default {
   computed: {
     ...mapState(['user']),
     url() {
+      if (this.stopAuthFallback)
+        return this.photoURL
       return this.photoURL || this.user.photoURL || this.getProviderPhotoURL
     },
     options() {
@@ -97,6 +99,7 @@ export default {
     getIconSize() {
       switch (this.size) {
         case 'normal': return '28px'
+      case 'small': return '17px'
         default: return '12px'
       }
     },

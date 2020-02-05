@@ -10,6 +10,7 @@
 
       :created='i.created'
       @delete='deleteInvite'
+      @accept='acceptInvite'
     />
   </div>
 </template>
@@ -30,6 +31,9 @@ export default {
         inviteId: id,
         groupId: this.groupId,
       })
+    },
+    acceptInvite() {
+
     },
   },
   computed: {

@@ -7,7 +7,11 @@
   >
     <div class="GroupUserProfile rb" :class="platform">
       <div class="wrapper">
-        <ProfilePhoto :photoURL='photoURL' size='small'/>
+        <ProfilePhoto class="photo"
+          :photoURL='photoURL'
+          :stopAuthFallback='true'
+          size='small'
+        />
         <div class="info">
           <span class="inf displayName">
             <span>{{displayName}}</span>
@@ -24,7 +28,7 @@
             </span>
           </span>
         </div>
-        <div v-if="denied !== undefined" class="options">
+        <div v-if="denied !== undefined" class="options fade">
           <Icon class="icon cursor remove-highlight primary-hover"
             icon='trash'
             color='var(--red)'
@@ -32,6 +36,10 @@
             @click="$emit('delete')"
           />
         </div>
+        <span v-else class="options">
+          <span class="btn pending">Accept</span>
+          <span class="btn rejected" @click="$emit('delete')">Reject</span>
+        </span>
       </div>
     </div>
   </transition>
@@ -105,12 +113,16 @@ export default {
 }
 
 .options {
-  opacity: 0;
-  margin-left: 12px;
+  display: flex;
   transition-duration: .15s;
 }
 
-.mobile .options {
+.fade {
+  opacity: 0;
+  margin-left: 12px;
+}
+
+.mobile .fade {
   opacity: 1 !important;
 }
 
@@ -131,6 +143,10 @@ export default {
 
 .icon {
   transform: translate(0px, 2px);
+}
+
+.photo {
+  flex-shrink: 0;
 }
 
 .info {
@@ -171,6 +187,19 @@ export default {
 .rejected {
   border: 1px solid var(--red);
   color: var(--red);
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px;
+  margin-left: 4px;
+  border-radius: 8px;
+  transition-duration: .2s;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: var(--extra-light-gray);
 }
 
 </style>
