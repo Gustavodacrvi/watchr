@@ -174,7 +174,9 @@ service cloud.firestore {
       allow list: if
         isSignedInAndVerified() &&
         (isOwner() || isInviteTarget())
-      allow delete: if isSignedInAndVerified() && isOwner();
+      allow delete: if
+        isSignedInAndVerified() &&
+        isOwner();
       allow update: if
         isSignedInAndVerified() &&
         existingData().to == request.auth.uid &&

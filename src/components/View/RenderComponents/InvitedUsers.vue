@@ -10,7 +10,7 @@
 
       :created='i.created'
       :denied='i.denied'
-      @delete='deleteInvite'
+      @delete='deleteInvite(i)'
     />
   </div>
 </template>
@@ -27,10 +27,10 @@ export default {
   },
   props: ['groupId'],
   methods: {
-    deleteInvite({id}) {
+    deleteInvite(i) {
       this.$store.dispatch('invites/deleteInvite', {
-        inviteId: id,
-        groupId: this.groupId,
+        inviteId: i.id,
+        groupId: i.groupId,
       })
     },
   },
