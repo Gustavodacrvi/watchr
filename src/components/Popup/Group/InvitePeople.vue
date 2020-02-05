@@ -17,7 +17,6 @@
       />
       <InvitedUsers class="mar"
         :groupId='groupId'
-        @delete='deleteInvite'
       />
     </div>
   </div>
@@ -67,12 +66,6 @@ export default {
     },
     alreadySentFromThisGroup(email) {
       return this.sentInvites.some(i => i.targetProfile.email === email)
-    },
-    deleteInvite({id}) {
-      this.$store.dispatch('invites/deleteInvite', {
-        inviteId: id,
-        groupId: this.groupId,
-      })
     },
     async findEmail() {
       if (this.lastTryTime !== null && (new Date() - this.lastTryTime <= 1500)) 

@@ -18,7 +18,10 @@
           </span>
           <span class="inf email">
             <span>{{email}}</span>
-            <span>Sent {{parsedCreated}}</span>
+            <span>
+              <span v-show="groupName">{{groupName}}, </span>
+              <span>Sent {{parsedCreated}}</span>
+            </span>
           </span>
         </div>
         <div v-if="denied !== undefined" class="options">
@@ -47,7 +50,7 @@ export default {
     ProfilePhoto,
     Icon,
   },
-  props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied'],
+  props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied', 'groupName'],
   methods: {
     enter(el, done) {
 

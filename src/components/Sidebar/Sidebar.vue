@@ -446,7 +446,9 @@ export default {
           icon: 'paper-plane',
           id: 'asdfasdfasdfasd',
           number: invites.length,
-          callback: () => {},
+          callback: () => this.$store.dispatch('pushPopup', {
+            comp: 'SentInvites',
+          }),
         })
 
       return [...opt, ...this.getHidedSectionsIcons]
