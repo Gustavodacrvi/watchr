@@ -68,6 +68,9 @@ export default {
         ...this.item, id: this.id, name: this.name,
       })
     },
+    isActive() {
+      return this.name === this.viewName && this.viewType === 'folder'
+    },
   },
 }
 

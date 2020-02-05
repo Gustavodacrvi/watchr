@@ -144,7 +144,7 @@ export default {
       return obj[this.viewName]
     },
     getIconColor() {
-      if (this.viewType === 'folder') return ''
+      if (this.viewType === 'folder' || this.viewType === 'group') return ''
       if (this.viewType === 'list') {
         const obj = {
           Today: 'var(--yellow)',

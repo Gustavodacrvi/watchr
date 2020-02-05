@@ -608,6 +608,17 @@ export default {
           })
         }
       },
+      isTaskInGroup: {
+        getter({}, task, groupId) {
+          return task.group === groupId
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].group,
+            l: args[1],
+          })
+        }
+      },
       isTaskInList: {
         getter({}, task, listId) {
           return task.list === listId

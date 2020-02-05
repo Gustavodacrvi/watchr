@@ -12,7 +12,7 @@
       @touchstart.passive='touchstart'
       @touchmove.passive='touchmove'
 
-      data-type='folder'
+      data-type='group'
       :data-id='id'
       data-color='var(--txt)'
     >
@@ -26,7 +26,7 @@
         />
       </span>
       <Icon
-        class="arrow passive primary-hover"
+        class="arrow passive cursor primary-hover"
         icon='tiny-arrow'
         :class="{showCont: showing}"
         @click.native.stop='toggle'
@@ -58,21 +58,24 @@ export default {
   components: {
     ProfilePhotos,
   },
+  created() {
+    this.showing = localStorage.getItem(`group_toggle_${this.name}`) === 'true'
+  },
   methods: {
     click() {
-      // this.$router.push('/user?folder=' + this.name)
+      this.$router.push('/user?group=' + this.name)
     },
     toggle() {
-      /* this.showing = !this.showing
-      this.$store.dispatch('folder/saveFolder', {
-        id: this.id,
-        defaultShowing: this.showing,
-      }) */
+      this.showing = !this.showing
+      localStorage.setItem(`group_toggle_${this.name}`, this.showing)
     },
   },
   computed: {
     options() {
-      return groupUtils.getFolderOptions(this.item)
+      return groupUtils.getGroupOptions(this.item)
+    },
+    isActive() {
+      return this.name === this.viewName && this.viewType === 'group'
     },
   },
 }

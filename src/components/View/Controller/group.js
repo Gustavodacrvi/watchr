@@ -1,15 +1,15 @@
 
-import utilsFolder from '@/utils/folder'
+import utilsGroup from '@/utils/group'
 
 export default {
   computed: {
     addTask() {
       return obj => {
-        if (this.viewFolder) {
-          this.$store.dispatch('folder/addTaskByIndex', {
-            ...obj, folderId: this.viewFolder.id,
+/*         if (this.viewGroup) {
+          this.$store.dispatch('group/addTaskByIndex', {
+            ...obj, groupId: this.viewGroup.id,
           })
-        }
+        } */
       }
     },
     rootFallbackItem() {
@@ -17,56 +17,56 @@ export default {
     },
     mainFallbackItem() {
       return (task, force) => {
-        if (force || (!task.list && !task.folder && !task.heading))
-          task.folder = this.viewFolder.id
+        if (force || (!task.list && !task.group && !task.heading))
+          task.group = this.viewGroup.id
         return task
       }
     },
     
     updateIds() {
       return ids => {
-        if (this.viewFolder) {
-          this.$store.dispatch('folder/saveFolder', {
+        if (this.viewGroup) {
+/*           this.$store.dispatch('group/saveGroup', {
             tasks: ids,
-            id: this.viewFolder.id,
-          })
+            id: this.viewGroup.id,
+          }) */
         }
       }
     },
     saveHeaderName() {
       return name => {
-        if (this.viewFolder) {
-          if (this.$store.getters['folder/getFoldersByName']([name])[0])
+        if (this.viewGroup) {
+/*           if (this.$store.getters['group/getGroupsByName']([name])[0])
             this.pushToast({
-              name: 'This folder already exists!',
+              name: 'This group already exists!',
               seconds: 4,
               type: 'error',
             })
           else {
-            this.$router.push('/user?folder='+name)
-            this.$store.dispatch('folder/saveFolder', {
+            this.$router.push('/user?group='+name)
+            this.$store.dispatch('group/saveGroup', {
               name,
-              id: this.viewFolder.id,
+              id: this.viewGroup.id,
             })
-          }
+          } */
         }
       }
     },
     saveNotes() {
       return notes => {
-        if (this.viewFolder) {
-          this.$store.dispatch('folder/saveFolder', {
-            notes, id: this.viewFolder.id,
+/*         if (this.viewGroup) {
+          this.$store.dispatch('group/saveGroup', {
+            notes, id: this.viewGroup.id,
           })
-        }
+        } */
       }
     },
-    saveFolder() {
+    saveGroup() {
       return obj => {
-        this.$store.dispatch('folder/saveFolder', {
+        /* this.$store.dispatch('group/saveGroup', {
           ...obj,
-          id: this.viewFolder.id,
-        })
+          id: this.viewGroup.id,
+        }) */
       }
     },
     saveSchedule() {
@@ -75,32 +75,32 @@ export default {
     
     
     mainFilter() {
-      const fold = this.viewFolder
-      if (fold)
-        return task => this.isTaskInFolder(task, fold.id)
+      const group = this.viewGroup
+      if (group)
+        return task => this.isTaskInGroup(task, group.id)
       return () => false
     },
     rootFilter() {
       return () => true
     },
     
-    icon() {return 'folder'},
+    icon() {return 'group'},
     viewNameValue() {return this.viewName},
     files() {
-      const fold = this.viewFolder
-      if (fold) {
+      const group = this.viewGroup
+      if (group) {
         return {
-          id: fold.id,
-          storageFolder: 'folders',
-          files: fold.files,
+          id: group.id,
+          storageGroup: 'groups',
+          files: group.files || [],
         }
       }
       return null
     },
     tasksOrder() {
-      const fold = this.viewFolder
-      if (fold && fold.tasks) {
-        return fold.tasks
+      const group = this.viewGroup
+      if (group && group.tasks) {
+        return group.tasks
       }
       return []
     },
@@ -114,9 +114,9 @@ export default {
       return []
     },
     headerOptions() {
-      const fold = this.viewFolder
-      if (fold)
-        return utilsFolder.getFolderOptions(fold)
+      const group = this.viewGroup
+      if (group)
+        return utilsGroup.getGroupOptions(group)
       return null
     },
     getViewNotes() {
@@ -133,23 +133,23 @@ export default {
       return true
     },
     extraListView() {
-      const fold = this.viewFolder
+      const gro = this.viewGroup
       const save = obj => {
-        this.$store.dispatch('folder/saveFolder', {
-          id: fold.id,
+/*         this.$store.dispatch('group/saveGroup', {
+          id: gro.id,
           ...obj,
-        })
+        }) */
       }
       const dispatch = this.$store.dispatch
       
-      if (fold)
+      if (gro)
         return {
           comp: 'ListHandler',
-          folderId: fold.id,
-          rootFilter: list => fold.id === list.folder,
-          itemsOrder: fold.order || [],
+          groupId: gro.id,
+          rootFilter: list => gro.id === list.group,
+          itemsOrder: gro.order || [],
           updateIds: order => save({order}),
-          addItem: obj => dispatch('list/addListInFolderByIndexFromView', {...obj, folderId: fold.id}),
+          addItem: obj => dispatch('list/addListInGroupByIndexFromView', {...obj, groupId: gro.id}),
         }
     },
   },

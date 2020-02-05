@@ -14,10 +14,6 @@ export default {
     groups: [],
   },
   getters: {
-    groups(state) {
-      const keys = Object.keys(state.groups).filter(k => state.groups[k])
-      return keys.map(k => state.groups[k])
-    },
     ...MemoizeGetters('groups', {
       getGroupTaskOrderById({state, getters}, groupId) {
         const gro = getters.groups.find(f => f.id === groupId)
@@ -43,10 +39,10 @@ export default {
         react: [
           'name',
         ],
-        getter({state, getters}, names) {
+        getter({state}, names) {
           const arr = []
           for (const n of names) {
-            const gro = getters.groups.find(f => f.name === n)
+            const gro = state.groups.find(f => f.name === n)
             if (gro) arr.push(gro)
           }
           return arr
@@ -58,7 +54,7 @@ export default {
           if (ids.includes(f.id)) arr.push(f)
         return arr
       },
-    }, true),
+    }),
     getFavoriteGroups(state, getters) {
       return getters.groups.filter(f => f.favorite).map(f => ({...f, icon: 'group', color: 'var(--txt)'}))
     },

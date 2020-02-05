@@ -140,6 +140,7 @@ export default {
       doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
       doesTaskIncludeText: 'task/doesTaskIncludeText',
       isTaskInHeading: 'task/isTaskInHeading',
+      isTaskInGroup: 'task/isTaskInGroup',
       filterTasksByCompletionDate: 'task/filterTasksByCompletionDate',
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
@@ -426,6 +427,7 @@ export default {
       if (this.isSmart || type === 'search') return 'smartList'
       if (type === 'list') return 'list'
       if (type === 'folder') return 'folder'
+      if (type === 'group') return 'group'
       return 'tag'
     },
     upcomingHeadingsOptions() {
@@ -983,6 +985,9 @@ export default {
     },
     viewFolder() {
       return this.$store.getters['folder/getFoldersByName']([this.viewName])[0]
+    },
+    viewGroup() {
+      return this.$store.getters['group/getGroupsByName']([this.viewName])[0]
     },
     notHeadingHeaderView() {
       const n = this.viewName

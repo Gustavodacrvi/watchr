@@ -1,7 +1,7 @@
 
 
 export default {
-  getFolderOptions: item => ({tasks, getters, state, dispatch, router}) => {
+  getGroupOptions: item => ({tasks, getters, state, dispatch, router}) => {
     const opt = [
       {
         name: "Edit group name",
@@ -30,7 +30,7 @@ export default {
       icon: isOwner ? 'paper-plane' : 'group',
       callback: () => dispatch('pushPopup', {
         comp: 'InvitePeople',
-        payload: item,
+        payload: item.id,
       })
     })
     

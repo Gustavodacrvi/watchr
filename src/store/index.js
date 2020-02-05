@@ -347,6 +347,7 @@ const store = new Vuex.Store({
         tasks: getters['task/tasks'],
         lists: getters['list/lists'],
         folders: getters['folder/folders'],
+        groups: state.group.groups,
       })
     },
     logOut({state}) {

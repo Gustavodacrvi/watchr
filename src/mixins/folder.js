@@ -108,9 +108,6 @@ export default {
     getItemContHeight() {
       return (this.itemHeight * this.listLength) + 'px'
     },
-    isActive() {
-      return this.name === this.viewName && this.viewType === 'folder'
-    },
     itemHeight() {
       return this.isDesktop ? 35 : 42
     },
