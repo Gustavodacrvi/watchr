@@ -39,6 +39,9 @@
         </div>
       </transition>
     </span>
+    <span v-show="number" class="counter">
+      <span class='num'>{{ number }}</span>
+    </span>
     <transition name="title-trans">
       <div v-if="showingTitle && title && isDesktop"
         class="icon-title rb"
@@ -119,7 +122,7 @@ import group from '@/assets/icons/group.svg'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle', 'stop', 'title'],
+  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle', 'stop', 'title', 'number'],
   data() {
     return {
       activate: false,
@@ -258,6 +261,26 @@ export default {
 .Icon {
   position: relative;
   display: inline-block;
+  transform: scale(1,1);
+}
+
+.counter {
+  position: absolute;
+  left: -10px;
+  top: -10px;
+  padding: 6px;
+  border-radius: 50px;
+  background-color: var(--red);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 18px;
+  height: 18px;
+}
+
+.num {
+  transform: translateY(-1px);
 }
 
 .icon-title {

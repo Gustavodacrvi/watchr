@@ -98,6 +98,7 @@
                 class="sect-icon passive cursor remove-highlight primary-hover"
                 :icon='i.icon'
                 :circle='true'
+                :number='i.number'
                 color='var(--fade)'
                 @click="i.callback"
               />
@@ -444,6 +445,7 @@ export default {
         opt.push({
           icon: 'paper-plane',
           id: 'asdfasdfasdfasd',
+          number: invites.length,
           callback: () => {},
         })
 
