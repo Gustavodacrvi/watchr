@@ -426,6 +426,7 @@ export default {
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
       sortedFromMeInvites: 'invites/sortedFromMeInvites',
+      sortedToMeInvites: 'invites/sortedToMeInvites',
       isTaskInView: 'task/isTaskInView',
       // getfavfilters
       isTaskCompleted: 'task/isTaskCompleted',
@@ -449,6 +450,18 @@ export default {
           callback: () => this.$store.dispatch('pushPopup', {
             comp: 'SentInvites',
           }),
+        })
+
+      const fromOthers = this.sortedToMeInvites
+
+      if (fromOthers.length > 0)
+        opt.push({
+          icon: 'message',
+          id: 'message',
+          number: fromOthers.length,
+          callback: () => this.$store.dispatch('pushPopup', {
+            comp: 'Invites',
+          })
         })
 
       return [...opt, ...this.getHidedSectionsIcons]

@@ -102,6 +102,7 @@ import filter from '@/assets/icons/filter.svg'
 import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
 import pomo from '@/assets/icons/pomo.svg'
+import message from '@/assets/icons/message.svg'
 import pie from '@/assets/icons/pie.svg'
 import check from '@/assets/icons/check.svg'
 import layerGroup from '@/assets/icons/layer-group.svg'
@@ -135,7 +136,7 @@ export default {
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
-        pomo, pie, check, group,
+        pomo, pie, check, group, message,
         "later-lists": laterLists,
         "paper-plane": paperPlane,
         "box-close": boxClose,
