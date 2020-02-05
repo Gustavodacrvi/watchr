@@ -8,6 +8,7 @@
 
       :created='i.created'
       :denied='i.denied'
+      @delete='$emit("delete", i)'
     />
   </div>
 </template>

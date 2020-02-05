@@ -10,13 +10,15 @@
       <DropInput class="mar"
         placeholder='E-mail or username:'
         v-model="name"
-        :focus='true'
         :options='options'
         @select="selectSharedUser"
         @enter='findEmail'
         @cancel='$emit("close")'
       />
-      <InvitedUsers class="mar" :groupId='groupId'/>
+      <InvitedUsers class="mar"
+        :groupId='groupId'
+        @delete='deleteInvite'
+      />
     </div>
   </div>
 </template>
@@ -65,6 +67,12 @@ export default {
     },
     alreadySentFromThisGroup(email) {
       return this.sentInvites.some(i => i.targetProfile.email === email)
+    },
+    deleteInvite({id}) {
+      this.$store.dispatch('invites/deleteInvite', {
+        inviteId: id,
+        groupId: this.groupId,
+      })
     },
     async findEmail() {
       if (this.lastTryTime !== null && (new Date() - this.lastTryTime <= 1500)) 

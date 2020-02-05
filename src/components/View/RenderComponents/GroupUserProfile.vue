@@ -5,7 +5,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="GroupUserProfile rb">
+    <div class="GroupUserProfile rb" :class="platform">
       <div class="wrapper">
         <ProfilePhoto :photoURL='photoURL' size='small'/>
         <div class="info">
@@ -21,6 +21,14 @@
             <span>Sent {{parsedCreated}}</span>
           </span>
         </div>
+        <div v-if="denied !== undefined" class="options">
+          <Icon class="icon cursor remove-highlight primary-hover"
+            icon='trash'
+            color='var(--red)'
+            width='26px'
+            @click="$emit('delete')"
+          />
+        </div>
       </div>
     </div>
   </transition>
@@ -29,12 +37,15 @@
 <script>
 
 import ProfilePhoto from './ProfilePhoto.vue'
+import Icon from '@/components/Icon.vue'
 
 import utils from '@/utils'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
     ProfilePhoto,
+    Icon,
   },
   props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied'],
   methods: {
@@ -69,6 +80,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['platform']),
     parsedCreated() {
       if (!this.created)
         return null
@@ -89,8 +101,22 @@ export default {
   overflow: hidden;
 }
 
+.options {
+  opacity: 0;
+  margin-left: 12px;
+  transition-duration: .15s;
+}
+
+.mobile .options {
+  opacity: 1 !important;
+}
+
 .GroupUserProfile:hover {
   background-color: var(--light-gray);
+}
+
+.GroupUserProfile:hover .options {
+  opacity: 1;
 }
 
 .wrapper {
@@ -98,6 +124,10 @@ export default {
   display: flex;
   align-items: center;
   flex-basis: 100%;
+}
+
+.icon {
+  transform: translate(0px, 2px);
 }
 
 .info {

@@ -1,4 +1,8 @@
 
+import { fire } from './index'
+
+import { deleteInvite } from "@/utils/firestore"
+
 import MemoizeGetters from './memoFunctionGetters'
 
 export default {
@@ -24,5 +28,14 @@ export default {
         },
       }
     }),
+  },
+  actions: {
+    deleteInvite(c, {groupId, inviteId}) {
+      const b = fire.batch()
+
+      deleteInvite(b, groupId, inviteId)
+
+      b.commit()
+    },
   },
 }
