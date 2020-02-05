@@ -29,7 +29,7 @@ export const filterColl = () => userRef().collection('filters')
 export const filterRef = id => id ? filterColl().doc(id) : filterColl().doc()
 export const inviteRef = (groupId, id) => {
   const g = groupRef(groupId).collection('invites')
-  if (id) g.doc(id)
+  if (id) return g.doc(id)
   return g.doc()
 }
 export const setTask = (batch, task, rootState, id, writes) => {
@@ -207,6 +207,11 @@ export const deleteGroup = (b, groupId, rootState) => {
   rootState.task.groupTasks = {...rootState.task.groupTasks}
 
   b.delete(cacheRef)
+}
+export const rejectInvite = (batch, groupId, inviteId) => {
+  batch.set(inviteRef(groupId, inviteId), {
+    denied: true,
+  }, {merge: true})
 }
 export const deleteInvite = (batch, groupId, inviteId) => {
   batch.delete(inviteRef(groupId, inviteId))

@@ -9,8 +9,8 @@
       :groupName='i.groupName'
 
       :created='i.created'
-      @delete='deleteInvite'
-      @accept='acceptInvite'
+      @delete='deleteInvite(i)'
+      @accept='acceptInvite(i)'
     />
   </div>
 </template>
@@ -26,11 +26,8 @@ export default {
     GroupUserProfile,
   },
   methods: {
-    deleteInvite({id}) {
-      this.$store.dispatch('invites/deleteInvite', {
-        inviteId: id,
-        groupId: this.groupId,
-      })
+    deleteInvite(obj) {
+      this.$store.dispatch('invites/rejectInvite', obj)
     },
     acceptInvite() {
 

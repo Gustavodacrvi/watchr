@@ -224,8 +224,19 @@ service cloud.firestore {
         existingData().createdFire == incomingData().createdFire &&
 
         existingData().groupName == incomingData().groupName &&
-        existingData().ownerProfile == incomingData().ownerProfile &&
-        existingData().targetProfile == incomingData().targetProfile &&
+
+        existingData().ownerProfile.uid == incomingData().ownerProfile.uid &&
+        existingData().ownerProfile.displayName == incomingData().ownerProfile.displayName &&
+        existingData().ownerProfile.email == incomingData().ownerProfile.email &&
+        existingData().ownerProfile.photoURL == incomingData().ownerProfile.photoURL &&
+        existingData().ownerProfile.size() == incomingData().ownerProfile.size() &&
+
+        existingData().targetProfile.uid == incomingData().targetProfile.uid &&
+        existingData().targetProfile.displayName == incomingData().targetProfile.displayName &&
+        existingData().targetProfile.email == incomingData().targetProfile.email &&
+        existingData().targetProfile.photoURL == incomingData().targetProfile.photoURL &&
+        existingData().targetProfile.size() == incomingData().targetProfile.size() &&
+
         existingData().to == incomingData().to &&
         (incomingData().denied == false || incomingData().denied == true) &&
 

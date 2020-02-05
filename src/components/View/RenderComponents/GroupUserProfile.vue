@@ -37,7 +37,7 @@
           />
         </div>
         <span v-else class="options">
-          <span class="btn pending">Accept</span>
+          <span class="btn pending" @click="$emit('accept')">Accept</span>
           <span class="btn rejected" @click="$emit('delete')">Reject</span>
         </span>
       </div>
