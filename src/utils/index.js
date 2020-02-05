@@ -326,7 +326,6 @@ export default {
     changes.forEach(change => {
       const newDoc = {...change.doc.data(), id: change.doc.id}
 
-      console.log(change.type)
       if (change.type === 'added') {
         const el = state[arrName].find(el => el.id === change.doc.id)
         if (!el)
@@ -360,7 +359,7 @@ export default {
       return mom1.isSame(mom2, 'day')
     }
     
-    let date = mom(str, 'Y-M-D', true)
+    let date = mom(str, 'Y-M-D')
     if (sameDay(tod, date)) return 'Today'
     if (sameDay(mom().add(1, 'day'), date)) return 'Tomorrow'
     if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')

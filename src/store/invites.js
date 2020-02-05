@@ -9,7 +9,6 @@ export default {
   },
   getters: {
     sortedToMeInvites(state, d, c, rootGetters) {
-      console.log(state.toMe)
       return rootGetters.checkMissingIdsAndSortArr([], state.toMe)
     },
     sortedFromMeInvites(state, d, c, rootGetters) {
@@ -22,7 +21,7 @@ export default {
         },
         cache(args) {
           return JSON.stringify(args[0])
-        }
+        },
       }
     }),
   },

@@ -103,7 +103,8 @@ export default {
     getProfileWidth() {
       switch (this.size) {
         case 'normal': return '75px'
-        case 'small': return '23px'
+        case 'small': return '35px'
+        case 'ultra-small': return '23px'
         default: return '75px'
       }
     },

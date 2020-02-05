@@ -153,7 +153,6 @@ service cloud.firestore {
     match /{groupId=**}/groupCache/{cacheId} {
       allow create: if
         isSignedInAndVerified() &&
-        isValidDoc() &&
         isValidGroupCacheDoc();
       allow list: if
         isSignedInAndVerified() &&
@@ -167,12 +166,11 @@ service cloud.firestore {
         didntChangeConstant() &&
         isValidGroupCacheDoc();
     }
-    match /{groupId=**}/invites/{inviteId} {
+    match /{groupPath=**}/invites/{inviteId} {
       allow create: if
         isSignedInAndVerified() &&
-        isValidDoc(inviteId) &&
-        isValidInviteDoc(groupId) &&
-        isGroupOwner(groupId);
+        isValidInviteDoc() &&
+        isGroupOwner(groupPath);
       allow list: if
         isSignedInAndVerified() &&
         (isOwner() || isInviteTarget())
@@ -209,12 +207,12 @@ service cloud.firestore {
     function isInGroup() {
       return existingData().users[request.auth.uid] == true
     }
-    function isGroupOwner(groupId) {
-      return get(/databases/$(database)/documents/groups/$(groupId)).data.userId == request.auth.uid
+    function isGroupOwner(groupPath) {
+      return get(/databases/$(database)/documents/$(groupPath)).data.userId == request.auth.uid
     }
-    function isValidInviteDoc(groupId) {
+    function isValidInviteDoc() {
       return
-        incomingData().groupId == groupId &&
+        incomingData().groupId is string &&
         incomingData().userId is string &&
         incomingData().id is string &&
 
@@ -241,6 +239,7 @@ service cloud.firestore {
     }
     function isValidGroupCacheDoc() {
       return
+        incomingData().userId == request.auth.uid &&
         isValidGroupInfoDoc() &&
         incomingData().size() > 4 &&
         incomingData().size() < 8 &&

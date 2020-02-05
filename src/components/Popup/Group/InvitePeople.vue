@@ -7,7 +7,7 @@
       <span class="note">
         Type in the name of the person you want to share with. If it’s someone you’ve never shared a list with before, you’ll need to type in the email associated with their account. 
       </span>
-      <DropInput class="drop-input"
+      <DropInput class="mar"
         placeholder='E-mail or username:'
         v-model="name"
         :focus='true'
@@ -16,6 +16,7 @@
         @enter='findEmail'
         @cancel='$emit("close")'
       />
+      <InvitedUsers class="mar" :groupId='groupId'/>
     </div>
   </div>
 </template>
@@ -25,6 +26,7 @@
 import { mapGetters, mapState } from 'vuex'
 
 import DropInput from '@/components/Auth/DropInput.vue'
+import InvitedUsers from "@/components/View/RenderComponents/InvitedUsers.vue"
 
 import firebase from 'firebase/app'
 import 'firebase/firestore'
@@ -38,7 +40,7 @@ import mom from 'moment'
 
 export default {
   components: {
-    DropInput,
+    DropInput, InvitedUsers,
   },
   data() {
     return {
@@ -62,7 +64,6 @@ export default {
       this.name = split[split.length - 1]
     },
     alreadySentFromThisGroup(email) {
-      console.log(this.sentInvites)
       return this.sentInvites.some(i => i.targetProfile.email === email)
     },
     async findEmail() {
@@ -76,14 +77,12 @@ export default {
                     || this.pastShared.find(el => el.displayName === this.name)
 
         if (user) {
-          console.log(3)
           if (user.email === this.inviteEmail || this.alreadySentFromThisGroup(user.email)) {
             this.alreadySentToast()
             return;
           }
           this.sendInvite(user)
         } else {
-          console.log(4)
           if (this.name === this.inviteEmail || this.alreadySentFromThisGroup(this.name)) {
             this.alreadySentToast()
             return;
@@ -118,13 +117,13 @@ export default {
           groupId: this.group.id,
           ownerProfile: utils.getUserProfileData(this.user),
           targetProfile: user,
-          to: user.userId,
+          to: user.uid || user.userId,
           denied: false,
         })
   
         setInfo(b, {
           pastShared: {
-            [user.userId]: utils.getUserProfileData(user)
+            [user.uid || user.userId]: utils.getUserProfileData(user)
           }
         })
   
@@ -185,8 +184,8 @@ export default {
   opacity: .6;
 }
 
-.drop-input {
-  margin-top: 6px;
+.mar {
+  margin-top: 12px;
 }
 
 </style>

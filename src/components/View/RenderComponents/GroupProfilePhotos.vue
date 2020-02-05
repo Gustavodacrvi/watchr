@@ -5,7 +5,7 @@
   >
     <Photo
       :photoURL='ownerURL'
-      size='small'
+      size='ultra-small'
       :display='true'
     />
   </div>
