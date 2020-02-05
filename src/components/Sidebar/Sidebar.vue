@@ -94,7 +94,7 @@
         <div class="footer" :class="[platform, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop">
-              <Icon v-for="i in getHidedSectionsIcons" :key='i.icon'
+              <Icon v-for="i in sideIcons" :key='i.icon'
                 class="sect-icon passive cursor remove-highlight primary-hover"
                 :icon='i.icon'
                 :circle='true'
@@ -424,6 +424,7 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
+      sortedFromMeInvites: 'invites/sortedFromMeInvites',
       isTaskInView: 'task/isTaskInView',
       // getfavfilters
       isTaskCompleted: 'task/isTaskCompleted',
@@ -434,6 +435,19 @@ export default {
       return {
         left: (parseInt(this.width, 10) - 18) + 'px'
       }
+    },
+    sideIcons() {
+      const opt = []
+
+      const invites = this.sortedFromMeInvites
+      if (invites.length > 0)
+        opt.push({
+          icon: 'paper-plane',
+          id: 'asdfasdfasdfasd',
+          callback: () => {},
+        })
+
+      return [...opt, ...this.getHidedSectionsIcons]
     },
     getFavoritesRenderList() {
       const favs = this.getFavorites

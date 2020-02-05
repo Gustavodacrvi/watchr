@@ -112,6 +112,7 @@ import boxCheckFilled from '@/assets/icons/box-check-filled.svg'
 import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
 import circleClose from '@/assets/icons/circle-close.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
+import paperPlane from '@/assets/icons/paper-plane.svg'
 import laterLists from '@/assets/icons/later-lists.svg'
 import group from '@/assets/icons/group.svg'
 
@@ -133,6 +134,7 @@ export default {
         folder, heart, close, filter, magic, clock,
         pomo, pie, check, group,
         "later-lists": laterLists,
+        "paper-plane": paperPlane,
         "box-close": boxClose,
         "circle-close": circleClose,
         "circle-check-filled": circleCheckFilled,
