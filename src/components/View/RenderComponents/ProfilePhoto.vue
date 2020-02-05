@@ -6,8 +6,10 @@
     @click='click'
   >
     <Icon v-if="!url"
+      class="user"
       icon='user'
       color='var(--fade)'
+      :title='title'
       :width='getIconSize'
     />
   </div>
@@ -27,7 +29,7 @@ import 'firebase/storage'
 const sto = firebase.storage()
 
 export default {
-  props: ['photoURL', 'size', 'display', 'stopAuthFallback'],
+  props: ['photoURL', 'size', 'display', 'stopAuthFallback', 'title'],
   components: {
     Icon,
   },
@@ -137,6 +139,10 @@ export default {
 
 .doesntHavePhoto {
   background-color: var(--sidebar-color);
+}
+
+.user {
+  transform: translateY(2px);
 }
 
 </style>

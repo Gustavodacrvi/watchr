@@ -14,7 +14,13 @@
         />
         <div class="info">
           <span class="inf displayName">
-            <span>{{displayName}}</span>
+            <span>
+              <Icon v-if="isOwner"
+                icon='crown'
+                color='yellow'
+              />
+              {{displayName}}
+            </span>
             <template v-if="denied !== undefined">
               <span v-if="denied" class="tag rejected">rejected</span>
               <span v-else-if="!member" class="tag pending">pending</span>
@@ -58,7 +64,7 @@ export default {
     ProfilePhoto,
     Icon,
   },
-  props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied', 'groupName', 'member', 'allowRemove'],
+  props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied', 'groupName', 'member', 'allowRemove', 'isOwner'],
   methods: {
     enter(el, done) {
 

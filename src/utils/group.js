@@ -26,8 +26,8 @@ export default {
 
     const isOwner = item.userId === state.user.uid
     opt.splice(1, 0,       {
-      name: 'Invite users',
-      icon: 'group',
+      name: isOwner ? 'Manage users' : 'Group members',
+      icon: isOwner ? 'paper-plane' : 'group',
       callback: () => dispatch('pushPopup', {
         comp: 'InvitePeople',
         payload: item,

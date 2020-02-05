@@ -2,13 +2,18 @@
   <div class="GroupProfilePhotos"
     @click="click"
   >
-    <Photo
+    <Photo v-if="!isOwner"
       :photoURL='ownerURL'
       size='ultra-small'
       :display='true'
     />
+    <Icon v-else
+      icon='crown'
+      color='yellow'
+    />
     <div class="members">
       <Photo v-for="m in groupMembers"
+        class="mem"
         :key="m.uid"
         :photoURL='m.photoURL'
         size='ultra-small'
@@ -24,19 +29,19 @@
 import { mapState } from 'vuex'
 
 import Photo from "@/components/View/RenderComponents/ProfilePhoto.vue"
+import Icon from "@/components/Icon.vue"
 
 export default {
   props: ['group'],
   components: {
-    Photo,
+    Photo, Icon,
   },
   methods: {
     click() {
-      if (this.isOwner)
-        this.$store.dispatch('pushPopup', {
-          comp: 'InvitePeople',
-          payload: this.group,
-        })
+      this.$store.dispatch('pushPopup', {
+        comp: 'InvitePeople',
+        payload: this.group,
+      })
     },
   },
   computed: {
@@ -46,6 +51,9 @@ export default {
     }),
     groupInfo() {
       return this.groups.find(el => el.id === this.group)
+    },
+    isOwner() {
+      return this.userId === this.groupInfo.userId
     },
     groupMembers() {
       if (!this.groupInfo)
@@ -58,11 +66,11 @@ export default {
 
       return users
     },
-    ownerURL() {
-      return this.groupInfo.profiles[this.groupInfo.userId].photoURL
+    ownerProfile() {
+      return this.groupInfo.profiles[this.groupInfo.userId]
     },
-    isOwner() {
-      return this.userId === this.userId
+    ownerURL() {
+      return this.ownerProfile.photoURL
     },
   },
 }
@@ -80,6 +88,10 @@ export default {
 .members {
   margin-left: 10px;
   margin-right: -8px;
+}
+
+.mem {
+  background-color: var(--light-gray);
 }
 
 </style>

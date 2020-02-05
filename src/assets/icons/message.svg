@@ -4,7 +4,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="71px" height="63.25px" viewBox="0 0 71 63.25" enable-background="new 0 0 71 63.25" xml:space="preserve">
 <g>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" fill='currentColor' fill-opacity='.2' stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M6.267,5.085C4.589,3.663,5.015,2.5,7.215,2.5H64.5c2.2,0,2.618,1.153,0.929,2.563L38.69,27.379c-1.689,1.41-4.445,1.4-6.123-0.022
 		L6.267,5.085z"/>
 </g>

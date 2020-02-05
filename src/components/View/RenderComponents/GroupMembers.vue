@@ -9,6 +9,7 @@
 
         :created='i.created'
         :allowRemove='allowRemove(i)'
+        :isOwner='i.uid === group.userId'
         :denied='false'
         :member='true'
         @delete='deleteMember(i)'
