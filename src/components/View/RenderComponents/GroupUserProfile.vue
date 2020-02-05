@@ -24,12 +24,12 @@
             <span>{{email}}</span>
             <span>
               <span v-show="groupName">{{groupName}}, </span>
-              <span>Sent {{parsedCreated}}</span>
+              <span v-show="created">Sent {{parsedCreated}}</span>
             </span>
           </span>
         </div>
         <div v-if="denied !== undefined" class="options fade">
-          <Icon class="icon cursor remove-highlight primary-hover"
+          <Icon v-if="allowRemove || allowRemove === undefined" class="icon cursor remove-highlight primary-hover"
             icon='trash'
             color='var(--red)'
             width='26px'
@@ -58,7 +58,7 @@ export default {
     ProfilePhoto,
     Icon,
   },
-  props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied', 'groupName', 'member'],
+  props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied', 'groupName', 'member', 'allowRemove'],
   methods: {
     enter(el, done) {
 

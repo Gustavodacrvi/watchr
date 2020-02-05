@@ -1,13 +1,13 @@
 <template>
   <div class="addFolder popup cb shadow rb" :class="platform">
     <div class="tac title">
-      <h3 class="pc">Invite users</h3>
+      <h3 v-if="group" class="pc">{{ group.name }}</h3>
     </div>
     <div class="content">
-      <span class="note">
+      <span v-if="isOwner" class="note">
         Type in the name of the person you want to share with. If it’s someone you’ve never shared a list with before, you’ll need to type in the email associated with their account. 
       </span>
-      <DropInput class="mar"
+      <DropInput v-if="isOwner" class="mar"
         placeholder='E-mail or username:'
         v-model="name"
         :options='options'
@@ -163,6 +163,9 @@ export default {
     }),
     sentInvites() {
       return this.getSentInvitesByGroupId(this.groupId)
+    },
+    isOwner() {
+      return this.group && this.user.uid === this.group.userId
     },
     group() {
       return this.groups.find(el => el.id === this.groupId)

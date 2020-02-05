@@ -1,6 +1,5 @@
 <template>
   <div class="GroupProfilePhotos"
-    :class="{isOwner}"
     @click="click"
   >
     <Photo
@@ -8,6 +7,15 @@
       size='ultra-small'
       :display='true'
     />
+    <div class="members">
+      <Photo v-for="m in groupMembers"
+        :key="m.uid"
+        :photoURL='m.photoURL'
+        size='ultra-small'
+        :stopAuthFallback='true'
+        :display='true'
+      />
+    </div>
   </div>
 </template>
 
@@ -39,6 +47,17 @@ export default {
     groupInfo() {
       return this.groups.find(el => el.id === this.group)
     },
+    groupMembers() {
+      if (!this.groupInfo)
+        return []
+      const users = Object.keys(this.groupInfo.profiles)
+            .map(k => this.groupInfo.profiles[k])
+            .filter(i => i && i.uid !== this.groupInfo.userId)
+      
+      users.sort((a, b) => a.displayName.toLowerCase().localeCompare(b.displayName.toLowerCase()))
+
+      return users
+    },
     ownerURL() {
       return this.groupInfo.profiles[this.groupInfo.userId].photoURL
     },
@@ -55,10 +74,12 @@ export default {
 .GroupProfilePhotos {
   display: inline-flex;
   align-items: center;
+  cursor: pointer;
 }
 
-.isOwner {
-  cursor: pointer;
+.members {
+  margin-left: 10px;
+  margin-right: -8px;
 }
 
 </style>

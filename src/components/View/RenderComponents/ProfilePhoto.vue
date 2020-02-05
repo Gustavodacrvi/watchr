@@ -99,7 +99,8 @@ export default {
     getIconSize() {
       switch (this.size) {
         case 'normal': return '28px'
-      case 'small': return '17px'
+        case 'small': return '17px'
+        case 'ultra-small': return '15px'
         default: return '12px'
       }
     },
