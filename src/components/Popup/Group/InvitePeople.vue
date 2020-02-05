@@ -119,7 +119,7 @@ export default {
           ownerProfile: utils.getUserProfileData(this.user),
           targetProfile: user,
           to: user.uid || user.userId,
-          denied: false,
+          denied: null,
         })
   
         setInfo(b, {

@@ -514,7 +514,7 @@ const store = new Vuex.Store({
       if (userId)
         fire.collectionGroup('invites')
           .where('to', '==', userId)
-          .where('denied', '==', false)
+          .where('denied', '==', null)
           .onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state.invites, snap.docChanges(), 'toMe')
           })

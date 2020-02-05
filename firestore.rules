@@ -208,7 +208,7 @@ service cloud.firestore {
     function isInviteTarget() {
       return
         existingData().to == request.auth.uid &&
-        existingData().denied == false
+        existingData().denied == null
     }
     function isInGroup() {
       return existingData().users[request.auth.uid] == true
@@ -262,7 +262,7 @@ service cloud.firestore {
         incomingData().targetProfile.size() == 4 &&
         incomingData().to is string &&
         incomingData().to != incomingData().userId &&
-        incomingData().denied == false &&
+        incomingData().denied == null &&
 
         incomingData().size() == 10
     }

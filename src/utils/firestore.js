@@ -216,6 +216,11 @@ export const rejectInvite = (batch, groupId, inviteId) => {
 export const deleteInvite = (batch, groupId, inviteId) => {
   batch.delete(inviteRef(groupId, inviteId))
 }
+export const acceptInvite = (batch, groupId, inviteId) => {
+  batch.set(inviteRef(groupId, inviteId), {
+    denied: false,
+  }, {merge: true})
+}
 export const addGroup = (batch, name, rootState) => {
   const ref = groupRef()
   const infoRef = groupInfoRef(ref.id)

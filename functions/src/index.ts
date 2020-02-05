@@ -5,6 +5,8 @@ const firebase_tools = require('firebase-tools')
 
 const firebase = admin.initializeApp();
 
+const db = firebase.firestore()
+
 // const db = admin.firestore()
 // const FieldValue = admin.firestore.FieldValue
 
@@ -79,6 +81,38 @@ export const deleteGroupCollection = functions.firestore
               recursive: true,
               yes: true,
             })
+  })
+
+export const addUserToGroup = functions.firestore
+  .document('groups/{groupId}/invites/{inviteId}')
+  .onUpdate(async (snap, context) => {
+    const {groupId, inviteId} = context.params
+
+    const groupRef = db.collection(`groups`).doc(groupId)
+    const inviteRef = groupRef.collection('invites').doc(inviteId)
+    const res = await inviteRef.get()
+    const data = res.data()
+
+    if (data && !data.denied) {
+      
+      const obj = {
+        users: {
+          [data.to]: true,
+        },
+        profiles: {
+          [data.to]: data.targetProfile,
+        },
+      }
+
+      const b = db.batch()
+
+      b.set(groupRef.collection('info').doc('info'), obj, {merge: true})
+      b.set(groupRef.collection('groupCache').doc('groupCache'), obj, {merge: true})
+      b.delete(inviteRef)
+      
+      return b.commit()
+    }
+    return;
   })
 
 /*

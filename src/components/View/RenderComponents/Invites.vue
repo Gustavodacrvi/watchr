@@ -29,8 +29,8 @@ export default {
     deleteInvite(obj) {
       this.$store.dispatch('invites/rejectInvite', obj)
     },
-    acceptInvite() {
-
+    acceptInvite(obj) {
+      this.$store.dispatch('invites/acceptInvite', obj)
     },
   },
   computed: {
