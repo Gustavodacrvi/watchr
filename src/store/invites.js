@@ -1,7 +1,7 @@
 
 import { fire } from './index'
 
-import { deleteInvite, rejectInvite, acceptInvite } from "@/utils/firestore"
+import { deleteInvite, rejectInvite, acceptInvite, removeMember } from "@/utils/firestore"
 
 import MemoizeGetters from './memoFunctionGetters'
 
@@ -42,6 +42,13 @@ export default {
   
       acceptInvite(b, groupId, id)
   
+      b.commit()
+    },
+    removeMember({rootState}, {groupId, uid}) {
+      const b = fire.batch()
+
+      removeMember(b, groupId, uid, rootState)
+
       b.commit()
     },
     rejectInvite(c, {groupId, id}) {

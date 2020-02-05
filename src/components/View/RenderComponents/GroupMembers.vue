@@ -11,7 +11,7 @@
       :created='i.created'
       :denied='false'
       :member='true'
-      @delete='deleteInvite(i)'
+      @delete='deleteMember(i)'
     />
   </div>
 </template>
@@ -28,8 +28,11 @@ export default {
   },
   props: ['groupId'],
   methods: {
-    deleteInvite(i) {
-
+    deleteMember({uid}) {
+      this.$store.dispatch('invites/removeMember', {
+        groupId: this.groupId,
+        uid,
+      })
     },
   },
   computed: {
@@ -46,7 +49,7 @@ export default {
     groupMembers() {
       return this.checkMissingIdsAndSortArr([], 
           Object.keys(this.group.profiles)
-            .map(k => this.group.profiles[k]), 'uid')
+            .map(k => this.group.profiles[k]).filter(i => i), 'uid')
     },
     nonOwnerMember() {
       return this.groupMembers.filter(el => el.uid !== this.user.uid)

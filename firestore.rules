@@ -201,7 +201,8 @@ service cloud.firestore {
           isInGroup() &&
           didntChangeConstant() &&
           isValidGroupInfoDoc() &&
-          incomingData().size() == 5;
+          incomingData().size() == 5 &&
+          (isOwner() || incomingData().name == existingData().name);
       }
     }
 

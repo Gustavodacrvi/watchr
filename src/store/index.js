@@ -500,12 +500,12 @@ const store = new Vuex.Store({
                       state.list.groupLists[k] = undefined
                   state.list.groupLists = {...state.list.groupLists}
                 } else {
-                  const i = state.group.groups.findIndex(el => el.id === change.doc.id)
+                  const i = state.group.groups.findIndex(el => el.id === newGroup.id)
           
                   utils.findChangesBetweenObjs(state.group.groups[i], newGroup, undefined, ['tasks', 'lists'])
 
-                  utils.updateVuexObject(state.group, 'groupTasks', newGroup.tasks || {}, task => task.group === newGroup.id)
-                  utils.updateVuexObject(state.group, 'groupLists', newGroup.lists || {}, list => list.group === newGroup.id)
+                  utils.updateVuexObject(state.task, 'groupTasks', newGroup.tasks || {}, task => task.group === newGroup.id)
+                  utils.updateVuexObject(state.list, 'groupLists', newGroup.lists || {}, list => list.group === newGroup.id)
                 }
               })
             }

@@ -221,6 +221,39 @@ export const acceptInvite = (batch, groupId, inviteId) => {
     denied: false,
   }, {merge: true})
 }
+export const removeMember = (batch, groupId, uid, rootState) => {
+  const infoRef = groupInfoRef(groupId)
+  const cacheRef = groupCacheRef(groupId)
+
+  const obj = {
+    users: {
+      [uid]: fd().delete(),
+    },
+    profiles: {
+      [uid]: fd().delete(),
+    },
+  }
+
+  const allGroups = rootState.group.groups
+  const i = allGroups.findIndex(el => el.id === groupId)
+  const target = allGroups[i]
+  utils.findChangesBetweenObjs(target, {
+    ...target,
+    ...{
+      users: {
+        ...target.users,
+        [uid]: undefined
+      },
+      profiles: {
+        ...target.profiles,
+        [uid]: undefined
+      },
+    },
+  })
+  
+  batch.set(infoRef, obj, {merge: true})
+  batch.set(cacheRef, obj, {merge: true})
+}
 export const addGroup = (batch, name, rootState) => {
   const ref = groupRef()
   const infoRef = groupInfoRef(ref.id)
