@@ -17,7 +17,7 @@
             <span>{{displayName}}</span>
             <template v-if="denied !== undefined">
               <span v-if="denied" class="tag rejected">rejected</span>
-              <span v-else class="tag pending">pending</span>
+              <span v-else-if="!member" class="tag pending">pending</span>
             </template>
           </span>
           <span class="inf email">
@@ -58,7 +58,7 @@ export default {
     ProfilePhoto,
     Icon,
   },
-  props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied', 'groupName'],
+  props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied', 'groupName', 'member'],
   methods: {
     enter(el, done) {
 
@@ -174,7 +174,7 @@ export default {
 .tag {
   display: inline-block;
   font-size: .8em;
-  padding: 2px 6px;  
+  padding: 2px 5px;  
   border-radius: 50px;
   margin-left: 8px;
 }

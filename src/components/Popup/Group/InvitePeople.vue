@@ -18,6 +18,9 @@
       <InvitedUsers class="mar"
         :groupId='groupId'
       />
+      <GroupMembers class='mar'
+        :groupId='groupId'
+      />
     </div>
   </div>
 </template>
@@ -28,6 +31,7 @@ import { mapGetters, mapState } from 'vuex'
 
 import DropInput from '@/components/Auth/DropInput.vue'
 import InvitedUsers from "@/components/View/RenderComponents/InvitedUsers.vue"
+import GroupMembers from "@/components/View/RenderComponents/GroupMembers.vue"
 
 import firebase from 'firebase/app'
 import 'firebase/firestore'
@@ -41,7 +45,7 @@ import mom from 'moment'
 
 export default {
   components: {
-    DropInput, InvitedUsers,
+    DropInput, InvitedUsers, GroupMembers,
   },
   data() {
     return {

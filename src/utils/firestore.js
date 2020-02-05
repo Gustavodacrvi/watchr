@@ -242,7 +242,7 @@ export const addGroup = (batch, name, rootState) => {
     },
     profiles: {
       [userId]: {
-        userId,
+        uid: userId,
         displayName: u.displayName,
         photoURL: u.photoURL || null,
         email: u.email,
