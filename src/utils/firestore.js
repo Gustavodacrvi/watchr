@@ -39,7 +39,7 @@ export const inviteRef = (groupId, id) => {
   if (id) return g.doc(id)
   return g.doc()
 }
-export const setTask = (batch, task, cache = undefined, rootState, id, writes) => {
+export const setTask = (batch, task, rootState, id, writes) => {
   return new Promise((solve, reject) => {
     const save = () => {
       if (!id)
@@ -50,13 +50,8 @@ export const setTask = (batch, task, cache = undefined, rootState, id, writes) =
 
       const savedGroupTask = groupTasks[id]
       const savedIndividualTask = individualTasks[id]
-  
-      if (!cache) {
-        if (task.group)
-          cache = groupRef(task.group)
-        else
-          cache = cacheRef()
-      }
+
+      const getGroupId = () => task.group || savedGroupTask.group
   
       const getObj = () => ({
         ...task, handleFiles: null,
@@ -64,10 +59,8 @@ export const setTask = (batch, task, cache = undefined, rootState, id, writes) =
         userId: uid(),
       })
       const setGroupTask = () => {
-        console.log(groupTask(task.group, id))
-        batch.set(
-          groupTask(task.group, id),
-          getObj(), {merge: true},
+        batch.set(groupTask(getGroupId(), id),
+          getObj(), {merge: true}
           )
         }
       const setCache = (refCache) => {
@@ -79,40 +72,43 @@ export const setTask = (batch, task, cache = undefined, rootState, id, writes) =
       }
       const setGroupCache = () => {
         setCache(
-          groupCacheRef(task.group),
+          groupCacheRef(getGroupId()),
         )
       }
-      const addWrite = obj => {
+      const addSharedWrite = (obj, groupId) => {
         writes.push({
           collection: 'tasks',
           [id]: obj,
+          groupId,
         })
       }
   
       const isNewTask = !savedGroupTask && !savedIndividualTask
-      const updatingGroupTask = !isNewTask && savedIndividualTask && savedIndividualTask.group === task.group
+      const updatingGroupTask = !isNewTask && savedGroupTask && savedGroupTask.group === getGroupId()
       
       console.log(isNewTask, updatingGroupTask)
-      console.log(task.group)
+      console.log(getGroupId())
       console.log(savedGroupTask)
+      console.log(getObj())
       console.log(writes)
       console.log(id)
-      if (task.group) {
+      if (getGroupId()) {
         if (isNewTask || updatingGroupTask) { // Create and add task to group
 
           setGroupTask()
           
           if (!writes)
             setGroupCache()
-          else
-            addWrite(obj)
-          
-        } else if (savedGroupTask) { // Move between groups
+          else if (writes.push)
+            addSharedWrite(getObj(), getGroupId())
+
+        } else if (savedGroupTask) { // Move 
 
         }
       } else {
 
       }
+
       solve()
     }
     if (task.handleFiles)
@@ -121,19 +117,46 @@ export const setTask = (batch, task, cache = undefined, rootState, id, writes) =
   })
 }
 export const cacheBatchedItems = (batch, writes) => {
-  const obj = {
-    ...writes.reduce((obj, write) => ({
+  const personalWrites = writes.filter(el => !el.groupId)
+  
+  const getObj = arr => ({
+    ...arr.reduce((obj, write) => ({
       ...obj,
       [write.collection]: {
         ...obj[write.collection],
         ...write,
       }
     }), {})
-  }
-  const keys = Object.keys(obj)
-  keys.forEach(k => delete obj[k].collection)
+  })
+  
+  const personalObj = getObj(personalWrites)
+  
+  const personalKeys = Object.keys(personalObj)
+  personalKeys.forEach(k => delete personalObj[k].collection)
+  
+  if (personalWrites.length > 0)
+    batch.set(cache, personalObj, {merge: true})
+  
+  const sharedWrites = writes.filter(el => el.groupId)
+  if (sharedWrites.length > 0) {
 
-  batch.set(cacheRef(), obj, {merge: true})
+    const idSet = new Set()
+    for (const w of sharedWrites)
+      if (!idSet.has(w.groupId))
+        idSet.add(w.groupId)
+
+    idSet.forEach(id => {
+      const obj = getObj(sharedWrites.filter(w => w.groupId === id))
+
+      const keys = Object.keys(obj)
+      keys.forEach(k => {
+        delete obj[k].collection
+        delete obj[k].groupId
+      })
+
+      batch.set(groupCacheRef(id), obj, {merge: true})
+    })
+  }
 }
 export const batchSetTasks = (batch, task, ids, rootState, rootWrites) => {
   return new Promise(async solve => {

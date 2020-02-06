@@ -746,16 +746,12 @@ export default {
     addTask({rootState}, obj) {
       const b = fire.batch()
 
-      let group
-      if (obj.group)
-        group = groupCacheRef(obj.group)
-
       setTask(b, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, group, rootState).then(() => {
+      }, rootState).then(() => {
         b.commit()
       })
     },
