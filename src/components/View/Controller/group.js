@@ -99,8 +99,8 @@ export default {
     },
     tasksOrder() {
       const group = this.viewGroup
-      if (group && group.tasks) {
-        return group.tasks
+      if (group && group.order) {
+        return group.order
       }
       return []
     },

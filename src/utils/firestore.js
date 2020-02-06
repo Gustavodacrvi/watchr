@@ -46,10 +46,10 @@ export const setTask = (batch, task, cache = undefined, rootState, id, writes) =
         id = utils.getUid()
 
       const groupTasks = rootState.task.groupTasks
-      const individualTasks = rootState.task.individualTasks
+      const individualTasks = rootState.task.tasks
 
-      const isInGroup = groupTasks[id]
-      const isInPersonal = individualTasks[id]
+      const savedGroupTask = groupTasks[id]
+      const savedIndividualTask = individualTasks[id]
   
       if (!cache) {
         if (task.group)
@@ -64,22 +64,22 @@ export const setTask = (batch, task, cache = undefined, rootState, id, writes) =
         userId: uid(),
       })
       const setGroupTask = () => {
+        console.log(groupTask(task.group, id))
         batch.set(
           groupTask(task.group, id),
           getObj(), {merge: true},
           )
         }
-      const setCache = (refCache, obj) => {
+      const setCache = (refCache) => {
         batch.set(refCache, {
           tasks: {
-            [id]: obj,
+            [id]: getObj(),
           }
         }, {merge: true})
       }
       const setGroupCache = () => {
         setCache(
           groupCacheRef(task.group),
-          getObj(),
         )
       }
       const addWrite = obj => {
@@ -89,12 +89,16 @@ export const setTask = (batch, task, cache = undefined, rootState, id, writes) =
         })
       }
   
+      const isNewTask = !savedGroupTask && !savedIndividualTask
+      const updatingGroupTask = !isNewTask && savedIndividualTask && savedIndividualTask.group === task.group
+      
+      console.log(isNewTask, updatingGroupTask)
       console.log(task.group)
-      console.log(isInGroup)
+      console.log(savedGroupTask)
       console.log(writes)
       console.log(id)
       if (task.group) {
-        if (isInGroup) {
+        if (isNewTask || updatingGroupTask) { // Create and add task to group
 
           setGroupTask()
           
@@ -103,43 +107,12 @@ export const setTask = (batch, task, cache = undefined, rootState, id, writes) =
           else
             addWrite(obj)
           
-        } else {
+        } else if (savedGroupTask) { // Move between groups
 
-          batch.set(
-            taskRef(task.id),
-            getObj(ref), {merge: true}
-          )
-          
-          if (isInPersonal)
-            batch.delete(refInd)
         }
       } else {
-        if (isInGroup) {
 
-          const refGro = groupTask(task.group, task.id)
-
-          batch.set(refGro, obj, {merge: true})
-          
-        } else {
-
-          const refGro = groupTask(task.group, task.id)
-
-          batch.set(refGro, obj, {merge: true})
-  
-        }
       }
-      
-      if (!writes)
-        batch.set(cache, {
-          tasks: {
-            [ref.id]: obj,
-          }
-        }, {merge: true})
-      else if (writes.push)
-        writes.push({
-          collection: 'tasks',
-          [ref.id]: obj,
-        })
       solve()
     }
     if (task.handleFiles)
