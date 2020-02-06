@@ -613,11 +613,11 @@ export default {
           icon: 'folder',
           callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
         },
-        /* {
+        {
           name: 'Add group',
           icon: 'group',
           callback: () => dispatch('pushPopup', {comp: 'AddGroup', naked: true}),
-        }, */
+        },
         {
           name: 'Add list',
           icon: 'tasks',

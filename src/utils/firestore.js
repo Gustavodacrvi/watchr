@@ -27,57 +27,107 @@ export const tagColl = () => userRef().collection('tags')
 export const tagRef = id => id ? tagColl().doc(id) : tagColl().doc()
 export const filterColl = () => userRef().collection('filters')
 export const filterRef = id => id ? filterColl().doc(id) : filterColl().doc()
+export const groupTask = (groupId, taskId) => {
+  const col = groupRef(groupId).collection('tasks')
+
+  if (taskId)
+    return col.doc(taskId)
+  return col.doc()
+}
 export const inviteRef = (groupId, id) => {
   const g = groupRef(groupId).collection('invites')
   if (id) return g.doc(id)
   return g.doc()
 }
-export const setTask = (batch, task, cache = cacheRef(), rootState, id, writes) => {
+export const setTask = (batch, task, cache = undefined, rootState, id, writes) => {
   return new Promise((solve, reject) => {
-
-    const groupTasks = rootState.task.groupTasks
-    const isInGroup = groupTasks[id]
-
-    console.log(isInGroup, groupTasks)
-    
-
-
-    if (task.group) {
-      if (isInGroup) {
-
-        
-        
-      } else {
-
-      }
-    } else {
-      if (isInGroup) {
-
-      } else {
-
-      }
-    }
-    
-
-
-
-
     const save = () => {
-      const obj = {
-        ...task, handleFiles: null,
-        id: ref.id,
-        userId: uid(),
-      }
+      if (!id)
+        id = utils.getUid()
 
-      const allTasks = rootState.task.tasks
-      const taskStore = allTasks[ref.id]
-      if (taskStore)
-        utils.findChangesBetweenObjs(taskStore, obj)
-      else
-        rootState.task.tasks = {
-          ...allTasks,
-          [ref.id]: obj,
+      const groupTasks = rootState.task.groupTasks
+      const individualTasks = rootState.task.individualTasks
+
+      const isInGroup = groupTasks[id]
+      const isInPersonal = individualTasks[id]
+  
+      if (!cache) {
+        if (task.group)
+          cache = groupRef(task.group)
+        else
+          cache = cacheRef()
+      }
+  
+      const getObj = () => ({
+        ...task, handleFiles: null,
+        id,
+        userId: uid(),
+      })
+      const setGroupTask = () => {
+        batch.set(
+          groupTask(task.group, id),
+          getObj(), {merge: true},
+          )
         }
+      const setCache = (refCache, obj) => {
+        batch.set(refCache, {
+          tasks: {
+            [id]: obj,
+          }
+        }, {merge: true})
+      }
+      const setGroupCache = () => {
+        setCache(
+          groupCacheRef(task.group),
+          getObj(),
+        )
+      }
+      const addWrite = obj => {
+        writes.push({
+          collection: 'tasks',
+          [id]: obj,
+        })
+      }
+  
+      console.log(task.group)
+      console.log(isInGroup)
+      console.log(writes)
+      console.log(id)
+      if (task.group) {
+        if (isInGroup) {
+
+          setGroupTask()
+          
+          if (!writes)
+            setGroupCache()
+          else
+            addWrite(obj)
+          
+        } else {
+
+          batch.set(
+            taskRef(task.id),
+            getObj(ref), {merge: true}
+          )
+          
+          if (isInPersonal)
+            batch.delete(refInd)
+        }
+      } else {
+        if (isInGroup) {
+
+          const refGro = groupTask(task.group, task.id)
+
+          batch.set(refGro, obj, {merge: true})
+          
+        } else {
+
+          const refGro = groupTask(task.group, task.id)
+
+          batch.set(refGro, obj, {merge: true})
+  
+        }
+      }
       
       if (!writes)
         batch.set(cache, {
@@ -90,7 +140,6 @@ export const setTask = (batch, task, cache = cacheRef(), rootState, id, writes) 
           collection: 'tasks',
           [ref.id]: obj,
         })
-      batch.set(ref, obj, {merge: true})
       solve()
     }
     if (task.handleFiles)

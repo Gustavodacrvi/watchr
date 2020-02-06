@@ -39,9 +39,9 @@ export default {
   computed: {
     ...mapGetters({
       platform: 'platform',
-      groups: 'group/groups',
     }),
     ...mapState({
+      groups: state => state.group.groups,
       popup: state => state.popup,
       payload: state => state.popup.payload,
     }),

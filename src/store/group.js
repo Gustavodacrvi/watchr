@@ -14,6 +14,11 @@ export default {
     groups: [],
   },
   getters: {
+    sortedGroupsByName(state) {
+      const groups = state.groups
+      groups.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      return groups
+    },
     ...MemoizeGetters('groups', {
       getGroupTaskOrderById({state, getters}, groupId) {
         const gro = getters.groups.find(f => f.id === groupId)
@@ -35,6 +40,13 @@ export default {
           return rootGetters.checkMissingIdsAndSortArr(order, arr)
         },
       },
+      sortedGroups(state, d, {userInfo}, rootGetters) {
+        let order = userInfo.folders
+        if (!order) order = []
+        if (userInfo)
+          return rootGetters.checkMissingIdsAndSortArr(order, state.groups)
+        return []
+      },
       getGroupsByName: {
         react: [
           'name',
@@ -48,9 +60,9 @@ export default {
           return arr
         },
       },
-      getGroupsById({state, getters}, ids) {
+      getGroupsById({state}, ids) {
         const arr = []
-        for (const f of getters.groups)
+        for (const f of state.groups)
           if (ids.includes(f.id)) arr.push(f)
         return arr
       },
@@ -144,7 +156,6 @@ export default {
       b.commit()
     },
     async addTaskByIndex({rootState}, {ids, index, task, groupId, newTaskRef}) {
-      console.log(ids, index, task, groupId, newTaskRef)
       
       const b = fire.batch()
 

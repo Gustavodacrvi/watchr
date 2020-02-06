@@ -21,8 +21,10 @@
       </span>
       <span class="name-wrapper">
         <span class="name"><b>{{ name }}</b></span>
-        <ProfilePhotos class="photos"
+        <ProfilePhotos
+          class="photos"
           :group='id'
+          @click.native.stop
         />
       </span>
       <Icon
