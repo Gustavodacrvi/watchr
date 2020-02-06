@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList } from '../utils/firestore'
+import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, groupCacheRef } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -744,12 +744,16 @@ export default {
     addTask({rootState}, obj) {
       const b = fire.batch()
 
+      let group
+      if (obj.group)
+        group = groupCacheRef(obj.group)
+
       setTask(b, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, rootState).then(() => {
+      }, group, rootState).then(() => {
         b.commit()
       })
     },

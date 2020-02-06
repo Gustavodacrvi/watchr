@@ -5,11 +5,11 @@ export default {
   computed: {
     addTask() {
       return obj => {
-/*         if (this.viewGroup) {
+        if (this.viewGroup) {
           this.$store.dispatch('group/addTaskByIndex', {
             ...obj, groupId: this.viewGroup.id,
           })
-        } */
+        }
       }
     },
     rootFallbackItem() {

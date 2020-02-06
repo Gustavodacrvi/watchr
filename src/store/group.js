@@ -144,6 +144,8 @@ export default {
       b.commit()
     },
     async addTaskByIndex({rootState}, {ids, index, task, groupId, newTaskRef}) {
+      console.log(ids, index, task, groupId, newTaskRef)
+      
       const b = fire.batch()
 
       const writes = []

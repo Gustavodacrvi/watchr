@@ -143,7 +143,7 @@ import utils from '@/utils/'
 export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton',  'addedHeading', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
-   'disableFallback', 'isLast'],
+   'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
     Task, Icon, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
@@ -1058,6 +1058,10 @@ export default {
         })
       }
     },
+    getCalendarOrderDate() {
+      this.changingViewName = true
+      setTimeout(() => this.changingViewName = false, 2000)
+    },
     viewName() {
       this.changingViewName = true
       setTimeout(() => this.changingViewName = false, 2000)
@@ -1152,6 +1156,10 @@ export default {
 
 .isRootAndHaveItems {
   margin: 50px 0;
+}
+
+.mobile .isRootAndHaveItems {
+  margin: 25px 0;
 }
 
 </style>

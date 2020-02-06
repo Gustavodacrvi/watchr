@@ -197,7 +197,7 @@ export default {
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = '50px'
+          w.marginTop = this.isDesktop ? '50px': '25px'
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1

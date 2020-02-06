@@ -32,9 +32,36 @@ export const inviteRef = (groupId, id) => {
   if (id) return g.doc(id)
   return g.doc()
 }
-export const setTask = (batch, task, rootState, id, writes) => {
+export const setTask = (batch, task, cache = cacheRef(), rootState, id, writes) => {
   return new Promise((solve, reject) => {
-    const ref = taskRef(id)
+
+    const groupTasks = rootState.task.groupTasks
+    const isInGroup = groupTasks[id]
+
+    console.log(isInGroup, groupTasks)
+    
+
+
+    if (task.group) {
+      if (isInGroup) {
+
+        
+        
+      } else {
+
+      }
+    } else {
+      if (isInGroup) {
+
+      } else {
+
+      }
+    }
+    
+
+
+
+
     const save = () => {
       const obj = {
         ...task, handleFiles: null,
@@ -53,7 +80,7 @@ export const setTask = (batch, task, rootState, id, writes) => {
         }
       
       if (!writes)
-        batch.set(cacheRef(), {
+        batch.set(cache, {
           tasks: {
             [ref.id]: obj,
           }

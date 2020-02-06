@@ -663,7 +663,7 @@ export default {
 
       setList(batch, {
         headings: heads,
-      }, listRef(listId), rootState)
+      }, listId, rootState)
       
       const newList = listRef()
       setList(batch, {
@@ -693,7 +693,7 @@ export default {
     saveList({rootState}, list) {
       const b = fire.batch()
       
-      setList(b, list, listRef(list.id), rootState)
+      setList(b, list, list.id, rootState)
 
       b.commit()
     },

@@ -8,9 +8,15 @@ service cloud.firestore {
       allow update: if isValidUserDoc(userId);
       
       match /tasks/{task} {
-        allow create: if isSignedInAndVerified() && isValidTask(task);
+        allow create: if
+          isSignedInAndVerified() &&
+          isValidDoc(task) &&
+          isValidTask();
         allow read, delete, update: if isOwnerAndVerified();
-        allow update: if didntChangeConstant() && isValidTask(task);
+        allow update: if
+          didntChangeConstant() &&
+          isValidDoc(task) &&
+          isValidTask();
       }
       match /info/{info} {
         allow create: if isSignedInAndVerified() && isInfoValid(info);
@@ -83,32 +89,6 @@ service cloud.firestore {
             )
           )
       }
-      function isValidList(id) {
-        return
-          isValidDoc(id) &&
-          incomingData().name is string &&
-          incomingData().created is string &&
-          incomingData().createdFire is timestamp &&
-          (!('smartViewsOrders' in incomingData()) || incomingData().smartViewsOrders is map) &&
-          isArrayOrUndefined('files', 30) &&
-          isArrayOrUndefined('tags', 50) &&
-          isArrayOrUndefined('tasks', 50) &&
-          isNullStringOrUndefined('notes') &&
-          isNullStringOrUndefined('folder') &&
-          isNullStringOrUndefined('group') &&
-          (
-            (!('calendar' in incomingData()) || incomingData().calendar == null) ||
-            (
-              incomingData().calendar.type == 'specific' ||
-              incomingData().calendar.type == 'after completion' ||
-              incomingData().calendar.type == 'someday' ||
-              incomingData().calendar.type == 'daily' ||
-              incomingData().calendar.type == 'weekly' ||
-              incomingData().calendar.type == 'monthly' ||
-              incomingData().calendar.type == 'yearly'
-            )
-          )
-      }
       function isValidFolder(id) {
         return
           isValidDoc(id) &&
@@ -116,37 +96,6 @@ service cloud.firestore {
           isArrayOrUndefined('files', 30) &&
           isArrayOrUndefined('tasks', 50) &&
           isArrayOrUndefined('order', 50)
-      }
-      function isValidTask(id) {
-        return
-          isValidDoc(id) &&
-          incomingData().name is string &&
-          incomingData().created is string &&
-          incomingData().createdFire is timestamp &&
-          isArrayOrUndefined('files', 30) &&
-          isArrayOrUndefined('checklist', 50) &&
-          isArrayOrUndefined('order', 50) &&
-          isArrayOrUndefined('tags', 50) &&
-          isNullStringOrUndefined('folder') &&
-          isNullStringOrUndefined('group') &&
-          isNullStringOrUndefined('taskDuration') &&
-          isNullStringOrUndefined('priority') &&
-          isNullStringOrUndefined('heading') &&
-          isNullStringOrUndefined('notes') &&
-          isNullStringOrUndefined('list') &&
-          incomingData().size() < 30 &&
-          (
-            (!('calendar' in incomingData()) || incomingData().calendar == null) ||
-            (
-              incomingData().calendar.type == 'specific' ||
-              incomingData().calendar.type == 'after completion' ||
-              incomingData().calendar.type == 'someday' ||
-              incomingData().calendar.type == 'daily' ||
-              incomingData().calendar.type == 'weekly' ||
-              incomingData().calendar.type == 'monthly' ||
-              incomingData().calendar.type == 'yearly'
-            )
-          )
       }
     }
 
@@ -207,16 +156,88 @@ service cloud.firestore {
           incomingData().size() == 5 &&
           (isOwner() || incomingData().name == existingData().name);
       }
+      match /tasks/{task} {
+        allow create: if
+          isSignedInAndVerified() &&
+          incomingData().id == task &&
+          isValidTask() &&
+          isGroupMember(groupId);
+        allow read, delete, update: if isOwnerAndVerified();
+        allow update: if
+          didntChangeConstant() &&
+          incomingData().id == task &&
+          isValidTask() &&
+          isGroupMember(groupId);
+      }
     }
 
+    function isGroupMember(groupId) {
+      return get(/databases/$(database)/documents/groups/$(groupId)/info).data.users[request.auth.uid] == true
+    }
     function isInviteTarget() {
       return
         existingData().to == request.auth.uid &&
         existingData().denied == null
     }
+    function isValidTask() {
+      return
+        incomingData().name is string &&
+        incomingData().created is string &&
+        incomingData().createdFire is timestamp &&
+        isArrayOrUndefined('files', 30) &&
+        isArrayOrUndefined('checklist', 50) &&
+        isArrayOrUndefined('order', 50) &&
+        isArrayOrUndefined('tags', 50) &&
+        isNullStringOrUndefined('folder') &&
+        isNullStringOrUndefined('group') &&
+        isNullStringOrUndefined('taskDuration') &&
+        isNullStringOrUndefined('priority') &&
+        isNullStringOrUndefined('heading') &&
+        isNullStringOrUndefined('notes') &&
+        isNullStringOrUndefined('list') &&
+        incomingData().size() < 30 &&
+        (
+          (!('calendar' in incomingData()) || incomingData().calendar == null) ||
+          (
+            incomingData().calendar.type == 'specific' ||
+            incomingData().calendar.type == 'after completion' ||
+            incomingData().calendar.type == 'someday' ||
+            incomingData().calendar.type == 'daily' ||
+            incomingData().calendar.type == 'weekly' ||
+            incomingData().calendar.type == 'monthly' ||
+            incomingData().calendar.type == 'yearly'
+          )
+        )
+    }
     function isInGroup() {
       return existingData().users[request.auth.uid] == true
     }
+    function isValidList(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().name is string &&
+          incomingData().created is string &&
+          incomingData().createdFire is timestamp &&
+          (!('smartViewsOrders' in incomingData()) || incomingData().smartViewsOrders is map) &&
+          isArrayOrUndefined('files', 30) &&
+          isArrayOrUndefined('tags', 50) &&
+          isArrayOrUndefined('tasks', 50) &&
+          isNullStringOrUndefined('notes') &&
+          isNullStringOrUndefined('folder') &&
+          isNullStringOrUndefined('group') &&
+          (
+            (!('calendar' in incomingData()) || incomingData().calendar == null) ||
+            (
+              incomingData().calendar.type == 'specific' ||
+              incomingData().calendar.type == 'after completion' ||
+              incomingData().calendar.type == 'someday' ||
+              incomingData().calendar.type == 'daily' ||
+              incomingData().calendar.type == 'weekly' ||
+              incomingData().calendar.type == 'monthly' ||
+              incomingData().calendar.type == 'yearly'
+            )
+          )
+      }
     function isGroupOwner(groupPath) {
       return get(/databases/$(database)/documents/$(groupPath)).data.userId == request.auth.uid
     }
