@@ -558,32 +558,46 @@ export const deleteList = (batch, id, rootState, writes) => {
   batch.delete(listRef(id))
 }
 export const deleteTask = (batch, id, rootState, writes) => {
-  rootState.task.tasks = {
-    ...rootState.task.tasks,
-    [id]: undefined,
+  const groupTasks = rootState.task.groupTasks
+  const sharedTask = groupTasks[id]
+
+  const obj = {
+    tasks: {
+      [id]: fd().delete(),
+    },
   }
   
-  if (!writes)
-    batch.set(cacheRef(), {
-      tasks: {
+  if (!sharedTask) {
+    batch.delete(taskRef(id))
+
+    if (!writes)
+      batch.set(cacheRef(), obj, {merge: true})
+    else if (writes.push)
+      writes.push({
+        collection: 'tasks',
         [id]: fd().delete(),
-      },
-    }, {merge: true})
-  else if (writes.push)
-    writes.push({
-      collection: 'tasks',
-      [id]: fd().delete(),
-    })
-  batch.delete(taskRef(id))
+      })
+
+  } else {
+    batch.delete(groupTask(sharedTask.group, id))
+
+    if (!writes)
+      batch.set(groupCacheRef(sharedTask.group), obj, {merge: true})
+    else if (writes.push)
+      writes.push({
+        collection: 'tasks',
+        [id]: fd().delete(),
+        groupId: sharedTask.group,
+      })
+  }
 }
 export const batchDeleteTasks = (batch, ids, rootState) => {
+  const writes = []
+  
   for (const id of ids)
-    deleteTask(batch, id, rootState, true)
-  batch.set(cacheRef(), {
-    tasks: {
-      ...ids.reduce((obj, id) => ({...obj, [id]: fd().delete()}), {})
-    },
-  }, {merge: true})
+    deleteTask(batch, id, rootState, writes)
+  
+  cacheBatchedItems(batch, writes)
 }
 export const deleteFolder = (batch, id, rootState, writes) => {
   rootState.folder.folders = {
