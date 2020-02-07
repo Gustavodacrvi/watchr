@@ -162,8 +162,9 @@ service cloud.firestore {
           incomingData().id == task &&
           isValidTask() &&
           isGroupMember(groupId);
-        allow read, delete, update: if isOwnerAndVerified();
+        allow read, delete: if isSignedInAndVerified() && isGroupMember(groupId);
         allow update: if
+          isSignedInAndVerified() &&
           didntChangeConstant() &&
           incomingData().id == task &&
           isValidTask() &&

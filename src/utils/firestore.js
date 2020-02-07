@@ -51,15 +51,18 @@ export const setTask = (batch, task, rootState, id, writes) => {
       const savedGroupTask = groupTasks[id]
       const savedIndividualTask = individualTasks[id]
 
-      const getGroupId = () => task.group || (savedGroupTask && savedGroupTask.group)
+      const getGroupId = restrict => task.group || (savedGroupTask && !restrict && savedGroupTask.group)
   
       const getObj = () => ({
+        ...(savedGroupTask || savedIndividualTask || {}),
         ...task, handleFiles: null,
         id,
         userId: uid(),
       })
+      const getGroupTaskRef = () => groupTask(getGroupId(), id)
+      const getGroupCacheRef = () => groupCacheRef(getGroupId())
       const setGroupTask = () => {
-        batch.set(groupTask(getGroupId(), id),
+        batch.set(getGroupTaskRef(),
           getObj(), {merge: true}
           )
       }
@@ -75,7 +78,7 @@ export const setTask = (batch, task, rootState, id, writes) => {
       }
       const setGroupCache = () => {
         setCache(
-          groupCacheRef(getGroupId()),
+          getGroupCacheRef(),
         )
       }
       const setPersonalCache = () => {
@@ -83,11 +86,11 @@ export const setTask = (batch, task, rootState, id, writes) => {
           cacheRef(),
         )
       }
-      const addSharedWrite = (obj, groupId) => {
+      const addSharedWrite = obj => {
         writes.push({
           collection: 'tasks',
           [id]: obj,
-          groupId,
+          groupId: getGroupId(),
         })
       }
       const addPersonalWrite = obj => {
@@ -99,12 +102,22 @@ export const setTask = (batch, task, rootState, id, writes) => {
       const deletePersonalTask = () => {
         batch.delete(taskRef(id))
       }
+      const deleteGroupTask = () => {
+        batch.delete(getGroupTaskRef())
+      }
       const deleteFromPersonalCache = () => {
         batch.set(cacheRef(), {
           tasks: {
-            [id]: fd().deleteFolder()
+            [id]: fd().delete()
           },
-        })
+        }, {merge: true})
+      }
+      const deleteFromGroupCache = () => {
+        batch.set(getGroupCacheRef(), {
+          tasks: {
+            [id]: fd().delete()
+          },
+        }, {merge: true})
       }
   
       const isNewTask = !savedGroupTask && !savedIndividualTask
@@ -117,17 +130,19 @@ export const setTask = (batch, task, rootState, id, writes) => {
       console.log(getObj())
       console.log(writes)
       console.log(id)
-      if (getGroupId()) {
-        if (isNewTask || updatingGroupTask) { // Create and add task to group/update
+      if (getGroupId(true)) {
+        if (isNewTask || updatingGroupTask) { // Create and add task to group/update.
+          console.log('Create and add task to group/update.')
 
           setGroupTask()
           
           if (!writes)
             setGroupCache()
           else if (writes.push)
-            addSharedWrite(getObj(), getGroupId())
+            addSharedWrite(getObj())
 
         } else if (savedIndividualTask) { // Move personal task to shared.
+          console.log('Move personal task to shared.')
 
           deletePersonalTask()
           setGroupTask()
@@ -135,20 +150,37 @@ export const setTask = (batch, task, rootState, id, writes) => {
           if (!writes) {
             setGroupCache()
             deleteFromPersonalCache()
+          } else if (writes.push) {
+            addSharedWrite(getObj())
+            addPersonalWrite(fd().delete())
           }
 
         }
       } else {
-        if (isNewTask || updatingPersonalTask) {
+        if (isNewTask || updatingPersonalTask) { // Create and add task to personal/update.
+          console.log('Create and add task to personal/update.')
 
           setPersonalTask()
-          console.log('personal')
 
           if (!writes)
             setPersonalCache()
           else if (writes.push)
             addPersonalWrite(getObj())
 
+        } else if (savedGroupTask) { // Move shared task to personal.
+          console.log('Move shared task to personal.')
+
+          deleteGroupTask()
+          setPersonalTask()
+
+          if (!writes) {
+            setPersonalCache()
+            deleteFromGroupCache()
+          } else if (writes.push) {
+            addPersonalWrite(getObj())
+            addSharedWrite(fd().delete())
+          }
+          
         }
       }
 
