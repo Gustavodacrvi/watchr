@@ -112,6 +112,19 @@ export default {
   
         const ref = inviteRef(this.groupId)
   
+        console.log({
+          userId: this.user.uid,
+          id: ref.id,
+          createdFire: serverTimestamp(),
+          created: mom().format('Y-M-D HH:mm ss'),
+  
+          groupName: this.group.name,
+          groupId: this.group.id,
+          ownerProfile: utils.getUserProfileData(this.user),
+          targetProfile: utils.getUserProfileData(user),
+          to: user.uid || user.userId,
+          denied: null,
+        })
         b.set(ref, {
           userId: this.user.uid,
           id: ref.id,
