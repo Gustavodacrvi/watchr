@@ -378,6 +378,7 @@ export default {
                 completed: t.completed,
                 calendar: t.calendar,
                 list: t.list,
+                group: t.group,
                 folder: t.folder,
                 tags: t.tags,
               }
@@ -468,6 +469,7 @@ export default {
       isTaskInbox: {
         getter({}, task) {
           return !task.completed && !task.checked &&
+          !task.group &&
           !utilsTask.hasCalendarBinding(task) &&
           !task.list &&
           !task.folder &&
@@ -479,6 +481,7 @@ export default {
             com: t.completed,
             che: t.checked,
             cal: t.calendar,
+            gro: t.group,
             lis: t.list,
             fol: t.folder,
             tag: t.tags,
