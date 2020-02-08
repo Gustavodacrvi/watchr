@@ -67,7 +67,7 @@ export default {
 
       return {
         notes: {
-          name: this.groupgetViewNotes || null,
+          name: group.notes || null,
           save: notes => {
             this.$store.dispatch('group/saveGroup', {
               notes, id: this.viewGroup.id,

@@ -474,7 +474,7 @@ const store = new Vuex.Store({
                 const newGroup = change.doc.data()
                 
                 if (change.type === 'added') {
-                  const el = state.group.groups.find(el => el.id === change.doc.id)
+                  const el = state.group.groups.find(el => el.id === newGroup.id)
                   if (!el) {
                     state.group.groups.push(newGroup)
                     state.task.groupTasks = {
@@ -487,17 +487,19 @@ const store = new Vuex.Store({
                     }
                   }
                 } else if (change.type === 'removed') {
-                  const index = state.group.groups.findIndex(el => el.id === change.doc.id)
-                  state.group.groups.splice(index, 1)
+                  const index = state.group.groups.findIndex(el => el.id === newGroup.id)
+                  if (index > -1) {
+                    state.group.groups.splice(index, 1)
+                  }
 
                   let keys = Object.keys(state.task.groupTasks)
                   for (const k of keys)
-                    if (state.task.groupTasks[k].group === change.doc.id)
+                    if (state.task.groupTasks[k] && state.task.groupTasks[k].group === newGroup.id)
                       state.task.groupTasks[k] = undefined
                   state.task.groupTasks = {...state.task.groupTasks}
                   keys = Object.keys(state.list.groupLists)
                   for (const k of keys)
-                    if (state.list.groupLists[k].group === change.doc.id)
+                    if (state.list.groupLists[k] && state.list.groupLists[k].group === newGroup.id)
                       state.list.groupLists[k] = undefined
                   state.list.groupLists = {...state.list.groupLists}
                 } else {
@@ -569,7 +571,7 @@ const store = new Vuex.Store({
 
 fire.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED })
 
-fire.enablePersistence().then(() => enabled = true)
+/* fire.enablePersistence({synchronizeTabs: true}).then(() => enabled = true)
 .catch(err => {
   if (err.code === 'failed-precondition') {
     // handle error
@@ -580,7 +582,7 @@ fire.enablePersistence().then(() => enabled = true)
       seconds: 8,
       type: 'error',
     })
-})
+}) */
 
 
 store.commit('saveUser', null)

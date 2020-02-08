@@ -402,7 +402,7 @@ export const deleteGroup = (b, groupId, rootState) => {
 
   const keys = Object.keys(groupTasks)
   for (const k of keys)
-    if (groupTasks[k].group === groupId)
+    if (groupTasks[k] && groupTasks[k].group === groupId)
       rootState.task.groupTasks[k] = undefined
   rootState.task.groupTasks = {...rootState.task.groupTasks}
 

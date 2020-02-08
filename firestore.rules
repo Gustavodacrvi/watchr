@@ -274,6 +274,7 @@ service cloud.firestore {
       return
         incomingData().groupId is string &&
         incomingData().userId is string &&
+        incomingData().to != incomingData().userId &&
         incomingData().id is string &&
 
         incomingData().created is string &&

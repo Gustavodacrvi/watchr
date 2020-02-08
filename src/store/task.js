@@ -729,6 +729,7 @@ export default {
           'completed',
           'list',
           'folder',
+          'group',
           'tags',
           'completeDate',
         ],

@@ -79,7 +79,7 @@ import v087 from './Updates/v087.vue'
 import v088 from './Updates/v088.vue'
 import v089 from './Updates/v089.vue'
 import v090 from './Updates/v090.vue'
-import v0091 from './Updates/v0091.vue'
+import v091 from './Updates/v091.vue'
 
 export default {
   components: {

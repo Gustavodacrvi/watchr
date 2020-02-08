@@ -64,12 +64,22 @@ export default {
         type: 'error',
       })
     },
+    alreadyInGroupToast() {
+      this.toast({
+        name: 'This users is already a member of this group.',
+        seconds: 3,
+        type: 'error',
+      })
+    },
     selectSharedUser(str) {
       const split = str.split(' ')
       this.name = split[split.length - 1]
     },
     alreadySentFromThisGroup(email) {
       return this.sentInvites.some(i => i.targetProfile.email === email)
+    },
+    isAlreadyInGroup(email) {
+      return this.groupMembers.some(i => i && i.email === email)
     },
     async findEmail() {
       if (this.lastTryTime !== null && (new Date() - this.lastTryTime <= 1500)) 
@@ -86,10 +96,18 @@ export default {
             this.alreadySentToast()
             return;
           }
+          if (this.isAlreadyInGroup(user.email)) {
+            this.alreadyInGroupToast()
+            return;
+          }
           this.sendInvite(user)
         } else {
           if (this.name === this.inviteEmail || this.alreadySentFromThisGroup(this.name)) {
             this.alreadySentToast()
+            return;
+          }
+          if (this.isAlreadyInGroup(user.email)) {
+            this.alreadyInGroupToast()
             return;
           }
           const res = await db.collection('users').where('email', '==', this.name).get()
@@ -112,19 +130,6 @@ export default {
   
         const ref = inviteRef(this.groupId)
   
-        console.log({
-          userId: this.user.uid,
-          id: ref.id,
-          createdFire: serverTimestamp(),
-          created: mom().format('Y-M-D HH:mm ss'),
-  
-          groupName: this.group.name,
-          groupId: this.group.id,
-          ownerProfile: utils.getUserProfileData(this.user),
-          targetProfile: utils.getUserProfileData(user),
-          to: user.uid || user.userId,
-          denied: null,
-        })
         b.set(ref, {
           userId: this.user.uid,
           id: ref.id,
@@ -176,6 +181,10 @@ export default {
     }),
     sentInvites() {
       return this.getSentInvitesByGroupId(this.groupId)
+    },
+    groupMembers() {
+      return Object.keys(this.group.profiles)
+            .map(k => this.group.profiles[k])
     },
     isOwner() {
       return this.group && this.user.uid === this.group.userId
