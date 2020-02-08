@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <span v-if="isOwner" class="note">
-        Type in the name of the person you want to share with. If it’s someone you’ve never shared a list with before, you’ll need to type in the email associated with their account. 
+        Type in the name of the person you want to share with. If it’s someone you’ve never shared a group with before, you’ll need to type in the email associated with their account. 
       </span>
       <DropInput v-if="isOwner" class="mar"
         placeholder='E-mail or username:'
