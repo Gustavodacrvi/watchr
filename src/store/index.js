@@ -571,7 +571,7 @@ const store = new Vuex.Store({
 
 fire.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED })
 
-/* fire.enablePersistence({synchronizeTabs: true}).then(() => enabled = true)
+fire.enablePersistence({synchronizeTabs: true}).then(() => enabled = true)
 .catch(err => {
   if (err.code === 'failed-precondition') {
     // handle error
@@ -582,7 +582,7 @@ fire.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED })
       seconds: 8,
       type: 'error',
     })
-}) */
+})
 
 
 store.commit('saveUser', null)
