@@ -59,21 +59,39 @@ export default {
       return null
     },
     headerInfo() {
+      const group = this.viewGroup
+      if (!group)
+        return undefined
+      
+      const save = this.groupsaveGroup
+
       return {
         notes: {
           name: this.groupgetViewNotes || null,
           save: notes => {
-            if (this.viewGroup) {
-              this.$store.dispatch('group/saveGroup', {
-                notes, id: this.viewGroup.id,
-              })
-            }
+            this.$store.dispatch('group/saveGroup', {
+              notes, id: this.viewGroup.id,
+            })
           },
+        },
+        files: {
+          names: group.files || [],
+          storageFolder: 'groups',
+          id: group.id,
+          save: files => save({files}),
         },
       }
     },
     saveSchedule() {
       return info => localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
+    },
+    saveGroup() {
+      return obj => {
+        this.$store.dispatch('group/saveGroup', {
+          ...obj,
+          id: this.viewGroup.id,
+        })
+      }
     },
     
     
@@ -89,17 +107,6 @@ export default {
     
     icon() {return 'group'},
     viewNameValue() {return this.viewName},
-    files() {
-      const group = this.viewGroup
-      if (group) {
-        return {
-          id: group.id,
-          storageGroup: 'groups',
-          files: group.files || [],
-        }
-      }
-      return null
-    },
     tasksOrder() {
       const group = this.viewGroup
       if (group && group.order) {
