@@ -963,7 +963,7 @@ export default {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTasksById', {
           ids: this.selectedItems,
-          task: {...obj, folder: null},
+          task: {...obj, folder: null, group: null,},
         })
       }
       const links = []
@@ -975,7 +975,7 @@ export default {
           callback: () => {
             this.$store.dispatch('task/saveTasksById', {
               ids: this.selectedItems,
-              task: {folder: fold.id, list: null},
+              task: {folder: fold.id, list: null, group: null},
             })
           },
         })
@@ -989,7 +989,7 @@ export default {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTasksById', {
           ids: this.selectedItems,
-          task: {...obj, folder: null},
+          task: {...obj, folder: null, group: null,},
         })
       }
       const links = []

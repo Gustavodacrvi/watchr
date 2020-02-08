@@ -116,6 +116,7 @@
                 <span v-if="deadlineStr" class="tag alert">{{ deadlineStr }}</span>
                 <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                 <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
+                <span v-if="groupStr" class="tag cb rb">{{ groupStr }}</span>
                 <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                 <span v-if="headingName && showHeadingName" class="tag cb rb">{{ headingName }}</span>
                 <span v-if="taskDuration && !schedule" class="tag cb rb">{{ taskDuration }}</span>
@@ -167,7 +168,7 @@ import ListItemMixin from "@/mixins/listItem"
 export default {
   mixins: [ListItemMixin],
   props: ['item', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
-  'selectEverythingToggle'],
+  'selectEverythingToggle', 'hideGroupName'],
   components: {
     Timeline, TaskIcons,
     Icon: IconVue,
@@ -396,6 +397,8 @@ export default {
   computed: {
     ...mapState({
       userInfo: state => state.userInfo,
+
+      savedGroups: state => state.group.groups,
     }),
     ...mapGetters({
       isDesktop: 'isDesktop',
@@ -577,6 +580,7 @@ export default {
             this.$store.dispatch('task/saveTask', {
               id: this.item.id,
               folder: fold.id,
+              group: null,
               list: null,
             })
           }
@@ -592,6 +596,7 @@ export default {
         this.$store.dispatch('task/saveTask', {
           id: this.item.id,
           folder: null,
+          group: null,
           ...obj
         })
       }
@@ -660,6 +665,13 @@ export default {
       const folder = this.item.folder
       if (!folder || this.hideFolderName) return null
       const fold = this.savedFolders.find(f => f.id === folder)
+      if (!fold || (fold.name === this.viewName)) return null
+      return fold.name
+    },
+    groupStr() {
+      const group = this.item.group
+      if (!group || this.hideFolderName) return null
+      const fold = this.savedGroups.find(f => f.id === group)
       if (!fold || (fold.name === this.viewName)) return null
       return fold.name
     },

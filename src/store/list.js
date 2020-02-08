@@ -347,7 +347,7 @@ export default {
       getListByName: {
         react: ['name'],
         getter({getters}, name) {
-          return getters.lists.find(l => l.name.trim() === name)
+          return getters.lists.find(l => l.name && l.name.trim() === name)
         },
       },
       filterSidebarLists: {
@@ -779,6 +779,30 @@ export default {
 
       b.commit()
     },
+    async addTaskByIndexSmartViewGroup({rootState}, {ids, index, task, groupId, viewName, newTaskRef}) {
+      const b = fire.batch()
+
+      const writes = []
+      
+      await setTask(b, {
+        userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
+        ...task,
+      }, rootState, newTaskRef.id, writes)
+    
+      setGroup(b, {
+        smartViewsOrders: {
+          [viewName]: {
+            [uid()]: ids
+          },
+        },
+      }, groupId, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
     async addTaskByIndexCalendarOrder({rootState}, {ids, index, task, date, newTaskRef}) {
       const b = fire.batch()
       
@@ -805,7 +829,6 @@ export default {
       const writes = []
 
       setList(b, {
-        folder: null,
         name: '',
         smartViewsOrders: {},
         userId: uid(),
@@ -955,6 +978,7 @@ export default {
 
       batchSetTasks(b, {
         list: listId,
+        group: null,
         folder: null,
         heading: null,
       }, taskIds, rootState, writes)
@@ -979,6 +1003,7 @@ export default {
       batchSetTasks(b, {
         list: listId,
         folder: null,
+        group: null,
         heading: null,
       }, taskIds, rootState, writes)
 
@@ -1147,6 +1172,7 @@ export default {
 
       setList(b, {
         folder: null,
+        group: null,
         name: '',
         smartViewsOrders: {},
         userId: uid(),

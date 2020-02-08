@@ -133,7 +133,7 @@ export default {
       const writes = []
 
       setInfo(b, {lists: ids}, writes)
-      setList(b, {folder: null}, id, rootState, writes)
+      setList(b, {folder: null, group: null,}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -164,6 +164,7 @@ export default {
       batchSetTasks(b, {
         list: null,
         folder: folderId,
+        group: null,
         heading: null,
       }, taskIds, rootState, writes)
 
@@ -183,6 +184,7 @@ export default {
       batchSetTasks(b, {
         folder: folderId,
         list: null,
+        group: null,
         heading: null,
       }, taskIds, rootState, writes)
 
@@ -220,10 +222,12 @@ export default {
       
       batchSetLists(b, {
         folder: null,
+        group: null,
       }, folderLists.map(el => el.id), rootState, writes)
-
+      
       batchSetTasks(b, {
         folder: null,
+        group: null,
       }, folderTasks.map(el => el.id), rootState, writes)
     
       deleteFolder(b, id, rootState, writes)
@@ -232,7 +236,7 @@ export default {
 
       b.commit()
     },
-    saveSmartViewHeadingTasksOrder({getters}, {ids, folderId, smartView}) {
+    saveSmartViewHeadingTasksOrder({getters, rootState}, {ids, folderId, smartView}) {
       const folder = getters.getFoldersById([folderId])[0]
       let views = folder.smartViewsOrders
       if (!views) views = {}

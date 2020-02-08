@@ -20,10 +20,10 @@ export default {
       return groups
     },
     ...MemoizeGetters('groups', {
-      getGroupTaskOrderById({state, getters}, groupId) {
-        const gro = getters.groups.find(f => f.id === groupId)
-        if (gro && gro.tasks)
-          return gro.tasks
+      getGroupTaskOrderById({state}, groupId) {
+        const gro = state.groups.find(f => f.id === groupId)
+        if (gro && gro.order)
+          return gro.order
         return []
       },
       getListsByGroupId: {
@@ -119,25 +119,25 @@ export default {
 
       b.commit()
     },
-    moveTasksToGroup({getters, rootState}, {ids, taskIds, groupId, smartView}) {
-      const gro = getters.getGroupsById([groupId])[0]
+    moveTasksToGroup({getters, rootState}, {ids, taskIds, groupId, viewName}) {
       const b = fire.batch()
-
-      let views = gro.smartViewsOrders
-      if (!views) views = {}
-      views[smartView] = ids
 
       const writes = []
 
       batchSetTasks(b, {
         list: null,
         group: groupId,
+        folder: null,
         heading: null,
       }, taskIds, rootState, writes)
 
       setGroup(b, {
-        smartViewsOrders: views,
-      }, groupId, rootState, writes)
+        smartViewsOrders: {
+          [viewName]: {
+            [uid()]: ids,
+          },
+        },
+      })
 
       cacheBatchedItems(b, writes)
 
@@ -151,6 +151,7 @@ export default {
       batchSetTasks(b, {
         group: groupId,
         list: null,
+        folder: null,
         heading: null,
       }, taskIds, rootState, writes)
 
@@ -186,17 +187,18 @@ export default {
 
       b.commit()
     },
-    saveSmartViewHeadingTasksOrder({getters}, {ids, groupId, smartView}) {
-      const group = getters.getGroupsById([groupId])[0]
-      let views = group.smartViewsOrders
-      if (!views) views = {}
-      views[smartView] = ids
+    saveSmartViewHeadingTasksOrder({rootState}, {ids, groupId, viewName}) {
+      const b = fire.batch()
 
-      const batch = fire.batch()
+      setGroup(b, {
+        smartViewsOrders: {
+          [viewName]: {
+            [uid()]: ids,
+          },
+        }
+      }, groupId, rootState)
 
-      setGroup(batch, {smartViewsOrders: views}, groupId, rootState)
-
-      batch.commit()
+      b.commit()
     },
   },
 }

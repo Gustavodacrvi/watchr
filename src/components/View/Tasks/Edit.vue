@@ -370,6 +370,7 @@ export default {
                 ...this.task,
                 list: this.getListsById([task.list]).map(el => el.name)[0],
                 heading: null,
+                group: null,
                 folder: null,
               }
             } else if (task.folder) {
@@ -377,6 +378,7 @@ export default {
                 ...this.task,
                 folder: this.getFoldersById([task.folder]).map(el => el.name)[0],
                 list: null,
+                group: null,
                 heading: null,
               }
             } else {
@@ -573,7 +575,6 @@ export default {
         }
         if (t.list) {
           this.task.folder = ''
-          this.task.group = ''
           this.task.group = ''
         }
         

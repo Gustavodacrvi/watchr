@@ -679,6 +679,7 @@ export default {
               callback: () => save('save', {
                 list: t.id,
                 folder: null,
+                group: null,
                 heading: null,
               }),
             })),
@@ -695,6 +696,7 @@ export default {
               callback: () => save('save', {
                 folder: t.id,
                 list: null,
+                group: null,
                 heading: null,
               }),
             })),

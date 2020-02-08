@@ -490,7 +490,7 @@ export default {
       },
       isTaskAnytime: {
         getter({}, task) {
-          const hasListOrFolderOrTag = task.list || task.folder || (task.tags && task.tags.length > 0)
+          const hasListOrFolderOrTag = task.list || task.folder || task.group || (task.tags && task.tags.length > 0)
           return hasListOrFolderOrTag &&
             !utilsTask.hasCalendarBinding(task)
         },
@@ -499,6 +499,7 @@ export default {
           return JSON.stringify({
             l: t.list, f: t.folder, t: t.tags,
             c: t.calendar,
+            g: t.group,
           })
         },
       },
@@ -1062,7 +1063,6 @@ export default {
     async addTasksToGroupById({rootState}, {ids, groupId}) {
       const b = fire.batch()
 
-      console.log(ids, groupId)
       await batchSetTasks(b, {
         list: null,
         folder: null,

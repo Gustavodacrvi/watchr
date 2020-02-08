@@ -14,6 +14,7 @@
         <HeaderInfo v-if="hasFileHandler"
           :key="hasFileHandler + 'asdf'"
           icon='file'
+          title='Add file'
           @add='getHeaderInfoFile'
         />
       </div>
