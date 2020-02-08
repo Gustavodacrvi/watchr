@@ -166,7 +166,7 @@ export default {
       return 'var(--red)'
     },
     isEditable() {
-      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder') && this.isDesktop
+      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktop
     },
   },
   watch: {

@@ -36,7 +36,7 @@ export default {
     saveHeaderName() {
       return name => {
         if (this.viewGroup) {
-/*           if (this.$store.getters['group/getGroupsByName']([name])[0])
+          if (this.$store.getters['group/getGroupsByName']([name])[0])
             this.pushToast({
               name: 'This group already exists!',
               seconds: 4,
@@ -44,11 +44,11 @@ export default {
             })
           else {
             this.$router.push('/user?group='+name)
-            this.$store.dispatch('group/saveGroup', {
+            this.$store.dispatch('group/saveGroupName', {
               name,
               id: this.viewGroup.id,
             })
-          } */
+          }
         }
       }
     },
