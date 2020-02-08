@@ -119,7 +119,7 @@ export default {
 
       b.commit()
     },
-    moveTasksToGroup({getters, rootState}, {ids, taskIds, groupId, viewName}) {
+    moveTasksToGroup({rootState}, {ids, taskIds, groupId, viewName}) {
       const b = fire.batch()
 
       const writes = []
@@ -137,7 +137,7 @@ export default {
             [uid()]: ids,
           },
         },
-      })
+      }, groupId, rootState)
 
       cacheBatchedItems(b, writes)
 

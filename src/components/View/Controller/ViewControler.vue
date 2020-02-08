@@ -209,6 +209,7 @@ export default {
       for (const viewHeading of headings) {
         if (viewHeading.smartViewControllerType === 'list') {
           const list = viewHeading
+          let viewTasksOrder = calendarOrder.slice()
           let tasksOrder = []
 
           const getSmartViewOrder = () => {
@@ -224,16 +225,18 @@ export default {
             const taskIdsFromList = this.getAllTasksOrderByList(list.id)
 
             let found = false
-            for (const id of calendarOrder)
+            for (const id of viewTasksOrder)
               if (taskIdsFromList.includes(id)) {
                 found = true
                 break
               }
 
-            if (found) tasksOrder = calendarOrder
+            if (found) tasksOrder = viewTasksOrder
             else tasksOrder = taskIdsFromList
           }
-          calendarOrder = utilsTask.concatArraysRemovingOldEls(calendarOrder, tasksOrder)
+          if (!isSmartOrderViewType)
+            viewTasksOrder = utilsTask.concatArraysRemovingOldEls(viewTasksOrder, tasksOrder)
+          else viewTasksOrder = tasksOrder.slice()
           
           const saveOrder = ids => {
             if (isSmartOrderViewType) {
@@ -242,7 +245,7 @@ export default {
               })
             } else {
               this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids),
+                ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
                 date: currentDate,
               })
             }
@@ -250,7 +253,7 @@ export default {
 
           const filterFunction = task => this.isTaskInList(task, list.id)
 
-          const sort = tasks => this.sortArray(calendarOrder, tasks)
+          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
 
           arr.push({
             name: list.name,
@@ -295,7 +298,7 @@ export default {
               else
                 this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
                   ...obj,
-                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, obj.ids),
+                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, obj.ids),
                   date: currentDate,
                 })
             },
@@ -307,13 +310,14 @@ export default {
               else
                 this.$store.dispatch('list/moveTasksToListCalendarOrder', {
                   taskIds, ids, date: currentDate, listId: list.id,
-                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids)
+                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids)
                 })
             }
           })
         } else if (viewHeading.smartViewControllerType === 'folder') {
           const folder = viewHeading
           let tasksOrder = []
+          let viewTasksOrder = calendarOrder.slice()
           const getSmartViewOrder = () => {
             if (folder.smartViewsOrders && folder.smartViewsOrders[viewName])
               return folder.smartViewsOrders[viewName]
@@ -327,16 +331,18 @@ export default {
             const taskIdsFromFolder = this.getFolderTaskOrderById(folder.id)
 
             let found = false
-            for (const id of calendarOrder)
+            for (const id of viewTasksOrder)
               if (taskIdsFromFolder.includes(id)) {
                 found = true
                 break
               }
 
-            if (found) tasksOrder = calendarOrder
+            if (found) tasksOrder = viewTasksOrder
             else tasksOrder = taskIdsFromFolder
           }
-          calendarOrder = utilsTask.concatArraysRemovingOldEls(calendarOrder, tasksOrder)
+          if (!isSmartOrderViewType)
+            viewTasksOrder = utilsTask.concatArraysRemovingOldEls(viewTasksOrder, tasksOrder)
+          else viewTasksOrder = tasksOrder.slice()
           
           const saveOrder = ids => {
             if (isSmartOrderViewType)
@@ -345,14 +351,14 @@ export default {
               })
             else
               this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids),
+                ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
                 date: currentDate,
               })
           }
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
-          const sort = tasks => this.sortArray(calendarOrder, tasks)
+          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
           
           arr.push({
             name: folder.name,
@@ -396,7 +402,7 @@ export default {
               else
                 this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
                   ...obj,
-                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, obj.ids),
+                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, obj.ids),
                   date: currentDate,
                 })
             },
@@ -408,12 +414,13 @@ export default {
               else
                 this.$store.dispatch('folder/moveTasksToFolderCalendarOrder', {
                   taskIds, ids, date: currentDate, folderId: folder.id,
-                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids)
+                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids)
                 })
             }
           })
         } else if (viewHeading.smartViewControllerType === 'group') {
           const group = viewHeading
+          let viewTasksOrder = calendarOrder.slice()
           let tasksOrder = []
           const getSmartViewOrder = () => {
             if (group.smartViewsOrders && group.smartViewsOrders[viewName] && group.smartViewsOrders[viewName][this.userId])
@@ -428,16 +435,18 @@ export default {
             const taskIdsFromGroup = this.getGroupTaskOrderById(group.id)
 
             let found = false
-            for (const id of calendarOrder)
+            for (const id of viewTasksOrder)
               if (taskIdsFromGroup.includes(id)) {
                 found = true
                 break
               }
 
-            if (found) tasksOrder = calendarOrder
+            if (found) tasksOrder = viewTasksOrder
             else tasksOrder = taskIdsFromGroup
           }
-          calendarOrder = utilsTask.concatArraysRemovingOldEls(calendarOrder, tasksOrder)
+          if (!isSmartOrderViewType)
+            viewTasksOrder = utilsTask.concatArraysRemovingOldEls(viewTasksOrder, tasksOrder)
+          else viewTasksOrder = tasksOrder.slice()
           
           const saveOrder = ids => {
             if (isSmartOrderViewType)
@@ -446,21 +455,21 @@ export default {
               })
             else
               this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids),
+                ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
                 date: currentDate,
               })
           }
 
           const filterFunction = task => this.isTaskInGroup(task, group.id)
 
-          const sort = tasks => this.sortArray(calendarOrder, tasks)
+          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
 
           arr.push({
             name: group.name,
             allowEdit: true,
             hideGroupName: true,
             showHeadingName: true,
-            icon: 'groups',
+            icon: 'group',
             id: group.id,
 
             onEdit: tasks => name => {
@@ -497,19 +506,19 @@ export default {
               else
                 this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
                   ...obj,
-                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, obj.ids),
+                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, obj.ids),
                   date: currentDate,
                 })
             },
             onSortableAdd: (evt, taskIds, type, ids) => {
               if (isSmartOrderViewType)
-                this.$store.dispatch('group/moveTasksToFolder', {
+                this.$store.dispatch('group/moveTasksToGroup', {
                   taskIds, ids, groupId: group.id, viewName,
                 })
               else
-                this.$store.dispatch('group/moveTasksToFolderCalendarOrder', {
+                this.$store.dispatch('group/moveTasksToGroupCalendarOrder', {
                   taskIds, ids, date: currentDate, groupId: group.id,
-                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids)
+                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids)
                 })
             }
           })

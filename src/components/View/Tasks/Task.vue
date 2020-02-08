@@ -670,7 +670,7 @@ export default {
     },
     groupStr() {
       const group = this.item.group
-      if (!group || this.hideFolderName) return null
+      if (!group || this.hideGroupName) return null
       const fold = this.savedGroups.find(f => f.id === group)
       if (!fold || (fold.name === this.viewName)) return null
       return fold.name

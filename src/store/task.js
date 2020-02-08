@@ -388,6 +388,7 @@ export default {
               obj = {
                 calendar: t.calendar,
                 list: t.list,
+                group: t.group,
                 folder: t.folder,
                 tags: t.tags,
               }

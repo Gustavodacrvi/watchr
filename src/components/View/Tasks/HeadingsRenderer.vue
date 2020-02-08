@@ -42,6 +42,7 @@
           :editComp='h.editComp || editComp'
 
           :hideListName="h.hideListName"
+          :hideGroupName="h.hideGroupName"
           :viewName='viewName'
           :viewType='viewType'
           :rootHeadings='getLazyHeadingsIds'
@@ -89,7 +90,8 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 'justAddedHeading',
+  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
+  , 'scheduleObject', 'selectEverythingToggle', 'justAddedHeading',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {
@@ -203,7 +205,10 @@ export default {
         w.opacity = 1
         s.padding = '0 6px'
         s.overflow = 'hidden'
-        setTimeout(done, 205)
+        setTimeout(() => {
+          w.removeProperty('margin-top')
+          done()
+        }, 215)
       })
     },
     leave(el, done) {
