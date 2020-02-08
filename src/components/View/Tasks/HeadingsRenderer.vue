@@ -7,7 +7,7 @@
         @enter='enter'
         @leave='leave'
       >
-      <HeadingVue v-for="(h, i) in headings" :key="h.id"
+      <HeadingVue v-for="(h, i) in getHeadings" :key="h.id"
         :header='h'
 
         v-bind="h"
@@ -15,7 +15,7 @@
         :headingEditOptions='headingEditOptions'
         :color='h.color ? h.color : ""'
         :options='h.options ? h.options(h.nonFiltered) : []'
-        :length='h.items.length'
+        :length='h.length'
 
         @option-click='v => getOptionClick(h)(v)'
         @save-notes='v => getNotesOption(h)(v)'
@@ -42,6 +42,7 @@
           :editComp='h.editComp || editComp'
 
           :hideListName="h.hideListName"
+          :hideGroupName="h.hideGroupName"
           :viewName='viewName'
           :viewType='viewType'
           :rootHeadings='getLazyHeadingsIds'
@@ -89,7 +90,8 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 'justAddedHeading',
+  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
+  , 'scheduleObject', 'selectEverythingToggle', 'justAddedHeading',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {
@@ -106,6 +108,7 @@ export default {
       this.mountSortable()
   },
   beforeDestroy() {
+    this.$emit('headings-items-ids', [])
     if (this.sortable)
       this.sortable.destroy()
   },
@@ -196,13 +199,16 @@ export default {
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = '50px'
+          w.marginTop = this.isDesktop ? '50px': '25px'
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
         s.padding = '0 6px'
         s.overflow = 'hidden'
-        setTimeout(done, 205)
+        setTimeout(() => {
+          w.removeProperty('margin-top')
+          done()
+        }, 215)
       })
     },
     leave(el, done) {
@@ -235,6 +241,21 @@ export default {
   },
   computed: {
     ...mapGetters(['isDesktop']),
+    getHeadings() {
+      const heads = this.headings
+
+      heads.forEach(h => {
+        if (this.showAllHeadingsItems)
+          h.length = h.items.length
+        else {
+          h.length = 4
+          if (h.items.length < 3)
+            h.length = h.items.length
+        }
+      })
+
+      return heads
+    },
     emptyHeadings() {
       return []
     },
@@ -244,6 +265,7 @@ export default {
   },
   watch: {
     viewName() {
+      this.itemsIdsObj = {}
       if (this.sortable)
         this.sortable.options.disabled = !this.updateHeadingIds
     },

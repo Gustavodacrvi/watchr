@@ -41,6 +41,8 @@ import tag from './tag'
 import list from './list'
 import filter from './filter'
 import folder from './folder'
+import group from './group'
+import invites from './invites'
 import pomo from './pomo'
 
 import utils from '@/utils'
@@ -48,7 +50,7 @@ import { userRef, cacheRef, setInfo } from "../utils/firestore"
 
 const uid = () => auth.currentUser.uid
 
-const version = '090'
+const version = '091'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -61,7 +63,7 @@ if (lastVersion === null) {
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter, folder,
-    pomo,
+    pomo, group, invites,
   },
   state: {
     lastVersion,
@@ -74,8 +76,11 @@ const store = new Vuex.Store({
     },
     iconDrop: null,
     user: {
+      uid: null,
       displayName: null,
       email: null,
+      photoURL: null,
+      providerData: null,
     },
     userInfo: {
       pomo: null,
@@ -125,24 +130,23 @@ const store = new Vuex.Store({
     calendarList: [],
 
     isFirstSnapshot: true,
-    changedIds: [],
 
     clipboardTask: null,
     toggleClipboardPaste: false,
   },
   getters: {
     ...Memoize(null, {
-      checkMissingIdsAndSortArr({}, order, arr) {
+      checkMissingIdsAndSortArr({}, order, arr, property = 'id') {
 
         let items = []
         for (const id of order) {
-          const item = arr.find(el => el.id === id)
+          const item = arr.find(el => el[property] === id)
           if (item) items.push(item)
         }
     
         let notIncluded = []
         for (const item of arr) {
-          if (!order.includes(item.id))
+          if (!order.includes(item[property]))
             notIncluded.push(item)
         }
     
@@ -160,8 +164,8 @@ const store = new Vuex.Store({
         const ids = new Set()
         const ordered = []
         for (const item of items) {
-          if (!ids.has(item.id)) {
-            ids.add(item.id)
+          if (!ids.has(item[property])) {
+            ids.add(item[property])
             ordered.push(item)
           }
         }
@@ -332,11 +336,6 @@ const store = new Vuex.Store({
     toggleAlt(state, clicked) {
       state.isOnAlt = clicked
     },
-    change(state, ids) {
-      for (const id of ids)
-        if (!state.changedIds.includes(id))
-          state.changedIds.push(id)
-    },
   },
   actions: {
     getOptions(context, options) {
@@ -348,6 +347,7 @@ const store = new Vuex.Store({
         tasks: getters['task/tasks'],
         lists: getters['list/lists'],
         folders: getters['folder/folders'],
+        groups: state.group.groups,
       })
     },
     logOut({state}) {
@@ -383,12 +383,25 @@ const store = new Vuex.Store({
       if (!getters.isDesktop && !persistOnTheSameView)
         router.go(-1)
     },
+    updateProfilePic(c, photoURL) {
+      return Promise.all([
+        auth.currentUser.updateProfile({
+          photoURL,
+        }),
+        userRef().set({
+          photoURL,
+        }, {merge: true})
+      ])
+    },
     deleteProfilePic() {
       const str = `images/${auth.currentUser.uid}.jpg`
-      sto.ref(str).delete().then(() => {
+      return sto.ref(str).delete().then(() => {
         auth.currentUser.updateProfile({
           photoURL: '',
-        }).then(() => location.reload())
+        })
+        userRef().set({
+          photoURL: null,
+        }, {merge: true})
       })
     },
     setInfo(c, obj) {
@@ -398,7 +411,7 @@ const store = new Vuex.Store({
 
       b.commit()
     },
-    getData({state, dispatch}) {
+    getData({state, dispatch}, userId) {
       cacheRef().onSnapshot(snap => {
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
@@ -416,17 +429,11 @@ const store = new Vuex.Store({
           dispatch('pomo/updateDurations')
         })
 
-        if (!state.isFirstSnapshot) {
-          if (!isFromHere) {
-            utils.updateVuexObject(state.task, 'tasks', data.tasks || {}, state.changedIds, isFromHere)
-            utils.updateVuexObject(state.tag, 'tags', data.tags || {}, state.changedIds, isFromHere)
-            utils.updateVuexObject(state.folder, 'folders', data.folders || {}, state.changedIds, isFromHere)
-            utils.updateVuexObject(state.list, 'lists', data.lists || {}, state.changedIds, isFromHere)
-          }
-          
-          if (isFromHere) {
-            state.changedIds = []
-          }
+        if (!state.isFirstSnapshot && !isFromHere) {
+          utils.updateVuexObject(state.task, 'tasks', data.tasks || {})
+          utils.updateVuexObject(state.tag, 'tags', data.tags || {})
+          utils.updateVuexObject(state.folder, 'folders', data.folders || {})
+          utils.updateVuexObject(state.list, 'lists', data.lists || {})
         } else {
           if (data.stats)
             state.pomo.stats = data.stats.pomo || {}
@@ -455,6 +462,72 @@ const store = new Vuex.Store({
         }
         
       })
+      if (userId)
+        fire.collectionGroup('groupCache')
+          .where(`users.${userId}`, '==', true)
+          .onSnapshot(snap => {
+            const isFromHere = snap.metadata.hasPendingWrites
+            if (!isFromHere) {
+              const changes = snap.docChanges()
+              
+              changes.forEach(change => {
+                const newGroup = change.doc.data()
+                
+                if (change.type === 'added') {
+                  const el = state.group.groups.find(el => el.id === newGroup.id)
+                  if (!el) {
+                    state.group.groups.push(newGroup)
+                    state.task.groupTasks = {
+                      ...state.task.groupTasks,
+                      ...newGroup.tasks,
+                    }
+                    state.list.groupTasks = {
+                      ...state.list.groupListss,
+                      ...newGroup.lists,
+                    }
+                  }
+                } else if (change.type === 'removed') {
+                  const index = state.group.groups.findIndex(el => el.id === newGroup.id)
+                  if (index > -1) {
+                    state.group.groups.splice(index, 1)
+                  }
+
+                  let keys = Object.keys(state.task.groupTasks)
+                  for (const k of keys)
+                    if (state.task.groupTasks[k] && state.task.groupTasks[k].group === newGroup.id)
+                      state.task.groupTasks[k] = undefined
+                  state.task.groupTasks = {...state.task.groupTasks}
+                  keys = Object.keys(state.list.groupLists)
+                  for (const k of keys)
+                    if (state.list.groupLists[k] && state.list.groupLists[k].group === newGroup.id)
+                      state.list.groupLists[k] = undefined
+                  state.list.groupLists = {...state.list.groupLists}
+                } else {
+                  const i = state.group.groups.findIndex(el => el.id === newGroup.id)
+          
+                  utils.findChangesBetweenObjs(state.group.groups[i], newGroup, undefined, ['tasks', 'lists'])
+
+                  utils.updateVuexObject(state.task, 'groupTasks', newGroup.tasks || {}, task => task.group === newGroup.id)
+                  utils.updateVuexObject(state.list, 'groupLists', newGroup.lists || {}, list => list.group === newGroup.id)
+                }
+              })
+            }
+          })
+      
+      if (userId)
+        fire.collectionGroup('invites')
+          .where('to', '==', userId)
+          .where('denied', '==', null)
+          .onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state.invites, snap.docChanges(), 'toMe')
+          })
+
+      if (userId)
+        fire.collectionGroup('invites')
+          .where('userId', '==', userId)
+          .onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state.invites, snap.docChanges(), 'fromMe')
+          })
     },
     update({}, info) {
       const b = fire.batch()
@@ -493,17 +566,12 @@ const store = new Vuex.Store({
 
       return b.commit()
     },
-    addRecentCollaborators({state}, user) {
-      const add = !state.userInfo.recentUsers || !state.userInfo.recentUsers[user.userId]
-      if (add)
-        fire.collection('users').doc(uid()).update({
-          recentUsers: {[user.userId]: user},
-        })
-    },
   }
 })
 
-fire.enablePersistence().then(() => enabled = true)
+fire.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED })
+
+fire.enablePersistence({synchronizeTabs: true}).then(() => enabled = true)
 .catch(err => {
   if (err.code === 'failed-precondition') {
     // handle error
@@ -511,7 +579,7 @@ fire.enablePersistence().then(() => enabled = true)
   else if (err.code === 'unimplemented')
     store.commit('pushToast', {
       name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
-      seconds: 12,
+      seconds: 8,
       type: 'error',
     })
 })
@@ -529,7 +597,7 @@ auth.onAuthStateChanged((user) => {
 
   const dispatch = store.dispatch
   const loadData = () => {
-    dispatch('getData')
+    dispatch('getData', user.uid)
   }
   const toast = (t) => store.commit('pushToast', t)
 

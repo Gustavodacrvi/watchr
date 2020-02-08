@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList } from '../utils/firestore'
+import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, groupCacheRef } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -17,11 +17,14 @@ export default {
   namespaced: true,
   state: {
     tasks: {},
+    groupTasks: {},
   },
   getters: {
     tasks(state) {
       const keys = Object.keys(state.tasks).filter(k => state.tasks[k])
-      return keys.map(k => state.tasks[k])
+      const groupKeys = Object.keys(state.groupTasks).filter(k => state.groupTasks[k])
+      
+      return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
     },
     priorityOptions() {
       return [
@@ -375,6 +378,7 @@ export default {
                 completed: t.completed,
                 calendar: t.calendar,
                 list: t.list,
+                group: t.group,
                 folder: t.folder,
                 tags: t.tags,
               }
@@ -384,6 +388,7 @@ export default {
               obj = {
                 calendar: t.calendar,
                 list: t.list,
+                group: t.group,
                 folder: t.folder,
                 tags: t.tags,
               }
@@ -465,6 +470,7 @@ export default {
       isTaskInbox: {
         getter({}, task) {
           return !task.completed && !task.checked &&
+          !task.group &&
           !utilsTask.hasCalendarBinding(task) &&
           !task.list &&
           !task.folder &&
@@ -476,6 +482,7 @@ export default {
             com: t.completed,
             che: t.checked,
             cal: t.calendar,
+            gro: t.group,
             lis: t.list,
             fol: t.folder,
             tag: t.tags,
@@ -484,7 +491,7 @@ export default {
       },
       isTaskAnytime: {
         getter({}, task) {
-          const hasListOrFolderOrTag = task.list || task.folder || (task.tags && task.tags.length > 0)
+          const hasListOrFolderOrTag = task.list || task.folder || task.group || (task.tags && task.tags.length > 0)
           return hasListOrFolderOrTag &&
             !utilsTask.hasCalendarBinding(task)
         },
@@ -493,6 +500,7 @@ export default {
           return JSON.stringify({
             l: t.list, f: t.folder, t: t.tags,
             c: t.calendar,
+            g: t.group,
           })
         },
       },
@@ -607,6 +615,17 @@ export default {
           })
         }
       },
+      isTaskInGroup: {
+        getter({}, task, groupId) {
+          return task.group === groupId
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].group,
+            l: args[1],
+          })
+        }
+      },
       isTaskInList: {
         getter({}, task, listId) {
           return task.list === listId
@@ -710,6 +729,7 @@ export default {
           'completed',
           'list',
           'folder',
+          'group',
           'tags',
           'completeDate',
         ],
@@ -737,7 +757,7 @@ export default {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, rootState, taskRef()).then(() => {
+      }, rootState).then(() => {
         b.commit()
       })
     },
@@ -756,7 +776,7 @@ export default {
             created: mom().format('Y-M-D HH:mm ss'),
             userId: uid(),
             id: ref.id,
-          }, rootState, ref, writes)
+          }, rootState, ref.id, writes)
         )
       }
 
@@ -767,7 +787,7 @@ export default {
     },
     saveTask({rootState}, obj) {
       const b = fire.batch()
-      setTask(b, obj, rootState, taskRef(obj.id)).then(() => {
+      setTask(b, obj, rootState, obj.id).then(() => {
         b.commit()
       })
     },
@@ -819,6 +839,7 @@ export default {
           for (const t of task.checklist) {
             setTask(b, {
               folder: null,
+              group: null,
               userId: uid(),
               name: t.name,
               createdFire: serverTimestamp(),
@@ -831,7 +852,7 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }, rootState, taskRef(t.id), writes)
+            }, rootState, t.id, writes)
             subIds.push(t.id)
           }
 
@@ -846,11 +867,11 @@ export default {
           tasks: subIds,
           headings: [],
           headingsOrder: [],
-        }, list, rootState, writes)
+        }, list.id, rootState, writes)
         
       })
 
-      setFolder(b, {order}, folderRef(folderId), rootState, writes)
+      setFolder(b, {order}, folderId, rootState, writes)
 
       cacheBatchedItems(b, writes)
       
@@ -881,6 +902,7 @@ export default {
               created: mom().format('Y-M-D HH:mm ss'),
               cloud_function_edit: false,
               folder: null,
+              group: null,
               userId: uid(),
               name: t.name,
               priority: '',
@@ -890,7 +912,7 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }, rootState, taskRef(t.id), writes)
+            }, rootState, t.id, writes)
             ids.push(t.id)
           }
   
@@ -908,7 +930,7 @@ export default {
           tasks: ids,
           headings: [],
           headingsOrder: [],
-        }, list, rootState, writes)
+        }, list.id, rootState, writes)
 
         cacheBatchedItems(b, writes)
   
@@ -948,8 +970,7 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, rootState, taskRef(t.id), writes)
-        commit('change', [t.id], {root: true})
+        }, rootState, t.id, writes)
       }
 
       cacheBatchedItems(b, writes)
@@ -975,8 +996,7 @@ export default {
           checkDate: null,
           fullCheckDate: null,
           calendar: c,
-        }, rootState, taskRef(t.id), writes)
-        commit('change', [t.id], {root: true})
+        }, rootState, t.id, writes)
       }
       cacheBatchedItems(b, writes)
 
@@ -1018,7 +1038,6 @@ export default {
       const b = fire.batch()
 
       await batchSetTasks(b, task, ids, rootState)
-      commit('change', ids, {root: true})
 
       b.commit()
     },
@@ -1028,20 +1047,31 @@ export default {
       await batchSetTasks(b, {
         tags: fd().arrayUnion(...tagIds),
       }, ids, rootState)
-      commit('change', ids, {root: true})
 
       b.commit()
     },
-    async addListToTasksById({commit, rootState}, {ids, listId}) {
+    async addListToTasksById({rootState}, {ids, listId}) {
       const b = fire.batch()
 
       await batchSetTasks(b, {
         list: listId,
         folder: null,
+        group: null,
         heading: null,
       }, ids, rootState)
-      commit('change', ids, {root: true})
 
+      b.commit()
+    },
+    async addTasksToGroupById({rootState}, {ids, groupId}) {
+      const b = fire.batch()
+
+      await batchSetTasks(b, {
+        list: null,
+        folder: null,
+        group: groupId,
+        heading: null,
+      }, ids, rootState)
+      
       b.commit()
     },
     async addFolderToTasksById({commit, rootState}, {ids, folderId}) {
@@ -1050,9 +1080,9 @@ export default {
       await batchSetTasks(b, {
         list: null,
         folder: folderId,
+        group: null,
         heading: null,
       }, ids, rootState)
-      commit('change', ids, {root: true})
       
       b.commit()
     },
@@ -1063,7 +1093,7 @@ export default {
         ...task, files: [],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
-      }, rootState, taskRef())
+      }, rootState)
 
       b.commit()
     },
@@ -1082,6 +1112,13 @@ export default {
         case 'list': {
           dispatch('addListToTasksById', {
             listId: elIds[0],
+            ids: taskIds,
+          })
+          break
+        }
+        case 'group': {
+          dispatch('addTasksToGroupById', {
+            groupId: elIds[0],
             ids: taskIds,
           })
           break

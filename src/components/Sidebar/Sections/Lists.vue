@@ -31,43 +31,47 @@
 
       data-name='folders-root'
     >
-      <FolderApp v-for="f in laseredFolders" :key="f.id"
-        v-bind="f"
-        :folder='f'
-        :viewName='viewName'
-        :viewType='viewType'
-        :listLength='f.list.length'
+      <template v-for="f in laseredFoldersAndGrups">
+        <component :key="f.id"
+          :is='f.comp'
+        
+          v-bind="f"
+          :item='f'
+          :viewName='viewName'
+          :viewType='viewType'
+          :listLength='f.list.length'
 
-        :data-id='f.id'
+          :data-id='f.id'
 
-        data-type='folder'
-      >
-        <Renderer
-          type="list"
-          icon="tasks"
-          iconColor='var(--primary)'
-          inputPlaceholder='List name...'
-          :folder='f.id'
-          :disableSelection='true'
-          :enableSort="true"
-          :list="f.list"
-          :active="active"
-          :viewType="viewType"
-          :mapProgress='getListProgress'
-          :mapNumbers="(tasks) => tasks"
-          :mapHelpIcon='getListIcon'
-          :mapString='mapString'
-          :onSortableAdd='betweenFolders'
+          data-type='folder'
+        >
+          <Renderer
+            type="list"
+            icon="tasks"
+            iconColor='var(--primary)'
+            inputPlaceholder='List name...'
+            :folder='f.id'
+            :disableSelection='true'
+            :enableSort="true"
+            :list="f.list"
+            :active="active"
+            :viewType="viewType"
+            :mapProgress='getListProgress'
+            :mapNumbers="(tasks) => tasks"
+            :mapHelpIcon='getListIcon'
+            :mapString='mapString'
+            :onSortableAdd='betweenFolders'
 
-          :fallbackItem='fallbackItem(f.id)'
-          :getItemRef='getItemRef'
+            :fallbackItem='fallbackItem(f.id)'
+            :getItemRef='getItemRef'
 
-          @is-moving='v => isDragginInnerList = v'
-          @buttonAdd='obj => folderButtonAdd(f.id, obj)'
-          @update='ids => updateFolderIds(f.id, ids)'
-          @add='addList'
-        />
-      </FolderApp>
+            @is-moving='v => isDragginInnerList = v'
+            @buttonAdd='obj => folderButtonAdd(f.id, obj)'
+            @update='ids => updateFolderIds(f.id, ids)'
+            @add='addList'
+          />
+        </component>
+      </template>
     </transition-group>
     <div style="height: 100px"></div>
   </div>
@@ -76,7 +80,8 @@
 <script>
 
 import RendererVue from '../Renderer.vue'
-import FolderApp from './Folder.vue'
+import Folder from './Folder.vue'
+import Group from './Group.vue'
 
 import utilsList from '@/utils/list'
 import utilsTask from '@/utils/task'
@@ -93,7 +98,8 @@ import { Sortable } from 'sortablejs'
 
 export default {
   components: {
-    Renderer: RendererVue, FolderApp,
+    Renderer: RendererVue, Folder,
+    Group,
   },
   props: ['active', 'viewName', 'viewType', 'showDefered', 'showRepeat'],
   data() {
@@ -231,7 +237,7 @@ export default {
       tasks: 'task/tasks',
       isDesktop: 'isDesktop',
       isTaskInList: 'task/isTaskInList',
-      sortedFolders: 'folder/sortedFolders',
+      sortedFoldersAndGroups: 'folder/sortedFoldersAndGroups',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       getListsByFolderId: 'folder/getListsByFolderId',
@@ -240,12 +246,19 @@ export default {
       filterSidebarLists: 'list/filterSidebarLists',
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
-    laseredFolders() {
-      const sortedFolders = this.sortedFolders
-      sortedFolders.forEach(fold => {
-        fold.list = this.filterSidebarLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
+    laseredFoldersAndGrups() {
+      const sortedFoldersAndGroups = this.sortedFoldersAndGroups
+      sortedFoldersAndGroups.forEach(fold => {
+        if (!fold.isGroup) {
+          fold.list = this.filterSidebarLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
+
+          fold.comp = "Folder"
+        } else {
+          fold.comp = "Group"
+          fold.list = []
+        }
       })
-      return sortedFolders
+      return sortedFoldersAndGroups
     },
     sortedLists() {
       return this.$store.getters['list/sortedLists']

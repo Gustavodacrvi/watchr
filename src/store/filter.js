@@ -79,7 +79,7 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
-      }, rootState, newTaskRef).then(() => {
+      }, rootState, newTaskRef.id).then(() => {
         ids.splice(index, 0, newTaskRef.id)
   
         batch.update(filterRef(filterId), {tasks: ids})

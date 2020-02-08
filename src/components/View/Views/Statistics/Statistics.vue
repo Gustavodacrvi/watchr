@@ -33,6 +33,9 @@ export default {
       this.pop('RecentData')
     },
   },
+  computed: {
+    ...mapGetters(['platform']),
+  }
 }
 
 </script>

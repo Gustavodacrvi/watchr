@@ -39,6 +39,9 @@
         </div>
       </transition>
     </span>
+    <span v-show="number" class="counter">
+      <span class='num'>{{ number }}</span>
+    </span>
     <transition name="title-trans">
       <div v-if="showingTitle && title && isDesktop"
         class="icon-title rb"
@@ -99,6 +102,7 @@ import filter from '@/assets/icons/filter.svg'
 import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
 import pomo from '@/assets/icons/pomo.svg'
+import message from '@/assets/icons/message.svg'
 import pie from '@/assets/icons/pie.svg'
 import check from '@/assets/icons/check.svg'
 import layerGroup from '@/assets/icons/layer-group.svg'
@@ -112,12 +116,15 @@ import boxCheckFilled from '@/assets/icons/box-check-filled.svg'
 import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
 import circleClose from '@/assets/icons/circle-close.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
+import paperPlane from '@/assets/icons/paper-plane.svg'
 import laterLists from '@/assets/icons/later-lists.svg'
+import group from '@/assets/icons/group.svg'
+import crown from '@/assets/icons/crown.svg'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle', 'stop', 'title'],
+  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle', 'stop', 'title', 'number'],
   data() {
     return {
       activate: false,
@@ -130,8 +137,9 @@ export default {
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
-        pomo, pie, check,
+        pomo, pie, check, group, message, crown,
         "later-lists": laterLists,
+        "paper-plane": paperPlane,
         "box-close": boxClose,
         "circle-close": circleClose,
         "circle-check-filled": circleCheckFilled,
@@ -255,6 +263,26 @@ export default {
 .Icon {
   position: relative;
   display: inline-block;
+  transform: scale(1,1);
+}
+
+.counter {
+  position: absolute;
+  left: -10px;
+  top: -10px;
+  padding: 6px;
+  border-radius: 50px;
+  background-color: var(--red);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 18px;
+  height: 18px;
+}
+
+.num {
+  transform: translateY(-1px);
 }
 
 .icon-title {

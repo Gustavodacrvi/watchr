@@ -9,7 +9,7 @@
         @google='upgradeAccountToGoogle'
       />
       <InputApp
-        placeholder='Username(Optional):'
+        placeholder='Username:'
         :value='username'
         @input='v => username = v'
         @cancel="$emit('close')"
@@ -180,8 +180,8 @@ export default {
       return eMail.length > 75 || password.length > 75 || conPassword.length > 75 || username.length > 50
     },
     atLeastOneEmpty() {
-      const { eMail, password, conPassword } = this
-      return eMail === '' || password === '' || conPassword === ''
+      const { eMail, password, conPassword, username  } = this
+      return eMail === '' || password === '' || conPassword === '' || username === ''
     },
     notEqual() {
       return this.password !== this.conPassword

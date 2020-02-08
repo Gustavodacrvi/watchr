@@ -66,6 +66,12 @@
               color=''
               @click="task.folder = ''"
             />
+            <Tag v-if="task.group"
+              icon="group"
+              :value="task.group"
+              color=''
+              @click="task.group = ''"
+            />
             <Tag v-if="task.list"
               icon="tasks"
               :value="task.list"
@@ -169,6 +175,15 @@
                 :center='true'
               />
               <IconDrop
+                handle="group"
+                width="24px"
+                class="opt-icon"
+                :options="groupOptions"
+                :circle='true'
+                title='Add to group'
+                :center='true'
+              />
+              <IconDrop
                 handle="calendar"
                 width="22px"
                 class="opt-icon"
@@ -241,7 +256,7 @@ import FileMixin from '@/mixins/file.js'
 
 export default {
   mixins: [FileMixin],
-  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction', 'fallbackItem'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'quickAdd', 'focusToggle', 'taskHeight', 'editAction', 'fallbackItem'],
   components: {
     FileDragDrop,
     DropInput: DropInputVue, FileApp,
@@ -262,6 +277,7 @@ export default {
         taskDuration: '',
         deadline: '',
         folder: '',
+        group: '',
         list: '',
         notes: '',
         calendar: null,
@@ -314,6 +330,7 @@ export default {
 
       this.task.list = this.listName
       this.task.folder = this.folderName
+      this.task.group = this.groupName
       this.task.tags = this.getTagNames
     }
 
@@ -353,6 +370,7 @@ export default {
                 ...this.task,
                 list: this.getListsById([task.list]).map(el => el.name)[0],
                 heading: null,
+                group: null,
                 folder: null,
               }
             } else if (task.folder) {
@@ -360,6 +378,7 @@ export default {
                 ...this.task,
                 folder: this.getFoldersById([task.folder]).map(el => el.name)[0],
                 list: null,
+                group: null,
                 heading: null,
               }
             } else {
@@ -461,7 +480,8 @@ export default {
           s.height = '35px'
         else
           s.height = height + 'px'
-        s.margin = '75px 0'
+        if (!this.quickAdd)
+          s.margin = '75px 0'
         setTimeout(() => {
           this.show = true
         }, 290)
@@ -545,9 +565,17 @@ export default {
           this.task.list = ''
           this.task.heading = ''
           this.task.headingId = ''
+          this.task.group = ''
+        }
+        if (t.group) {
+          this.task.list = ''
+          this.task.heading = ''
+          this.task.headingId = ''
+          this.task.folder = ''
         }
         if (t.list) {
           this.task.folder = ''
+          this.task.group = ''
         }
         
         let n = t.name
@@ -569,6 +597,7 @@ export default {
           ...t,
           list: this.listId,
           folder: this.folderId,
+          group: this.groupId,
           tags: this.tagIds,
           name: n.trim(), heading,
           calendar,
@@ -638,6 +667,7 @@ export default {
       getFoldersById: 'folder/getFoldersById',
       lists: 'list/sortedLists',
       folders: 'folder/sortedFolders',
+      groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
     }),
     showingOptions() {
@@ -720,14 +750,24 @@ export default {
         return this.$store.getters['folder/getFoldersById']([this.task.folder])[0].name
       return ''
     },
-    listId() {
-      if (this.task.list)
-        return this.$store.getters['list/getListsByName']([this.task.list]).map(el => el.id)[0]
-      return null
-    },
     folderId() {
       if (this.task.folder)
         return this.$store.getters['folder/getFoldersByName']([this.task.folder]).map(el => el.id)[0]
+      return null
+    },
+    groupName() {
+      if (this.task.group)
+        return this.$store.getters['group/getGroupsById']([this.task.group])[0].name
+      return ''
+    },
+    groupId() {
+      if (this.task.group)
+        return this.$store.getters['group/getGroupsByName']([this.task.group]).map(el => el.id)[0]
+      return null
+    },
+    listId() {
+      if (this.task.list)
+        return this.$store.getters['list/getListsByName']([this.task.list]).map(el => el.id)[0]
       return null
     },
     buttonText() {
@@ -736,7 +776,7 @@ export default {
     },
     atLeastOnSpecialTag() {
       const t = this.task
-      return this.calendarStr || t.deadline || t.priority || t.folder || t.taskDuration || t.list || (t.list && t.heading)
+      return this.calendarStr || t.deadline || t.priority || t.folder || t.group || t.taskDuration || t.list || (t.list && t.heading)
     },
     calendarStr() {
       if (this.task.calendar)
@@ -770,6 +810,22 @@ export default {
     priorities() {
       return this.$store.getters['task/priorityOptions']
     },
+    groupOptions() {
+      return {
+        links: this.groups.map(el => ({
+          icon: 'group',
+          name: el.name,
+          callback: () => {
+            this.task.group = el.name
+            this.task.list = ''
+            this.task.folder = ''
+            this.task.heading = ''
+            this.task.headingId = ''
+          }
+        })),
+        allowSearch: true,
+      }
+    },
     folderOptions() {
       const arr = []
       for (const el of this.folders) {
@@ -779,6 +835,7 @@ export default {
           callback: () => {
             this.task.folder = el.name
             this.task.list = ''
+            this.task.group = ''
             this.task.heading = ''
             this.task.headingId = ''
           }
@@ -798,6 +855,7 @@ export default {
           callback: () => {
             this.task.list = el.name
             this.task.folder = ''
+            this.task.group = ''
             const arr = []
             for (const h of el.headings) {
               arr.push({
@@ -877,6 +935,7 @@ export default {
             this.task.name = n.replace(listName, '')
             this.task.list = li.name
             this.task.folder = ''
+            this.task.group = ''
             break
           }
         }
@@ -898,6 +957,7 @@ export default {
             this.task.name = n.replace(folderName, '')
             this.task.folder = f.name
             this.task.list = ''
+            this.task.group = ''
             this.task.heading = ''
             this.task.headingId = ''
             break

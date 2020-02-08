@@ -94,10 +94,12 @@
         <div class="footer" :class="[platform, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop">
-              <Icon v-for="i in getHidedSectionsIcons" :key='i.icon'
-                class="sect-icon cursor remove-highlight primary-hover"
+              <Icon v-for="i in sideIcons" :key='i.icon'
+                class="sect-icon passive cursor remove-highlight primary-hover"
                 :icon='i.icon'
                 :circle='true'
+                :number='i.number'
+                color='var(--fade)'
                 @click="i.callback"
               />
               <transition name="icon-t">
@@ -423,6 +425,8 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
+      sortedFromMeInvites: 'invites/sortedFromMeInvites',
+      sortedToMeInvites: 'invites/sortedToMeInvites',
       isTaskInView: 'task/isTaskInView',
       // getfavfilters
       isTaskCompleted: 'task/isTaskCompleted',
@@ -433,6 +437,34 @@ export default {
       return {
         left: (parseInt(this.width, 10) - 18) + 'px'
       }
+    },
+    sideIcons() {
+      const opt = []
+
+      const invites = this.sortedFromMeInvites
+      if (invites.length > 0)
+        opt.push({
+          icon: 'paper-plane',
+          id: 'asdfasdfasdfasd',
+          number: invites.length,
+          callback: () => this.$store.dispatch('pushPopup', {
+            comp: 'SentInvites',
+          }),
+        })
+
+      const fromOthers = this.sortedToMeInvites
+
+      if (fromOthers.length > 0)
+        opt.push({
+          icon: 'message',
+          id: 'message',
+          number: fromOthers.length,
+          callback: () => this.$store.dispatch('pushPopup', {
+            comp: 'Invites',
+          })
+        })
+
+      return [...opt, ...this.getHidedSectionsIcons]
     },
     getFavoritesRenderList() {
       const favs = this.getFavorites
@@ -580,6 +612,11 @@ export default {
           name: 'Add folder',
           icon: 'folder',
           callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
+        },
+        {
+          name: 'Add group',
+          icon: 'group',
+          callback: () => dispatch('pushPopup', {comp: 'AddGroup', naked: true}),
         },
         {
           name: 'Add list',
@@ -810,7 +847,7 @@ export default {
 }
 
 .sect-icon {
-  margin-right: 8px;
+  margin-right: 12px;
 }
 
 .mobile .showing .inner-footer {

@@ -1,0 +1,63 @@
+.showCont {
+  margin-bottom: 12px;
+}
+
+.header {
+  position: relative;
+  display: flex;
+  height: 35px;
+  transform: scale(1,1); /* used for drag and drop */
+  transition-duration: .15s;
+  overflow: hidden;
+}
+
+.mobile .header {
+  height: 42px;
+}
+
+.header:hover, .isActive {
+  background-color: var(--dark);
+}
+
+.icon {
+  color: var(--fade);
+  transform: translateY(2px);
+  transition-duration: .15s;
+}
+
+.icon.headerHover {
+  color: var(--txt);
+}
+
+.icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 100%;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transition-duration: .2s;
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.arrow.showCont {
+  top: 55%;
+  transform: translateY(-50%) rotate(0deg);
+}
+
+.name-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.drop {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+}

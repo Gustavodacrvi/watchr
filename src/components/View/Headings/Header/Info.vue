@@ -6,7 +6,7 @@
       @leave='leave'
       tag="div"
     >
-      <div v-if="headerInfo && headerInfo.icons">
+      <div v-if="headerInfo && (headerInfo.icons || hasFileHandler)">
         <HeaderInfo v-for="item in headerInfo.icons"
           :key="item.icon"
           v-bind="item"
@@ -14,6 +14,7 @@
         <HeaderInfo v-if="hasFileHandler"
           :key="hasFileHandler + 'asdf'"
           icon='file'
+          title='Add file'
           @add='getHeaderInfoFile'
         />
       </div>

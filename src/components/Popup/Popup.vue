@@ -33,6 +33,10 @@ import AddHeadingNote from './Lists/AddHeadingNote.vue'
 import Updates from './Updates.vue'
 import FastSearch from './FastSearch.vue'
 import AddFolder from './Folder/AddFolder.vue'
+import AddGroup from './Group/AddGroup.vue'
+import InvitePeople from './Group/InvitePeople.vue'
+import SentInvites from './Group/SentInvites.vue'
+import Invites from './Group/Invites.vue'
 import RecentData from './Statistics/RecentData.vue'
 import Shortcuts from './Shortcuts.vue'
 
@@ -44,7 +48,8 @@ export default {
     AddListNote, AddTagNote, Icon, AddList, AddFilter,
     AddTask, Updates, ChangeUsername, ChangeEmail,
     Confirm, AddHeadingNote, AddFolder, Profile,
-    RecentData, Shortcuts,
+    RecentData, Shortcuts, AddGroup, InvitePeople,
+    SentInvites, Invites,
   },
   methods: {
     closeMobilePopup() {

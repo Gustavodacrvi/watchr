@@ -1,9 +1,5 @@
 
-import utilsTask from '@/utils/task'
-import utilsList from '@/utils/list'
 import utilsFolder from '@/utils/folder'
-import utils from '@/utils/'
-import mom from 'moment'
 
 export default {
   computed: {
@@ -21,7 +17,7 @@ export default {
     },
     mainFallbackItem() {
       return (task, force) => {
-        if (force || (!task.list && !task.folder && !task.heading))
+        if (force || (!task.list && !task.folder && !task.group && !task.heading))
           task.folder = this.viewFolder.id
         return task
       }

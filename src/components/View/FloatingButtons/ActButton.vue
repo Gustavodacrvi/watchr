@@ -87,7 +87,7 @@ export default {
   z-index: 10;
   overflow: hidden;
   cursor: grab;
-  border-radius: 100px;
+  border-radius: 1000px;
   background-color: var(--card);
   box-shadow: 0 3px 8px rgba(15,15,15,.3);
 }

@@ -155,11 +155,11 @@ export default {
       if (this.viewType === 'search')
         return () => true
       if (n === 'Calendar')
-        return task => !task.list && !task.folder
+        return task => !task.list && !task.folder && !task.group
       if (n === 'Today' && this.hasOverdueTasks)
         return () => false
       if (this.isSmart && this.notHeadingHeaderView)
-        return task => !task.list && !task.folder
+        return task => !task.list && !task.folder && !task.group
       return () => false
     },
     configFilterOptions() {

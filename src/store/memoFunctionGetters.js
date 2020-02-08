@@ -26,8 +26,8 @@ export default (property, getters, getPropertyFromGetter) => {
       const origin = getPropertyFromGetter ? vuexGetters : vuexState
       
       if (property) {
-        if (property.length === undefined) {
-          if (property) origin[property]
+        if (!Array.isArray(property)) {
+          origin[property]
         }
         else
           for (const k of property)

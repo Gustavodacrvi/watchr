@@ -485,7 +485,7 @@ export default {
 }
 
 .week {
-  border-radius: 50px;
+  border-radius: 5000px;
   margin-right: 8px;
 }
 

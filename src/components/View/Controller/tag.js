@@ -36,14 +36,6 @@ export default {
         }
       }
     },
-    saveNotes() {
-      return notes => {
-        if (this.viewTag)
-          this.$store.dispatch('tag/saveTag', {
-            notes, id: this.viewTag.id
-          })
-      }
-    },
     updateIds() {
       return ids => {
         if (this.viewTag) {
@@ -87,7 +79,12 @@ export default {
       return {
         notes: {
           name: this.taggetViewNotes || null,
-          save: this.tagsaveNotes,
+          save: notes => {
+            if (this.viewTag)
+              this.$store.dispatch('tag/saveTag', {
+                notes, id: this.viewTag.id
+              })
+          },
         },
       }
     },

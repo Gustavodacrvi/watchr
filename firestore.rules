@@ -8,9 +8,15 @@ service cloud.firestore {
       allow update: if isValidUserDoc(userId);
       
       match /tasks/{task} {
-        allow create: if isSignedInAndVerified() && isValidTask(task);
+        allow create: if
+          isSignedInAndVerified() &&
+          isValidDoc(task) &&
+          isValidTask();
         allow read, delete, update: if isOwnerAndVerified();
-        allow update: if didntChangeConstant() && isValidTask(task);
+        allow update: if
+          didntChangeConstant() &&
+          isValidDoc(task) &&
+          isValidTask();
       }
       match /info/{info} {
         allow create: if isSignedInAndVerified() && isInfoValid(info);
@@ -48,52 +54,6 @@ service cloud.firestore {
         allow update: if didntChangeConstant() && isValidFolder(fold);
       }
 
-			function isSignedIn() {
-        return request.auth.uid != null;
-      }
-      function isOwner() {
-        return isSignedIn() && (request.auth.uid == resource.data.userId);
-      }
-      function isVerified() {
-      	return isSignedIn() && request.auth.token.email_verified
-      }
-      function isSignedInAndVerified() {
-        return isSignedIn() && isVerified()
-      }
-      function isOwnerAndVerified() {
-      	return isOwner() && isVerified()
-      }
-
-      function incomingData() {
-        return request.resource.data
-      }
-      function existingData() {
-        return resource.data
-      }
-      function isValidDoc(id) {
-        return
-          incomingData().userId == request.auth.uid &&
-          incomingData().id == id
-      }
-      function didntChangeConstant() {
-        return
-          existingData().userId == incomingData().userId &&
-          existingData().id == incomingData().id
-      }
-
-      function isArrayOrUndefined(fieldName, max) {
-        return (!(fieldName in incomingData()) || (incomingData()[fieldName] is list && incomingData()[fieldName].size() < (max + 1)))
-      }
-      function isNullStringOrUndefined(fieldName) {
-        return
-          !(fieldName in incomingData()) ||
-          incomingData()[fieldName] is string || incomingData()[fieldName] == null
-      }
-      function isNullOrBollean(fieldName) {
-        return
-          (!(fieldName in incomingData()) || incomingData()[fieldName] == null || incomingData()[fieldName] == true || incomingData()[fieldName] == false)
-      }
-
       function isInfoValid(bracketId) {
         return
           isValidDoc(bracketId) &&
@@ -111,7 +71,7 @@ service cloud.firestore {
           incomingData().created is string &&
           incomingData().createdFire is timestamp &&
           isNullStringOrUndefined('parent') &&
-          isArrayOrUndefined('order') &&
+          isArrayOrUndefined('order', 1000) &&
           incomingData().size() < 10
       }
       function isValidUserDoc(bracketId) {
@@ -129,7 +89,131 @@ service cloud.firestore {
             )
           )
       }
-      function isValidList(id) {
+      function isValidFolder(id) {
+        return
+          isValidDoc(id) &&
+          incomingData().name is string &&
+          isArrayOrUndefined('files', 30) &&
+          isArrayOrUndefined('tasks', 50) &&
+          isArrayOrUndefined('order', 50)
+      }
+    }
+
+    match /{groupId=**}/groupCache/{cacheId} {
+      allow create: if
+        isSignedInAndVerified() &&
+        incomingData().userId == request.auth.uid &&
+        isValidGroupCacheDoc();
+      allow list: if
+        isSignedInAndVerified() &&
+        isInGroup();
+      allow delete: if
+        isSignedInAndVerified() &&
+        isOwner()
+      allow update: if
+        isSignedInAndVerified() &&
+        isInGroup() &&
+        didntChangeConstant() &&
+        isValidGroupCacheDoc() &&
+        (isOwner() || incomingData().name == existingData().name);
+
+    }
+    match /{groupPath=**}/invites/{inviteId} {
+      allow create: if
+        isSignedInAndVerified() &&
+        isValidInviteDoc() &&
+        isGroupOwner(groupPath);
+      allow list: if
+        isSignedInAndVerified() &&
+        (isOwner() || isInviteTarget())
+      allow delete: if
+        isSignedInAndVerified() &&
+        isOwner();
+      allow update: if
+        isSignedInAndVerified() &&
+        existingData().to == request.auth.uid &&
+        onlyChangedDeniedField();
+    }
+
+    match /groups/{groupId} {
+      allow create: if isSignedInAndVerified() && isValidGroupDoc(groupId);
+      allow delete: if isOwner();
+
+      match /info/info {
+        allow create: if
+          isSignedInAndVerified() &&
+          isValidDoc(groupId) &&
+          isValidGroupInfoDoc() &&
+          incomingData().size() == 5;
+        allow read: if
+          isSignedInAndVerified() &&
+          isInGroup();
+        allow update: if
+          isSignedInAndVerified() &&
+          isInGroup() &&
+          didntChangeConstant() &&
+          isValidGroupInfoDoc() &&
+          incomingData().size() == 5 &&
+          (isOwner() || incomingData().name == existingData().name);
+      }
+      match /tasks/{task} {
+        allow create: if
+          isSignedInAndVerified() &&
+          incomingData().id == task &&
+          isValidTask() &&
+          isGroupMember(groupId);
+        allow read, delete: if isSignedInAndVerified() && isGroupMember(groupId);
+        allow update: if
+          isSignedInAndVerified() &&
+          didntChangeConstant() &&
+          incomingData().id == task &&
+          isValidTask() &&
+          isGroupMember(groupId);
+      }
+    }
+
+    function isGroupMember(groupId) {
+      return get(/databases/$(database)/documents/groups/$(groupId)/info/info).data.users[request.auth.uid] == true
+    }
+    function isInviteTarget() {
+      return
+        existingData().to == request.auth.uid &&
+        existingData().denied == null
+    }
+    function isValidTask() {
+      return
+        incomingData().name is string &&
+        incomingData().created is string &&
+        incomingData().createdFire is timestamp &&
+        isArrayOrUndefined('files', 30) &&
+        isArrayOrUndefined('checklist', 50) &&
+        isArrayOrUndefined('order', 50) &&
+        isArrayOrUndefined('tags', 50) &&
+        isNullStringOrUndefined('folder') &&
+        isNullStringOrUndefined('group') &&
+        isNullStringOrUndefined('taskDuration') &&
+        isNullStringOrUndefined('priority') &&
+        isNullStringOrUndefined('heading') &&
+        isNullStringOrUndefined('notes') &&
+        isNullStringOrUndefined('list') &&
+        incomingData().size() < 30 &&
+        (
+          (!('calendar' in incomingData()) || incomingData().calendar == null) ||
+          (
+            incomingData().calendar.type == 'specific' ||
+            incomingData().calendar.type == 'after completion' ||
+            incomingData().calendar.type == 'someday' ||
+            incomingData().calendar.type == 'daily' ||
+            incomingData().calendar.type == 'weekly' ||
+            incomingData().calendar.type == 'monthly' ||
+            incomingData().calendar.type == 'yearly'
+          )
+        )
+    }
+    function isInGroup() {
+      return existingData().users[request.auth.uid] == true
+    }
+    function isValidList(id) {
         return
           isValidDoc(id) &&
           incomingData().name is string &&
@@ -141,6 +225,7 @@ service cloud.firestore {
           isArrayOrUndefined('tasks', 50) &&
           isNullStringOrUndefined('notes') &&
           isNullStringOrUndefined('folder') &&
+          isNullStringOrUndefined('group') &&
           (
             (!('calendar' in incomingData()) || incomingData().calendar == null) ||
             (
@@ -154,44 +239,139 @@ service cloud.firestore {
             )
           )
       }
-      function isValidFolder(id) {
-        return
-          isValidDoc(id) &&
-          incomingData().name is string &&
-          isArrayOrUndefined('files', 30) &&
-          isArrayOrUndefined('tasks', 50) &&
-          isArrayOrUndefined('order', 50)
-      }
-      function isValidTask(id) {
-        return
-          isValidDoc(id) &&
-          incomingData().name is string &&
-          incomingData().created is string &&
-          incomingData().createdFire is timestamp &&
-          isArrayOrUndefined('files', 30) &&
-          isArrayOrUndefined('checklist', 50) &&
-          isArrayOrUndefined('order', 50) &&
-          isArrayOrUndefined('tags', 50) &&
-          isNullStringOrUndefined('folder') &&
-          isNullStringOrUndefined('taskDuration') &&
-          isNullStringOrUndefined('priority') &&
-          isNullStringOrUndefined('heading') &&
-          isNullStringOrUndefined('notes') &&
-          isNullStringOrUndefined('list') &&
-          incomingData().size() < 30 &&
-          (
-            (!('calendar' in incomingData()) || incomingData().calendar == null) ||
-            (
-              incomingData().calendar.type == 'specific' ||
-              incomingData().calendar.type == 'after completion' ||
-              incomingData().calendar.type == 'someday' ||
-              incomingData().calendar.type == 'daily' ||
-              incomingData().calendar.type == 'weekly' ||
-              incomingData().calendar.type == 'monthly' ||
-              incomingData().calendar.type == 'yearly'
-            )
-          )
-      }
+    function isGroupOwner(groupPath) {
+      return get(/databases/$(database)/documents/$(groupPath)).data.userId == request.auth.uid
+    }
+    function onlyChangedDeniedField() {
+      return
+        existingData().groupId == incomingData().groupId &&
+        existingData().userId == incomingData().userId &&
+        existingData().id == incomingData().id &&
+
+        existingData().created == incomingData().created &&
+        existingData().createdFire == incomingData().createdFire &&
+
+        existingData().groupName == incomingData().groupName &&
+
+        existingData().ownerProfile.uid == incomingData().ownerProfile.uid &&
+        existingData().ownerProfile.displayName == incomingData().ownerProfile.displayName &&
+        existingData().ownerProfile.email == incomingData().ownerProfile.email &&
+        existingData().ownerProfile.photoURL == incomingData().ownerProfile.photoURL &&
+        existingData().ownerProfile.size() == incomingData().ownerProfile.size() &&
+
+        existingData().targetProfile.uid == incomingData().targetProfile.uid &&
+        existingData().targetProfile.displayName == incomingData().targetProfile.displayName &&
+        existingData().targetProfile.email == incomingData().targetProfile.email &&
+        existingData().targetProfile.photoURL == incomingData().targetProfile.photoURL &&
+        existingData().targetProfile.size() == incomingData().targetProfile.size() &&
+
+        existingData().to == incomingData().to &&
+        (incomingData().denied == false || incomingData().denied == true) &&
+
+        incomingData().size() == 10
+    }
+    function isValidInviteDoc() {
+      return
+        incomingData().groupId is string &&
+        incomingData().userId is string &&
+        incomingData().to != incomingData().userId &&
+        incomingData().id is string &&
+
+        incomingData().created is string &&
+        incomingData().createdFire is timestamp &&
+
+        incomingData().groupName is string &&
+        incomingData().ownerProfile is map &&
+        incomingData().ownerProfile.uid == incomingData().userId &&
+        incomingData().ownerProfile.size() == 4 &&
+        incomingData().targetProfile is map &&
+        incomingData().targetProfile.uid == incomingData().to &&
+        incomingData().targetProfile.size() == 4 &&
+        incomingData().to is string &&
+        incomingData().to != incomingData().userId &&
+        incomingData().denied == null &&
+
+        incomingData().size() == 10
+    }
+    function isValidGroupDoc(id) {
+      return
+        isValidDoc(id) &&
+        incomingData().size() == 2
+    }
+    function isValidGroupCacheDoc() {
+      return
+        isValidGroupInfoDoc() &&
+        incomingData().size() > 4 &&
+        incomingData().size() < 11 &&
+
+        isNullStringOrUndefined('notes') &&
+        isArrayOrUndefined('files', 20) &&
+
+        (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
+        (!('order' in incomingData()) || incomingData().order is list) &&
+        (!('lists' in incomingData()) || incomingData().lists is map && incomingData().lists.size() < 2001)
+        (!('smartViewsOrders' in incomingData()) || incomingData().smartViewsOrders is map && incomingData().lists.size() < 2001)
+    }
+    function isValidGroupInfoDoc() {
+      return
+        incomingData().userId is string &&
+        incomingData().id is string &&
+        incomingData().name is string &&
+
+        incomingData().users is map &&
+        incomingData().users[incomingData().userId] == true &&
+        incomingData().users.size() < 21 &&
+
+        incomingData().profiles is map &&
+        incomingData().profiles[incomingData().userId] is map &&
+        incomingData().profiles.size() < 21 &&
+        incomingData().profiles.size() == incomingData().users.size()
+    }
+
+
+    function isSignedIn() {
+      return request.auth.uid != null;
+    }
+    function isOwner() {
+      return isSignedIn() && (request.auth.uid == resource.data.userId);
+    }
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified
+    }
+    function isSignedInAndVerified() {
+      return isSignedIn() && isVerified()
+    }
+    function isOwnerAndVerified() {
+      return isOwner() && isVerified()
+    }
+    function incomingData() {
+      return request.resource.data
+    }
+    function existingData() {
+      return resource.data
+    }
+    function isValidDoc(id) {
+      return
+        incomingData().userId == request.auth.uid &&
+        incomingData().id == id
+    }
+    function didntChangeConstant() {
+      return
+        existingData().userId == incomingData().userId &&
+        existingData().id == incomingData().id
+    }
+
+    function isArrayOrUndefined(fieldName, max) {
+      return (!(fieldName in incomingData()) || (incomingData()[fieldName] is list && incomingData()[fieldName].size() < (max + 1)))
+    }
+    function isNullStringOrUndefined(fieldName) {
+      return
+        !(fieldName in incomingData()) ||
+        incomingData()[fieldName] is string || incomingData()[fieldName] == null
+    }
+    function isNullOrBollean(fieldName) {
+      return
+        (!(fieldName in incomingData()) || incomingData()[fieldName] == null || incomingData()[fieldName] == true || incomingData()[fieldName] == false)
     }
   }
 }

@@ -66,8 +66,10 @@ export default {
   },
   watch: {
     fileToggle() {
-      this.addFile(this.fileToggle)
-      this.$emit('empty-toggle')
+      if (this.fileToggle) {
+        this.addFile(this.fileToggle)
+        this.$emit('empty-toggle')
+      }
     },
   },
 }

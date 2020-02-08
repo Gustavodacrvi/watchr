@@ -264,32 +264,40 @@ export default {
       if (obj.hasOwnProperty(k))
         obj[k] = {...obj[k], id: k}
   },
-  updateVuexObject(state, arrName, source, changed, isFromHere) {
-    const target = state[arrName]
+  getUserProfileData(user) {
+    return {
+      displayName: user.displayName,
+      email: user.email,
+      uid: user.uid || user.userId,
+      photoURL: user.photoURL,
+    }
+  },
+  updateVuexObject(state, objName, source, filter) {
+    const target = state[objName]
     const targetKeys = Object.keys(target)
     const sourceKeys = Object.keys(source)
 
     for (const k of sourceKeys)
       if (!target[k])
-        return Vue.set(state, arrName, {...source})
+        return Vue.set(state, objName, {...source})
         
     for (const k of targetKeys)
       if (!source[k])
-        return Vue.set(state, arrName, {...source})
+        return Vue.set(state, objName, {...source})
 
-    const changedKeys = !isFromHere || changed.length === 0 ? sourceKeys : changed
-
-    changedKeys.forEach(k => {
-      if (target[k])
+    sourceKeys.forEach(k => {
+      if (target[k] && (!filter || filter(target[k])))
         this.findChangesBetweenObjs(target[k], source[k],
           (key, val) => Vue.set(target[k], key, val)
         )
     })
   },
-  findChangesBetweenObjs(oldObj, newObj, onFoundChange) {
+  findChangesBetweenObjs(oldObj, newObj, onFoundChange, ignoreKeys) {
     if (oldObj && newObj) {
       const keys = Object.keys(newObj)
       for (const k of keys) {
+        if (ignoreKeys && ignoreKeys.includes(k))
+          continue
         const old = oldObj[k]
         const val = newObj[k]
         const type = typeof val
@@ -351,7 +359,7 @@ export default {
       return mom1.isSame(mom2, 'day')
     }
     
-    let date = mom(str, 'Y-M-D', true)
+    let date = mom(str, 'Y-M-D')
     if (sameDay(tod, date)) return 'Today'
     if (sameDay(mom().add(1, 'day'), date)) return 'Tomorrow'
     if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')
@@ -671,6 +679,7 @@ export default {
               callback: () => save('save', {
                 list: t.id,
                 folder: null,
+                group: null,
                 heading: null,
               }),
             })),
@@ -687,6 +696,7 @@ export default {
               callback: () => save('save', {
                 folder: t.id,
                 list: null,
+                group: null,
                 heading: null,
               }),
             })),

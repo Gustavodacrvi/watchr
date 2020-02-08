@@ -25,6 +25,23 @@ export default {
         return rootGetters.checkMissingIdsAndSortArr(order, d.folders)
       return []
     },
+    sortedFoldersAndGroups(s, d, state, rootGetters) {
+      const {userInfo} = state
+      let order = userInfo.folders
+      if (!order) order = []
+
+      const groups = state.group.groups
+      const folders = d.folders
+
+      groups.forEach(el => el.isGroup = true)
+      
+      if (userInfo)
+        return rootGetters.checkMissingIdsAndSortArr(order, [
+          ...folders,
+          ...groups,
+        ])
+      return []
+    },
     ...MemoizeGetters('folders', {
       getFolderTaskOrderById({state, getters}, folderId) {
         const fold = getters.folders.find(f => f.id === folderId)
@@ -81,7 +98,7 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         ...fold,
         defaultShowing: true,
-      }, folderRef(), rootState)
+      }, undefined, rootState)
 
       b.commit()
     },
@@ -99,14 +116,14 @@ export default {
       
       setFolder(b, {
         order: ids,
-      }, folderRef(id), rootState)
+      }, id, rootState)
 
       b.commit()
     },
     saveFolder({rootState}, fold) {
       const b = fire.batch()
       
-      setFolder(b, fold, folderRef(fold.id), rootState)
+      setFolder(b, fold, fold.id, rootState)
 
       b.commit()
     },
@@ -116,7 +133,7 @@ export default {
       const writes = []
 
       setInfo(b, {lists: ids}, writes)
-      setList(b, {folder: null}, listRef(id), rootState, writes)
+      setList(b, {folder: null, group: null,}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -127,8 +144,8 @@ export default {
 
       const writes = []
 
-      setFolder(b, {order: ids}, folderRef(folder), rootState, writes)
-      setList(b, {folder}, listRef(id), rootState, writes)
+      setFolder(b, {order: ids}, folder, rootState, writes)
+      setList(b, {folder}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -147,12 +164,13 @@ export default {
       batchSetTasks(b, {
         list: null,
         folder: folderId,
+        group: null,
         heading: null,
       }, taskIds, rootState, writes)
 
       setFolder(b, {
         smartViewsOrders: views,
-      }, folderRef(folderId), rootState, writes)
+      }, folderId, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -166,6 +184,7 @@ export default {
       batchSetTasks(b, {
         folder: folderId,
         list: null,
+        group: null,
         heading: null,
       }, taskIds, rootState, writes)
 
@@ -185,9 +204,9 @@ export default {
       await setTask(b, {
         userId: uid(),
         ...task,
-      }, rootState, newTaskRef, writes)
+      }, rootState, newTaskRef.id, writes)
       ids.splice(index, 0, newTaskRef.id)
-      setFolder(b, {tasks: ids}, folderRef(folderId), rootState, writes)
+      setFolder(b, {tasks: ids}, folderId, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -203,10 +222,12 @@ export default {
       
       batchSetLists(b, {
         folder: null,
+        group: null,
       }, folderLists.map(el => el.id), rootState, writes)
-
+      
       batchSetTasks(b, {
         folder: null,
+        group: null,
       }, folderTasks.map(el => el.id), rootState, writes)
     
       deleteFolder(b, id, rootState, writes)
@@ -215,7 +236,7 @@ export default {
 
       b.commit()
     },
-    saveSmartViewHeadingTasksOrder({getters}, {ids, folderId, smartView}) {
+    saveSmartViewHeadingTasksOrder({getters, rootState}, {ids, folderId, smartView}) {
       const folder = getters.getFoldersById([folderId])[0]
       let views = folder.smartViewsOrders
       if (!views) views = {}
@@ -223,7 +244,7 @@ export default {
 
       const batch = fire.batch()
 
-      setFolder(batch, {smartViewsOrders: views}, folderRef(folderId), rootState)
+      setFolder(batch, {smartViewsOrders: views}, folderId, rootState)
 
       batch.commit()
     },
