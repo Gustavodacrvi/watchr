@@ -567,6 +567,8 @@ const store = new Vuex.Store({
   }
 })
 
+fire.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED })
+
 fire.enablePersistence().then(() => enabled = true)
 .catch(err => {
   if (err.code === 'failed-precondition') {
@@ -575,7 +577,7 @@ fire.enablePersistence().then(() => enabled = true)
   else if (err.code === 'unimplemented')
     store.commit('pushToast', {
       name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
-      seconds: 12,
+      seconds: 8,
       type: 'error',
     })
 })

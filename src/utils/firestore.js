@@ -42,9 +42,9 @@ export const inviteRef = (groupId, id) => {
 export const setTask = (batch, task, rootState, id, writes) => {
   return new Promise((solve, reject) => {
     const save = () => {
-      if (!id)
-        id = utils.getUid()
 
+      id = id ? id : utils.getUid()
+      
       const groupTasks = rootState.task.groupTasks
       const individualTasks = rootState.task.tasks
 
@@ -65,7 +65,7 @@ export const setTask = (batch, task, rootState, id, writes) => {
         batch.set(
           !groupId ? getGroupTaskRef() : groupTask(groupId, id),
           getObj(), {merge: true}
-          )
+        )
       }
       const setPersonalTask = () => {
         batch.set(taskRef(id), getObj(), {merge: true})
@@ -74,7 +74,7 @@ export const setTask = (batch, task, rootState, id, writes) => {
         batch.set(refCache, {
           tasks: {
             [id]: getObj(),
-          }
+          },
         }, {merge: true})
       }
       const setGroupCache = groupId => {
@@ -126,16 +126,16 @@ export const setTask = (batch, task, rootState, id, writes) => {
       const updatingPersonalTask = !isNewTask && savedIndividualTask && savedIndividualTask.group === null
       const isChangingGroups = savedGroupTask && savedGroupTask.group !== getGroupId(true)
       
-      console.log(isNewTask, updatingGroupTask, savedIndividualTask, updatingPersonalTask, savedGroupTask)
-      console.log(getGroupId())
-      console.log(savedGroupTask)
-      console.log(getObj())
-      console.log(writes)
-      console.log(id)
       if (getGroupId(true)) {
-        if (isNewTask || updatingGroupTask) { // Create and add task to group/update.
-          console.log('Create and add task to group/update.')
 
+        const saveGroupTasks = rootState.task.groupTasks
+        rootState.task.groupTasks = {
+          ...saveGroupTasks,
+          [id]: getObj(),
+        }
+        
+        if (isNewTask || updatingGroupTask) { // Create and add task to group/update.
+          
           setGroupTask()
           
           if (!writes)
@@ -144,8 +144,13 @@ export const setTask = (batch, task, rootState, id, writes) => {
             addSharedWrite(getObj())
 
         } else if (savedIndividualTask) { // Move personal task to shared.
-          console.log('Move personal task to shared.')
 
+          const savedPersonalTasks = rootState.task.tasks
+          rootState.task.tasks = {
+            ...savedPersonalTasks,
+            [id]: undefined,
+          }
+          
           deletePersonalTask()
           setGroupTask()
 
@@ -158,7 +163,6 @@ export const setTask = (batch, task, rootState, id, writes) => {
           }
 
         } else if (isChangingGroups) {
-          console.log('Changing groups')
 
           deleteGroupTask(savedGroupTask.group)
           setGroupTask(task.group)
@@ -173,8 +177,14 @@ export const setTask = (batch, task, rootState, id, writes) => {
           
         }
       } else {
+
+        const savedPersonalTasks = rootState.task.tasks
+        rootState.task.tasks = {
+          ...savedPersonalTasks,
+          [id]: getObj(),
+        }
+        
         if (isNewTask || updatingPersonalTask) { // Create and add task to personal/update.
-          console.log('Create and add task to personal/update.')
 
           setPersonalTask()
 
@@ -184,7 +194,12 @@ export const setTask = (batch, task, rootState, id, writes) => {
             addPersonalWrite(getObj())
 
         } else if (savedGroupTask) { // Move shared task to personal.
-          console.log('Move shared task to personal.')
+
+          const saveGroupTasks = rootState.task.groupTasks
+          rootState.task.groupTasks = {
+            ...saveGroupTasks,
+            [id]: undefined,
+          }
 
           deleteGroupTask()
           setPersonalTask()
@@ -570,16 +585,26 @@ export const deleteTask = (batch, id, rootState, writes) => {
   if (!sharedTask) {
     batch.delete(taskRef(id))
 
+    rootState.task.tasks = {
+      ...rootState.task.tasks,
+      [id]: undefined,
+    }
+    
     if (!writes)
-      batch.set(cacheRef(), obj, {merge: true})
+    batch.set(cacheRef(), obj, {merge: true})
     else if (writes.push)
-      writes.push({
-        collection: 'tasks',
-        [id]: fd().delete(),
-      })
-
+    writes.push({
+      collection: 'tasks',
+      [id]: fd().delete(),
+    })
+    
   } else {
     batch.delete(groupTask(sharedTask.group, id))
+    
+    rootState.task.groupTasks = {
+      ...rootState.task.groupTasks,
+      [id]: undefined,
+    }
 
     if (!writes)
       batch.set(groupCacheRef(sharedTask.group), obj, {merge: true})
