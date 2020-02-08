@@ -1155,7 +1155,7 @@ export default {
 }
 
 .isRootAndHaveItems {
-  margin: 50px 0;
+  margin: 40px 0;
 }
 
 .mobile .isRootAndHaveItems {

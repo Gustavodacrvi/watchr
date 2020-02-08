@@ -26,10 +26,10 @@ export default {
     updateIds() {
       return ids => {
         if (this.viewGroup) {
-/*           this.$store.dispatch('group/saveGroup', {
-            tasks: ids,
+          this.$store.dispatch('group/saveGroup', {
+            order: ids,
             id: this.viewGroup.id,
-          }) */
+          })
         }
       }
     },

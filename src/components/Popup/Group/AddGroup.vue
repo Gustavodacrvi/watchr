@@ -73,7 +73,7 @@ export default {
           })
           this.$store.dispatch('closePopup')
         } else if (!gro && this.isEditing) {
-          this.$store.dispatch('group/saveGroup', {
+          this.$store.dispatch('group/saveGroupName', {
             name: this.name,
             id: this.payload.id,
           })

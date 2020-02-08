@@ -223,7 +223,7 @@ export const setTask = (batch, task, rootState, id, writes) => {
   })
 }
 export const cacheBatchedItems = (batch, writes) => {
-  const personalWrites = writes.filter(el => !el.groupId)
+  const personalWrites = writes.filter(el => !el.groupId && el.collection)
   
   const getObj = arr => ({
     ...arr.reduce((obj, write) => ({
@@ -252,7 +252,8 @@ export const cacheBatchedItems = (batch, writes) => {
         idSet.add(w.groupId)
 
     idSet.forEach(id => {
-      const obj = getObj(sharedWrites.filter(w => w.groupId === id))
+      const obj = getObj(sharedWrites.filter(w => w.groupId === id && w.collection))
+      const toMerge = sharedWrites.filter(w => w.groupId === id && !w.collection).reduce((o, w) => ({...w.obj, ...o}), {})
 
       const keys = Object.keys(obj)
       keys.forEach(k => {
@@ -260,7 +261,7 @@ export const cacheBatchedItems = (batch, writes) => {
         delete obj[k].groupId
       })
 
-      batch.set(groupCacheRef(id), obj, {merge: true})
+      batch.set(groupCacheRef(id), {...obj, ...toMerge}, {merge: true})
     })
   }
 }
@@ -326,6 +327,27 @@ export const setTag = (batch, tag, id, rootState, writes) => {
   batch.set(ref, obj, {merge: true})
 }
 
+export const setGroup = (batch, group, id, rootState, writes) => {
+  const obj = group
+
+  const allGroups = rootState.group.groups
+  const targetGroup = allGroups.find(el => el.id === id)
+  if (targetGroup)
+    utils.findChangesBetweenObjs(targetGroup, obj)
+  else
+    rootState.group.groups = [
+      ...allGroups,
+      obj,
+    ]
+    
+  if (!writes)
+    batch.set(groupCacheRef(id), group, {merge: true})
+  else if (writes.push)
+    writes.push({
+      groupId: id,
+      obj,
+    })
+}
 export const setFolder = (batch, folder, id, rootState, writes) => {
   const ref = folderRef(id)
   const obj = {
