@@ -301,7 +301,10 @@ service cloud.firestore {
       return
         isValidGroupInfoDoc() &&
         incomingData().size() > 4 &&
-        incomingData().size() < 9 &&
+        incomingData().size() < 11 &&
+
+        isNullStringOrUndefined('notes') &&
+        isArrayOrUndefined('files') &&
 
         (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
         (!('order' in incomingData()) || incomingData().order is list) &&

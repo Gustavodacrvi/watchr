@@ -52,21 +52,24 @@ export default {
         }
       }
     },
-    saveNotes() {
-      return notes => {
-/*         if (this.viewGroup) {
-          this.$store.dispatch('group/saveGroup', {
-            notes, id: this.viewGroup.id,
-          })
-        } */
-      }
+    getViewNotes() {
+      const gro = this.viewGroup
+      if (gro)
+        return gro.notes
+      return null
     },
-    saveGroup() {
-      return obj => {
-        /* this.$store.dispatch('group/saveGroup', {
-          ...obj,
-          id: this.viewGroup.id,
-        }) */
+    headerInfo() {
+      return {
+        notes: {
+          name: this.groupgetViewNotes || null,
+          save: notes => {
+            if (this.viewGroup) {
+              this.$store.dispatch('group/saveGroup', {
+                notes, id: this.viewGroup.id,
+              })
+            }
+          },
+        },
       }
     },
     saveSchedule() {
