@@ -836,6 +836,7 @@ export default {
           for (const t of task.checklist) {
             setTask(b, {
               folder: null,
+              group: null,
               userId: uid(),
               name: t.name,
               createdFire: serverTimestamp(),
@@ -898,6 +899,7 @@ export default {
               created: mom().format('Y-M-D HH:mm ss'),
               cloud_function_edit: false,
               folder: null,
+              group: null,
               userId: uid(),
               name: t.name,
               priority: '',
@@ -1045,15 +1047,29 @@ export default {
 
       b.commit()
     },
-    async addListToTasksById({commit, rootState}, {ids, listId}) {
+    async addListToTasksById({rootState}, {ids, listId}) {
       const b = fire.batch()
 
       await batchSetTasks(b, {
         list: listId,
         folder: null,
+        group: null,
         heading: null,
       }, ids, rootState)
 
+      b.commit()
+    },
+    async addTasksToGroupById({rootState}, {ids, groupId}) {
+      const b = fire.batch()
+
+      console.log(ids, groupId)
+      await batchSetTasks(b, {
+        list: null,
+        folder: null,
+        group: groupId,
+        heading: null,
+      }, ids, rootState)
+      
       b.commit()
     },
     async addFolderToTasksById({commit, rootState}, {ids, folderId}) {
@@ -1062,6 +1078,7 @@ export default {
       await batchSetTasks(b, {
         list: null,
         folder: folderId,
+        group: null,
         heading: null,
       }, ids, rootState)
       
@@ -1093,6 +1110,13 @@ export default {
         case 'list': {
           dispatch('addListToTasksById', {
             listId: elIds[0],
+            ids: taskIds,
+          })
+          break
+        }
+        case 'group': {
+          dispatch('addTasksToGroupById', {
+            groupId: elIds[0],
             ids: taskIds,
           })
           break

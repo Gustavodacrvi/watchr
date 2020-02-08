@@ -919,7 +919,7 @@ export default {
       const writes = []
 
       batchSetTasks(b, {
-        list: null, folder: null, heading: null,
+        list: null, folder: null, heading: null, group: null,
       }, taskIds, rootState, writes)
 
       const obj = {}
@@ -939,7 +939,7 @@ export default {
       const writes = []
 
       batchSetTasks(b, {
-        list: null, folder: null, heading: null,
+        list: null, folder: null, heading: null, group: null,
       }, taskIds, rootState, writes)
       
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
@@ -1269,6 +1269,7 @@ export default {
       batchSetTasks(b, {
         list: null,
         folder,
+        group: null,
         heading: null,
       }, ids, rootState, writes)
 
@@ -1295,6 +1296,7 @@ export default {
         })
         batchSetTasks(b, {
           list: null,
+          group: null,
           folder,
           heading: null,
         }, taskIds, rootState, writes)

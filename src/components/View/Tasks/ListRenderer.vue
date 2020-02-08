@@ -587,7 +587,7 @@ export default {
   
                 if (containsInfo(target)) {
                   const d = target.dataset
-                  if (!lastToElement || lastToElement === evt.to || moveType === d.type || (moveType === 'folder' && d.type === 'list')) {
+                  if (!lastToElement || lastToElement === evt.to || moveType === d.type || ((moveType === 'folder' && d.type === 'list') || (moveType === 'group' && d.type === 'list'))) {
                     cancel = false
                     
                     moveType = d.type

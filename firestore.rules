@@ -304,7 +304,7 @@ service cloud.firestore {
         incomingData().size() < 11 &&
 
         isNullStringOrUndefined('notes') &&
-        isArrayOrUndefined('files') &&
+        isArrayOrUndefined('files', 20) &&
 
         (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
         (!('order' in incomingData()) || incomingData().order is list) &&
