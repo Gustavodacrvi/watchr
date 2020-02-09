@@ -687,6 +687,8 @@ export default {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
 
+      const writes = []
+      
       let folder = null
       let group = null
       
@@ -706,23 +708,23 @@ export default {
       setList(batch, {
         folder,
         group,
-        userId: uid(),
-        users: [uid()],
         smartViewsOrders: {},
         name: oldHeading.name,
-        notes: oldHeading.notes,
+        notes: oldHeading.notes || null,
         headings: [],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         headingsOrder: [],
         tasks: taskIds,
-      }, newList.id, rootState)
+      }, newList.id, rootState, writes)
       for (const id of taskIds)
         setTask(batch, {
           group,
           list: newList.id,
           heading: null,
-        }, rootState, id)
+        }, rootState, id, writes)
+
+      cacheBatchedItems(batch, writes)
 
       batch.commit()
     },
