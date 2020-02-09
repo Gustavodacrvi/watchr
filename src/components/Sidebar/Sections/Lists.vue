@@ -258,7 +258,7 @@ export default {
           fold.list = this.filterSidebarLists(
             this.getListsByGroupId({
               id: fold.id,
-              lists: this.sortedLists,
+              lists: this.getLists,
             })
           )
         }
@@ -306,7 +306,7 @@ export default {
       return this.filterSidebarLists(this.getLists)
     },
     getLists() {
-      const lists = this.sortedLists
+      const lists = this.sortedLists.map(el => ({...el}))
       for (const list of lists) {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
@@ -316,7 +316,7 @@ export default {
           this.$store.dispatch('list/completeLists', [list])
         }
       }
-      return lists.map(t => t)
+      return lists
     },
   },
 }

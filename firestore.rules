@@ -243,9 +243,11 @@ service cloud.firestore {
           isArrayOrUndefined('tags', 50) &&
           isArrayOrUndefined('tasks', 50) &&
 
-          !(
-            (incomingData().folder is string) &&
-            (incomingData().group is string)
+          (
+            (!('folder' in incomingData()) || !('group' in incomingData())) ||
+            (
+              (incomingData().folder is string) && (incomingData().group is string)
+            )
           ) &&
           
           isNullStringOrUndefined('notes') &&
