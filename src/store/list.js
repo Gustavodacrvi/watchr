@@ -23,7 +23,9 @@ export default {
   getters: {
     lists(state) {
       const keys = Object.keys(state.lists).filter(k => state.lists[k])
-      return keys.map(k => state.lists[k])
+      const groupKeys = Object.keys(state.groupLists).filter(k => state.groupLists[k])
+      
+      return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
     sortedLists(state, d, {userInfo}, rootGetters) {
       if (userInfo)
@@ -433,11 +435,18 @@ export default {
 
       const writes = []
 
+      let group = null
+      if (list.group)
+        group = list.group
+
       const createTasks = (arr, tasks) => {
         for (const t of tasks) {
           const ref = taskRef()
           setTask(b, {
             ...t, id: null, list: newListRef.id,
+            group,
+            createdFire: serverTimestamp(),
+            created: mom().format('Y-M-D HH:mm ss'),
           }, rootState, ref.id, writes)
           arr.push({
             oldId: t.id,
@@ -467,7 +476,10 @@ export default {
         headingsOrder,
         headings,
         name,
+        group,
         folder: list.folder || null,
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
         deadline: list.deadline || null,
         tags: list.tags || [],
         calendar: list.calendar || null,
@@ -501,6 +513,27 @@ export default {
       const writes = []
       
       setFolder(b, {order: ids}, item.folder, rootState, writes)
+
+      setList(b, {
+        ...item,
+        smartViewsOrders: {},
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+      }, newItemRef.id, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    addListInGroupByIndex({rootState}, {ids, item, newItemRef}) {
+      const b = fire.batch()
+
+      const writes = []
+      item.group = item.folder
+      item.folder = null
+      
+      setGroup(b, {listsOrder: ids}, item.group, rootState, writes)
 
       setList(b, {
         ...item,
@@ -652,40 +685,48 @@ export default {
     },
     convertHeadingToList({rootState, getters}, {listId, taskIds, headingId}) {
       const list = getters.getListsById([listId])[0]
-      const batch = fire.batch()
+      const b = fire.batch()
+
+      const writes = []
+      
       let folder = null
+      let group = null
+      
       if (list.folder) folder = list.folder
+      if (list.group) group = list.group
 
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === headingId)
       const oldHeading = {...heads[i]}
       heads.splice(i, 1)
 
-      setList(batch, {
+      setList(b, {
         headings: heads,
       }, listId, rootState)
       
       const newList = listRef()
-      setList(batch, {
+      setList(b, {
         folder,
-        userId: uid(),
-        users: [uid()],
+        group,
         smartViewsOrders: {},
         name: oldHeading.name,
-        notes: oldHeading.notes,
+        notes: oldHeading.notes || null,
         headings: [],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         headingsOrder: [],
         tasks: taskIds,
-      }, newList.id, rootState)
+      }, newList.id, rootState, writes)
       for (const id of taskIds)
-        setTask(batch, {
+        setTask(b, {
+          group,
           list: newList.id,
           heading: null,
-        }, rootState, id)
+        }, rootState, id, writes)
 
-      batch.commit()
+      cacheBatchedItems(b, writes)
+
+      b.commit()
     },
 
     // EDIT
@@ -973,15 +1014,27 @@ export default {
 
       b.commit()
     },
-    moveTasksToListCalendarOrder({rootState}, {ids, taskIds, date, listId}) {
+    moveTasksToListCalendarOrder({rootState, getters}, {ids, taskIds, date, listId}) {
       const b = fire.batch()
+      const list = getters.getListsById([listId])[0]
 
-      batchSetTasks(b, {
-        list: listId,
-        group: null,
-        folder: null,
-        heading: null,
-      }, taskIds, rootState, writes)
+      let obj
+      if (list.group)
+        obj = {
+          list: listId,
+          group: list.group,
+          folder: null,
+          heading: null,
+        }
+      else
+        obj = {
+          list: listId,
+          group: null,
+          folder: null,
+          heading: null,
+        }
+
+      batchSetTasks(b, obj, taskIds, rootState, writes)
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
@@ -999,13 +1052,24 @@ export default {
       views[smartView] = ids
 
       const writes = []
+
+      let obj
+      if (list.group)
+        obj = {
+          list: listId,
+          group: list.group,
+          folder: null,
+          heading: null,
+        }
+      else
+        obj = {
+          list: listId,
+          group: null,
+          folder: null,
+          heading: null,
+        }
       
-      batchSetTasks(b, {
-        list: listId,
-        folder: null,
-        group: null,
-        heading: null,
-      }, taskIds, rootState, writes)
+      batchSetTasks(b, obj, taskIds, rootState, writes)
 
       setList(b, {
         smartViewsOrders: views,
@@ -1295,7 +1359,7 @@ export default {
       batchSetTasks(b, {
         list: null,
         folder,
-        group: null,
+        group: list.group || null,
         heading: null,
       }, ids, rootState, writes)
 
@@ -1322,7 +1386,7 @@ export default {
         })
         batchSetTasks(b, {
           list: null,
-          group: null,
+          group: list.group || null,
           folder,
           heading: null,
         }, taskIds, rootState, writes)

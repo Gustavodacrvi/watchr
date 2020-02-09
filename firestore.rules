@@ -39,9 +39,9 @@ service cloud.firestore {
         allow update: if didntChangeConstant();
       }
       match /lists/{list} {
-        allow create: if isSignedInAndVerified() && isValidList(list);
+        allow create: if isSignedInAndVerified() && isValidDoc(list) && isValidList();
         allow update, read, delete: if isOwnerAndVerified();
-        allow update: if didntChangeConstant() && isValidList(list);
+        allow update: if didntChangeConstant() && isValidDoc(list) && isValidList();
       }
       match /stats/{info} {
         allow create: if isSignedInAndVerified() && isValidDoc(info);
@@ -170,6 +170,20 @@ service cloud.firestore {
           isValidTask() &&
           isGroupMember(groupId);
       }
+      match /lists/{list} {
+        allow create: if
+          isSignedInAndVerified() &&
+          incomingData().id == list &&
+          isValidList() &&
+          isGroupMember(groupId);
+        allow read, delete: if isSignedInAndVerified() && isGroupMember(groupId);
+        allow update: if
+          isSignedInAndVerified() &&
+          didntChangeConstant() &&
+          incomingData().id == list &&
+          isValidList() &&
+          isGroupMember(groupId);
+      }
     }
 
     function isGroupMember(groupId) {
@@ -191,6 +205,12 @@ service cloud.firestore {
         isArrayOrUndefined('tags', 50) &&
         isNullStringOrUndefined('folder') &&
         isNullStringOrUndefined('group') &&
+
+        !(
+          (incomingData().folder is string) &&
+          (incomingData().group is string)
+        ) &&
+        
         isNullStringOrUndefined('taskDuration') &&
         isNullStringOrUndefined('priority') &&
         isNullStringOrUndefined('heading') &&
@@ -213,9 +233,8 @@ service cloud.firestore {
     function isInGroup() {
       return existingData().users[request.auth.uid] == true
     }
-    function isValidList(id) {
+    function isValidList() {
         return
-          isValidDoc(id) &&
           incomingData().name is string &&
           incomingData().created is string &&
           incomingData().createdFire is timestamp &&
@@ -223,6 +242,17 @@ service cloud.firestore {
           isArrayOrUndefined('files', 30) &&
           isArrayOrUndefined('tags', 50) &&
           isArrayOrUndefined('tasks', 50) &&
+
+          (
+            (!('folder' in incomingData()) || !('group' in incomingData())) ||
+            !(
+              (incomingData().folder is string) && (incomingData().group is string)
+            ) ||
+            (
+              (incomingData().folder == null) || (incomingData().group == null)
+            )
+          ) &&
+          
           isNullStringOrUndefined('notes') &&
           isNullStringOrUndefined('folder') &&
           isNullStringOrUndefined('group') &&
@@ -302,13 +332,14 @@ service cloud.firestore {
       return
         isValidGroupInfoDoc() &&
         incomingData().size() > 4 &&
-        incomingData().size() < 11 &&
+        incomingData().size() < 12 &&
 
         isNullStringOrUndefined('notes') &&
         isArrayOrUndefined('files', 20) &&
 
         (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
         (!('order' in incomingData()) || incomingData().order is list) &&
+        (!('listsOrder' in incomingData()) || incomingData().listsOrder is list) &&
         (!('lists' in incomingData()) || incomingData().lists is map && incomingData().lists.size() < 2001) &&
         (!('smartViewsOrders' in incomingData()) || (incomingData().smartViewsOrders is map && incomingData().smartViewsOrders.size() < 2001))
     }

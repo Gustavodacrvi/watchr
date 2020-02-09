@@ -50,7 +50,7 @@ import { userRef, cacheRef, setInfo } from "../utils/firestore"
 
 const uid = () => auth.currentUser.uid
 
-const version = '091'
+const version = '092'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -481,8 +481,8 @@ const store = new Vuex.Store({
                       ...state.task.groupTasks,
                       ...newGroup.tasks,
                     }
-                    state.list.groupTasks = {
-                      ...state.list.groupListss,
+                    state.list.groupLists = {
+                      ...state.list.groupLists,
                       ...newGroup.lists,
                     }
                   }

@@ -93,7 +93,7 @@
         <div v-if="isDesktop" style="height: 35px;"></div>
         <div class="footer" :class="[platform, {showing}]" :style="{width}">
           <div class="inner-footer">
-            <div class="drop">
+            <div class="drop" v-if="showIconDropdown">
               <Icon v-for="i in sideIcons" :key='i.icon'
                 class="sect-icon passive cursor remove-highlight primary-hover"
                 :icon='i.icon'
@@ -103,7 +103,7 @@
                 @click="i.callback"
               />
               <transition name="icon-t">
-                <IconDrop v-if="showIconDropdown"
+                <IconDrop
                   class="right passive"
                   handle='settings-h'
                   :circle='true'

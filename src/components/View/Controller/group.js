@@ -102,7 +102,7 @@ export default {
       return () => false
     },
     rootFilter() {
-      return () => true
+      return task => !task.list
     },
     
     icon() {return 'group'},
@@ -145,10 +145,10 @@ export default {
     extraListView() {
       const gro = this.viewGroup
       const save = obj => {
-/*         this.$store.dispatch('group/saveGroup', {
+        this.$store.dispatch('group/saveGroup', {
           id: gro.id,
           ...obj,
-        }) */
+        })
       }
       const dispatch = this.$store.dispatch
       
@@ -157,8 +157,8 @@ export default {
           comp: 'ListHandler',
           groupId: gro.id,
           rootFilter: list => gro.id === list.group,
-          itemsOrder: gro.order || [],
-          updateIds: order => save({order}),
+          itemsOrder: gro.listsOrder || [],
+          updateIds: listsOrder => save({listsOrder}),
           addItem: obj => dispatch('list/addListInGroupByIndexFromView', {...obj, groupId: gro.id}),
         }
     },

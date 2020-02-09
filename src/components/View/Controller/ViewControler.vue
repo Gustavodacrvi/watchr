@@ -288,6 +288,10 @@ export default {
             fallbackItem: (task, force) => {
               if (force || (!task.list && !task.folder && !task.group))
                 task.list = list.id
+              
+            if (force || (!task.group && !task.list))
+                task.group = list.group || null
+              
               return task
             },
             onAddItem: obj => {
@@ -414,7 +418,7 @@ export default {
               else
                 this.$store.dispatch('folder/moveTasksToFolderCalendarOrder', {
                   taskIds, ids, date: currentDate, folderId: folder.id,
-                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids)
+                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
                 })
             }
           })

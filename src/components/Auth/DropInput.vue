@@ -1,7 +1,7 @@
 <template>
   <div class="DropInput">
     <span v-if="msg && showing" class="msg">{{ msg }}</span>
-    <textarea class="input rb cbd"
+    <textarea class="input rb cbd" ref='input'
       :placeholder='placeholder'
       rows='1'
       type='text'
@@ -76,14 +76,17 @@ export default {
     },
     focusInput(timeout) {
       if (this.focus) {
-        const el = this.$el.getElementsByClassName('input')[0]
-        setTimeout(() => el.focus(), timeout)
+        const el = this.$refs.input
+        if (el)
+          setTimeout(() => el.focus(), timeout)
       }
     },
     fixHeight() {
-      const el = this.$el.getElementsByClassName('input')[0]
-      el.style.height = '5px'
-      el.style.height = (el.scrollHeight) + 'px'
+      const el = this.$refs.input
+      if (el) {
+        el.style.height = '5px'
+        el.style.height = (el.scrollHeight) + 'px'
+      }
     },
     enterItems(el, done) {
       el.style.opacity = 0
@@ -166,10 +169,14 @@ export default {
             setTimeout(() => {
               this.fixHeight() 
             })
+            event.preventDefault()
           }
-          event.preventDefault()
         } else if (this.shift) {
           this.$emit('enter')
+          setTimeout(() => {
+            this.fixHeight() 
+          })
+          event.preventDefault()
         }
       } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
       this.active = ''
@@ -280,7 +287,6 @@ export default {
 }
 
 .link {
-  display: block;
   height: 40px;
   padding: 0 12px;
   display: flex;

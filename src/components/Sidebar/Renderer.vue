@@ -110,7 +110,7 @@ export default {
 
       onUpdate: evt => {
         setTimeout(() => {
-          this.$emit('update', this.getIds)
+          this.$emit('update', this.getIds())
         }, 10)
       },
       onStart: () => {
@@ -139,7 +139,7 @@ export default {
           this.addEdit(i)
         } else if (type === 'sidebar-element') {
           if (this.onSortableAdd)
-            this.onSortableAdd(this.folder, item.dataset.id, this.getIds)
+            this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
         }
         this.draggableRoot.removeChild(item)
       },
@@ -169,11 +169,13 @@ export default {
 
         this.items.splice(index, 0, item)
 
-        this.$emit('add', {
-          item,
-          newItemRef,
-          ids: this.getIds,
-        })
+        setTimeout(() => {
+          this.$emit('add', {
+            item,
+            newItemRef,
+            ids: this.getIds(),
+          })
+        }, 10)
       }
     },
 
@@ -259,13 +261,6 @@ export default {
       if (this.iconColor) return this.iconColor
       return el.iconColor
     },
-  },
-  computed: {
-    ...mapState(['selectedItems', 'movingTask']),
-    ...mapGetters(['isDesktop']),
-    draggableRoot() {
-      return this.$el.getElementsByClassName('sidebar-renderer-root')[0]
-    },
     getIds() {
       const childNodes = this.draggableRoot.childNodes
       const ids = []
@@ -274,6 +269,13 @@ export default {
           ids.push(node.dataset.id)
       }
       return ids
+    },
+  },
+  computed: {
+    ...mapState(['selectedItems', 'movingTask']),
+    ...mapGetters(['isDesktop']),
+    draggableRoot() {
+      return this.$el.getElementsByClassName('sidebar-renderer-root')[0]
     },
     apply() {
       return this.$store.state.apply.bool

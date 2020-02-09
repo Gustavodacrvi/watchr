@@ -28,8 +28,13 @@ export default {
     },
     mainFallbackItem() {
       return (task, force) => {
+        const list = this.viewList
         if (force || (!task.list && !task.folder && !task.group))
-          task.list = this.viewList.id
+          task.list = list.id
+        
+        if (force || (!task.group && !task.list))
+          task.group = list.group || null
+        
         task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
         return task
       }
@@ -162,7 +167,7 @@ export default {
               return utilsList.listHeadingOptions(viewList, h, this.$store, tasks, this.l)
             },
             fallbackItem: (task, force) => {
-              if (force || (!task.heading && !task.folder && !task.group && task.list === viewList.id))
+              if (force || (!task.heading && !task.folder && task.list === viewList.id))
                 task.heading = h.id
               task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
               return task

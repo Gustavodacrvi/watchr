@@ -510,7 +510,9 @@ export default {
           if (indicies.length === 0) indicies.push(evt.newIndex)
           
           if ((type === 'Task' || type === 'List') && this.comp === 'List') {
-            this.onSortableAdd(items, ids, indicies, this.getIds(true))
+            const finalIds = this.lazyItems.map(el => el.id)
+            finalIds.splice(indicies[0], 0, ...ids)
+            this.onSortableAdd(items, ids, indicies, finalIds)
           } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()

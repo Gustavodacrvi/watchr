@@ -18,7 +18,6 @@
 
       :getItemRef='getItemRef'
       
-      @buttonAdd='buttonAdd'
       @update='update'
       @add='addListInRoot'
     />
@@ -60,15 +59,14 @@
             :mapNumbers="(tasks) => tasks"
             :mapHelpIcon='getListIcon'
             :mapString='mapString'
-            :onSortableAdd='betweenFolders'
+            :onSortableAdd='(folder, id, ids) => betweenFolders(folder, id, ids, f.comp)'
 
             :fallbackItem='fallbackItem(f.id)'
             :getItemRef='getItemRef'
 
             @is-moving='v => isDragginInnerList = v'
-            @buttonAdd='obj => folderButtonAdd(f.id, obj)'
-            @update='ids => updateFolderIds(f.id, ids)'
-            @add='addList'
+            @update='ids => updateFolderIds(f.id, f.comp, ids)'
+            @add='obj => addList(obj, f.comp)'
           />
         </component>
       </template>
@@ -142,8 +140,11 @@ export default {
     getItemRef() {
       return listRef()
     },
-    addList(obj) {
-      this.$store.dispatch('list/addListInFolderByIndex', obj)
+    addList(obj, comp) {
+      if (comp === "Group")
+        this.$store.dispatch('list/addListInGroupByIndex', obj)
+      else
+        this.$store.dispatch('list/addListInFolderByIndex', obj)
     },
     addListInRoot(obj) {
       this.$store.dispatch('list/addListInRootByIndex', obj)
@@ -174,10 +175,15 @@ export default {
       s.opacity = '0'
       h.height = '0'
     },
-    betweenFolders(folder, id, ids) {
-      this.$store.dispatch('folder/moveListBetweenFolders', {
-        folder, id, ids,
-      })
+    betweenFolders(folder, id, ids, comp) {
+      if (comp === "Group")
+        this.$store.dispatch('group/moveListBetweenGroups', {
+          group: folder, id, ids,
+        })
+      else
+        this.$store.dispatch('folder/moveListBetweenFolders', {
+          folder, id, ids,
+        })
     },
     rootAdd(folder, id, ids) {
       this.$store.dispatch('folder/moveListToRoot', {
@@ -195,17 +201,14 @@ export default {
         return arr
       }
     },
-    updateFolderIds(id, ids) {
-      this.$store.dispatch('folder/updateOrder', {id, ids})
+    updateFolderIds(id, comp, ids) {
+      if (comp === 'Group')
+        this.$store.dispatch('group/updateOrder', {id, ids})
+      else
+        this.$store.dispatch('folder/updateOrder', {id, ids})
     },
     update(ids) {
       this.$store.dispatch('list/updateOrder', ids)
-    },
-    buttonAdd(obj) {
-      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj}, naked: true})
-    },
-    folderButtonAdd(id, obj) {
-      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj, folderId: id}, naked: true})
     },
     getListProgress(list) {
       return this.$store.getters['list/pieProgress'](this.tasks, list.id, task => this.isTaskInView(task, "Completed"))
@@ -241,8 +244,10 @@ export default {
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       getListsByFolderId: 'folder/getListsByFolderId',
+      getListsByGroupId: 'group/getListsByGroupId',
       getLaterLists: 'list/getLaterLists',
 
+      sortedLists: 'list/sortedLists',
       filterSidebarLists: 'list/filterSidebarLists',
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
@@ -255,13 +260,15 @@ export default {
           fold.comp = "Folder"
         } else {
           fold.comp = "Group"
-          fold.list = []
+          fold.list = this.filterSidebarLists(
+            this.getListsByGroupId({
+              id: fold.id,
+              lists: this.getLists,
+            })
+          )
         }
       })
       return sortedFoldersAndGroups
-    },
-    sortedLists() {
-      return this.$store.getters['list/sortedLists']
     },
     listsWithFolders() {
       const lists = this.filteredLists
@@ -276,7 +283,7 @@ export default {
       const lists = this.filteredLists
 
       const arr = []
-      for (const f of lists) if (!f.folder) arr.push(f)
+      for (const f of lists) if (!f.folder && !f.group) arr.push(f)
       
       return arr
     },
@@ -304,7 +311,7 @@ export default {
       return this.filterSidebarLists(this.getLists)
     },
     getLists() {
-      const lists = this.sortedLists
+      const lists = this.sortedLists.map(el => ({...el}))
       for (const list of lists) {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
@@ -314,7 +321,7 @@ export default {
           this.$store.dispatch('list/completeLists', [list])
         }
       }
-      return lists.map(t => t)
+      return lists
     },
   },
 }
