@@ -982,7 +982,7 @@ export default {
           changedOptions = true
         }
       }
-      const parseFolder = () => {
+      const parseGroup = () => {
         const groups = this.groups
         for (const f of groups) {
           const folderName = ` %${f.name}`
@@ -1021,6 +1021,7 @@ export default {
       parseTags()
       parseLists()
       parseFolder()
+      parseGroup()
 
       if (!changedOptions) this.options = []
     },
