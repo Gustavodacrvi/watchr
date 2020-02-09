@@ -15,8 +15,10 @@
           @change-time='changeTime'
         />
       </transition>
-      <CommentCounter v-show="item.group && isDesktop"
+      <CommentCounter v-if="item.group && isDesktop"
         :hover='onHover'
+        :numbers='nonReadComments'
+        @click.native="commentsPopup"
       />
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
@@ -398,6 +400,15 @@ export default {
         },
       })
     },
+    commentsPopup() {
+      this.$store.dispatch('pushPopup', {
+        comp: "Comments",
+        payload: {
+          groupId: this.item.groupId,
+          id: this.item.id,
+        },
+      })
+    },
   },
   computed: {
     ...mapState({
@@ -416,6 +427,7 @@ export default {
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
+      nonReadCommentsById: 'group/nonReadCommentsById',
     }),
     options() {
       const {c,t} = this.getTask
@@ -553,6 +565,9 @@ export default {
     canceledItem() {
       return this.isTaskCanceled(this.item)
     },
+    nonReadComments() {
+      return this.nonReadCommentsById(this.item.group, this.item.id)
+    },
 
     
     checklistPieProgress() {
@@ -678,10 +693,13 @@ export default {
       if (!fold || (fold.name === this.viewName)) return null
       return fold.name
     },
+    taskGroup() {
+      return this.savedGroups.find(f => f.id === this.item.group)
+    },
     groupStr() {
       const group = this.item.group
       if (!group || this.hideGroupName) return null
-      const fold = this.savedGroups.find(f => f.id === group)
+      const fold = this.taskGroup
       if (!fold || (fold.name === this.viewName)) return null
       if (this.taskList && this.viewName === this.taskList.name) return null
       return fold.name

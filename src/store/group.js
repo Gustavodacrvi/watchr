@@ -20,6 +20,24 @@ export default {
       return groups
     },
     ...MemoizeGetters('groups', {
+      nonReadCommentsById: {
+        getter({getters}, groupId, id) {
+          const group = getters.getGroupsById([groupId])[0]
+          if (group) {
+            const groupComments = group.comments || {}
+            const room = groupComments[id]
+            if (room) {
+              return Object.keys(room).reduce((tot, k) => 
+                  (!room[k].readBy || room[k].readBy[uid()]) ? tot : tot + 1
+                , 0)
+            }
+          }
+          return 0
+        },
+        cache(args) {
+          return JSON.stringify(args)
+        },
+      },
       getGroupTaskOrderById({state}, groupId) {
         const gro = state.groups.find(f => f.id === groupId)
         if (gro && gro.order)

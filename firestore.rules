@@ -332,12 +332,13 @@ service cloud.firestore {
       return
         isValidGroupInfoDoc() &&
         incomingData().size() > 4 &&
-        incomingData().size() < 12 &&
+        incomingData().size() < 13 &&
 
         isNullStringOrUndefined('notes') &&
         isArrayOrUndefined('files', 20) &&
 
         (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
+        (!('comments' in incomingData()) || incomingData().comments is map && incomingData().comments.size() < 4001) &&
         (!('order' in incomingData()) || incomingData().order is list) &&
         (!('listsOrder' in incomingData()) || incomingData().listsOrder is list) &&
         (!('lists' in incomingData()) || incomingData().lists is map && incomingData().lists.size() < 2001) &&

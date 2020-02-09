@@ -4,7 +4,7 @@
     :class="{number}"
   >
     <transition name="num-t">
-      <div v-if="hover"
+      <div v-if="hover || number"
         class="wrapper"
       >
         <Icon
@@ -47,6 +47,7 @@ export default {
 
 .number {
   right: calc(100% + 21px);
+  color: var(--txt) !important;
 }
 
 .CommentCounter:hover {
@@ -69,13 +70,13 @@ export default {
 .num-t-enter, .num-t-leave-to {
   opacity: 0;
   transform: translateY(5px);
-  transition-duration: .2s;
+  transition-duration: .25s;
 }
 
 .num-t-leave, .num-t-enter-to {
   opacity: 1;
   transform: translateY(0px);
-  transition-duration: .2s;
+  transition-duration: .25s;
 }
 
 </style>
