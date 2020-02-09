@@ -198,7 +198,7 @@ export default {
     },
     updateFolderIds(id, comp, ids) {
       if (comp === 'Group')
-        console.log('group')
+        this.$store.dispatch('group/updateOrder', {id, ids})
       else
         this.$store.dispatch('folder/updateOrder', {id, ids})
     },
@@ -278,7 +278,7 @@ export default {
       const lists = this.filteredLists
 
       const arr = []
-      for (const f of lists) if (!f.folder) arr.push(f)
+      for (const f of lists) if (!f.folder && !f.group) arr.push(f)
       
       return arr
     },
