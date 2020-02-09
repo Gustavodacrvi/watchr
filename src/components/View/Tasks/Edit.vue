@@ -7,7 +7,7 @@
     <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, platform]" :style="editStyle">
       <div class="fix-back" @click="remove"></div>
       <div class="edit-wrapper">
-        <DropInput ref="task-name"
+        <DropInput ref="task-name" class="name-input"
           :class="{'no-back': !popup, hide: !defaultTask, show}"
           v-model="task.name"
           :focus="true"
@@ -568,14 +568,12 @@ export default {
           this.task.group = ''
         }
         if (t.group) {
-          this.task.list = ''
           this.task.heading = ''
           this.task.headingId = ''
           this.task.folder = ''
         }
         if (t.list) {
           this.task.folder = ''
-          this.task.group = ''
         }
         
         let n = t.name
@@ -731,10 +729,19 @@ export default {
         }
       return names
     },
+    getListObj() {
+      if (this.task.list)
+        return this.$store.getters['list/getListsById']([this.task.list])[0]
+    },
     listName() {
       if (this.task.list)
-        return this.$store.getters['list/getListsById']([this.task.list])[0].name
+        return this.getListObj.name
       return ''
+    },
+    isGroupList() {
+      if (this.task.list)
+        return this.getListObj.group
+      return false
     },
     listHeadingName() {
       if (this.task.list && this.task.heading) {
@@ -855,7 +862,8 @@ export default {
           callback: () => {
             this.task.list = el.name
             this.task.folder = ''
-            this.task.group = ''
+            this.task.group = el.group || ''
+            this.task.group = this.groupName
             const arr = []
             for (const h of el.headings) {
               arr.push({
@@ -934,8 +942,9 @@ export default {
           if (n.includes(listName)) {
             this.task.name = n.replace(listName, '')
             this.task.list = li.name
+            this.task.group = li.group || ''
+            this.task.group = this.groupName
             this.task.folder = ''
-            this.task.group = ''
             break
           }
         }
@@ -970,6 +979,30 @@ export default {
           const word = lastWord.substr(1)
 
           this.options = this.folders.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
+          changedOptions = true
+        }
+      }
+      const parseFolder = () => {
+        const groups = this.groups
+        for (const f of groups) {
+          const folderName = ` %${f.name}`
+          if (n.includes(folderName)) {
+            this.task.name = n.replace(folderName, '')
+            this.task.folder = ''
+            this.task.list = ''
+            this.task.group = f.name
+            this.task.heading = ''
+            this.task.headingId = ''
+            break
+          }
+        }
+        const arr = n.split(' ')
+        const lastWord = arr[arr.length - 1]
+        if (lastWord[0] === '%') {
+          this.optionsType = '%'
+          const word = lastWord.substr(1)
+
+          this.options = this.groups.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
         }
       }
@@ -1144,6 +1177,10 @@ export default {
 
 .button {
   display: inline-block;
+}
+
+.name-input {
+  z-index: 10;
 }
 
 .icons {
