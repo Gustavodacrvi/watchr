@@ -481,8 +481,8 @@ const store = new Vuex.Store({
                       ...state.task.groupTasks,
                       ...newGroup.tasks,
                     }
-                    state.list.groupTasks = {
-                      ...state.list.groupListss,
+                    state.list.groupLists = {
+                      ...state.list.groupLists,
                       ...newGroup.lists,
                     }
                   }

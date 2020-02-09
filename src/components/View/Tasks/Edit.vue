@@ -481,7 +481,7 @@ export default {
         else
           s.height = height + 'px'
         if (!this.quickAdd)
-          s.margin = '75px 0'
+          s.margin = '50px 0'
         setTimeout(() => {
           this.show = true
         }, 290)

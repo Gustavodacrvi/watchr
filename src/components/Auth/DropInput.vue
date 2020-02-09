@@ -77,13 +77,16 @@ export default {
     focusInput(timeout) {
       if (this.focus) {
         const el = this.$refs.input
-        setTimeout(() => el.focus(), timeout)
+        if (el)
+          setTimeout(() => el.focus(), timeout)
       }
     },
     fixHeight() {
       const el = this.$refs.input
-      el.style.height = '5px'
-      el.style.height = (el.scrollHeight) + 'px'
+      if (el) {
+        el.style.height = '5px'
+        el.style.height = (el.scrollHeight) + 'px'
+      }
     },
     enterItems(el, done) {
       el.style.opacity = 0

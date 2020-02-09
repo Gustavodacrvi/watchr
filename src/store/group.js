@@ -30,12 +30,13 @@ export default {
         react: [
           'order'
         ],
-        getter({state, getters, rootGetters}, {id, lists}) {
+        getter({state, rootGetters}, {id, lists}) {
           const arr = []
-          const gro = getters.groups.find(f => f.id === id)
+          const gro = state.groups.find(f => f.id === id)
           for (const l of lists)
             if (l.group && l.group === id) arr.push(l)
-          let order = gro.order
+
+          let order = gro.listsOrder
           if (!order) order = []
           return rootGetters.checkMissingIdsAndSortArr(order, arr)
         },

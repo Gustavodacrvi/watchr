@@ -18,7 +18,6 @@
 
       :getItemRef='getItemRef'
       
-      @buttonAdd='buttonAdd'
       @update='update'
       @add='addListInRoot'
     />
@@ -66,9 +65,8 @@
             :getItemRef='getItemRef'
 
             @is-moving='v => isDragginInnerList = v'
-            @buttonAdd='obj => folderButtonAdd(f.id, obj)'
-            @update='ids => updateFolderIds(f.id, ids)'
-            @add='addList'
+            @update='ids => updateFolderIds(f.id, f.comp, ids)'
+            @add='obj => addList(obj, f.comp)'
           />
         </component>
       </template>
@@ -142,8 +140,11 @@ export default {
     getItemRef() {
       return listRef()
     },
-    addList(obj) {
-      this.$store.dispatch('list/addListInFolderByIndex', obj)
+    addList(obj, comp) {
+      if (comp === "Group")
+        this.$store.dispatch('list/addListInGroupByIndex', obj)
+      else
+        this.$store.dispatch('list/addListInFolderByIndex', obj)
     },
     addListInRoot(obj) {
       this.$store.dispatch('list/addListInRootByIndex', obj)
@@ -195,17 +196,14 @@ export default {
         return arr
       }
     },
-    updateFolderIds(id, ids) {
-      this.$store.dispatch('folder/updateOrder', {id, ids})
+    updateFolderIds(id, comp, ids) {
+      if (comp === 'Group')
+        console.log('group')
+      else
+        this.$store.dispatch('folder/updateOrder', {id, ids})
     },
     update(ids) {
       this.$store.dispatch('list/updateOrder', ids)
-    },
-    buttonAdd(obj) {
-      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj}, naked: true})
-    },
-    folderButtonAdd(id, obj) {
-      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj, folderId: id}, naked: true})
     },
     getListProgress(list) {
       return this.$store.getters['list/pieProgress'](this.tasks, list.id, task => this.isTaskInView(task, "Completed"))
@@ -241,8 +239,10 @@ export default {
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       getListsByFolderId: 'folder/getListsByFolderId',
+      getListsByGroupId: 'group/getListsByGroupId',
       getLaterLists: 'list/getLaterLists',
 
+      sortedLists: 'list/sortedLists',
       filterSidebarLists: 'list/filterSidebarLists',
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
@@ -255,13 +255,15 @@ export default {
           fold.comp = "Folder"
         } else {
           fold.comp = "Group"
-          fold.list = []
+          fold.list = this.filterSidebarLists(
+            this.getListsByGroupId({
+              id: fold.id,
+              lists: this.sortedLists,
+            })
+          )
         }
       })
       return sortedFoldersAndGroups
-    },
-    sortedLists() {
-      return this.$store.getters['list/sortedLists']
     },
     listsWithFolders() {
       const lists = this.filteredLists

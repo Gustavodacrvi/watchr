@@ -327,13 +327,14 @@ service cloud.firestore {
       return
         isValidGroupInfoDoc() &&
         incomingData().size() > 4 &&
-        incomingData().size() < 11 &&
+        incomingData().size() < 12 &&
 
         isNullStringOrUndefined('notes') &&
         isArrayOrUndefined('files', 20) &&
 
         (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&
         (!('order' in incomingData()) || incomingData().order is list) &&
+        (!('listsOrder' in incomingData()) || incomingData().listsOrder is list) &&
         (!('lists' in incomingData()) || incomingData().lists is map && incomingData().lists.size() < 2001) &&
         (!('smartViewsOrders' in incomingData()) || (incomingData().smartViewsOrders is map && incomingData().smartViewsOrders.size() < 2001))
     }

@@ -23,7 +23,9 @@ export default {
   getters: {
     lists(state) {
       const keys = Object.keys(state.lists).filter(k => state.lists[k])
-      return keys.map(k => state.lists[k])
+      const groupKeys = Object.keys(state.groupLists).filter(k => state.groupLists[k])
+      
+      return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
     sortedLists(state, d, {userInfo}, rootGetters) {
       if (userInfo)
@@ -501,6 +503,27 @@ export default {
       const writes = []
       
       setFolder(b, {order: ids}, item.folder, rootState, writes)
+
+      setList(b, {
+        ...item,
+        smartViewsOrders: {},
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+      }, newItemRef.id, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    addListInGroupByIndex({rootState}, {ids, item, newItemRef}) {
+      const b = fire.batch()
+
+      const writes = []
+      item.group = item.folder
+      item.folder = null
+      
+      setGroup(b, {listsOrder: ids}, item.group, rootState, writes)
 
       setList(b, {
         ...item,
