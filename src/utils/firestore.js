@@ -154,6 +154,8 @@ export const setTask = (batch, task, rootState, id, writes) => {
           else if (writes.push)
             addSharedWrite(getObj())
 
+          console.log(writes, getObj())
+
         } else if (savedIndividualTask) { // Move personal task to shared.
 
           const savedPersonalTasks = rootState.task.tasks
@@ -621,6 +623,8 @@ export const setList = (batch, list, id, rootState, writes) => {
       else if (writes.push)
         addSharedWrite(getObj())
 
+      console.log(writes, getObj())
+
     } else if (savedIndividualList) { // Move personal list to shared.
       console.log('LIST', 'Move personal list to shared')
 
@@ -656,7 +660,7 @@ export const setList = (batch, list, id, rootState, writes) => {
         addSharedWrite(fd().delete(), savedGroupList.group)
         addSharedWrite(getObj(), task.group)
       }
-      
+
     }
   } else {
 

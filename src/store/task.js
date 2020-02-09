@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, groupCacheRef } from '../utils/firestore'
+import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, setGroup } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -817,7 +817,7 @@ export default {
 
       b.commit()
     },
-    convertTasksToListByIndex({rootState}, {tasks, folderId, order, savedLists, indicies}) {
+    convertTasksToListByIndex({rootState}, {tasks, folder, group, order, savedLists, indicies}) {
       const tasksWithConflictingListNames = {}
 
       tasks.forEach(task => {
@@ -839,7 +839,7 @@ export default {
           for (const t of task.checklist) {
             setTask(b, {
               folder: null,
-              group: null,
+              group,
               userId: uid(),
               name: t.name,
               createdFire: serverTimestamp(),
@@ -859,11 +859,14 @@ export default {
         setList(b, {
           userId: uid(),
           smartViewsOrders: {},
-          folder: folderId,
+          folder,
+          group,
+          createdFire: serverTimestamp(),
+          created: mom().format('Y-M-D HH:mm ss'),
           name: tasksWithConflictingListNames[task.id] ? task.name + ' (list)' : task.name,
           notes: task.notes || null,
           tags: task.tags || [],
-          descr: '',
+          assigned: task.assigned || null,
           tasks: subIds,
           headings: [],
           headingsOrder: [],
@@ -871,7 +874,10 @@ export default {
         
       })
 
-      setFolder(b, {order}, folderId, rootState, writes)
+      if (folder)
+        setFolder(b, {order}, folder, rootState, writes)
+      else if (group)
+        setGroup(b, {listsOrder: order}, group, rootState, writes)
 
       cacheBatchedItems(b, writes)
       
@@ -883,9 +889,13 @@ export default {
         const b = fire.batch()
   
         let folder = null
+        let group = null
         if (task.list) {
           const list = savedLists.find(l => l.id === task.list)
           if (list && list.folder) folder = list.folder
+        }
+        if (task.group) {
+          group = task.group
         }
 
         const writes = []
@@ -896,32 +906,34 @@ export default {
         const ids = []
         if (task.checklist)
         for (const t of task.checklist) {
-            setTask(b, {
-              id: t.id,
-              createdFire: serverTimestamp(),
-              created: mom().format('Y-M-D HH:mm ss'),
-              cloud_function_edit: false,
-              folder: null,
-              group: null,
-              userId: uid(),
-              name: t.name,
-              priority: '',
-              list: list.id,
-              calendar: null,
-              heading: null,
-              tags: [],
-              checklist: [],
-              order: [],
-            }, rootState, t.id, writes)
-            ids.push(t.id)
-          }
+          setTask(b, {
+            id: t.id,
+            createdFire: serverTimestamp(),
+            created: mom().format('Y-M-D HH:mm ss'),
+            cloud_function_edit: false,
+            folder: null,
+            group,
+            userId: uid(),
+            name: t.name,
+            priority: '',
+            list: list.id,
+            calendar: null,
+            heading: null,
+            tags: [],
+            checklist: [],
+            order: [],
+          }, rootState, t.id, writes)
+          ids.push(t.id)
+        }
   
         setList(b, {
           folder,
+          group,
           userId: uid(),
           createdFire: serverTimestamp(),
           created: mom().format('Y-M-D HH:mm ss'),
           users: [uid()],
+          assigned: task.assigned || null,
           smartViewsOrders: {},
           name: task.name,
           notes: task.notes || null,

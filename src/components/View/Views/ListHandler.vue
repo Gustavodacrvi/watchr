@@ -51,7 +51,7 @@ export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'showSomeday', 'showSomeday',
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday',
   'removeListHandlerWhenThereArentLists', 'selectEverythingToggle'],
   components: {
     ListRendererVue,
@@ -88,7 +88,8 @@ export default {
             lazyItems.splice(index, 0, list)
             this.$store.dispatch('list/saveList', {
               ...list,
-              folder: this.folderId,
+              folder: this.folderId || null,
+              group: this.groupId || null,
             })
             callback()
           },
@@ -106,7 +107,10 @@ export default {
     },
     onSortableAdd(o, ids, indicies, order) {
       this.$store.dispatch('task/convertTasksToListByIndex', {
-        tasks: this.storeTasks.filter(el => ids.includes(el.id)), folderId: this.folderId, savedLists: this.storeLists, indicies, order,
+        tasks: this.storeTasks.filter(el => ids.includes(el.id)),
+        folder: this.folderId || null,
+        group: this.groupId || null,
+        savedLists: this.storeLists, indicies, order,
       })
     },
   },
@@ -121,9 +125,6 @@ export default {
       isListCanceled: 'list/isListCanceled',
       isListSomeday: 'list/isListSomeday',
     }),
-    getFolder() {
-      return this.storeFolders.find(el => el.id === this.folderId)
-    },
     hideList() {
       return this.removeListHandlerWhenThereArentLists && this.isViewEmpty
     },
