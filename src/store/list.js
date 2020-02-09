@@ -435,11 +435,18 @@ export default {
 
       const writes = []
 
+      let group = null
+      if (list.group)
+        group = list.group
+
       const createTasks = (arr, tasks) => {
         for (const t of tasks) {
           const ref = taskRef()
           setTask(b, {
             ...t, id: null, list: newListRef.id,
+            group,
+            createdFire: serverTimestamp(),
+            created: mom().format('Y-M-D HH:mm ss'),
           }, rootState, ref.id, writes)
           arr.push({
             oldId: t.id,
@@ -469,7 +476,10 @@ export default {
         headingsOrder,
         headings,
         name,
+        group,
         folder: list.folder || null,
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
         deadline: list.deadline || null,
         tags: list.tags || [],
         calendar: list.calendar || null,
