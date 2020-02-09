@@ -28,17 +28,18 @@ export default {
       },
       getListsByGroupId: {
         react: [
-          'order'
+          'listsOrder'
         ],
         getter({state, rootGetters}, {id, lists}) {
           const arr = []
           const gro = state.groups.find(f => f.id === id)
           for (const l of lists)
             if (l.group && l.group === id) arr.push(l)
-
+            
           let order = gro.listsOrder
           if (!order) order = []
-          return rootGetters.checkMissingIdsAndSortArr(order, arr)
+          const res = rootGetters.checkMissingIdsAndSortArr(order, arr)
+          return res
         },
       },
       sortedGroups(state, d, {userInfo}, rootGetters) {

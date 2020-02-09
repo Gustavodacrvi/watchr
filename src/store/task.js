@@ -1065,10 +1065,16 @@ export default {
     async addListToTasksById({rootState}, {ids, listId}) {
       const b = fire.batch()
 
+      const list = rootState.list.lists[listId] || rootState.list.groupLists[listId]
+
+      let group = null
+      if (list && list.group)
+        group = list.group
+
       await batchSetTasks(b, {
         list: listId,
+        group,
         folder: null,
-        group: null,
         heading: null,
       }, ids, rootState)
 

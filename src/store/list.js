@@ -685,7 +685,7 @@ export default {
     },
     convertHeadingToList({rootState, getters}, {listId, taskIds, headingId}) {
       const list = getters.getListsById([listId])[0]
-      const batch = fire.batch()
+      const b = fire.batch()
 
       const writes = []
       
@@ -700,12 +700,12 @@ export default {
       const oldHeading = {...heads[i]}
       heads.splice(i, 1)
 
-      setList(batch, {
+      setList(b, {
         headings: heads,
       }, listId, rootState)
       
       const newList = listRef()
-      setList(batch, {
+      setList(b, {
         folder,
         group,
         smartViewsOrders: {},
@@ -718,15 +718,15 @@ export default {
         tasks: taskIds,
       }, newList.id, rootState, writes)
       for (const id of taskIds)
-        setTask(batch, {
+        setTask(b, {
           group,
           list: newList.id,
           heading: null,
         }, rootState, id, writes)
 
-      cacheBatchedItems(batch, writes)
+      cacheBatchedItems(b, writes)
 
-      batch.commit()
+      b.commit()
     },
 
     // EDIT

@@ -140,10 +140,13 @@ export const setTask = (batch, task, rootState, id, writes) => {
       if (getGroupId(true)) {
 
         const saveGroupTasks = rootState.task.groupTasks
-        rootState.task.groupTasks = {
-          ...saveGroupTasks,
-          [id]: getObj(),
-        }
+        if (savedGroupTask)
+          utils.findChangesBetweenObjs(savedGroupTask, getObj())
+        else
+          rootState.task.groupTasks = {
+            ...saveGroupTasks,
+            [id]: getObj(),
+          }
         
         if (isNewTask || updatingGroupTask) { // Create and add task to group/update.
           
@@ -153,8 +156,6 @@ export const setTask = (batch, task, rootState, id, writes) => {
             setGroupCache()
           else if (writes.push)
             addSharedWrite(getObj())
-
-          console.log(writes, getObj())
 
         } else if (savedIndividualTask) { // Move personal task to shared.
 
@@ -192,10 +193,13 @@ export const setTask = (batch, task, rootState, id, writes) => {
       } else {
 
         const savedPersonalTasks = rootState.task.tasks
-        rootState.task.tasks = {
-          ...savedPersonalTasks,
-          [id]: getObj(),
-        }
+        if (savedIndividualTask)
+          utils.findChangesBetweenObjs(savedIndividualTask, getObj())
+        else
+          rootState.task.tasks = {
+            ...savedPersonalTasks,
+            [id]: getObj(),
+          }
         
         if (isNewTask || updatingPersonalTask) { // Create and add task to personal/update.
 
@@ -607,11 +611,14 @@ export const setList = (batch, list, id, rootState, writes) => {
   
   if (getGroupId(true)) {
 
-    const savedGroupList = rootState.list.groupLists
-    rootState.list.groupLists = {
-      ...savedGroupList,
-      [id]: getObj(),
-    }
+    const savedGroupLists = rootState.list.groupLists
+    if (savedGroupList)
+      utils.findChangesBetweenObjs(savedGroupList, getObj())
+    else
+      rootState.list.groupLists = {
+        ...savedGroupLists,
+        [id]: getObj(),
+      }
     
     if (isNewList || updatingGroupList) { // Create and add list to group/update.
       console.log('LIST', 'Create and add list to group/update')
@@ -665,10 +672,13 @@ export const setList = (batch, list, id, rootState, writes) => {
   } else {
 
     const savedPersonalLists = rootState.list.lists
-    rootState.list.lists = {
-      ...savedPersonalLists,
-      [id]: getObj(),
-    }
+    if (savedIndividualList)
+      utils.findChangesBetweenObjs(savedIndividualList, getObj())
+    else
+      rootState.list.lists = {
+        ...savedPersonalLists,
+        [id]: getObj(),
+      }
     
     if (isNewList || updatingPersonalList) { // Create and add list to personal/update.
       console.log('LIST', 'Create and add list to personal/update')

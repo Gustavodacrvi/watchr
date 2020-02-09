@@ -145,10 +145,10 @@ export default {
     extraListView() {
       const gro = this.viewGroup
       const save = obj => {
-/*         this.$store.dispatch('group/saveGroup', {
+        this.$store.dispatch('group/saveGroup', {
           id: gro.id,
           ...obj,
-        }) */
+        })
       }
       const dispatch = this.$store.dispatch
       
