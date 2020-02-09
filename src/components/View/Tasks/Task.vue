@@ -15,6 +15,9 @@
           @change-time='changeTime'
         />
       </transition>
+      <CommentCounter v-show="item.group && isDesktop"
+        :hover='onHover'
+      />
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
         ref='back'
@@ -152,6 +155,7 @@ import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
 import Timeline from './Timeline.vue'
 import TaskIcons from './TaskIcons.vue'
+import CommentCounter from '@/components/View/RenderComponents/CommentCounter.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -170,6 +174,7 @@ export default {
   props: ['item', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
+    CommentCounter,
     Timeline, TaskIcons,
     Icon: IconVue,
     IconDrop: IconDropVue,
