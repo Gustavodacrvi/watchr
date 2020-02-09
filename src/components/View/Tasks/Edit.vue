@@ -209,7 +209,7 @@
                 class="opt-icon"
                 :options="deadlineOptions"
                 :circle='true'
-                handleColor='var(--red)'
+                handleColor='var(--orange)'
                 title='Add deadline'
                 :center='true'
               />

@@ -1,7 +1,7 @@
 <template>
   <div class="DropInput">
     <span v-if="msg && showing" class="msg">{{ msg }}</span>
-    <textarea class="input rb cbd"
+    <textarea class="input rb cbd" ref='input'
       :placeholder='placeholder'
       rows='1'
       type='text'
@@ -76,12 +76,12 @@ export default {
     },
     focusInput(timeout) {
       if (this.focus) {
-        const el = this.$el.getElementsByClassName('input')[0]
+        const el = this.$refs.input
         setTimeout(() => el.focus(), timeout)
       }
     },
     fixHeight() {
-      const el = this.$el.getElementsByClassName('input')[0]
+      const el = this.$refs.input
       el.style.height = '5px'
       el.style.height = (el.scrollHeight) + 'px'
     },
@@ -166,10 +166,14 @@ export default {
             setTimeout(() => {
               this.fixHeight() 
             })
+            event.preventDefault()
           }
-          event.preventDefault()
         } else if (this.shift) {
           this.$emit('enter')
+          setTimeout(() => {
+            this.fixHeight() 
+          })
+          event.preventDefault()
         }
       } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
       this.active = ''
@@ -280,7 +284,6 @@ export default {
 }
 
 .link {
-  display: block;
   height: 40px;
   padding: 0 12px;
   display: flex;

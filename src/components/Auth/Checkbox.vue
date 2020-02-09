@@ -49,7 +49,7 @@ export default {
 
 .Checkbox {
   padding: 0 26px;
-  height: 35px;
+  min-height: 35px;
   display: flex;
   align-items: center;
   transition-duration: .15s;

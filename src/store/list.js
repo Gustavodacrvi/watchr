@@ -653,8 +653,12 @@ export default {
     convertHeadingToList({rootState, getters}, {listId, taskIds, headingId}) {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
+
       let folder = null
+      let group = null
+      
       if (list.folder) folder = list.folder
+      if (list.group) group = list.group
 
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === headingId)
@@ -668,6 +672,7 @@ export default {
       const newList = listRef()
       setList(batch, {
         folder,
+        group,
         userId: uid(),
         users: [uid()],
         smartViewsOrders: {},
@@ -681,6 +686,7 @@ export default {
       }, newList.id, rootState)
       for (const id of taskIds)
         setTask(batch, {
+          group,
           list: newList.id,
           heading: null,
         }, rootState, id)
@@ -973,15 +979,27 @@ export default {
 
       b.commit()
     },
-    moveTasksToListCalendarOrder({rootState}, {ids, taskIds, date, listId}) {
+    moveTasksToListCalendarOrder({rootState, getters}, {ids, taskIds, date, listId}) {
       const b = fire.batch()
+      const list = getters.getListsById([listId])[0]
 
-      batchSetTasks(b, {
-        list: listId,
-        group: null,
-        folder: null,
-        heading: null,
-      }, taskIds, rootState, writes)
+      let obj
+      if (list.group)
+        obj = {
+          list: listId,
+          group: list.group,
+          folder: null,
+          heading: null,
+        }
+      else
+        obj = {
+          list: listId,
+          group: null,
+          folder: null,
+          heading: null,
+        }
+
+      batchSetTasks(b, obj, taskIds, rootState, writes)
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
@@ -999,13 +1017,24 @@ export default {
       views[smartView] = ids
 
       const writes = []
+
+      let obj
+      if (list.group)
+        obj = {
+          list: listId,
+          group: list.group,
+          folder: null,
+          heading: null,
+        }
+      else
+        obj = {
+          list: listId,
+          group: null,
+          folder: null,
+          heading: null,
+        }
       
-      batchSetTasks(b, {
-        list: listId,
-        folder: null,
-        group: null,
-        heading: null,
-      }, taskIds, rootState, writes)
+      batchSetTasks(b, obj, taskIds, rootState, writes)
 
       setList(b, {
         smartViewsOrders: views,
@@ -1295,7 +1324,7 @@ export default {
       batchSetTasks(b, {
         list: null,
         folder,
-        group: null,
+        group: list.group || null,
         heading: null,
       }, ids, rootState, writes)
 
@@ -1322,7 +1351,7 @@ export default {
         })
         batchSetTasks(b, {
           list: null,
-          group: null,
+          group: list.group || null,
           folder,
           heading: null,
         }, taskIds, rootState, writes)

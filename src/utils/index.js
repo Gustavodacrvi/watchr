@@ -54,31 +54,31 @@ export default {
       },
       {
         match: ['monday', 'mon'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Mon', 'ddd'))
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Mon', 'ddd').format('Y-M-D'))
       },
       {
         match: ['tuesday', 'tue'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Tue', 'ddd'))
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Tue', 'ddd').format('Y-M-D'))
       },
       {
         match: ['wednesday', 'wed'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Wed', 'ddd'))
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Wed', 'ddd').format('Y-M-D'))
       },
       {
         match: ['thursday', 'thu'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Thu', 'ddd'))
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Thu', 'ddd').format('Y-M-D'))
       },
       {
         match: ['friday', 'fri'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Fri', 'ddd'))
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Fri', 'ddd').format('Y-M-D'))
       },
       {
         match: ['saturday', 'sat'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sat', 'ddd'))
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sat', 'ddd').format('Y-M-D'))
       },
       {
         match: ['sunday', 'sun'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sun', 'ddd'))
+        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sun', 'ddd').format('Y-M-D'))
       },
       {
         match: 'next month',
