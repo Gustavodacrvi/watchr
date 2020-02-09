@@ -102,7 +102,7 @@ export default {
       return () => false
     },
     rootFilter() {
-      return () => true
+      return task => !task.list
     },
     
     icon() {return 'group'},

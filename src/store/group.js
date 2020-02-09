@@ -113,8 +113,8 @@ export default {
 
       const writes = []
 
-      setGroup(b, {order: ids}, group, rootState, writes)
-      setList(b, {group}, id, rootState, writes)
+      setGroup(b, {listsOrder: ids}, group, rootState, writes)
+      setList(b, {group, folder: null}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
 

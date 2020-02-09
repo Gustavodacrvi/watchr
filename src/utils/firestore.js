@@ -58,11 +58,15 @@ export const setTask = (batch, task, rootState, id, writes) => {
       const savedGroupTask = groupTasks[id]
       const savedIndividualTask = individualTasks[id]
 
-      const getGroupId = restrict => task.group || (savedGroupTask && !restrict && savedGroupTask.group)
+      const hydratedTask = {
+        ...(savedGroupTask || savedIndividualTask || {}),
+        ...task,
+      }
+
+      const getGroupId = restrict => hydratedTask.group || (savedGroupTask && !restrict && savedGroupTask.group)
   
       const getObj = () => ({
-        ...(savedGroupTask || savedIndividualTask || {}),
-        ...task, handleFiles: null,
+        ...hydratedTask, handleFiles: null,
         id,
         userId: uid(),
       })
@@ -584,10 +588,13 @@ export const setList = (batch, list, id, rootState, writes) => {
       },
     }, {merge: true})
   }
-  const getListTaskIds = obj => Object.keys(obj).map(el => obj[el] && obj[el].id).filter(el => el)
+  const getListTaskIds = obj => Object.keys(obj).filter(el => obj[el] && obj[el].list === id)
   const setListTasks = toPersonal => {
-    getListTaskIds(rootState.task.tasks).forEach(
-      taskId => setTask(batch, {group: toPersonal ? null : getGroupId(true)}, rootState, taskId, writes)
+    getListTaskIds(toPersonal ? rootState.task.groupTasks : rootState.task.tasks).forEach(
+      taskId => setTask(batch, {
+        group: toPersonal ? null : getGroupId(true),
+        list: id,
+      }, rootState, taskId, writes)
     )
   }
 
@@ -613,7 +620,7 @@ export const setList = (batch, list, id, rootState, writes) => {
         setGroupCache()
       else if (writes.push)
         addSharedWrite(getObj())
-      
+
     } else if (savedIndividualList) { // Move personal list to shared.
       console.log('LIST', 'Move personal list to shared')
 
@@ -689,7 +696,7 @@ export const setList = (batch, list, id, rootState, writes) => {
         addPersonalWrite(getObj())
         addSharedWrite(fd().delete())
       }
-      
+
     }
   }
 }

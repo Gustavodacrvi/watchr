@@ -247,6 +247,9 @@ service cloud.firestore {
             (!('folder' in incomingData()) || !('group' in incomingData())) ||
             (
               (incomingData().folder is string) && (incomingData().group is string)
+            ) ||
+            (
+              (incomingData().folder == null) || (incomingData().group == null)
             )
           ) &&
           

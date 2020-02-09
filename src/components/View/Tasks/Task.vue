@@ -655,6 +655,11 @@ export default {
       if (!savedList || (savedList.name === this.viewName)) return null
       return savedList.name
     },
+    taskList() {
+      if (!this.item.list)
+        return null
+      return this.savedLists.find(el => el.id === this.item.list)
+    },
     headingName() {
       const list = this.itemList
       if (!list) return ''
@@ -673,6 +678,7 @@ export default {
       if (!group || this.hideGroupName) return null
       const fold = this.savedGroups.find(f => f.id === group)
       if (!fold || (fold.name === this.viewName)) return null
+      if (this.taskList && this.viewName === this.taskList.name) return null
       return fold.name
     },
     calendarStr() {

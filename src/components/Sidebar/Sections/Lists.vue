@@ -59,7 +59,7 @@
             :mapNumbers="(tasks) => tasks"
             :mapHelpIcon='getListIcon'
             :mapString='mapString'
-            :onSortableAdd='betweenFolders'
+            :onSortableAdd='(folder, id, ids) => betweenFolders(folder, id, ids, f.comp)'
 
             :fallbackItem='fallbackItem(f.id)'
             :getItemRef='getItemRef'
@@ -175,10 +175,15 @@ export default {
       s.opacity = '0'
       h.height = '0'
     },
-    betweenFolders(folder, id, ids) {
-      this.$store.dispatch('folder/moveListBetweenFolders', {
-        folder, id, ids,
-      })
+    betweenFolders(folder, id, ids, comp) {
+      if (comp === "Group")
+        this.$store.dispatch('group/moveListBetweenGroups', {
+          group: folder, id, ids,
+        })
+      else
+        this.$store.dispatch('folder/moveListBetweenFolders', {
+          folder, id, ids,
+        })
     },
     rootAdd(folder, id, ids) {
       this.$store.dispatch('folder/moveListToRoot', {
