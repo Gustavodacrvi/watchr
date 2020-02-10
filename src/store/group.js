@@ -26,9 +26,10 @@ export default {
           if (group) {
             const groupComments = group.comments || {}
             const room = groupComments[id]
+            const userId = uid()
             if (room) {
               return Object.keys(room).reduce((tot, k) => 
-                  (!room[k].readBy || room[k].readBy[uid()]) ? tot : tot + 1
+                  (!(room[k].userId === userId) || !room[k].readBy || room[k].readBy[userId]) ? tot : tot + 1
                 , 0)
             }
           }

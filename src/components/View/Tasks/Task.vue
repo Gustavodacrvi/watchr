@@ -404,7 +404,7 @@ export default {
       this.$store.dispatch('pushPopup', {
         comp: "Comments",
         payload: {
-          groupId: this.item.groupId,
+          groupId: this.item.group,
           id: this.item.id,
         },
       })
