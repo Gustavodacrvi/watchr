@@ -54,21 +54,7 @@ export default {
       })
     },
     assignItem() {
-      const links = this.profileUsers.filter(p => p.uid !== this.user.uid)
-
-      links.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
-      
-      links.unshift({
-        name: this.user.displayName,
-        icon: 'crown',
-        color: 'var(--yellow)',
-      })
-      
-      this.$store.commit('pushIconDrop', {
-        center: true,
-        links,
-        allowSearch: true,
-      })
+      this.$store.commit('pushIconDrop', this.assignUserProfiles)
     },
     bindMainSelection() {
       if (this.isDesktop)
@@ -379,8 +365,34 @@ export default {
       return Object.keys(profiles).map(k => ({
         name: profiles[k].displayName,
         uid: profiles[k].uid,
+        id: profiles[k].uid,
         photoURL: profiles[k].photoURL,
+        callback: () => this.assignUser(profiles[k].uid),
       }))
+    },
+    assignUserProfiles() {
+      const links = this.profileUsers.filter(p => p.uid !== this.user.uid)
+
+      links.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      
+      links.unshift({
+        name: this.user.displayName,
+        icon: 'crown',
+        id: this.user.uid,
+        color: 'var(--yellow)',
+        callback: () => this.assignUser(this.user.uid),
+      })
+      return {
+        center: true,
+        name: 'Assign user',
+        icon: 'group',
+        links,
+        callback: () => ({
+          allowSearch: true,
+          links,
+        }),
+        allowSearch: true,
+      }
     },
     itemGroup() {
       return this.savedGroups.find(f => f.id === this.item.group)

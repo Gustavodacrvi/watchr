@@ -250,15 +250,21 @@ export default {
         this.$store.dispatch('list/completeLists', [this.item])
       else this.$store.dispatch('list/uncompleteLists', [this.item])
     },
+    assignUser(uid) {
+      console.log(uid)
+    },
 
     async getListOptions() {
       this.options = await this.getOptions(utilsList.listOptions(this.item))
-      if (this.item.group)
+      if (this.item.group) {
         this.options.splice(1, 0, {
           name: 'Add comments',
           icon: 'comment',
           callback: this.commentsPopup,
         })
+        if (this.isGroupOwner)
+          this.options.splice(2, 0, this.assignUserProfiles)
+      }
     },
   },
   computed: {

@@ -402,6 +402,9 @@ export default {
         task: {calendar},
       })
     },
+    assignUser(uid) {
+      console.log(uid)
+    },
     saveDate(date) {
       this.$store.dispatch('task/saveTask', {
         id: this.item.id,
@@ -578,12 +581,15 @@ export default {
             callback: () => dispatch('task/deleteTasks', [this.item.id])
           },
       ]
-      if (this.item.group)
+      if (this.item.group) {
         arr.splice(1, 0, {
           name: 'Add comments',
           icon: 'comment',
           callback: this.commentsPopup,
         })
+        if (this.isGroupOwner)
+          arr.splice(2, 0, this.assignUserProfiles)
+      }
       return arr
     },
     completedItem() {

@@ -215,6 +215,7 @@ service cloud.firestore {
         isNullStringOrUndefined('priority') &&
         isNullStringOrUndefined('heading') &&
         isNullStringOrUndefined('notes') &&
+        isNullStringOrUndefined('assigned') &&
         isNullStringOrUndefined('list') &&
         incomingData().size() < 30 &&
         (
@@ -254,6 +255,7 @@ service cloud.firestore {
           ) &&
           
           isNullStringOrUndefined('notes') &&
+          isNullStringOrUndefined('assigned') &&
           isNullStringOrUndefined('folder') &&
           isNullStringOrUndefined('group') &&
           (
