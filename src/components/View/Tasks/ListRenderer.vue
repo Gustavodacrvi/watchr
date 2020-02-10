@@ -77,6 +77,15 @@
         :value='showMoreItemsMessage'
         @click="showingMoreItems = true"
       />
+      <div v-if="isDesktop && viewType === 'list' && !isSmart"
+        class="heading-add"
+        @click.stop="addHeadingsEdit(lazyItems.length)"
+      >
+        <span class="heading-add-line"></span>
+        <span class="heading-add-message">
+          Add heading
+        </span>
+      </div>
     </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
       :viewName='viewName'
@@ -1152,6 +1161,38 @@ export default {
   transition-duration: .2s;
 }
 
+.heading-add {
+  position: relative;
+  transform: translateY(25px);
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transition-duration: .2s;
+  cursor: pointer;
+}
+
+.heading-add:hover {
+  opacity: 1;
+}
+
+.heading-add-line {
+  position: absolute;
+  height: 2px;
+  border-radius: 50px;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--txt);
+  z-index: 2;
+}
+
+.heading-add-message {
+  position: relative;
+  z-index: 3;
+  padding: 0 16px;
+  background-color: var(--back-color);
+}
+
 .dontHaveItems {
   min-height: 15px;
 }
@@ -1163,5 +1204,6 @@ export default {
 .mobile .isRootAndHaveItems {
   margin: 25px 0;
 }
+
 
 </style>

@@ -434,23 +434,44 @@ export default {
           },
         },
         {
+          type: 'optionsList',
           name: 'Deadline',
-          icon: 'deadline',
-          callback: () => ({
-            comp: 'CalendarPicker',
-            content: {
-              onlyDates: true,
-              noTime: true,
-              allowNull: true,
-              callback: ({specific}) => {this.saveTaskContent({
-                deadline: specific,
-              })}
-            }
-          })
+          options: [
+            {
+              icon: 'star',
+              id: 'd',
+              callback: () => this.saveTaskContent({deadline: mom().format('Y-M-D')}),
+            },
+            {
+              icon: 'sun',
+              id: 'çljk',
+              callback: () => this.saveTaskContent({deadline: mom().add(1, 'day').format('Y-M-D')}),
+            },
+            {
+              icon: 'calendar',
+              id: 'çljkasdf',
+              callback: () => ({
+                comp: 'CalendarPicker',
+                content: {
+                  onlyDates: true,
+                  noTime: true,
+                  allowNull: true,
+                  callback: ({specific}) => {this.saveTaskContent({
+                    deadline: specific,
+                  })}
+                }
+              })
+            },
+            {
+              icon: 'bloqued',
+              id: 'asdf',
+              callback: () => this.saveTaskContent({deadline: null}),
+            },
+          ]
         },
         {
           type: 'optionsList',
-          name: 'Schedule',
+          name: 'Defer',
           options: [
             {
               icon: 'star',

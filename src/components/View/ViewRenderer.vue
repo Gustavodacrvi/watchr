@@ -1082,6 +1082,15 @@ export default {
         ]
       }
       
+      const saveDeadline = deadline => {
+        this.$store.dispatch('task/saveTasksById', {
+          ids: this.selectedItems,
+          task: {
+            deadline,
+          }
+        })
+      }
+      
       if (ids.length === 0) {
         let opt = [
           {
@@ -1201,28 +1210,43 @@ export default {
             }}
           },
           {
+            type: 'optionsList',
             name: 'Deadline',
-            icon: 'deadline',
-            callback: () => ({
-              comp: 'CalendarPicker',
-              content: {
-                onlyDates: true,
-                noTime: true,
-                allowNull: true,
-                callback: ({specific}) => {
-                  this.$store.dispatch('task/saveTasksById', {
-                    ids: this.selectedItems,
-                    task: {
-                      deadline: specific,
-                    }
-                  })
-                }
-              }
-            })
+            options: [
+              {
+                icon: 'star',
+                id: 'd',
+                callback: () => saveDeadline(mom().format('Y-M-D')),
+              },
+              {
+                icon: 'sun',
+                id: 'çljk',
+                callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
+              },
+              {
+                icon: 'calendar',
+                id: 'çljkasdf',
+                callback: () => ({
+                  comp: 'CalendarPicker',
+                  content: {
+                    onlyDates: true,
+                    noTime: true,
+                    allowNull: true,
+                    callback: ({specific}) => {saveDeadline(specific,
+                    )}
+                  }
+                })
+              },
+              {
+                icon: 'bloqued',
+                id: 'asdf',
+                callback: () => saveDeadline(null),
+              },
+            ]
           },
           {
             type: 'optionsList',
-            name: 'Schedule',
+            name: 'Defer',
             options: [
               {
                 icon: 'star',
