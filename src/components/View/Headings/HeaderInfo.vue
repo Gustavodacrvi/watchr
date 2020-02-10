@@ -4,11 +4,14 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="header-info rb"
+    <div
+      class="header-info rb"
+      :class="{number}"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
       @click.stop='click'
     >
+      <span v-show="number" class="num">{{ number }}</span>
       <Icon
         class="icon faded"
         :icon="icon"
@@ -46,7 +49,7 @@ import Icon from '@/components/Icon.vue'
 import utils from '@/utils'
 
 export default {
-  props: ['content', 'right', 'icon', 'options', 'title'],
+  props: ['content', 'right', 'icon', 'options', 'title', 'number'],
   components: {
     Icon,
   },
@@ -80,9 +83,13 @@ export default {
       s.transitionDuration = '0s'
       s.opacity = '0'
       s.height = '0px'
+      s.minWidth = 0
+      s.padding = '0'
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         s.height = '35px'
+        s.padding = '0 8px'
+        s.minWidth = '35px'
         s.opacity = '1'
 
         setTimeout(done, 255)
@@ -94,6 +101,8 @@ export default {
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'
+      s.padding = '0'
+      s.minWidth = '0px'
       s.opacity = '0'
 
       setTimeout(done, 255)
@@ -160,15 +169,29 @@ export default {
 
 .faded {
   opacity: .6;
+  transition: opacity .2s;
+}
+
+.number .faded {
+  opacity: 1;
+}
+
+.num {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
 }
 
 .header-info {
   height: 35px;
+  min-width: 35px;
+  position: relative;
   display: inline-flex;
   padding: 0 8px;
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
+  overflow: visible;
 }
 
 .cont {
@@ -181,6 +204,7 @@ export default {
 
 .icon {
   transform: translateY(2px);
+  overflow: hidden;
 }
 
 .header-info:hover {

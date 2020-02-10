@@ -2,7 +2,11 @@
 import { fire, auth } from '../store/index'
 import fb from 'firebase/app'
 
+import Vue from 'vue'
+
 import utils from './index'
+
+import mom from 'moment'
 
 export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
@@ -238,6 +242,70 @@ export const setTask = (batch, task, rootState, id, writes) => {
       task.handleFiles(ref.id).then(save).catch(reject)
     else save()
   })
+}
+export const addComment = (b, groupId, room, comment, name, rootState) => {
+  const ref = groupCacheRef(groupId)
+
+  const obj = {
+    name,
+    id: comment,
+    userId: uid(),
+    files: [],
+    reactions: [],
+    created: mom().format('Y-M-D HH:mm ss'), 
+    createdFire: serverTimestamp(),
+    readBy: null,
+  }
+  
+  b.set(ref, {
+    comments: {
+      [room]: {
+        [comment]: obj,
+      },
+    },
+  }, {merge: true})
+
+  const target = rootState.group.groups.find(el => el.id === groupId)
+  if (!target.comments[room])
+    target.comments[room] = {}
+  Vue.set(target.comments[room], comment, obj)
+}
+export const readComments = (b, groupId, room, ids, rootState) => {
+  const ref = groupCacheRef(groupId)
+
+  const userId = uid()
+  b.set(ref, {
+    comments: {
+      [room]: {
+        ...ids.reduce((o, id) => ({...o, [id]: {readBy: {[userId]: true}}}), {})
+      },
+    },
+  }, {merge: true})
+
+  const target = rootState.group.groups.find(el => el.id === groupId)
+  const keys = Object.keys(target.comments[room])
+  for (const k of keys)
+    if (ids.includes(k)) {
+      Vue.set(target.comments[room][k], 'readBy', {
+        ...target.comments[room][k].readBy,
+        [userId]: true,
+      })
+    }
+  target.comments = {...target.comments}
+}
+export const deleteComment = (b, groupId, room, comment, rootState) => {
+  const ref = groupCacheRef(groupId)
+  
+  b.set(ref, {
+    comments: {
+      [room]: {
+        [comment]: fd().delete()
+      },
+    },
+  }, {merge: true})
+
+  const target = rootState.group.groups.find(el => el.id === groupId)
+  target.comments[room][comment] = undefined
 }
 export const cacheBatchedItems = (batch, writes) => {
   const personalWrites = writes.filter(el => !el.groupId && el.collection)
@@ -629,8 +697,6 @@ export const setList = (batch, list, id, rootState, writes) => {
         setGroupCache()
       else if (writes.push)
         addSharedWrite(getObj())
-
-      console.log(writes, getObj())
 
     } else if (savedIndividualList) { // Move personal list to shared.
       console.log('LIST', 'Move personal list to shared')

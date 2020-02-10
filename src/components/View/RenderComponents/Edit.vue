@@ -58,7 +58,8 @@ export default {
   methods: {
     remove(evt) {
       let found = false
-      for (const node of evt.path)
+      const path = event.path || (event.composedPath && event.composedPath())
+      for (const node of path)
         if (node === this.$el) {
           found = true
           break

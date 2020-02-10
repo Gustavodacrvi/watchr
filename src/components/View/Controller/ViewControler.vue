@@ -286,11 +286,13 @@ export default {
             ],
             updateIds: saveOrder,
             fallbackItem: (task, force) => {
+              if (force || (!task.group && !task.list)) {
+                task.group = list.group || null
+                task.list = list.id || null
+              }
+              
               if (force || (!task.list && !task.folder && !task.group))
                 task.list = list.id
-              
-            if (force || (!task.group && !task.list))
-                task.group = list.group || null
               
               return task
             },

@@ -59,7 +59,8 @@ export default {
   },
   methods: {
     click(evt) {
-      const els = evt.path
+      const path = event.path || (event.composedPath && event.composedPath())
+      const els = path
       for (const e of els)
         if (e.classList && e.classList.contains('add-task-floating-button')) {
           setTimeout(() => {

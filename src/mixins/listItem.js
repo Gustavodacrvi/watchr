@@ -14,6 +14,7 @@ export default {
       startTime: 0,
       initialScroll: 0,
       moved: false,
+      onHover: false,
       changeColor: false,
       stopTouchEvents: false,
       right: 0,
@@ -43,6 +44,15 @@ export default {
       window.removeEventListener('keydown', this.mainSelectionKeyDown)
   },
   methods: {
+    commentsPopup() {
+      this.$store.dispatch('pushPopup', {
+        comp: "Comments",
+        payload: {
+          groupId: this.item.group,
+          id: this.item.id,
+        },
+      })
+    },
     bindMainSelection() {
       if (this.isDesktop)
         if (this.isItemMainSelection)
@@ -335,7 +345,14 @@ export default {
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
     }),
-    ...mapGetters(['isDesktop']),
+    ...mapGetters({
+      isDesktop: 'isDesktop',
+
+      nonReadCommentsById: 'group/nonReadCommentsById',
+    }),
+    nonReadComments() {
+      return this.nonReadCommentsById(this.item.group, this.item.id).length
+    },
     isItemMainSelection() {
       return this.item.id === this.mainSelection
     },

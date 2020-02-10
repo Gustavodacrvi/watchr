@@ -6,7 +6,7 @@
       @leave='leave'
       tag="div"
     >
-      <div v-if="headerInfo && (headerInfo.icons || hasFileHandler)">
+      <div v-if="headerInfo && (headerInfo.icons || hasFileHandler || headerInfo.comments)" class="icons">
         <HeaderInfo v-for="item in headerInfo.icons"
           :key="item.icon"
           v-bind="item"
@@ -16,6 +16,13 @@
           icon='file'
           title='Add file'
           @add='getHeaderInfoFile'
+        />
+        <HeaderInfo v-if="headerInfo.comments"
+          :key="'faskasdf' + false"
+          icon='comment'
+          :number='getNonReadComments'
+          title='Group chat'
+          @click.native="openComments"
         />
       </div>
     </transition>
@@ -58,6 +65,8 @@ import FileHandler from './../../RenderComponents/FileHandler.vue'
 import HeaderInfo from './../HeaderInfo.vue'
 import Tag from '../../Tag.vue'
 import Notes from '../Notes.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -104,6 +113,7 @@ export default {
       s.transitionDuration = '.25s'
 
       s.height = 0
+      s.width = 0
       s.opacity = 0
       s.margin = 0
 
@@ -141,8 +151,23 @@ export default {
 
       setTimeout(done, 255)
     },
+    openComments() {
+      this.$store.dispatch('pushPopup', {
+        comp: "Comments",
+        payload: {
+          groupId: this.headerInfo.comments.group,
+          id: this.headerInfo.comments.room,
+        },
+      })
+    },
   },
   computed: {
+    ...mapGetters({
+      nonReadCommentsById: 'group/nonReadCommentsById',
+    }),
+    getNonReadComments() {
+      return this.nonReadCommentsById(this.headerInfo.comments.group, this.headerInfo.comments.room).length
+    },
     hasFileHandler() {
       return this.headerInfo && this.headerInfo.files && this.headerInfo.files.names
     },
@@ -155,6 +180,11 @@ export default {
 
 .tags-wrapper {
   display: flex;
+}
+
+.icons {
+  position: relative;
+  z-index: 10;
 }
 
 </style>
