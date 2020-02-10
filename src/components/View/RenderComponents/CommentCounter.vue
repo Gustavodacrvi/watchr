@@ -7,9 +7,17 @@
       class="wrapper"
       :class="{show: hover || number}"
     >
+      <Icon v-if="isOwner"
+        class="plus icon"
+        icon='plus'
+        width='26px'
+        @click.native.stop="$emit('assign')"
+      />
       <Icon
+        class="icon"
         icon='comment'
         width='26px'
+        @click.native.stop="$emit('comment')"
       />
       <transition name="num-t">
         <span v-if="number" class="num">{{number}}</span>
@@ -23,7 +31,7 @@
 import Icon from "@/components/Icon.vue"
 
 export default {
-  props: ['number', 'hover'],
+  props: ['number', 'isOwner', 'hover'],
   components: {
     Icon,
   },
@@ -45,11 +53,15 @@ export default {
 }
 
 .number {
-  right: calc(100% + 23px);
+  right: calc(100% + 16px);
   color: var(--txt) !important;
 }
 
-.CommentCounter:hover {
+.icon {
+  transition: .2s right, .2s color, .15s transform;
+}
+
+.icon:hover {
   transform: scale(1.1,1.1);
   cursor: pointer;
   color: var(--txt) !important;
@@ -61,6 +73,12 @@ export default {
   opacity: 0;
   transform: translateY(5px);
   transition-duration: .25s;
+}
+
+.plus {
+  position: absolute;
+  right: 34px;
+  top: -1px;
 }
 
 .num {

@@ -12,7 +12,10 @@
       <CommentCounter v-if="item.group && isDesktop && !isEditing"
         :hover='onHover'
         :number='nonReadComments'
-        @click.native="commentsPopup"
+        :isOwner='isGroupOwner'
+        @assign="assignItem"
+        @comment="commentsPopup"
+        @mouseenter.native='onHover = true'
       />
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
@@ -259,9 +262,6 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      userInfo: state => state.userInfo,
-    }),
     ...mapGetters({
       tasks: 'task/tasks',
       platform: 'platform',

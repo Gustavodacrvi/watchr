@@ -18,7 +18,9 @@
       <CommentCounter v-if="item.group && isDesktop && !isEditing"
         :hover='onHover'
         :number='nonReadComments'
-        @click.native="commentsPopup"
+        :isOwner='isGroupOwner'
+        @assign="assignItem"
+        @comment="commentsPopup"
         @mouseenter.native='onHover = true'
       />
       <div v-if="doneTransition && !isEditing && !isDesktop"
@@ -415,11 +417,6 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      userInfo: state => state.userInfo,
-
-      savedGroups: state => state.group.groups,
-    }),
     ...mapGetters({
       isDesktop: 'isDesktop',
       platform: 'platform',
@@ -719,13 +716,10 @@ export default {
       if (!fold || (fold.name === this.viewName)) return null
       return fold.name
     },
-    taskGroup() {
-      return this.savedGroups.find(f => f.id === this.item.group)
-    },
     groupStr() {
       const group = this.item.group
       if (!group || this.hideGroupName) return null
-      const fold = this.taskGroup
+      const fold = this.itemGroup
       if (!fold || (fold.name === this.viewName)) return null
       if (this.taskList && this.viewName === this.taskList.name) return null
       return fold.name

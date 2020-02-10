@@ -53,6 +53,23 @@ export default {
         },
       })
     },
+    assignItem() {
+      const links = this.profileUsers.filter(p => p.uid !== this.user.uid)
+
+      links.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      
+      links.unshift({
+        name: this.user.displayName,
+        icon: 'crown',
+        color: 'var(--yellow)',
+      })
+      
+      this.$store.commit('pushIconDrop', {
+        center: true,
+        links,
+        allowSearch: true,
+      })
+    },
     bindMainSelection() {
       if (this.isDesktop)
         if (this.isItemMainSelection)
@@ -344,12 +361,30 @@ export default {
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
+
+      savedGroups: state => state.group.groups,
+      userInfo: state => state.userInfo,
+      user: state => state.user,
     }),
     ...mapGetters({
       isDesktop: 'isDesktop',
 
       nonReadCommentsById: 'group/nonReadCommentsById',
     }),
+    isGroupOwner() {
+      return (this.itemGroup && this.itemGroup.userId === this.userInfo.userId)
+    },
+    profileUsers() {
+      const profiles = this.itemGroup.profiles
+      return Object.keys(profiles).map(k => ({
+        name: profiles[k].displayName,
+        uid: profiles[k].uid,
+        photoURL: profiles[k].photoURL,
+      }))
+    },
+    itemGroup() {
+      return this.savedGroups.find(f => f.id === this.item.group)
+    },
     nonReadComments() {
       return this.nonReadCommentsById(this.item.group, this.item.id).length
     },

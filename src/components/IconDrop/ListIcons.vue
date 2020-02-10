@@ -21,7 +21,13 @@
             @dblclick="l.important ? linkCallback(l.callback, l) : () => {}"
           >
             <div class="link-cont">
-              <Icon v-if="l.icon"
+              <ProfilePhoto v-if='l.photoURL'
+                class="photo"
+                :photoURL='l.photoURL'
+                size='ultra-small'
+                :display='true'
+              />
+              <Icon v-else-if="l.icon"
                 class="cursor icon"
                 :icon="l.icon"
                 :color="l.color"
@@ -85,6 +91,7 @@
 
 import Icon from './../Icon.vue'
 import ButtonApp from '@/components/Auth/Button.vue'
+import ProfilePhoto from "@/components/View/RenderComponents/ProfilePhoto.vue"
 
 import { mapGetters } from 'vuex'
 
@@ -93,6 +100,7 @@ export default {
   props: ['content'],
   components: {
     Icon, ButtonApp,
+    ProfilePhoto,
   },
   data() {
     return {
@@ -261,6 +269,11 @@ export default {
   position: relative;
   margin-right: 8px;
   bottom: -1.5px;
+}
+
+.photo {
+  margin-right: 6px;
+  transform: translate(-1px, -1px);
 }
 
 .search {
