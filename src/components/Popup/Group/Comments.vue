@@ -4,13 +4,19 @@
     :class="platform"
   >
     <div class="wrapper">
-      <div class="messages">
+      <div class="messages scroll-thin">
         <Icon
           class="comment-background"
           icon='comment'
           color='var(--sidebar-color)'
           width='150px'
         />
+          <Comment v-for="c in groupCommentsReversed"
+            class="comm"
+            :key="c.id"
+            :groupId='payload.groupId'
+            v-bind="c"
+          />
       </div>
       <div class="editor rb">
         <div class="text">
@@ -19,20 +25,27 @@
             placeholder="Comment..."
             class="txt scroll-thin"
             cols="2"
+
+            v-model="comment"
+            @keydown="keydown"
           >
           </textarea>
         </div>
         <div class="header">
           <div class="tools">
-            <Icon
+<!--             <Icon
               class="cursor remove-highlight primary-hover"
               icon='file'
               title="Add file"
             />
+            <span>
+              &#128540;
+            </span> -->
           </div>
           <div class="btn">
             <button
               class="button rb"
+              @click="addComment"
             >
               Add comment
             </button>
@@ -47,31 +60,76 @@
 
 import Icon from "@/components/Icon.vue"
 import AuthButton from "@/components/Auth/Button.vue"
+import Comment from "./Comment.vue"
 
-import { mapGetters } from 'vuex'
+import mom from 'moment'
+
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
     Icon, AuthButton,
+    Comment,
   },
   props: ['payload'],
+  data() {
+    return {
+      comment: '',
+    }
+  },
   mounted() {
     this.focus()
   },
   methods: {
+    enter(el, done) {
+      done()
+    },
+    leave(el, done) {
+      done()
+    },
     focus() {
       const inp = this.$refs.input
       if (inp)
         inp.focus()
     },
+    keydown(evt) {
+      const {key} = evt
+
+      if (key === "Enter" && this.isOnShift) {
+        evt.preventDefault()
+        this.addComment()
+      }
+    },
+    addComment() {
+      this.$store.dispatch('group/addComment', {
+        group: this.payload.groupId,
+        id: this.payload.id,
+        name: this.comment,
+      })
+      this.comment = ''
+    },
   },
   computed: {
+    ...mapState({
+      isOnShift: state => state.isOnShift,
+    }),
     ...mapGetters({
       platform: 'platform',
       getGroupsById: 'group/getGroupsById',
+
+      checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
     group() {
       return this.getGroupsById([this.payload.groupId])[0]
+    },
+    groupComments() {
+      const room = (this.group.comments && this.group.comments[this.payload.id]) || {}
+      return this.checkMissingIdsAndSortArr([],
+        Object.keys(room).map(k => room[k]).filter(r => r)
+      )
+    },
+    groupCommentsReversed() {
+      return this.groupComments.slice().reverse()
     },
   },
 }
@@ -89,6 +147,7 @@ export default {
 
 .Comments.desktop {
   min-height: 500px;
+  flex-basis: 850px;
 }
 
 .wrapper {
@@ -103,6 +162,9 @@ export default {
 .messages {
   flex-basis: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  margin: 6px 0;
 }
 
 .editor {
@@ -148,6 +210,11 @@ export default {
 
 .button:hover {
   background-color: var(--light-gray);
+}
+
+.comm {
+  position: relative;
+  z-index: 4;
 }
 
 </style>

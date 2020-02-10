@@ -29,7 +29,7 @@ export default {
             const userId = uid()
             if (room) {
               return Object.keys(room).reduce((tot, k) => 
-                  (!(room[k].userId === userId) || !room[k].readBy || room[k].readBy[userId]) ? tot : tot + 1
+                  (!(room[k] && room[k].userId === userId) || !room[k].readBy || room[k].readBy[userId]) ? tot : tot + 1
                 , 0)
             }
           }
@@ -97,6 +97,29 @@ export default {
       const b = fire.batch()
       
       addGroup(b, gro.name, rootState)
+
+      b.commit()
+    },
+    addComment({rootState}, obj) {
+      const b = fire.batch()
+
+      const newId = utils.getUid()
+      setGroup(b, {
+        comments: {
+          [obj.id]: {
+            [newId]: {
+              id: newId,
+              name: obj.name,
+              userId: uid(),
+              files: [],
+              reactions: [],
+              created: mom().format('Y-M-D HH:mm'),
+              createdFire: serverTimestamp(),
+              readBy: null,
+            }
+          },
+        },
+      }, obj.group, rootState)
 
       b.commit()
     },
