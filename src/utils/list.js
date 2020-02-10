@@ -246,6 +246,7 @@ export default {
       opt = [...opt, ...moreOptions]
       opt.push(deleteList)
     }
+
     return opt
   },
 }

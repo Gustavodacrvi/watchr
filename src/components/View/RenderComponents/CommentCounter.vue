@@ -3,19 +3,18 @@
     class="CommentCounter"
     :class="{number}"
   >
-    <transition name="num-t">
-      <div v-if="hover || number"
-        class="wrapper"
-      >
-        <Icon
-          icon='comment'
-          width='26px'
-        />
-        <transition name="num-t">
-          <span v-if="number" class="num">{{number}}</span>
-        </transition>
-      </div>
-    </transition>
+    <div
+      class="wrapper"
+      :class="{show: hover || number}"
+    >
+      <Icon
+        icon='comment'
+        width='26px'
+      />
+      <transition name="num-t">
+        <span v-if="number" class="num">{{number}}</span>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -36,7 +35,7 @@ export default {
 
 .CommentCounter {
   position: absolute;
-  right: calc(100% + 2px);
+  right: calc(100% + 4px);
   height: 100%;
   display: flex;
   color: var(--fade);
@@ -46,7 +45,7 @@ export default {
 }
 
 .number {
-  right: calc(100% + 21px);
+  right: calc(100% + 23px);
   color: var(--txt) !important;
 }
 
@@ -59,6 +58,9 @@ export default {
 .wrapper {
   position: relative;
   top: 4px;
+  opacity: 0;
+  transform: translateY(5px);
+  transition-duration: .25s;
 }
 
 .num {
@@ -67,13 +69,7 @@ export default {
   bottom: 0;
 }
 
-.num-t-enter, .num-t-leave-to {
-  opacity: 0;
-  transform: translateY(5px);
-  transition-duration: .25s;
-}
-
-.num-t-leave, .num-t-enter-to {
+.show {
   opacity: 1;
   transform: translateY(0px);
   transition-duration: .25s;

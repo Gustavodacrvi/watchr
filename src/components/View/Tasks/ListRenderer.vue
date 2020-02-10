@@ -836,7 +836,7 @@ export default {
         this.addedItem = t.id
         this.addItem({
           item: t, ids: this.getIds(true),
-          newId: newItemRef.id,
+          newId: t.id,
           index, newItemRef,
           header: this.header,
         })
@@ -1034,6 +1034,7 @@ export default {
         this.waitingUpdateTimeout = null
       }
       const items = newArr.slice()
+      const isSmartListHeading = this.isSmart && !this.isRoot && this.viewType === 'list'
       
       this.waitingUpdateTimeout = setTimeout(() => {
         if (!this.changedViewName) {
@@ -1058,7 +1059,7 @@ export default {
             this.focusToggle = !this.focusToggle
           })
         }
-      })
+      }, isSmartListHeading ? 200 : 0)
     },
     headings(newArr) {
       if (this.isRoot) {

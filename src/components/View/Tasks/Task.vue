@@ -19,6 +19,7 @@
         :hover='onHover'
         :number='nonReadComments'
         @click.native="commentsPopup"
+        @mouseenter.native='onHover = true'
       />
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
@@ -108,6 +109,15 @@
                       width="12px"
                       :progress='checklistPieProgress'
                     />
+                    <span v-if="!isDesktop && nonReadComments" class="comment-icon">
+                      <Icon
+                        icon='comment'
+                        width="14px"
+                      />
+                      <span class="comm-num">
+                        {{nonReadComments}}
+                      </span>
+                    </span>
                     <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
                     <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="14px"/>
                     <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
@@ -571,6 +581,12 @@ export default {
             callback: () => dispatch('task/deleteTasks', [this.item.id])
           },
       ]
+      if (this.item.group)
+        arr.splice(1, 0, {
+          name: 'Add comments',
+          icon: 'comment',
+          callback: this.commentsPopup,
+        })
       return arr
     },
     completedItem() {
@@ -812,6 +828,14 @@ export default {
   overflow: hidden;
 }
 
+.comment-icon {
+  margin-left: 10px;
+  position: relative;
+}
+
+.comm-num {
+  font-size: .8em;
+}
 
 .cont-wrapper.mobile {
   min-height: 50px;
