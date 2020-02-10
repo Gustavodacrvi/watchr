@@ -4,11 +4,14 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="header-info rb"
+    <div
+      class="header-info rb"
+      :class="{number}"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
       @click.stop='click'
     >
+      <span v-show="number" class="num">{{ number }}</span>
       <Icon
         class="icon faded"
         :icon="icon"
@@ -46,7 +49,7 @@ import Icon from '@/components/Icon.vue'
 import utils from '@/utils'
 
 export default {
-  props: ['content', 'right', 'icon', 'options', 'title'],
+  props: ['content', 'right', 'icon', 'options', 'title', 'number'],
   components: {
     Icon,
   },
@@ -160,10 +163,22 @@ export default {
 
 .faded {
   opacity: .6;
+  transition: opacity .2s;
+}
+
+.number .faded {
+  opacity: 1;
+}
+
+.num {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
 }
 
 .header-info {
   height: 35px;
+  position: relative;
   display: inline-flex;
   padding: 0 8px;
   align-items: center;

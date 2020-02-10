@@ -266,6 +266,8 @@ export const addComment = (b, groupId, room, comment, name, rootState) => {
   }, {merge: true})
 
   const target = rootState.group.groups.find(el => el.id === groupId)
+  if (!target.comments[room])
+    target.comments[room] = {}
   Vue.set(target.comments[room], comment, obj)
 }
 export const readComments = (b, groupId, room, ids, rootState) => {
@@ -695,8 +697,6 @@ export const setList = (batch, list, id, rootState, writes) => {
         setGroupCache()
       else if (writes.push)
         addSharedWrite(getObj())
-
-      console.log(writes, getObj())
 
     } else if (savedIndividualList) { // Move personal list to shared.
       console.log('LIST', 'Move personal list to shared')
