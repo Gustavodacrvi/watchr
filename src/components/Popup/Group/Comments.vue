@@ -16,6 +16,8 @@
             :key="c.id"
             :groupId='payload.groupId'
             v-bind="c"
+
+            @delete='deleteComment(c.id)'
           />
       </div>
       <div class="editor rb">
@@ -87,6 +89,13 @@ export default {
     leave(el, done) {
       done()
     },
+    deleteComment(id) {
+      this.$store.dispatch('group/deleteComment', {
+        group: this.payload.groupId,
+        id: this.payload.id,
+        commentId: id,
+      })
+    },
     focus() {
       const inp = this.$refs.input
       if (inp)
@@ -124,8 +133,9 @@ export default {
     },
     groupComments() {
       const room = (this.group.comments && this.group.comments[this.payload.id]) || {}
+      console.log(room)
       return this.checkMissingIdsAndSortArr([],
-        Object.keys(room).map(k => room[k]).filter(r => r)
+        Object.keys(room).map(k => room[k]).filter(r => r && r.userId)
       )
     },
     groupCommentsReversed() {
@@ -147,7 +157,7 @@ export default {
 
 .Comments.desktop {
   min-height: 500px;
-  flex-basis: 850px;
+  flex-basis: 700px;
 }
 
 .wrapper {
@@ -162,6 +172,7 @@ export default {
 .messages {
   flex-basis: 100%;
   position: relative;
+  overflow: auto;
   display: flex;
   flex-direction: column-reverse;
   margin: 6px 0;

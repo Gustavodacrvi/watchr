@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks, setGroup, setGroupInfo } from '../utils/firestore'
+import { uid, fd, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, addComment, batchSetTasks, deleteComment,setGroup, setGroupInfo } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
@@ -100,26 +100,17 @@ export default {
 
       b.commit()
     },
+    deleteComment({rootState}, obj) {
+      const b = fire.batch()
+
+      deleteComment(b, obj.group, obj.id, obj.commentId, rootState)
+      
+      b.commit()
+    },
     addComment({rootState}, obj) {
       const b = fire.batch()
 
-      const newId = utils.getUid()
-      setGroup(b, {
-        comments: {
-          [obj.id]: {
-            [newId]: {
-              id: newId,
-              name: obj.name,
-              userId: uid(),
-              files: [],
-              reactions: [],
-              created: mom().format('Y-M-D HH:mm'),
-              createdFire: serverTimestamp(),
-              readBy: null,
-            }
-          },
-        },
-      }, obj.group, rootState)
+      addComment(b, obj.group, obj.id, utils.getUid(), obj.name, rootState)
 
       b.commit()
     },

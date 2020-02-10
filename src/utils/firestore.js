@@ -2,7 +2,11 @@
 import { fire, auth } from '../store/index'
 import fb from 'firebase/app'
 
+import Vue from 'vue'
+
 import utils from './index'
+
+import mom from 'moment'
 
 export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
@@ -238,6 +242,45 @@ export const setTask = (batch, task, rootState, id, writes) => {
       task.handleFiles(ref.id).then(save).catch(reject)
     else save()
   })
+}
+export const addComment = (b, groupId, room, comment, name, rootState) => {
+  const ref = groupCacheRef(groupId)
+
+  const obj = {
+    name,
+    id: comment,
+    userId: uid(),
+    files: [],
+    reactions: [],
+    created: mom().format('Y-M-D HH:mm'),
+    createdFire: serverTimestamp(),
+    readBy: null,
+  }
+  
+  b.set(ref, {
+    comments: {
+      [room]: {
+        [comment]: obj,
+      },
+    },
+  }, {merge: true})
+
+  const target = rootState.group.groups.find(el => el.id === groupId)
+  Vue.set(target.comments[room], comment, obj)
+}
+export const deleteComment = (b, groupId, room, comment, rootState) => {
+  const ref = groupCacheRef(groupId)
+  
+  b.set(ref, {
+    comments: {
+      [room]: {
+        [comment]: fd().delete()
+      },
+    },
+  }, {merge: true})
+
+  const target = rootState.group.groups.find(el => el.id === groupId)
+  target.comments[room][comment] = undefined
 }
 export const cacheBatchedItems = (batch, writes) => {
   const personalWrites = writes.filter(el => !el.groupId && el.collection)

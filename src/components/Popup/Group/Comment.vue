@@ -1,16 +1,23 @@
 <template>
   <div class="Comment" :class="{isOwner}">
     <div class="triangle"></div>
-    <ProfilePhoto class="photo"
-      :photoURL='ownerProfile.photoURL'
+    <ProfilePhoto v-if="!isOwner"
+      class="photo"
       size='small'
+      :photoURL='ownerProfile.photoURL'
       :display='true'
     />
     <div class="wrapper">
       <div class="card">
         <div class="info">
           <b class="display-name">{{ ownerProfile.displayName }}</b>
-          <span class="fade">{{createdStr}}</span>
+          <span class="fade mar">{{createdStr}}</span>
+          <Icon v-if='isOwner'
+            class="info-icon mar cursor remove-highlight primary-hover"
+            icon='trash'
+            color='var(--red)'
+            @click.native='$emit("delete")'
+          />
         </div>
         <span v-html="parsedName"></span>
       </div>
@@ -21,6 +28,7 @@
 <script>
 
 import ProfilePhoto from '@/components/View/RenderComponents/ProfilePhoto.vue'
+import Icon from "@/components/Icon.vue"
 
 import utils from '@/utils'
 
@@ -31,6 +39,7 @@ import { mapState } from 'vuex'
 export default {
   components: {
     ProfilePhoto,
+    Icon,
   },
   props: ['name', 'userId', 'files', 'reactions', 'created', 'groupId'],
   computed: {
@@ -62,9 +71,20 @@ export default {
 
 <style scoped>
 
+.info-icon {
+  transform: translateY(-1.5px);
+  opacity: 0;
+  transition: opacity .2s;
+}
+
 .Comment {
   margin: 6px 70px;
+  margin-right: 30px;
   position: relative;
+}
+
+.card:hover .info-icon {
+  opacity: 1;
 }
 
 .card {
@@ -86,6 +106,7 @@ export default {
 .fade {
   font-size: .9em;
   opacity: .6;
+  transform: translateY(1px);
 }
 
 .isOwner .info {
@@ -95,7 +116,6 @@ export default {
 
 .display-name {
   opacity: 1;
-  margin-left: 8px;
 }
 
 .photo {
@@ -108,6 +128,14 @@ export default {
   left: 0;
   width: 0;
   height: 0;
+}
+
+.mar {
+  margin: 0 10px;
+}
+
+.isOwner .mar + .mar {
+  margin-right: 0px;
 }
 
 .isOwner .triangle {
