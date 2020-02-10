@@ -6,7 +6,7 @@
       @leave='leave'
       tag="div"
     >
-      <div v-if="headerInfo && (headerInfo.icons || hasFileHandler || headerInfo.comments)">
+      <div v-if="headerInfo && (headerInfo.icons || hasFileHandler || headerInfo.comments)" class="icons">
         <HeaderInfo v-for="item in headerInfo.icons"
           :key="item.icon"
           v-bind="item"
@@ -113,6 +113,7 @@ export default {
       s.transitionDuration = '.25s'
 
       s.height = 0
+      s.width = 0
       s.opacity = 0
       s.margin = 0
 
@@ -179,6 +180,11 @@ export default {
 
 .tags-wrapper {
   display: flex;
+}
+
+.icons {
+  position: relative;
+  z-index: 10;
 }
 
 </style>

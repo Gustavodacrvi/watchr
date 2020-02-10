@@ -83,9 +83,13 @@ export default {
       s.transitionDuration = '0s'
       s.opacity = '0'
       s.height = '0px'
+      s.width = 0
+      s.padding = '0'
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         s.height = '35px'
+        s.padding = '0 8px'
+        s.width = '35px'
         s.opacity = '1'
 
         setTimeout(done, 255)
@@ -97,6 +101,8 @@ export default {
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'
+      s.padding = '0'
+      s.width = '0px'
       s.opacity = '0'
 
       setTimeout(done, 255)
@@ -178,12 +184,14 @@ export default {
 
 .header-info {
   height: 35px;
+  width: 35px;
   position: relative;
   display: inline-flex;
   padding: 0 8px;
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
+  overflow: visible;
 }
 
 .cont {
@@ -191,11 +199,12 @@ export default {
   align-items: center;
   white-space: nowrap;
   margin-left: 6px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .icon {
   transform: translateY(2px);
+  overflow: visible;
 }
 
 .header-info:hover {

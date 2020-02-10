@@ -66,6 +66,10 @@ export default {
       const save = this.groupsaveGroup
 
       return {
+        comments: group.id ? {
+          group: group.id,
+          room: group.id,
+        } : undefined,
         notes: {
           name: group.notes || null,
           save: notes => {
