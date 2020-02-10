@@ -11,14 +11,21 @@
           color='var(--sidebar-color)'
           width='150px'
         />
-          <Comment v-for="c in groupCommentsReversed"
-            class="comm"
-            :key="c.id"
-            :groupId='payload.groupId'
-            v-bind="c"
+          <transition-group
+            @enter='enter'
+            @leave='leave'
+            tag="div"
+            class="comments"
+          >
+            <Comment v-for="c in groupCommentsReversed"
+              class="comm"
+              :key="c.id"
+              :groupId='payload.groupId'
+              v-bind="c"
 
-            @delete='deleteComment(c.id)'
-          />
+              @delete='deleteComment(c.id)'
+            />
+          </transition-group>
       </div>
       <div class="editor rb">
         <div class="text">
@@ -84,10 +91,43 @@ export default {
   },
   methods: {
     enter(el, done) {
-      done()
+
+      const {height} = getComputedStyle(el)
+
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.height = 0
+      s.opacity = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+        s.height = height
+        s.opacity = 1
+
+        setTimeout(() => {
+          s.height = 'auto'
+          done()
+        }, 210)
+      })
+      
     },
     leave(el, done) {
-      done()
+
+      const s = el.style
+
+      s.transitionDuration = 0
+
+      s.height = getComputedStyle(el).height
+      s.opacity = 1
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+        s.height = 0
+        s.opacity = 0
+        setTimeout(done, 205)
+      })
+      
     },
     deleteComment(id) {
       this.$store.dispatch('group/deleteComment', {
@@ -133,7 +173,6 @@ export default {
     },
     groupComments() {
       const room = (this.group.comments && this.group.comments[this.payload.id]) || {}
-      console.log(room)
       return this.checkMissingIdsAndSortArr([],
         Object.keys(room).map(k => room[k]).filter(r => r && r.userId)
       )
@@ -173,7 +212,11 @@ export default {
   flex-basis: 100%;
   position: relative;
   overflow: auto;
+}
+
+.comments {
   display: flex;
+  height: 100%;
   flex-direction: column-reverse;
   margin: 6px 0;
 }

@@ -252,7 +252,7 @@ export const addComment = (b, groupId, room, comment, name, rootState) => {
     userId: uid(),
     files: [],
     reactions: [],
-    created: mom().format('Y-M-D HH:mm'),
+    created: mom().format('Y-M-D HH:mm'), 
     createdFire: serverTimestamp(),
     readBy: null,
   }
