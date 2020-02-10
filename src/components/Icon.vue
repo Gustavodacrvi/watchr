@@ -105,6 +105,7 @@ import pomo from '@/assets/icons/pomo.svg'
 import message from '@/assets/icons/message.svg'
 import pie from '@/assets/icons/pie.svg'
 import check from '@/assets/icons/check.svg'
+import comment from '@/assets/icons/comment.svg'
 import layerGroup from '@/assets/icons/layer-group.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
@@ -138,6 +139,7 @@ export default {
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
         pomo, pie, check, group, message, crown,
+        comment,
         "later-lists": laterLists,
         "paper-plane": paperPlane,
         "box-close": boxClose,

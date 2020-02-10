@@ -9,7 +9,8 @@
       </span>
       <DropInput v-if="isOwner" class="mar"
         placeholder='E-mail or username:'
-        v-model="name"
+        :value='name'
+        @input='v => name = v.trim()'
         :options='options'
         @select="selectSharedUser"
         @enter='findEmail'
@@ -106,7 +107,7 @@ export default {
             this.alreadySentToast()
             return;
           }
-          if (this.isAlreadyInGroup(user.email)) {
+          if (this.isAlreadyInGroup(this.name)) {
             this.alreadyInGroupToast()
             return;
           }
@@ -129,7 +130,7 @@ export default {
         const b = db.batch()
   
         const ref = inviteRef(this.groupId)
-  
+
         b.set(ref, {
           userId: this.user.uid,
           id: ref.id,
@@ -139,7 +140,7 @@ export default {
           groupName: this.group.name,
           groupId: this.group.id,
           ownerProfile: utils.getUserProfileData(this.user),
-          targetProfile: user,
+          targetProfile: utils.getUserProfileData(user),
           to: user.uid || user.userId,
           denied: null,
         })

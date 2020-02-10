@@ -29,11 +29,13 @@ export default {
     mainFallbackItem() {
       return (task, force) => {
         const list = this.viewList
+        if (force || (!task.group && !task.list)) {
+          task.group = list.group || null
+          task.list = list.id || null
+        }
+
         if (force || (!task.list && !task.folder && !task.group))
           task.list = list.id
-        
-        if (force || (!task.group && !task.list))
-          task.group = list.group || null
         
         task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
         return task
@@ -258,6 +260,10 @@ export default {
       
       if (list)
         return {
+          comments: list.group ? {
+            group: list.group,
+            room: list.id,
+          } : undefined,
           files: {
             names: list.files || [],
             storageFolder: 'lists',

@@ -15,6 +15,11 @@
           @change-time='changeTime'
         />
       </transition>
+      <CommentCounter v-if="item.group && isDesktop && !isEditing"
+        :hover='onHover'
+        :number='nonReadComments'
+        @click.native="commentsPopup"
+      />
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
         ref='back'
@@ -134,7 +139,7 @@
               :showCancel='true'
               :editAction='editAction'
               @done-action='editAction = null'
-              @cancel='isEditing = false'
+              @cancel='editCancel'
               @save='saveTask'
             />
           </div>
@@ -152,6 +157,7 @@ import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
 import Timeline from './Timeline.vue'
 import TaskIcons from './TaskIcons.vue'
+import CommentCounter from '@/components/View/RenderComponents/CommentCounter.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -170,6 +176,7 @@ export default {
   props: ['item', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
+    CommentCounter,
     Timeline, TaskIcons,
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -180,7 +187,6 @@ export default {
     return {
       showingIconDropContent: false,
       isEditing: false,
-      onHover: false,
       justSaved: false,
       doneTransition: false,
 
@@ -258,6 +264,10 @@ export default {
       } else {
         el.style.transitionDuration = '.25s'
       }
+    },
+    editCancel() {
+      this.isEditing = false
+      this.onHover = false
     },
     taskLeave(el, done) {
       this.doneTransition = false
@@ -548,7 +558,6 @@ export default {
     canceledItem() {
       return this.isTaskCanceled(this.item)
     },
-
     
     checklistPieProgress() {
       let completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
@@ -673,10 +682,13 @@ export default {
       if (!fold || (fold.name === this.viewName)) return null
       return fold.name
     },
+    taskGroup() {
+      return this.savedGroups.find(f => f.id === this.item.group)
+    },
     groupStr() {
       const group = this.item.group
       if (!group || this.hideGroupName) return null
-      const fold = this.savedGroups.find(f => f.id === group)
+      const fold = this.taskGroup
       if (!fold || (fold.name === this.viewName)) return null
       if (this.taskList && this.viewName === this.taskList.name) return null
       return fold.name

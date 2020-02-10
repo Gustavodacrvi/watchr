@@ -26,6 +26,16 @@
           :group='id'
           @click.native.stop
         />
+        <transition name="fade-t">
+          <div v-if="nonReadComments" class="comment-icon">
+            <Icon
+              icon='comment'
+            />
+            <span class="comm">
+              {{nonReadComments}}
+            </span>
+          </div>
+        </transition>
       </span>
       <Icon
         class="arrow passive cursor primary-hover"
@@ -54,6 +64,7 @@ import folderMixin from "@/mixins/folder"
 import ProfilePhotos from "@/components/View/RenderComponents/GroupProfilePhotos.vue"
 
 import groupUtils from '@/utils/group'
+import { mapGetters } from 'vuex'
 
 export default {
   mixins: [folderMixin],
@@ -73,6 +84,12 @@ export default {
     },
   },
   computed: {
+    ...mapGetters({
+      getAllNonReadComments: 'group/getAllNonReadComments',
+    }),
+    nonReadComments() {
+      return this.getAllNonReadComments(this.id).length
+    },
     options() {
       return groupUtils.getGroupOptions(this.item)
     },
@@ -92,6 +109,10 @@ export default {
 .photos {
   margin-left: 10px;
   margin-top: 2px;
+}
+
+.comment-icon {
+  transform: translate(24px, 2px);
 }
 
 </style>

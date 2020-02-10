@@ -34,6 +34,7 @@ import Updates from './Updates.vue'
 import FastSearch from './FastSearch.vue'
 import AddFolder from './Folder/AddFolder.vue'
 import AddGroup from './Group/AddGroup.vue'
+import Comments from './Group/Comments.vue'
 import InvitePeople from './Group/InvitePeople.vue'
 import SentInvites from './Group/SentInvites.vue'
 import Invites from './Group/Invites.vue'
@@ -49,7 +50,7 @@ export default {
     AddTask, Updates, ChangeUsername, ChangeEmail,
     Confirm, AddHeadingNote, AddFolder, Profile,
     RecentData, Shortcuts, AddGroup, InvitePeople,
-    SentInvites, Invites,
+    SentInvites, Invites, Comments,
   },
   methods: {
     closeMobilePopup() {

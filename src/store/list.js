@@ -358,6 +358,7 @@ export default {
           'canceled',
           'folder',
           'calendar',
+          'group',
         ],
         getter({getters}, lists) {
           return lists.filter(l =>
@@ -373,6 +374,7 @@ export default {
               c: el.completed,
               ca: el.canceled,
               ca: el.calendar,
+              g: el.group
             }))
           })
         },

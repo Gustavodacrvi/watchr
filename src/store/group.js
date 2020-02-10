@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks, setGroup, setGroupInfo } from '../utils/firestore'
+import { uid, fd, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, readComments, addComment, batchSetTasks, deleteComment,setGroup, setGroupInfo } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
@@ -20,6 +20,47 @@ export default {
       return groups
     },
     ...MemoizeGetters('groups', {
+      getAllNonReadComments: {
+        react: [
+          'comments',
+        ],
+        getter({getters}, groupId) {
+          const group = getters.getGroupsById([groupId])[0]
+          if (group.comments) {
+            return Object.keys(group.comments).map(id =>
+              getters.nonReadCommentsById(groupId, id)
+            ).flat()
+          }
+          return []
+        },
+      },
+      nonReadCommentsById: {
+        react: [
+          'comments',
+        ],
+        getter({getters}, groupId, id) {
+          const group = getters.getGroupsById([groupId])[0]
+          if (group) {
+            const groupComments = group.comments || {}
+            const room = groupComments[id]
+            const userId = uid()
+            if (room) {
+              return Object.keys(room).filter((k) => {
+                if (!room[k]) return false
+
+                const isOwner = room[k].userId === userId
+                const read = room[k].readBy && room[k].readBy[userId]
+                
+                return !(isOwner || read)
+              })
+            }
+          }
+          return []
+        },
+        cache(args) {
+          return JSON.stringify(args)
+        },
+      },
       getGroupTaskOrderById({state}, groupId) {
         const gro = state.groups.find(f => f.id === groupId)
         if (gro && gro.order)
@@ -78,6 +119,27 @@ export default {
       const b = fire.batch()
       
       addGroup(b, gro.name, rootState)
+
+      b.commit()
+    },
+    deleteComment({rootState}, obj) {
+      const b = fire.batch()
+
+      deleteComment(b, obj.group, obj.id, obj.commentId, rootState)
+      
+      b.commit()
+    },
+    readComments({rootState}, obj) {
+      const b = fire.batch()
+
+      readComments(b, obj.groupId, obj.room, obj.ids, rootState)
+
+      b.commit()
+    },
+    addComment({rootState}, obj) {
+      const b = fire.batch()
+
+      addComment(b, obj.group, obj.id, utils.getUid(), obj.name, rootState)
 
       b.commit()
     },
