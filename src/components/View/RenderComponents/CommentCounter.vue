@@ -5,7 +5,7 @@
   >
     <div
       class="wrapper"
-      :class="{show: hover || number}"
+      :class="{show}"
     >
       <Icon v-if="isOwner"
         class="plus icon"
@@ -23,17 +23,54 @@
         <span v-if="number" class="num">{{number}}</span>
       </transition>
     </div>
+    <div v-if="!show && assigned" class="icon-wrapper">
+      <Icon v-if="isAssignedOwner"
+        icon='crown'
+        width='22px'
+      />
+      <Icon v-else-if='isMe'
+        icon='user'
+        width='22px'
+        color='var(--primary)'
+      />
+      <ProfilePhoto v-else
+        class="photo"
+        :photoURL='userPhoto'
+        size='ultra-small'
+        :display='true'
+      />
+    </div>
   </div>
 </template>
 
 <script>
 
 import Icon from "@/components/Icon.vue"
+import ProfilePhoto from "@/components/View/RenderComponents/ProfilePhoto.vue"
+
+import { mapState } from 'vuex'
 
 export default {
-  props: ['number', 'isOwner', 'hover'],
+  props: ['number', 'isOwner', 'hover', 'assigned', 'profileUsers'],
   components: {
-    Icon,
+    Icon, ProfilePhoto,
+  },
+  computed: {
+    ...mapState({
+      uid: state => state.user.uid,
+    }),
+    isMe() {
+      return this.uid === this.assigned
+    },
+    userPhoto() {
+      return this.profileUsers.find(el => el.uid === this.assigned).photoURL
+    },
+    isAssignedOwner() {
+      return this.isOwner && this.assigned === this.uid
+    },
+    show() {
+      return this.hover || this.number
+    },
   },
 }
 
@@ -75,6 +112,11 @@ export default {
   transition-duration: .25s;
 }
 
+.photo {
+  transform: translateY(2.5px);
+  opacity: .6;
+}
+
 .plus {
   position: absolute;
   right: 34px;
@@ -91,6 +133,12 @@ export default {
   opacity: 1;
   transform: translateY(0px);
   transition-duration: .25s;
+}
+
+.icon-wrapper {
+  position: absolute;
+  right: 0;
+  transform: translateY(1.5px);
 }
 
 </style>

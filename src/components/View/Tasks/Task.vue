@@ -19,6 +19,8 @@
         :hover='onHover'
         :number='nonReadComments'
         :isOwner='isGroupOwner'
+        :assigned='item.assigned'
+        :profileUsers='profileUsers'
         @assign="assignItem"
         @comment="commentsPopup"
         @mouseenter.native='onHover = true'
@@ -403,7 +405,9 @@ export default {
       })
     },
     assignUser(uid) {
-      console.log(uid)
+      this.saveTaskContent({
+        assigned: uid,
+      })
     },
     saveDate(date) {
       this.$store.dispatch('task/saveTask', {

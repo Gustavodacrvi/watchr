@@ -382,6 +382,12 @@ export default {
         color: 'var(--yellow)',
         callback: () => this.assignUser(this.user.uid),
       })
+      links.unshift({
+        name: "Remove assignee",
+        icon: 'trash',
+        id: this.user.uid + 'assigned',
+        callback: () => this.assignUser(null),
+      })
       return {
         center: true,
         name: 'Assign user',

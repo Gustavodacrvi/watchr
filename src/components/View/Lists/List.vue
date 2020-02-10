@@ -13,6 +13,8 @@
         :hover='onHover'
         :number='nonReadComments'
         :isOwner='isGroupOwner'
+        :assigned='item.assigned'
+        :profileUsers='profileUsers'
         @assign="assignItem"
         @comment="commentsPopup"
         @mouseenter.native='onHover = true'
@@ -251,7 +253,10 @@ export default {
       else this.$store.dispatch('list/uncompleteLists', [this.item])
     },
     assignUser(uid) {
-      console.log(uid)
+      this.$store.dispatch('list/saveList', {
+        id: this.item.id,
+        assigned: uid,
+      })
     },
 
     async getListOptions() {
