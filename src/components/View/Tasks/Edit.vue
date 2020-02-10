@@ -433,7 +433,8 @@ export default {
     remove(evt) {
       if (this.readyToRemove) {
         let found = false
-        for (const node of evt.path)
+        const path = event.path || (event.composedPath && event.composedPath())
+        for (const node of path)
           if (node.classList && node.classList.contains('edit-wrapper')) {
             found = true
             break

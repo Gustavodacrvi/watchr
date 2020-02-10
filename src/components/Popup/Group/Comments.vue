@@ -4,7 +4,7 @@
     :class="platform"
   >
     <div class="wrapper">
-      <div class="messages scroll-thin">
+      <div class="messages">
         <Icon
           class="comment-background"
           icon='comment'
@@ -15,7 +15,8 @@
             @enter='enter'
             @leave='leave'
             tag="div"
-            class="comments"
+            class="comments scroll-thin"
+            ref='wrapper'
           >
             <Comment v-for="c in groupCommentsReversed"
               class="comm"
@@ -181,6 +182,17 @@ export default {
       return this.groupComments.slice().reverse()
     },
   },
+  watch: {
+    groupCommentsReversed() {
+      const ref = this.$refs.wrapper.$el
+      if (ref) {
+        setTimeout(() => {
+          if (diff < 1500)
+            ref.scrollTop = ref.scrollHeight
+        })
+      }
+    },
+  },
 }
 
 </script>
@@ -196,7 +208,7 @@ export default {
 
 .Comments.desktop {
   min-height: 500px;
-  flex-basis: 700px;
+  flex-basis: 800px;
 }
 
 .wrapper {
@@ -211,14 +223,15 @@ export default {
 .messages {
   flex-basis: 100%;
   position: relative;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .comments {
   display: flex;
   height: 100%;
   flex-direction: column-reverse;
-  margin: 6px 0;
+  overflow: auto;
+  padding: 6px 0;
 }
 
 .editor {

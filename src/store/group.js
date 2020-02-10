@@ -28,9 +28,14 @@ export default {
             const room = groupComments[id]
             const userId = uid()
             if (room) {
-              return Object.keys(room).reduce((tot, k) => 
-                  (!(room[k] && room[k].userId === userId) || !room[k].readBy || room[k].readBy[userId]) ? tot : tot + 1
-                , 0)
+              return Object.keys(room).reduce((tot, k) => {
+                if (!room[k]) return tot
+
+                const isOwner = room[k].userId === userId
+                const read = room[k].readBy && room[k].readBy[userId]
+                
+                return (isOwner || read) ? tot : tot + 1
+              }, 0)
             }
           }
           return 0

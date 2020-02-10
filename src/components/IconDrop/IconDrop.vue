@@ -138,7 +138,8 @@ export default {
       let hide = true
       if (evt) {
         let found = false
-        for (const node of evt.path)
+        const path = event.path || (event.composedPath && event.composedPath())
+        for (const node of path)
           if (node.classList && (node.classList.contains('IconDrop') || node.classList.contains('MobileIcondrop'))) {
             found = true
             break

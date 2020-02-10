@@ -56,7 +56,7 @@ export default {
       return this.groups.find(el => el.id === this.groupId)
     },
     ownerProfile() {
-      return this.groupInfo.profiles[this.groupInfo.userId]
+      return this.groupInfo.profiles[this.userId]
     },
     isOwner() {
       return this.uid === this.userId
@@ -78,7 +78,7 @@ export default {
 }
 
 .Comment {
-  margin: 6px 70px;
+  margin: 6px 60px;
   margin-right: 30px;
   position: relative;
 }
@@ -93,6 +93,7 @@ export default {
   max-width: 400px;
   word-break: break-all;
   border-radius: 18px;
+  float: left;
 }
 
 .isOwner .card {
@@ -120,14 +121,16 @@ export default {
 
 .photo {
   position: absolute;
-  left: 0;
+  left: -52px;
 }
 
 .triangle {
   position: absolute;
-  left: 0;
+  left: -14px;
   width: 0;
   height: 0;
+  border-bottom: 50px solid transparent;
+  border-right: 30px solid var(--sidebar-color);
 }
 
 .mar {
@@ -141,7 +144,7 @@ export default {
 .isOwner .triangle {
   left: unset;
   right: -14px;
-  border-bottom: 50px solid transparent;
+  border-right: unset;
   border-left: 30px solid var(--sidebar-color);
 }
 

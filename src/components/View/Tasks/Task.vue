@@ -15,9 +15,9 @@
           @change-time='changeTime'
         />
       </transition>
-      <CommentCounter v-if="item.group && isDesktop"
+      <CommentCounter v-if="item.group && isDesktop && !isEditing"
         :hover='onHover'
-        :numbers='nonReadComments'
+        :number='nonReadComments'
         @click.native="commentsPopup"
       />
       <div v-if="doneTransition && !isEditing && !isDesktop"
@@ -139,7 +139,7 @@
               :showCancel='true'
               :editAction='editAction'
               @done-action='editAction = null'
-              @cancel='isEditing = false'
+              @cancel='editCancel'
               @save='saveTask'
             />
           </div>
@@ -265,6 +265,10 @@ export default {
       } else {
         el.style.transitionDuration = '.25s'
       }
+    },
+    editCancel() {
+      this.isEditing = false
+      this.onHover = false
     },
     taskLeave(el, done) {
       this.doneTransition = false
