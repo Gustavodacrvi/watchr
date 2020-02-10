@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, addComment, batchSetTasks, deleteComment,setGroup, setGroupInfo } from '../utils/firestore'
+import { uid, fd, deleteGroup, addGroup, serverTimestamp, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, readComments, addComment, batchSetTasks, deleteComment,setGroup, setGroupInfo } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
@@ -21,6 +21,9 @@ export default {
     },
     ...MemoizeGetters('groups', {
       nonReadCommentsById: {
+        react: [
+          'comments',
+        ],
         getter({getters}, groupId, id) {
           const group = getters.getGroupsById([groupId])[0]
           if (group) {
@@ -28,17 +31,17 @@ export default {
             const room = groupComments[id]
             const userId = uid()
             if (room) {
-              return Object.keys(room).reduce((tot, k) => {
-                if (!room[k]) return tot
+              return Object.keys(room).filter((k) => {
+                if (!room[k]) return false
 
                 const isOwner = room[k].userId === userId
                 const read = room[k].readBy && room[k].readBy[userId]
                 
-                return (isOwner || read) ? tot : tot + 1
-              }, 0)
+                return !(isOwner || read)
+              })
             }
           }
-          return 0
+          return []
         },
         cache(args) {
           return JSON.stringify(args)
@@ -110,6 +113,13 @@ export default {
 
       deleteComment(b, obj.group, obj.id, obj.commentId, rootState)
       
+      b.commit()
+    },
+    readComments({rootState}, obj) {
+      const b = fire.batch()
+
+      readComments(b, obj.groupId, obj.room, obj.ids, rootState)
+
       b.commit()
     },
     addComment({rootState}, obj) {

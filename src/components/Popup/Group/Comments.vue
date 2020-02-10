@@ -89,6 +89,15 @@ export default {
   },
   mounted() {
     this.focus()
+
+    const groupId = this.payload.groupId
+    const room = this.payload.id
+    
+    const ids = this.nonReadCommentsById(groupId, room)
+    if (ids.length > 0)
+      this.$store.dispatch('group/readComments', {
+        groupId, room, ids,
+      })
   },
   methods: {
     enter(el, done) {
@@ -166,6 +175,7 @@ export default {
     ...mapGetters({
       platform: 'platform',
       getGroupsById: 'group/getGroupsById',
+      nonReadCommentsById: 'group/nonReadCommentsById',
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
@@ -187,6 +197,7 @@ export default {
       const ref = this.$refs.wrapper.$el
       if (ref) {
         setTimeout(() => {
+          const diff = ref.scrollHeight - ref.scrollTop
           if (diff < 1500)
             ref.scrollTop = ref.scrollHeight
         })

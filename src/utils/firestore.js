@@ -268,6 +268,29 @@ export const addComment = (b, groupId, room, comment, name, rootState) => {
   const target = rootState.group.groups.find(el => el.id === groupId)
   Vue.set(target.comments[room], comment, obj)
 }
+export const readComments = (b, groupId, room, ids, rootState) => {
+  const ref = groupCacheRef(groupId)
+
+  const userId = uid()
+  b.set(ref, {
+    comments: {
+      [room]: {
+        ...ids.reduce((o, id) => ({...o, [id]: {readBy: {[userId]: true}}}), {})
+      },
+    },
+  }, {merge: true})
+
+  const target = rootState.group.groups.find(el => el.id === groupId)
+  const keys = Object.keys(target.comments[room])
+  for (const k of keys)
+    if (ids.includes(k)) {
+      Vue.set(target.comments[room][k], 'readBy', {
+        ...target.comments[room][k].readBy,
+        [userId]: true,
+      })
+    }
+  target.comments = {...target.comments}
+}
 export const deleteComment = (b, groupId, room, comment, rootState) => {
   const ref = groupCacheRef(groupId)
   

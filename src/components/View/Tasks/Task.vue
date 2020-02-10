@@ -570,7 +570,7 @@ export default {
       return this.isTaskCanceled(this.item)
     },
     nonReadComments() {
-      return this.nonReadCommentsById(this.item.group, this.item.id)
+      return this.nonReadCommentsById(this.item.group, this.item.id).length
     },
 
     
