@@ -110,8 +110,8 @@ export default {
         return arr
       },
     }),
-    getFavoriteGroups(state, getters) {
-      return getters.groups.filter(f => f.favorite).map(f => ({...f, icon: 'group', color: 'var(--txt)'}))
+    getFavoriteGroups(state) {
+      return state.groups.filter(f => f.favorite).map(f => ({...f, icon: 'group', color: 'var(--txt)'}))
     },
   },
   actions: {
