@@ -83,13 +83,13 @@ export default {
       s.transitionDuration = '0s'
       s.opacity = '0'
       s.height = '0px'
-      s.width = 0
+      s.minWidth = 0
       s.padding = '0'
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         s.height = '35px'
         s.padding = '0 8px'
-        s.width = '35px'
+        s.minWidth = '35px'
         s.opacity = '1'
 
         setTimeout(done, 255)
@@ -102,7 +102,7 @@ export default {
         s.transitionDuration = '0s'
       s.height = '0px'
       s.padding = '0'
-      s.width = '0px'
+      s.minWidth = '0px'
       s.opacity = '0'
 
       setTimeout(done, 255)
@@ -184,7 +184,7 @@ export default {
 
 .header-info {
   height: 35px;
-  width: 35px;
+  min-width: 35px;
   position: relative;
   display: inline-flex;
   padding: 0 8px;
@@ -199,12 +199,12 @@ export default {
   align-items: center;
   white-space: nowrap;
   margin-left: 6px;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .icon {
   transform: translateY(2px);
-  overflow: visible;
+  overflow: hidden;
 }
 
 .header-info:hover {

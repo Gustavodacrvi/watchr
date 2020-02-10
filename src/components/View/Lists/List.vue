@@ -5,7 +5,15 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="List" :class="[platform, {completed: completed || canceled, isItemMainSelection, isItemSelected}]">
+    <div class="List" :class="[platform, {completed: completed || canceled, isItemMainSelection, isItemSelected}]"
+      @mouseenter="onHover = true"
+      @mouseleave="onHover = false"
+    >
+      <CommentCounter v-if="item.group && isDesktop && !isEditing"
+        :hover='onHover'
+        :number='nonReadComments'
+        @click.native="commentsPopup"
+      />
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
         ref='back'
@@ -107,6 +115,7 @@ import utilsList from "@/utils/list"
 
 import ListEdit from "./Edit.vue"
 import ListIcons from './ListIcons.vue'
+import CommentCounter from '@/components/View/RenderComponents/CommentCounter.vue'
 
 import { mapGetters, mapState, mapActions } from 'vuex'
 
@@ -120,7 +129,7 @@ export default {
   mixins: [ListItemMixin],
   components: {
     Icon, ListIcons,
-    ListEdit,
+    ListEdit, CommentCounter,
   },
   props: ['item', 'changingViewName', 'itemHeight'],
   data() {

@@ -187,7 +187,6 @@ export default {
     return {
       showingIconDropContent: false,
       isEditing: false,
-      onHover: false,
       justSaved: false,
       doneTransition: false,
 
@@ -404,15 +403,6 @@ export default {
         },
       })
     },
-    commentsPopup() {
-      this.$store.dispatch('pushPopup', {
-        comp: "Comments",
-        payload: {
-          groupId: this.item.group,
-          id: this.item.id,
-        },
-      })
-    },
   },
   computed: {
     ...mapState({
@@ -431,7 +421,6 @@ export default {
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
-      nonReadCommentsById: 'group/nonReadCommentsById',
     }),
     options() {
       const {c,t} = this.getTask
@@ -569,10 +558,6 @@ export default {
     canceledItem() {
       return this.isTaskCanceled(this.item)
     },
-    nonReadComments() {
-      return this.nonReadCommentsById(this.item.group, this.item.id).length
-    },
-
     
     checklistPieProgress() {
       let completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)

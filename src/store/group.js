@@ -20,6 +20,20 @@ export default {
       return groups
     },
     ...MemoizeGetters('groups', {
+      getAllNonReadComments: {
+        react: [
+          'comments',
+        ],
+        getter({getters}, groupId) {
+          const group = getters.getGroupsById([groupId])[0]
+          if (group.comments) {
+            return Object.keys(group.comments).map(id =>
+              getters.nonReadCommentsById(groupId, id)
+            ).flat()
+          }
+          return []
+        },
+      },
       nonReadCommentsById: {
         react: [
           'comments',
