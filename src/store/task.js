@@ -1057,7 +1057,7 @@ export default {
       const b = fire.batch()
 
       await batchSetTasks(b, {
-        tags: fd().arrayUnion(...tagIds),
+        tags: tagIds,
       }, ids, rootState)
 
       b.commit()

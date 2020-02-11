@@ -39,6 +39,11 @@
           </transition>
         </div>
         <div class="info">
+          <AssigneeProfilePhoto v-if="group"
+            :assigned='assigned'
+            :owner='itemGroup.userId'
+            :userPhoto='assigneeProfile.photoURL'
+          />
           <template v-if="helpIcons">
             <Icon v-for="i in helpIcons" :key="i" class="inf faded"
               :icon='i'
@@ -93,6 +98,7 @@
 
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
+import AssigneeProfilePhoto from "@/components/View/RenderComponents/AssigneeProfilePhoto.vue"
 
 import { mapGetters, mapState, mapActions } from 'vuex'
 
@@ -102,10 +108,11 @@ export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
-  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder'],
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     Icon: IconVue,
+    AssigneeProfilePhoto,
     IconDrop: IconDropVue,
   },
   data() {
@@ -217,12 +224,26 @@ export default {
       viewName: 'viewName',
       storeViewType: 'viewType',
     }),
-    ...mapGetters(['platform', 'isDesktop']),
+    ...mapGetters({
+      platform: 'platform',
+      isDesktop: 'isDesktop',
+
+      getGroupsById: 'group/getGroupsById',
+    }),
     hasSubList() {
       return this.subList && this.subList.length > 0
     },
-    isDraggingOver() {
-      return this
+    itemGroup() {
+      return !this.group ? undefined : this.getGroupsById([this.group])[0]
+    },
+    profiles() {
+      return this.itemGroup.profiles
+    },
+    ownerProfile() {
+      return this.profiles[this.itemGroup.userId]
+    },
+    assigneeProfile() {
+      return this.profiles[this.assigned]
     },
     getStringObj() {
       if (!this.string) return null

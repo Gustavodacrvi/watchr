@@ -24,20 +24,10 @@
       </transition>
     </div>
     <div v-if="!show && assigned" class="icon-wrapper">
-      <Icon v-if="isAssignedOwner"
-        icon='crown'
-        width='22px'
-      />
-      <Icon v-else-if='isMe'
-        icon='user'
-        width='22px'
-        color='var(--primary)'
-      />
-      <ProfilePhoto v-else
-        class="photo"
-        :photoURL='userPhoto'
-        size='ultra-small'
-        :display='true'
+      <AssigneeProfilePhoto
+        :assigned='assigned'
+        :owner='group.userId'
+        :userPhoto='userPhoto'
       />
     </div>
   </div>
@@ -46,32 +36,30 @@
 <script>
 
 import Icon from "@/components/Icon.vue"
-import ProfilePhoto from "@/components/View/RenderComponents/ProfilePhoto.vue"
+import AssigneeProfilePhoto from "./AssigneeProfilePhoto.vue"
 
 import { mapState } from 'vuex'
 
 export default {
   props: ['number', 'isOwner', 'hover', 'assigned', 'groupId'],
   components: {
-    Icon, ProfilePhoto,
+    Icon,
+    AssigneeProfilePhoto,
   },
   computed: {
     ...mapState({
       uid: state => state.user.uid,
-      
+
       groups: state => state.group.groups,
     }),
-    isMe() {
-      return this.uid === this.assigned
+    group() {
+      return this.groups.find(el => el.id === this.groupId)
     },
     profileUsers() {
-      return this.groups.find(el => el.id === this.groupId).profiles
+      return this.group.profiles
     },
     userPhoto() {
       return this.profileUsers[this.assigned].photoURL
-    },
-    isAssignedOwner() {
-      return this.isOwner && this.assigned === this.uid
     },
     show() {
       return this.hover || this.number
