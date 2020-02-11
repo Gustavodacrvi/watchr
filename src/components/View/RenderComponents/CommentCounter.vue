@@ -51,19 +51,24 @@ import ProfilePhoto from "@/components/View/RenderComponents/ProfilePhoto.vue"
 import { mapState } from 'vuex'
 
 export default {
-  props: ['number', 'isOwner', 'hover', 'assigned', 'profileUsers'],
+  props: ['number', 'isOwner', 'hover', 'assigned', 'groupId'],
   components: {
     Icon, ProfilePhoto,
   },
   computed: {
     ...mapState({
       uid: state => state.user.uid,
+      
+      groups: state => state.group.groups,
     }),
     isMe() {
       return this.uid === this.assigned
     },
+    profileUsers() {
+      return this.groups.find(el => el.id === this.groupId).profiles
+    },
     userPhoto() {
-      return this.profileUsers.find(el => el.uid === this.assigned).photoURL
+      return this.profileUsers[this.assigned].photoURL
     },
     isAssignedOwner() {
       return this.isOwner && this.assigned === this.uid

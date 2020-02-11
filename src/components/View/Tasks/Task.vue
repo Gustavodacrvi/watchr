@@ -20,7 +20,7 @@
         :number='nonReadComments'
         :isOwner='isGroupOwner'
         :assigned='item.assigned'
-        :profileUsers='profileUsers'
+        :groupId='item.group'
         @assign="assignItem"
         @comment="commentsPopup"
         @mouseenter.native='onHover = true'

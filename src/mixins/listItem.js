@@ -356,49 +356,13 @@ export default {
       isDesktop: 'isDesktop',
 
       nonReadCommentsById: 'group/nonReadCommentsById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
     }),
     isGroupOwner() {
       return (this.itemGroup && this.itemGroup.userId === this.userInfo.userId)
     },
-    profileUsers() {
-      const profiles = this.itemGroup.profiles
-      return Object.keys(profiles).map(k => ({
-        name: profiles[k].displayName,
-        uid: profiles[k].uid,
-        id: profiles[k].uid,
-        photoURL: profiles[k].photoURL,
-        callback: () => this.assignUser(profiles[k].uid),
-      }))
-    },
     assignUserProfiles() {
-      const links = this.profileUsers.filter(p => p.uid !== this.user.uid)
-
-      links.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
-      
-      links.unshift({
-        name: this.user.displayName,
-        icon: 'crown',
-        id: this.user.uid,
-        color: 'var(--yellow)',
-        callback: () => this.assignUser(this.user.uid),
-      })
-      links.unshift({
-        name: "Remove assignee",
-        icon: 'trash',
-        id: this.user.uid + 'assigned',
-        callback: () => this.assignUser(null),
-      })
-      return {
-        center: true,
-        name: 'Assign user',
-        icon: 'group',
-        links,
-        callback: () => ({
-          allowSearch: true,
-          links,
-        }),
-        allowSearch: true,
-      }
+      return this.getAssigneeIconDrop(this.item, uid => this.assignUser(uid))
     },
     itemGroup() {
       return this.savedGroups.find(f => f.id === this.item.group)

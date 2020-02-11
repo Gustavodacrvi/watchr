@@ -516,6 +516,12 @@ export default {
         scheduleObject: obj,
       })
     },
+    assignUser(assigned) {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: this.selectedItems,
+        task: {assigned},
+      })
+    },
     saveAutoSchedule(info) {
       this.autoSchedule = info
       if (info === null)
@@ -702,6 +708,7 @@ export default {
       getListsByName: 'list/getListsByName',
       getFoldersByName: 'folder/getFoldersByName',
       getFoldersById: 'folder/getFoldersById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
       getTasksById: 'task/getTasksById',
 
       doesTaskPassExclusiveFolders: 'task/doesTaskPassExclusiveFolders',
@@ -1192,7 +1199,7 @@ export default {
         }
         return opt
       } else {
-        return [
+        const opt = [
           {
             name: 'Move to list',
             icon: 'tasks',
@@ -1322,6 +1329,9 @@ export default {
             callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
+        if (this.extraListView && this.extraListView.groupId)
+          opt.unshift(this.getAssigneeIconDrop({group: this.extraListView.groupId}, uid => this.assignUser(uid)))
+        return opt
       }
     },
     getNumberOfPages() {

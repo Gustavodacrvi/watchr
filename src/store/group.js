@@ -20,6 +20,53 @@ export default {
       return groups
     },
     ...MemoizeGetters('groups', {
+      react: [
+        'profiles',
+        'users',
+      ],
+      getAssigneeIconDrop: {
+        getter({getters, rootState}, {group = null}, assignUser) {
+          const itemGroup = getters.getGroupsById([group])[0]
+          const profiles = itemGroup.profiles
+          const profileUsers = Object.keys(profiles).map(k => ({
+            name: profiles[k].displayName,
+            uid: profiles[k].uid,
+            id: profiles[k].uid,
+            photoURL: profiles[k].photoURL,
+            callback: () => assignUser(profiles[k].uid),
+          }))
+          
+          const user = rootState.user
+          const links = profileUsers.filter(p => p.uid !== user.uid)
+    
+          links.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+          
+          links.unshift({
+            name: user.displayName,
+            icon: 'crown',
+            id: user.uid,
+            color: 'var(--yellow)',
+            callback: () => assignUser(user.uid),
+          })
+          links.unshift({
+            name: "Remove assignee",
+            icon: 'trash',
+            id: user.uid + 'assigned',
+            callback: () => assignUser(null),
+          })
+          return {
+            center: true,
+            name: 'Assign user',
+            icon: 'group',
+            links,
+            callback: () => ({
+              allowSearch: true,
+              links,
+            }),
+            allowSearch: true,
+          }
+        },
+      },
       getAllNonReadComments: {
         react: [
           'comments',
