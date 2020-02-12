@@ -353,11 +353,12 @@ const store = new Vuex.Store({
     logOut({state}) {
       const authInstance = gapi.auth2.getAuthInstance()
       authInstance.signOut()
-
+      
       auth.signOut().then(() => {
         state.authState = false
         location.reload()
       })
+      fire.clearPersistence()
     },
     pushKeyShortcut({dispatch, commit, state}, key) {
       const pop = (comp) => {
@@ -571,7 +572,7 @@ const store = new Vuex.Store({
 
 fire.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED })
 
-fire.enablePersistence({synchronizeTabs: true}).then(() => enabled = true)
+fire.enablePersistence().then(() => enabled = true)
 .catch(err => {
   if (err.code === 'failed-precondition') {
     // handle error

@@ -854,6 +854,7 @@ export default {
       
       const writes = []
       
+      console.log(b, rootState, newTaskRef.id, writes)
       await setTask(b, {
         userId: uid(),
         createdFire: serverTimestamp(),
