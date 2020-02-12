@@ -245,6 +245,7 @@ export default {
           'deadline',
           'completed',
           'canceled',
+          'assigned',
         ],
         getter({getters}, date) {
           return getters.lists.filter(l => getters.isListLastDeadlineDay(l, date))
@@ -359,6 +360,7 @@ export default {
           'folder',
           'calendar',
           'group',
+          'assigned',
         ],
         getter({getters}, lists) {
           return lists.filter(l =>
@@ -373,7 +375,8 @@ export default {
             c: args[0].map(el => ({
               c: el.completed,
               ca: el.canceled,
-              ca: el.calendar,
+              ass: el.assigned,
+              cab: el.calendar,
               g: el.group
             }))
           })

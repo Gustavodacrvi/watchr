@@ -181,6 +181,7 @@ export default {
         cache(args) {
           return JSON.stringify({
             c: args[0].canceled,
+            ca: args[0].calendar,
           }) 
         },
       },
@@ -713,6 +714,22 @@ export default {
         ],
         getter({getters, state}) {
           return getters.tasks.filter(getters.isTaskOverdue)
+        },
+      },
+      numberOfAssignedToMeTasks: {
+        react: [
+          'canceled',
+          'calendar',
+          'completed',
+          'assigned',
+        ],
+        getter({getters}) {
+          const userId = uid()
+          return getters.tasks.filter(t =>
+            !getters.isTaskCompleted(t) &&
+            !getters.isTaskCanceled(t) &&
+            t.assigned === userId
+          ).length
         },
       },
       getTasksById({getters}, ids) {

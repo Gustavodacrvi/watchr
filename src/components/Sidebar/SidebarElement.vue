@@ -39,7 +39,7 @@
           </transition>
         </div>
         <div class="info">
-          <AssigneeProfilePhoto v-if="group"
+          <AssigneeProfilePhoto v-if="group && assigneeProfile"
             :assigned='assigned'
             :owner='itemGroup.userId'
             :userPhoto='assigneeProfile.photoURL'

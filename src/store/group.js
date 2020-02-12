@@ -116,7 +116,12 @@ export default {
       },
       getListsByGroupId: {
         react: [
-          'listsOrder'
+          'completed',
+          'canceled',
+          'folder',
+          'calendar',
+          'group',
+          'assigned',
         ],
         getter({state, rootGetters}, {id, lists}) {
           const arr = []

@@ -37,12 +37,23 @@
           </div>
         </transition>
       </span>
-      <Icon
-        class="arrow passive cursor primary-hover"
-        icon='tiny-arrow'
-        :class="{showCont: showing}"
-        @click.native.stop='toggle'
-      />
+      <div class='info'>
+        <transition name="fade-t">
+          <span v-if="assignedToMe" class="counter">
+            {{assignedToMe}}
+          </span>
+        </transition>
+        <span class="arrow-wrapper">
+          <span class="arrow-wrapper-wrapper">
+            <Icon
+              class="arrow passive cursor primary-hover"
+              icon='tiny-arrow'
+              :class="{showCont: showing}"
+              @click.native.stop='toggle'
+            />
+          </span>
+        </span>
+      </div>
     </div>
     <div class="cont" :class="{showCont: showing}">
       <transition
@@ -86,7 +97,11 @@ export default {
   computed: {
     ...mapGetters({
       getAllNonReadComments: 'group/getAllNonReadComments',
+      numberOfAssignedToMeTasks: 'task/numberOfAssignedToMeTasks',
     }),
+    assignedToMe() {
+      return this.numberOfAssignedToMeTasks()
+    },
     nonReadComments() {
       return this.getAllNonReadComments(this.id).length
     },
@@ -105,6 +120,11 @@ export default {
 </style>
 
 <style scoped>
+
+.counter {
+  position: absolute;
+  right: 38px;
+}
 
 .photos {
   margin-left: 10px;
