@@ -16,6 +16,7 @@
         />
       </transition>
       <CommentCounter v-if="item.group && isDesktop && !isEditing"
+        ref="comment-counter"
         :hover='onHover'
         :number='nonReadComments'
         :isOwner='isGroupOwner'
@@ -286,6 +287,9 @@ export default {
     taskLeave(el, done) {
       this.doneTransition = false
       const back = this.$refs['back']
+      let cn = this.$refs['comment-counter']
+      if (cn)
+        cn = cn.$el.style
       if (back) back.style.display = 'none'
       const s = this.$refs['cont-wrapper'].style
       let l
@@ -296,6 +300,10 @@ export default {
       }
       
       s.opacity = 1
+      if (cn) {
+        cn.transitionDuration = '0s'
+        cn.opacity = 1
+      }
       s.transitionDuration = '0s'
       if (this.completeAnimation) {
         l.transitionDuration = '0s'
@@ -308,6 +316,10 @@ export default {
       s.minHeight = this.itemHeight + 'px'
 
       const hideTask = () => {
+        if (cn) {
+          cn.transitionDuration = '.25s'
+          cn.opacity = 0
+        }
         s.transitionDuration = '.25s'
         s.opacity = 0
         s.height = 0
@@ -341,6 +353,9 @@ export default {
       this.doneTransition = false
       if (cont) {
         const s = cont.style
+        let cn = this.$refs['comment-counter']
+        if (cn)
+          cn = cn.$el.style
 
         setTimeout(() => {
           this.doneTransition = true
@@ -351,8 +366,16 @@ export default {
           s.opacity = 0
           s.height = 0
           s.minHeight = 0
+          if (cn) {
+            cn.transitionDuration = '0s'
+            cn.opacity = 0
+          }
           
           requestAnimationFrame(() => {
+            if (cn) {
+              cn.transitionDuration = '.25s'
+              cn.opacity = 1
+            }
             s.transitionDuration = '.25s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
