@@ -1,4 +1,5 @@
 
+import { uid } from '@/utils/firestore'
 
 export default {
   getGroupOptions: item => ({tasks, getters, state, dispatch, router}) => {

@@ -145,6 +145,7 @@ import utils from '@/utils'
 import utilsList from '@/utils/list'
 import utilsTag from '@/utils/tag'
 import utilsFolder from '@/utils/folder'
+import utilsGroup from '@/utils/group'
 
 export default {
   props: ['value', 'width', 'sidebarHided', 'pressingHandle'],
@@ -431,6 +432,7 @@ export default {
       // getfavfilters
       isTaskCompleted: 'task/isTaskCompleted',
       favFolders: 'folder/getFavoriteFolders',
+      favGroups: 'group/getFavoriteGroups',
       favTags: 'tag/getFavoriteTags',
     }),
     sidebarHandle() {
@@ -483,6 +485,9 @@ export default {
           case 'folder': {
             return utilsFolder.getFolderOptions(link)
           }
+          case 'group': {
+            return utilsGroup.getGroupOptions(link)
+          }
         }
         return []
       }
@@ -511,7 +516,8 @@ export default {
       return [
         ...this.favLists,
         ...this.favFolders,
-        ...this.favTags
+        ...this.favGroups,
+        ...this.favTags,
       ]
     },
     getFavorites() {

@@ -56,7 +56,7 @@
             :active="active"
             :viewType="viewType"
             :mapProgress='getListProgress'
-            :mapNumbers="(tasks) => tasks"
+            :mapNumbers="tasks => tasks"
             :mapHelpIcon='getListIcon'
             :mapString='mapString'
             :onSortableAdd='(folder, id, ids) => betweenFolders(folder, id, ids, f.comp)'

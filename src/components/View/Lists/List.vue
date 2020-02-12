@@ -12,7 +12,12 @@
       <CommentCounter v-if="item.group && isDesktop && !isEditing"
         :hover='onHover'
         :number='nonReadComments'
-        @click.native="commentsPopup"
+        :isOwner='isGroupOwner'
+        :assigned='item.assigned'
+        :groupId='item.group'
+        @assign="assignItem"
+        @comment="commentsPopup"
+        @mouseenter.native='onHover = true'
       />
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
@@ -247,15 +252,27 @@ export default {
         this.$store.dispatch('list/completeLists', [this.item])
       else this.$store.dispatch('list/uncompleteLists', [this.item])
     },
+    assignUser(uid) {
+      this.$store.dispatch('list/saveList', {
+        id: this.item.id,
+        assigned: uid,
+      })
+    },
 
     async getListOptions() {
       this.options = await this.getOptions(utilsList.listOptions(this.item))
+      if (this.item.group) {
+        this.options.splice(1, 0, {
+          name: 'Add comments',
+          icon: 'comment',
+          callback: this.commentsPopup,
+        })
+        if (this.isGroupOwner)
+          this.options.splice(2, 0, this.assignUserProfiles)
+      }
     },
   },
   computed: {
-    ...mapState({
-      userInfo: state => state.userInfo,
-    }),
     ...mapGetters({
       tasks: 'task/tasks',
       platform: 'platform',

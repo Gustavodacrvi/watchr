@@ -138,7 +138,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'getCalendarOrderDate',
+  'getCalendarOrderDate', 'viewItem',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
@@ -516,6 +516,12 @@ export default {
         scheduleObject: obj,
       })
     },
+    assignUser(assigned) {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: this.selectedItems,
+        task: {assigned},
+      })
+    },
     saveAutoSchedule(info) {
       this.autoSchedule = info
       if (info === null)
@@ -702,6 +708,7 @@ export default {
       getListsByName: 'list/getListsByName',
       getFoldersByName: 'folder/getFoldersByName',
       getFoldersById: 'folder/getFoldersById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
       getTasksById: 'task/getTasksById',
 
       doesTaskPassExclusiveFolders: 'task/doesTaskPassExclusiveFolders',
@@ -1082,6 +1089,15 @@ export default {
         ]
       }
       
+      const saveDeadline = deadline => {
+        this.$store.dispatch('task/saveTasksById', {
+          ids: this.selectedItems,
+          task: {
+            deadline,
+          }
+        })
+      }
+      
       if (ids.length === 0) {
         let opt = [
           {
@@ -1183,7 +1199,7 @@ export default {
         }
         return opt
       } else {
-        return [
+        const opt = [
           {
             name: 'Move to list',
             icon: 'tasks',
@@ -1201,28 +1217,43 @@ export default {
             }}
           },
           {
+            type: 'optionsList',
             name: 'Deadline',
-            icon: 'deadline',
-            callback: () => ({
-              comp: 'CalendarPicker',
-              content: {
-                onlyDates: true,
-                noTime: true,
-                allowNull: true,
-                callback: ({specific}) => {
-                  this.$store.dispatch('task/saveTasksById', {
-                    ids: this.selectedItems,
-                    task: {
-                      deadline: specific,
-                    }
-                  })
-                }
-              }
-            })
+            options: [
+              {
+                icon: 'star',
+                id: 'd',
+                callback: () => saveDeadline(mom().format('Y-M-D')),
+              },
+              {
+                icon: 'sun',
+                id: 'çljk',
+                callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
+              },
+              {
+                icon: 'calendar',
+                id: 'çljkasdf',
+                callback: () => ({
+                  comp: 'CalendarPicker',
+                  content: {
+                    onlyDates: true,
+                    noTime: true,
+                    allowNull: true,
+                    callback: ({specific}) => {saveDeadline(specific,
+                    )}
+                  }
+                })
+              },
+              {
+                icon: 'bloqued',
+                id: 'asdf',
+                callback: () => saveDeadline(null),
+              },
+            ]
           },
           {
             type: 'optionsList',
-            name: 'Schedule',
+            name: 'Defer',
             options: [
               {
                 icon: 'star',
@@ -1298,6 +1329,9 @@ export default {
             callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
+        if (((this.viewItem && this.viewItem.group) || (this.viewType === 'group')) && this.viewItem)
+          opt.unshift(this.getAssigneeIconDrop({group: this.viewItem.group || this.viewItem.id}, uid => this.assignUser(uid)))
+        return opt
       }
     },
     getNumberOfPages() {

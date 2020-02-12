@@ -181,6 +181,7 @@ export default {
         cache(args) {
           return JSON.stringify({
             c: args[0].canceled,
+            ca: args[0].calendar,
           }) 
         },
       },
@@ -715,6 +716,45 @@ export default {
           return getters.tasks.filter(getters.isTaskOverdue)
         },
       },
+      getAssignedTasksByList: {
+        react: [
+          'canceled',
+          'calendar',
+          'completed',
+          'group',
+          'list',
+          'assigned',
+        ],
+        getter({getters}, groupId, list) {
+          const userId = uid()
+          return getters.tasks.filter(t => 
+              !getters.isTaskCompleted(t) &&
+              !getters.isTaskCanceled(t) &&
+              t.assigned === userId &&
+              t.group === groupId &&
+              t.list === list
+            ).length
+        },
+      },
+      numberOfAssignedToMeTasks: {
+        react: [
+          'canceled',
+          'calendar',
+          'group',
+          'list',
+          'completed',
+          'assigned',
+        ],
+        getter({getters}, groupId) {
+          const userId = uid()
+          return getters.tasks.filter(t =>
+            !getters.isTaskCompleted(t) &&
+            !getters.isTaskCanceled(t) &&
+            t.assigned === userId &&
+            t.group === groupId
+          ).length
+        },
+      },
       getTasksById({getters}, ids) {
         const arr = []
         for (const id of ids) {
@@ -1057,7 +1097,7 @@ export default {
       const b = fire.batch()
 
       await batchSetTasks(b, {
-        tags: fd().arrayUnion(...tagIds),
+        tags: tagIds,
       }, ids, rootState)
 
       b.commit()

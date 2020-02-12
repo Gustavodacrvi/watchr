@@ -48,6 +48,13 @@
           <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
+          <AssigneeProfilePhoto v-if="group && assigneeProfile"
+            class="assigned"
+            :assigned='assigned'
+            :owner='itemGroup.userId'
+            :userPhoto='assigneeProfile.photoURL'
+          />
+          <span v-else-if="group && assignedToList" class="inf assigned">{{ assignedToList }}</span>
         </div>
       </div>
       <Icon v-if="hasSubList"
@@ -93,6 +100,7 @@
 
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
+import AssigneeProfilePhoto from "@/components/View/RenderComponents/AssigneeProfilePhoto.vue"
 
 import { mapGetters, mapState, mapActions } from 'vuex'
 
@@ -102,10 +110,11 @@ export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
-  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder'],
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     Icon: IconVue,
+    AssigneeProfilePhoto,
     IconDrop: IconDropVue,
   },
   data() {
@@ -217,12 +226,30 @@ export default {
       viewName: 'viewName',
       storeViewType: 'viewType',
     }),
-    ...mapGetters(['platform', 'isDesktop']),
+    ...mapGetters({
+      platform: 'platform',
+      isDesktop: 'isDesktop',
+
+      getGroupsById: 'group/getGroupsById',
+      getAssignedTasksByList: 'task/getAssignedTasksByList',
+    }),
     hasSubList() {
       return this.subList && this.subList.length > 0
     },
-    isDraggingOver() {
-      return this
+    assignedToList() {
+      return this.getAssignedTasksByList(this.group, this.id)
+    },
+    itemGroup() {
+      return !this.group ? undefined : this.getGroupsById([this.group])[0]
+    },
+    profiles() {
+      return this.itemGroup.profiles
+    },
+    ownerProfile() {
+      return this.profiles[this.itemGroup.userId]
+    },
+    assigneeProfile() {
+      return this.profiles[this.assigned]
     },
     getStringObj() {
       if (!this.string) return null
@@ -392,6 +419,11 @@ export default {
 
 .drop {
   transform: translateY(2px);
+}
+
+.assigned {
+  margin-left: 8px;
+  margin-right: 4px;
 }
 
 .total {

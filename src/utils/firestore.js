@@ -266,8 +266,10 @@ export const addComment = (b, groupId, room, comment, name, rootState) => {
   }, {merge: true})
 
   const target = rootState.group.groups.find(el => el.id === groupId)
-  if (!target.comments[room])
-    target.comments[room] = {}
+  if (!target.comments) {
+    Vue.set(target, 'comments', {})
+    Vue.set(target.comments, room, {})
+  }
   Vue.set(target.comments[room], comment, obj)
 }
 export const readComments = (b, groupId, room, ids, rootState) => {

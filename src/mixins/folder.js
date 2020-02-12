@@ -85,17 +85,21 @@ export default {
         this.openMobileOptions()
       }, 350)
     },
-    contLeave(el) {
+    contLeave(el, done) {
       const s = el.style
       
       s.transitionDuration = 0
       s.height = this.getItemContHeight
+      s.overflow = 'visible'
       s.opacity = 1
       
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
-        s.height = this.itemHeight + 'px'
+        s.height = '0px'
+        s.overflow = 'visible'
         s.opacity = 0
+
+        setTimeout(done, 255)
       })
     },
     go() {

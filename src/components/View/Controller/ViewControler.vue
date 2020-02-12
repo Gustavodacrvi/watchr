@@ -37,6 +37,7 @@
     :onSmartComponentUpdate='onSmartComponentUpdate'
     :viewComponent='viewComponent'
     :isListType='isListType'
+    :viewItem='viewItem'
     :extraListView='extraListView'
     :removeHeaderTag='removeHeaderTag'
     :saveHeaderName='saveHeaderName'

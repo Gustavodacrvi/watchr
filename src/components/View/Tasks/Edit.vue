@@ -572,6 +572,7 @@ export default {
           this.task.heading = ''
           this.task.headingId = ''
           this.task.folder = ''
+          this.task.tags = []
         }
         if (t.list) {
           this.task.folder = ''
