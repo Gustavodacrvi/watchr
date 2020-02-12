@@ -100,7 +100,7 @@ export default {
       numberOfAssignedToMeTasks: 'task/numberOfAssignedToMeTasks',
     }),
     assignedToMe() {
-      return this.numberOfAssignedToMeTasks()
+      return this.numberOfAssignedToMeTasks(this.id)
     },
     nonReadComments() {
       return this.getAllNonReadComments(this.id).length

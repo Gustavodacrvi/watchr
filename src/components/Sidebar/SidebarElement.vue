@@ -39,11 +39,6 @@
           </transition>
         </div>
         <div class="info">
-          <AssigneeProfilePhoto v-if="group && assigneeProfile"
-            :assigned='assigned'
-            :owner='itemGroup.userId'
-            :userPhoto='assigneeProfile.photoURL'
-          />
           <template v-if="helpIcons">
             <Icon v-for="i in helpIcons" :key="i" class="inf faded"
               :icon='i'
@@ -53,6 +48,13 @@
           <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
+          <AssigneeProfilePhoto v-if="group && assigneeProfile"
+            class="assigned"
+            :assigned='assigned'
+            :owner='itemGroup.userId'
+            :userPhoto='assigneeProfile.photoURL'
+          />
+          <span v-else-if="group && assignedToList" class="inf assigned">{{ assignedToList }}</span>
         </div>
       </div>
       <Icon v-if="hasSubList"
@@ -229,9 +231,13 @@ export default {
       isDesktop: 'isDesktop',
 
       getGroupsById: 'group/getGroupsById',
+      getAssignedTasksByList: 'task/getAssignedTasksByList',
     }),
     hasSubList() {
       return this.subList && this.subList.length > 0
+    },
+    assignedToList() {
+      return this.getAssignedTasksByList(this.group, this.id)
     },
     itemGroup() {
       return !this.group ? undefined : this.getGroupsById([this.group])[0]
@@ -413,6 +419,11 @@ export default {
 
 .drop {
   transform: translateY(2px);
+}
+
+.assigned {
+  margin-left: 8px;
+  margin-right: 4px;
 }
 
 .total {

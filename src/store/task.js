@@ -716,19 +716,42 @@ export default {
           return getters.tasks.filter(getters.isTaskOverdue)
         },
       },
-      numberOfAssignedToMeTasks: {
+      getAssignedTasksByList: {
         react: [
           'canceled',
           'calendar',
           'completed',
+          'group',
+          'list',
           'assigned',
         ],
-        getter({getters}) {
+        getter({getters}, groupId, list) {
+          const userId = uid()
+          return getters.tasks.filter(t => 
+              !getters.isTaskCompleted(t) &&
+              !getters.isTaskCanceled(t) &&
+              t.assigned === userId &&
+              t.group === groupId &&
+              t.list === list
+            ).length
+        },
+      },
+      numberOfAssignedToMeTasks: {
+        react: [
+          'canceled',
+          'calendar',
+          'group',
+          'list',
+          'completed',
+          'assigned',
+        ],
+        getter({getters}, groupId) {
           const userId = uid()
           return getters.tasks.filter(t =>
             !getters.isTaskCompleted(t) &&
             !getters.isTaskCanceled(t) &&
-            t.assigned === userId
+            t.assigned === userId &&
+            t.group === groupId
           ).length
         },
       },

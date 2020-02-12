@@ -138,7 +138,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'getCalendarOrderDate',
+  'getCalendarOrderDate', 'viewItem',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
@@ -1329,8 +1329,8 @@ export default {
             callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
-        if (this.extraListView && this.extraListView.groupId)
-          opt.unshift(this.getAssigneeIconDrop({group: this.extraListView.groupId}, uid => this.assignUser(uid)))
+        if (((this.viewItem && this.viewItem.group) || (this.viewType === 'group')) && this.viewItem)
+          opt.unshift(this.getAssigneeIconDrop({group: this.viewItem.group || this.viewItem.id}, uid => this.assignUser(uid)))
         return opt
       }
     },

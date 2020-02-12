@@ -369,6 +369,9 @@ export default {
       const c = list && list.calendar
       return c && c.lastCompleteDate
     },
+    viewItem() {
+      return this.viewList
+    },
     getPieProgress() {
       const list = this.viewList
       if (list && !this.isViewListSomeday)
