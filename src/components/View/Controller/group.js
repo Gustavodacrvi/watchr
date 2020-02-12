@@ -146,6 +146,9 @@ export default {
     removeListHandlerWhenThereArentLists() {
       return true
     },
+    viewItem() {
+      return this.viewGroup
+    },
     extraListView() {
       const gro = this.viewGroup
       const save = obj => {

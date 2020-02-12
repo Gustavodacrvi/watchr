@@ -2,6 +2,7 @@
   <div class="Heading"
     :name='header.name'
     :id='header.id'
+    :class="platform"
   >
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
@@ -125,12 +126,14 @@ export default {
       s.transitionDuration = 0
       s.opacity = 0
       s.height = 0
+      s.overflow = 'hidden'
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         s.opacity = 1
         s.height = this.renderHeight
         setTimeout(() => {
+          s.overflow = 'visible'
           s.height = 'auto'
           done()
         }, 255)
@@ -142,6 +145,7 @@ export default {
 
       s.transitionDuration = 0
       s.opacity = 1
+      s.overflow = 'hidden'
       s.height = this.renderHeight
 
       requestAnimationFrame(() => {
@@ -258,7 +262,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktop', 'platform']),
     bigName() {
       const m = this.getMom
 
@@ -341,6 +345,10 @@ export default {
   margin-top: 50px;
 }
 
+.Heading.mobile + .Heading {
+  margin-top: 25px;
+}
+
 .Heading:hover {
   z-index: 2;
 }
@@ -373,7 +381,6 @@ export default {
 .cont {
   position: relative;
   z-index: 49;
-  overflow: hidden;
 }
 
 .icon {

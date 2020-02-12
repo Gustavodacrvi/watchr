@@ -53,6 +53,9 @@ export default {
         },
       })
     },
+    assignItem() {
+      this.$store.commit('pushIconDrop', this.assignUserProfiles)
+    },
     bindMainSelection() {
       if (this.isDesktop)
         if (this.isItemMainSelection)
@@ -344,12 +347,26 @@ export default {
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
+
+      savedGroups: state => state.group.groups,
+      userInfo: state => state.userInfo,
+      user: state => state.user,
     }),
     ...mapGetters({
       isDesktop: 'isDesktop',
 
       nonReadCommentsById: 'group/nonReadCommentsById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
     }),
+    isGroupOwner() {
+      return (this.itemGroup && this.itemGroup.userId === this.userInfo.userId)
+    },
+    assignUserProfiles() {
+      return this.getAssigneeIconDrop(this.item, uid => this.assignUser(uid))
+    },
+    itemGroup() {
+      return this.savedGroups.find(f => f.id === this.item.group)
+    },
     nonReadComments() {
       return this.nonReadCommentsById(this.item.group, this.item.id).length
     },

@@ -1,7 +1,7 @@
 
 const computed = [
   'icon', 'showEmptyHeadings', 'updateHeadingIds', 'headingEditOptions', 'savedSchedule', 'headerOptions', 'getViewNotes', 'getPieProgress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackItem', 'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'mainFallbackItem', 'showHeading', 'itemCompletionCompareDate',
-  'headerInfo', 'headingsPagination', 'saveHeaderContent', 'configFilterOptions', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent', 'showHeadadingFloatingButton', 'extraListView', 'removeListHandlerWhenThereArentLists',
+  'headerInfo', 'headingsPagination', 'saveHeaderContent', 'configFilterOptions', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent', 'showHeadadingFloatingButton', 'extraListView', 'removeListHandlerWhenThereArentLists', 'viewItem',
   'removeHeaderTag', 'saveHeaderName', 'disableSortableMount',
 ]
 

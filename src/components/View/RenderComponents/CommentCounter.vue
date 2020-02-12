@@ -3,30 +3,67 @@
     class="CommentCounter"
     :class="{number}"
   >
-    <transition name="num-t">
-      <div v-if="hover || number"
-        class="wrapper"
-      >
-        <Icon
-          icon='comment'
-          width='26px'
-        />
-        <transition name="num-t">
-          <span v-if="number" class="num">{{number}}</span>
-        </transition>
-      </div>
-    </transition>
+    <div
+      class="wrapper"
+      :class="{show}"
+    >
+      <Icon v-if="isOwner"
+        class="plus icon"
+        icon='plus'
+        width='26px'
+        @click.native.stop="$emit('assign')"
+      />
+      <Icon
+        class="icon"
+        icon='comment'
+        width='26px'
+        @click.native.stop="$emit('comment')"
+      />
+      <transition name="num-t">
+        <span v-if="number" class="num">{{number}}</span>
+      </transition>
+    </div>
+    <div v-if="!show && assigned" class="icon-wrapper">
+      <AssigneeProfilePhoto
+        :assigned='assigned'
+        :owner='group.userId'
+        :userPhoto='userPhoto'
+      />
+    </div>
   </div>
 </template>
 
 <script>
 
 import Icon from "@/components/Icon.vue"
+import AssigneeProfilePhoto from "./AssigneeProfilePhoto.vue"
+
+import { mapState } from 'vuex'
 
 export default {
-  props: ['number', 'hover'],
+  props: ['number', 'isOwner', 'hover', 'assigned', 'groupId'],
   components: {
     Icon,
+    AssigneeProfilePhoto,
+  },
+  computed: {
+    ...mapState({
+      uid: state => state.user.uid,
+
+      groups: state => state.group.groups,
+    }),
+    group() {
+      return this.groups.find(el => el.id === this.groupId)
+    },
+    profileUsers() {
+      return this.group.profiles
+    },
+    userPhoto() {
+      return this.profileUsers[this.assigned].photoURL
+    },
+    show() {
+      return this.hover || this.number
+    },
   },
 }
 
@@ -36,7 +73,7 @@ export default {
 
 .CommentCounter {
   position: absolute;
-  right: calc(100% + 2px);
+  right: calc(100% + 4px);
   height: 100%;
   display: flex;
   color: var(--fade);
@@ -46,11 +83,15 @@ export default {
 }
 
 .number {
-  right: calc(100% + 21px);
+  right: calc(100% + 16px);
   color: var(--txt) !important;
 }
 
-.CommentCounter:hover {
+.icon {
+  transition: .2s right, .2s color, .15s transform;
+}
+
+.icon:hover {
   transform: scale(1.1,1.1);
   cursor: pointer;
   color: var(--txt) !important;
@@ -59,6 +100,20 @@ export default {
 .wrapper {
   position: relative;
   top: 4px;
+  opacity: 0;
+  transform: translateY(5px);
+  transition-duration: .25s;
+}
+
+.photo {
+  transform: translateY(2.5px);
+  opacity: .6;
+}
+
+.plus {
+  position: absolute;
+  right: 34px;
+  top: -1px;
 }
 
 .num {
@@ -67,16 +122,16 @@ export default {
   bottom: 0;
 }
 
-.num-t-enter, .num-t-leave-to {
-  opacity: 0;
-  transform: translateY(5px);
-  transition-duration: .25s;
-}
-
-.num-t-leave, .num-t-enter-to {
+.show {
   opacity: 1;
   transform: translateY(0px);
   transition-duration: .25s;
+}
+
+.icon-wrapper {
+  position: absolute;
+  right: 0;
+  transform: translateY(1.5px);
 }
 
 </style>

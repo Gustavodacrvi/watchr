@@ -1,5 +1,6 @@
+
 .showCont {
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
 .header {
@@ -37,20 +38,40 @@
   height: 100%;
 }
 
+.arrow-wrapper-wrapper {
+  position: absolute;
+  right: -35px;
+}
+
+.arrow-wrapper {
+  position: relative;
+  width: 2px;
+  height: 2px;
+}
+
 .arrow {
   position: absolute;
+  left: 50%;
   top: 50%;
-  right: 8px;
-  transition-duration: .2s;
-  transform: translateY(-50%) rotate(-90deg);
+  transition: transform .2s;
+  transform: translate(-50%,-50%) rotate(-90deg);
 }
 
 .arrow.showCont {
-  top: 55%;
-  transform: translateY(-50%) rotate(0deg);
+  position: absolute;
+  transform: translate(-50%,-50%)  rotate(0deg);
 }
 
 .name-wrapper {
+  display: flex;
+  align-items: center;
+  flex-basis: 100%;
+  flex-grow: 0;
+}
+
+.info {
+  flex-basis: 65px;
+  height: 100%;
   display: flex;
   align-items: center;
 }

@@ -74,6 +74,7 @@ export default {
   data() {
     return {
       scheduleObject: null,
+      order: [],
     }
   },
   created() {
@@ -82,7 +83,7 @@ export default {
   methods: {
     onAddExistingItem(index, lazyItems, fallbackItem, callback) {
       this.$store.dispatch('pushPopup', {
-        comp: 'FastSearch',
+        comp: 'FastSearch', 
         payload: {
           callback: (route, task) => {
             lazyItems.splice(index, 0, task)
@@ -416,7 +417,10 @@ export default {
               [head.listType ? 'list' : 'task']: obj.item,
               [head.listType ? 'newListRef' : 'newTaskRef']: obj.newItemRef,
             }
-            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => head.onAddItem(newObj))
+            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => {
+              this.order = newObj.ids.slice()
+              head.onAddItem(newObj)
+            })
           },
           progress: head.progress ? head.progress() : undefined,
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
@@ -454,7 +458,7 @@ export default {
       }
     },
     sortTasksFunction() {
-      const order = this.tasksOrder
+      const order = this.order
       return tasks => this.checkMissingIdsAndSortArr(order || [], tasks)
     },
 
@@ -546,6 +550,9 @@ export default {
     },
     rootNonFiltered() {
       this.$emit('root-non-filtered', this.rootNonFiltered)
+    },
+    tasksOrder() {
+      this.order = this.tasksOrder.slice()
     },
     autoSchedule: {
       handler() {

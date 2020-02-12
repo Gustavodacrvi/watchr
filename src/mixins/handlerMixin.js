@@ -3,6 +3,9 @@ export default {
   mounted() {
     this.emitIds()
   },
+  beforeDestroy() {
+    this.$emit('items-ids', [])
+  },
   methods: {
     go(...args) {
       this.$emit('go', ...args)

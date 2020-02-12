@@ -16,9 +16,15 @@
         />
       </transition>
       <CommentCounter v-if="item.group && isDesktop && !isEditing"
+        ref="comment-counter"
         :hover='onHover'
         :number='nonReadComments'
-        @click.native="commentsPopup"
+        :isOwner='isGroupOwner'
+        :assigned='item.assigned'
+        :groupId='item.group'
+        @assign="assignItem"
+        @comment="commentsPopup"
+        @mouseenter.native='onHover = true'
       />
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
@@ -108,6 +114,15 @@
                       width="12px"
                       :progress='checklistPieProgress'
                     />
+                    <span v-if="!isDesktop && nonReadComments" class="comment-icon">
+                      <Icon
+                        icon='comment'
+                        width="14px"
+                      />
+                      <span class="comm-num">
+                        {{nonReadComments}}
+                      </span>
+                    </span>
                     <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
                     <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="14px"/>
                     <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
@@ -272,6 +287,9 @@ export default {
     taskLeave(el, done) {
       this.doneTransition = false
       const back = this.$refs['back']
+      let cn = this.$refs['comment-counter']
+      if (cn)
+        cn = cn.$el.style
       if (back) back.style.display = 'none'
       const s = this.$refs['cont-wrapper'].style
       let l
@@ -282,6 +300,10 @@ export default {
       }
       
       s.opacity = 1
+      if (cn) {
+        cn.transitionDuration = '0s'
+        cn.opacity = 1
+      }
       s.transitionDuration = '0s'
       if (this.completeAnimation) {
         l.transitionDuration = '0s'
@@ -294,6 +316,10 @@ export default {
       s.minHeight = this.itemHeight + 'px'
 
       const hideTask = () => {
+        if (cn) {
+          cn.transitionDuration = '.25s'
+          cn.opacity = 0
+        }
         s.transitionDuration = '.25s'
         s.opacity = 0
         s.height = 0
@@ -327,6 +353,9 @@ export default {
       this.doneTransition = false
       if (cont) {
         const s = cont.style
+        let cn = this.$refs['comment-counter']
+        if (cn)
+          cn = cn.$el.style
 
         setTimeout(() => {
           this.doneTransition = true
@@ -337,8 +366,16 @@ export default {
           s.opacity = 0
           s.height = 0
           s.minHeight = 0
+          if (cn) {
+            cn.transitionDuration = '0s'
+            cn.opacity = 0
+          }
           
           requestAnimationFrame(() => {
+            if (cn) {
+              cn.transitionDuration = '.25s'
+              cn.opacity = 1
+            }
             s.transitionDuration = '.25s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
@@ -390,6 +427,11 @@ export default {
         task: {calendar},
       })
     },
+    assignUser(uid) {
+      this.saveTaskContent({
+        assigned: uid,
+      })
+    },
     saveDate(date) {
       this.$store.dispatch('task/saveTask', {
         id: this.item.id,
@@ -405,11 +447,6 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      userInfo: state => state.userInfo,
-
-      savedGroups: state => state.group.groups,
-    }),
     ...mapGetters({
       isDesktop: 'isDesktop',
       platform: 'platform',
@@ -434,23 +471,44 @@ export default {
           },
         },
         {
+          type: 'optionsList',
           name: 'Deadline',
-          icon: 'deadline',
-          callback: () => ({
-            comp: 'CalendarPicker',
-            content: {
-              onlyDates: true,
-              noTime: true,
-              allowNull: true,
-              callback: ({specific}) => {this.saveTaskContent({
-                deadline: specific,
-              })}
-            }
-          })
+          options: [
+            {
+              icon: 'star',
+              id: 'd',
+              callback: () => this.saveTaskContent({deadline: mom().format('Y-M-D')}),
+            },
+            {
+              icon: 'sun',
+              id: 'çljk',
+              callback: () => this.saveTaskContent({deadline: mom().add(1, 'day').format('Y-M-D')}),
+            },
+            {
+              icon: 'calendar',
+              id: 'çljkasdf',
+              callback: () => ({
+                comp: 'CalendarPicker',
+                content: {
+                  onlyDates: true,
+                  noTime: true,
+                  allowNull: true,
+                  callback: ({specific}) => {this.saveTaskContent({
+                    deadline: specific,
+                  })}
+                }
+              })
+            },
+            {
+              icon: 'bloqued',
+              id: 'asdf',
+              callback: () => this.saveTaskContent({deadline: null}),
+            },
+          ]
         },
         {
           type: 'optionsList',
-          name: 'Schedule',
+          name: 'Defer',
           options: [
             {
               icon: 'star',
@@ -550,6 +608,15 @@ export default {
             callback: () => dispatch('task/deleteTasks', [this.item.id])
           },
       ]
+      if (this.item.group) {
+        arr.splice(1, 0, {
+          name: 'Add comments',
+          icon: 'comment',
+          callback: this.commentsPopup,
+        })
+        if (this.isGroupOwner)
+          arr.splice(2, 0, this.assignUserProfiles)
+      }
       return arr
     },
     completedItem() {
@@ -682,13 +749,10 @@ export default {
       if (!fold || (fold.name === this.viewName)) return null
       return fold.name
     },
-    taskGroup() {
-      return this.savedGroups.find(f => f.id === this.item.group)
-    },
     groupStr() {
       const group = this.item.group
       if (!group || this.hideGroupName) return null
-      const fold = this.taskGroup
+      const fold = this.itemGroup
       if (!fold || (fold.name === this.viewName)) return null
       if (this.taskList && this.viewName === this.taskList.name) return null
       return fold.name
@@ -791,6 +855,14 @@ export default {
   overflow: hidden;
 }
 
+.comment-icon {
+  margin-left: 10px;
+  position: relative;
+}
+
+.comm-num {
+  font-size: .8em;
+}
 
 .cont-wrapper.mobile {
   min-height: 50px;

@@ -39,6 +39,12 @@
         />
       </template>
     </transition-group>
+    <div v-if="folder && items.length === 0"
+      class="add-item-message rb"
+      @click.stop='addEdit(0)'
+    >
+      Add item
+    </div>
   </div>
 </template>
 
@@ -327,4 +333,22 @@ export default {
   pointer-events: all;
 }
 
+.add-item-message {
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--light-sidebar-color);
+  transition-duration: .2s;
+  cursor: pointer;
+  transform: scale(1,1);
+}
+
+.add-item-message:hover {
+  background-color: var(--dark);
+}
+
+.add-item-message:active {
+  transform: scale(.95,.95);
+}
 </style>
