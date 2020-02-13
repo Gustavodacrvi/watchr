@@ -125,9 +125,9 @@ export default {
             firebase.auth().currentUser.delete()
             toastErr(err)
           })
-          this.$store.dispatch('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')
+          this.$store.dispatch('closePopup')
         }).catch(err => toastErr(err))
       } else this.upgradeAccountWithEmailAndPassword()
     },
@@ -136,7 +136,6 @@ export default {
       firebase.auth().currentUser.linkWithPopup(provider).then(res => {
         this.$store.dispatch('update', res.user).then(el => {
           this.$store.dispatch('closePopup')
-          window.location.reload()
         })
       }).catch(err => {
         this.$store.commit('pushToast', {
@@ -151,7 +150,8 @@ export default {
       firebase.auth().currentUser.linkWithCredential(provider).then(res => {
         this.$store.dispatch('update', res.user).then(el => {
           res.user.sendEmailVerification()
-          window.location.reload()
+          this.$store.dispatch('closePopup')
+
         }).catch(err => {
           this.$store.dispatch('pushToast', {
             name: err.message,

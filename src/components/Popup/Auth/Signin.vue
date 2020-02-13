@@ -74,10 +74,9 @@ export default {
               type: 'warning',
               seconds: 4,
             })
-          this.$store.dispatch('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push("/user")
-          window.location.reload()
+          this.$store.dispatch('closePopup')
         }).catch(err => {
           toast({
             name: err.message,
