@@ -16,7 +16,6 @@
       :class="{dontHaveItems: lazyItems.length === 0, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       :style="inflate"
       ref='item-renderer-root'
-      @click="rootClick"
 
       data-name='item-renderer'
     >
@@ -94,7 +93,7 @@
         </span>
       </div>
     </div>
-    <div v-if="isDesktop && !hasEdit"
+    <div v-if="isDesktop && !hasEdit && !moving"
       class="add-item-wrapper"
       :style="{top: `${nonEditGetItems.length * 35}px`}"
     >
@@ -126,7 +125,6 @@
       :isRootAddingHeadings='isAddingHeadings'
       :getItemFirestoreRef='getItemFirestoreRef'
       :showHeadingFloatingButton='showHeadingFloatingButton'
-      :movingButton='movingButton'
       :justAddedHeading='justAddedHeading'
       :updateHeadingIds='updateHeadingIds'
       :itemPlaceholder='itemPlaceholder'
@@ -169,7 +167,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton',  'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
@@ -199,7 +197,6 @@ export default {
       lastHeadingName: null,
       lastButtonElement: null,
       editMoveType: 'add',
-      compHeight: 0,
       headingsItemsIds: [],
 
       isAboutToMoveBetweenSortables: false,
@@ -221,7 +218,6 @@ export default {
       this.addEditComp(0)
       this.$emit('added-heading-complete-mount')
     }
-    this.getCompHeight()
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
     window.addEventListener('touchmove', this.mousemove)
@@ -242,10 +238,6 @@ export default {
     }
   },
   methods: {
-    rootClick() {
-      if (this.lazyItems.length === 0)
-        this.addEditComp(0)
-    },
     waitForAnotherTaskCompleteAnimation(hideTaskFunc) {
       this.completeAnimationStack.push(hideTaskFunc)
 
@@ -268,12 +260,6 @@ export default {
       else
         this.$emit('items-ids', this.allItemsIds)
     },
-    getCompHeight() {
-      const el = this.$refs['item-renderer-root']
-      const offsetTop = el.getBoundingClientRect().top
-      const height = document.documentElement.clientHeight
-      this.compHeight = (height - offsetTop - 300) + 'px'
-    },
     changeTime(args) {
       this.$emit('change-time', args)
     },
@@ -285,7 +271,7 @@ export default {
       this.$emit('go', bool)
     },
     mousemove(evt) {
-      if (this.movingButton) {
+      if (this.moving) {
         const addHeadingElement = document.querySelector('.ListRenderer .action-heading') || {}
         const createElement = document.querySelector('.ListRenderer .create') || {}
         const addElement = document.querySelector('.ListRenderer .add') || {}
@@ -954,6 +940,8 @@ export default {
       pressingKey: state => state.pressingKey,
       mainSelection: state => state.mainSelection,
       toggleClipboardPaste: state => state.toggleClipboardPaste,
+
+      moving: state => state.moving,
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
@@ -1029,10 +1017,8 @@ export default {
     },
     inflate() {
       if (!(this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
-        return {}
-      return this.isRoot ? {
-        minHeight: this.compHeight,
-      } : {
+        return null
+      return {
         minHeight: '700px',
       }
     },

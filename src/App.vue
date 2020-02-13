@@ -13,12 +13,11 @@
     </transition>
 
     <div class="content">
-      <transition name="nav-trans" mode="out-in">
+      <transition name="nav-trans">
         <NavBar v-if='(!hideNavbar || !allowNavHide)'
           :route='route'
         />
       </transition>
-      <div v-if="isDesktop && hideNavbar" style="height: 65px;"></div>
       <transition name="fade-t" appear mode="out-in">
           <router-view class="router-view" :class="{hided: hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
         />
@@ -147,16 +146,16 @@ export default {
       this.timeBeforeMouseMove = 0
       
       const y = evt.pageY
-      if (y && y < 10) {
+      if (y && y < 15) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = false
-        }, 50)
+        }, 150)
       } else if (y) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = true
-        }, 100)
+        }, 200)
       }
     },
     updateViewType(saveRoute) {
@@ -223,7 +222,7 @@ export default {
       if (!this.user || isAnonymous) return false
       if (!this.route || (!this.isDesktop && this.appRoute)) return true
       const isNotOnUser = this.$route.path !== '/user'
-      if (!this.user || this.needsUpdate || !this.isStandAlone() || !this.isDesktop || isAnonymous || isNotOnUser) return false
+      if (!this.user || this.needsUpdate || !this.isDesktop || isAnonymous || isNotOnUser) return false
       return this.hided
     },
     isMenuOpened() {
@@ -288,16 +287,16 @@ export default {
 .router-view {
   position: relative;
   top: 0;
-  transition: top .15s;
+  transition-duration: .3s;
 }
 
 .hided {
-  top: -22px !important;
+  top: 46px !important;
 }
 
 .menu {
   transform: translateX(-100%);
-  transition: transform .2s;
+  transition: transform .3s;
   transition-timing-function: ease-in;
 }
 
@@ -308,14 +307,14 @@ export default {
 
 .nav-trans-enter, .nav-trans-leave-to {
   opacity: 0;
-  transform: translateY(-25px);
-  transition: opacity .15s ease-out, transform .15s ease-out;
+  height: 0;
+  transition: opacity .3s ease-out, height .3s ease-out;
 }
 
 .nav-trans-leave, .nav-trans-enter-to {
   opacity: 1;
-  transform: translateY(0px);
-  transition: opacity .15s ease-in, transform .15s ease-in;
+  height: 65px;
+  transition: opacity .3s ease-in, height .3s ease-in;
 }
 
 </style>

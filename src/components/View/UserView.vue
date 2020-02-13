@@ -189,6 +189,7 @@ export default {
 
 .nav {
   position: fixed;
+  transition-duration: .2s !important;
   left: 0;
   z-index: 4;
 }

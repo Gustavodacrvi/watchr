@@ -58,7 +58,7 @@ export default {
   ],
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
-    'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
+    'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
     'selectEverythingToggle', 'getCalendarOrderDate',
     'width',

@@ -39,7 +39,7 @@
         />
       </template>
     </transition-group>
-    <div v-if="isDesktop && !hasEdit && !isSmart"
+    <div v-if="isDesktop && !hasEdit && !isSmart && !moving"
       class="add-item-wrapper"
       :style="{top: `${nonEditGetItems.length * 35}px`}"
     >
@@ -283,7 +283,11 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedItems', 'movingTask']),
+    ...mapState({
+      selectedItems: state => state.selectedItems,
+      movingTask: state => state.movingTask,
+      moving: state => state.moving,
+    }),
     ...mapGetters(['isDesktop']),
     nonEditGetItems() {
       return this.items.filter(el => !el.isEdit)
