@@ -117,6 +117,7 @@
       :scheduleObject='scheduleObject'
       :disableSortableMount='disableSortableMount'
       :onAddExistingItem='onAddExistingItem'
+      :isRootAddingHeadings='isAddingHeadings'
       :getItemFirestoreRef='getItemFirestoreRef'
       :showHeadingFloatingButton='showHeadingFloatingButton'
       :movingButton='movingButton'
@@ -162,7 +163,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton',  'addedHeading', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton',  'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
@@ -198,6 +199,7 @@ export default {
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
       justAddedHeading: false,
+      isAddingHeadings: false,
 
       completeAnimationStack: [],
       completeAnimationSettimeout: null,
@@ -723,6 +725,7 @@ export default {
     },
     slowlyAddHeadings(headings) {
       return new Promise(solve => {
+        this.isAddingHeadings = true
         this.lazyHeadings = []
         let i = 0
         const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.items && h.items.length > 0)
@@ -739,11 +742,17 @@ export default {
               const h = headinsgWithItems[i]
               if (h) add(h)
             }, timeout))
-          else solve()
+          else {
+            this.isAddingHeadings = false
+            solve()
+          }
         }
         const h = headinsgWithItems[0]
         if (h) add(h)
-        else solve()
+        else {
+          this.isAddingHeadings = false 
+          solve()
+        }
       })
     },
     addHeading(name, ...args) {
@@ -1010,7 +1019,8 @@ export default {
         return this.pressingSelectKeys
     },
     inflate() {
-      if (!((this.isRoot && this.comp === 'Task' && this.getHeadings.length === 0) || this.isLast) || this.showIllustration) return null
+      if (!(this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
+        return {}
       return this.isRoot ? {
         minHeight: this.compHeight,
       } : {
@@ -1221,10 +1231,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  transform: scale(1,1);
 }
 
 .dontHaveItems:hover + .add-item {
   height: 35px;
+  transform: scale(.95,.95);
   transition-delay: 0s;
   opacity: 1;
 }

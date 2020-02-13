@@ -39,7 +39,7 @@
         />
       </template>
     </transition-group>
-    <div v-if="folder && items.length === 0"
+    <div v-if="items.length === 0"
       class="add-item-message rb"
       @click.stop='addEdit(0)'
     >

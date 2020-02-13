@@ -51,8 +51,7 @@ export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday', 'width',
-  'removeListHandlerWhenThereArentLists', 'selectEverythingToggle'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday', 'width', 'removeListHandlerWhenThereArentLists', 'selectEverythingToggle'],
   components: {
     ListRendererVue,
   },
