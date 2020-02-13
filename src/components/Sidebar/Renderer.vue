@@ -39,11 +39,16 @@
         />
       </template>
     </transition-group>
-    <div v-if="items.length === 0"
-      class="add-item-message rb"
-      @click.stop='addEdit(0)'
+    <div v-if="isDesktop && !hasEdit && !isSmart"
+      class="add-item-wrapper"
+      :style="{top: `${nonEditGetItems.length * 35}px`}"
     >
-      Add item
+      <div
+        class="add-item rb"
+        @click.stop="addEdit(nonEditGetItems.length)"
+      >
+        Add item
+      </div>
     </div>
   </div>
 </template>
@@ -280,6 +285,9 @@ export default {
   computed: {
     ...mapState(['selectedItems', 'movingTask']),
     ...mapGetters(['isDesktop']),
+    nonEditGetItems() {
+      return this.items.filter(el => !el.isEdit)
+    },
     draggableRoot() {
       return this.$el.getElementsByClassName('sidebar-renderer-root')[0]
     },
@@ -333,22 +341,33 @@ export default {
   pointer-events: all;
 }
 
-.add-item-message {
+.add-item-wrapper {
   height: 35px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+}
+
+.add-item {
+  background-color: var(--back-color);
+  height: 0;
+  opacity: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--light-sidebar-color);
   transition-duration: .2s;
-  cursor: pointer;
   transform: scale(1,1);
 }
 
-.add-item-message:hover {
-  background-color: var(--dark);
+.add-item-wrapper:hover .add-item {
+  height: 35px;
+  opacity: 1;
+  cursor: pointer;
 }
 
-.add-item-message:active {
+.add-item-wrapper:active .add-item {
   transform: scale(.95,.95);
 }
+
 </style>

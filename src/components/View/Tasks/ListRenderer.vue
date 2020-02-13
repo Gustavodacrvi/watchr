@@ -94,10 +94,16 @@
         </span>
       </div>
     </div>
-    <div
-      class="add-item rb"
+    <div v-if="isDesktop && !hasEdit"
+      class="add-item-wrapper"
+      :style="{top: `${nonEditGetItems.length * 35}px`}"
     >
-      Add item
+      <div
+        class="add-item rb"
+        @click="addEditComp(nonEditGetItems.length)"
+      >
+        Add item
+      </div>
     </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
       :viewName='viewName'
@@ -972,6 +978,9 @@ export default {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyItems
       return this.showingMoreItems ? this.lazyItems : this.lazyItems.slice(0, this.hasEdit ? 4 : 3)
     },
+    nonEditGetItems() {
+      return this.getItems.filter(el => !el.isEdit)
+    },
     nonEditLazyTasks() {
       return this.lazyItems.filter(el => !el.isEdit)
     },
@@ -1220,29 +1229,33 @@ export default {
   background-color: var(--back-color);
 }
 
+.add-item-wrapper {
+  height: 35px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+}
+
 .add-item {
   background-color: var(--sidebar-color);
   height: 0;
   opacity: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  transition-duration: .2s;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition-duration: .2s;
   transform: scale(1,1);
 }
 
-.dontHaveItems:hover + .add-item {
+.add-item-wrapper:hover .add-item {
   height: 35px;
-  transform: scale(.95,.95);
-  transition-delay: 0s;
   opacity: 1;
+  cursor: pointer;
 }
 
-.dontHaveItems:hover {
-  cursor: pointer;
+.add-item-wrapper:active .add-item {
+  transform: scale(.95,.95);
 }
 
 .dontHaveItems {
