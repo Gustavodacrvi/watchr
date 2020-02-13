@@ -147,16 +147,16 @@ export default {
       this.timeBeforeMouseMove = 0
       
       const y = evt.pageY
-      if (y && y < 60) {
+      if (y && y < 10) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = false
-        }, 250)
+        }, 50)
       } else if (y) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = true
-        }, 300)
+        }, 100)
       }
     },
     updateViewType(saveRoute) {
@@ -170,7 +170,7 @@ export default {
       let firstNav = false
 
       if (
-        (this.isStandAlone && !this.initialSmartViewRender) || 
+        (this.isStandAlone() && !this.initialSmartViewRender) || 
         (path === '/user' && atLeastOneUndefined)
       ) {
         firstNav = true
@@ -195,10 +195,15 @@ export default {
         })
       }
     },
+    isStandAlone() {
+      const navigator = window.navigator
+      return (navigator.standalone === true)
+      || (window.matchMedia('(display-mode: standalone)').matches)
+    },
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos']),
-    ...mapGetters(['isDesktop', 'isStandAlone', 'getInitialSmartView', 'needsUpdate']),
+    ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate']),
     isReady() {
       return this.$store.state.googleCalendarReady
     },
@@ -218,7 +223,7 @@ export default {
       if (!this.user || isAnonymous) return false
       if (!this.route || (!this.isDesktop && this.appRoute)) return true
       const isNotOnUser = this.$route.path !== '/user'
-      if (!this.user || this.needsUpdate || !this.isStandAlone || !this.isDesktop || isAnonymous || isNotOnUser) return false
+      if (!this.user || this.needsUpdate || !this.isStandAlone() || !this.isDesktop || isAnonymous || isNotOnUser) return false
       return this.hided
     },
     isMenuOpened() {
@@ -231,7 +236,7 @@ export default {
       return this.$route.fullPath
     },
     hidePassive() {
-      return this.timeBeforeMouseMove > 4 && this.isStandAlone && this.isDesktop
+      return this.timeBeforeMouseMove > 4 && this.isStandAlone() && this.isDesktop
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null

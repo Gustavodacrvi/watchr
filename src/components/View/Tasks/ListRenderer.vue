@@ -1,7 +1,13 @@
 <template>
   <div class="ListRenderer floating-btn-container" :class='[platform, `${comp}-ListRenderer`, {isHeading: !isRoot}]' @click='click'>
     <transition name="illus-trans" appear>
-      <div v-if="showIllustration" class="illustration">
+      <div v-if="showIllustration"
+        class="illustration"
+        :style="{
+          width: `calc(100% - ${width}px)`,
+          left: width + 'px',
+        }"
+      >
         <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
       </div>
     </transition>
@@ -10,6 +16,7 @@
       :class="{dontHaveItems: lazyItems.length === 0, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       :style="inflate"
       ref='item-renderer-root'
+      @click="rootClick"
 
       data-name='item-renderer'
     >
@@ -87,6 +94,11 @@
         </span>
       </div>
     </div>
+    <div
+      class="add-item rb"
+    >
+      Add item
+    </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
       :viewName='viewName'
       :viewType='viewType'
@@ -150,7 +162,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton',  'addedHeading', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton',  'addedHeading', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
@@ -222,6 +234,10 @@ export default {
     }
   },
   methods: {
+    rootClick() {
+      if (this.lazyItems.length === 0)
+        this.addEditComp(0)
+    },
     waitForAnotherTaskCompleteAnimation(hideTaskFunc) {
       this.completeAnimationStack.push(hideTaskFunc)
 
@@ -1107,12 +1123,11 @@ export default {
 <style scoped>
 
 .illustration {
-  position: absolute;
-  top: 0;
+  position: fixed;
   height: 100%;
   min-height: 100%;
-  width: 100%;
   display: flex;
+  top: 0;
   justify-content: center;
   align-items: center;
   transition-duration: .15s;
@@ -1123,7 +1138,7 @@ export default {
 }
 
 .mobile .illustration {
-  width: 100%;
+  width: 100% !important;
 }
 
 .front {
@@ -1132,6 +1147,7 @@ export default {
 }
 
 .ListRenderer {
+  position: relative;
   margin-top: 16px;
 }
 
@@ -1194,8 +1210,31 @@ export default {
   background-color: var(--back-color);
 }
 
+.add-item {
+  background-color: var(--sidebar-color);
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  transition-duration: .2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dontHaveItems:hover + .add-item {
+  height: 35px;
+  transition-delay: 0s;
+  opacity: 1;
+}
+
+.dontHaveItems:hover {
+  cursor: pointer;
+}
+
 .dontHaveItems {
-  min-height: 15px;
+  min-height: 35px;
 }
 
 .isRootAndHaveItems {
