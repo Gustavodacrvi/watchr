@@ -222,7 +222,7 @@ export default {
       if (!this.user || isAnonymous) return false
       if (!this.route || (!this.isDesktop && this.appRoute)) return true
       const isNotOnUser = this.$route.path !== '/user'
-      if (!this.user || this.needsUpdate || !this.isDesktop || isAnonymous || isNotOnUser) return false
+      if (!this.user || this.needsUpdate || this.isStandAlone() || !this.isDesktop || isAnonymous || isNotOnUser) return false
       return this.hided
     },
     isMenuOpened() {

@@ -138,7 +138,7 @@ export default {
         Pomodoro: 'pomo',
         Statistics: 'pie',
         Upcoming: 'calendar',
-        Completed: 'circle-check',
+        Completed: 'logbook',
         "Later lists": 'later-lists',
       }
       return obj[this.viewName]

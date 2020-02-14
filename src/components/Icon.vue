@@ -86,6 +86,7 @@ import envelope from '@/assets/icons/envelope.svg'
 import search from '@/assets/icons/search.svg'
 import note from '@/assets/icons/note.svg'
 import archive from '@/assets/icons/archive.svg'
+import logbook from '@/assets/icons/logbook.svg'
 import importIcon from '@/assets/icons/import.svg'
 import exportIcon from '@/assets/icons/export.svg'
 import users from '@/assets/icons/users.svg'
@@ -139,7 +140,7 @@ export default {
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
         pomo, pie, check, group, message, crown,
-        comment,
+        comment, logbook,
         "later-lists": laterLists,
         "paper-plane": paperPlane,
         "box-close": boxClose,

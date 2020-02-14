@@ -249,7 +249,7 @@ export default {
           case 'Statistics': return 'pie'
           case 'Upcoming': return 'calendar'
           case 'Anytime': return 'layer-group'
-          case 'Completed': return 'circle-check'
+          case 'Completed': return 'logbook'
           case 'Someday': return 'archive'
         }
       }

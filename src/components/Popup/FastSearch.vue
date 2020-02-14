@@ -241,7 +241,7 @@ export default {
         },
         {
           name: 'Completed',
-          icon: 'circle-check',
+          icon: 'logbook',
           color: 'var(--olive)'
         },
         {
