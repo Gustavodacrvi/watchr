@@ -138,7 +138,7 @@ export default {
         Pomodoro: 'pomo',
         Statistics: 'pie',
         Upcoming: 'calendar',
-        Completed: 'logbook',
+        Logbook: 'logbook',
         "Later lists": 'later-lists',
       }
       return obj[this.viewName]
@@ -156,7 +156,7 @@ export default {
           Pomodoro: 'var(--dark-red)',
           Statistics: 'var(--primary)',
           Upcoming: 'var(--green)',
-          Completed: 'var(--olive)',
+          Logbook: 'var(--olive)',
         }
         const color = obj[this.viewName]
         if (!color) return 'var(--primary)'

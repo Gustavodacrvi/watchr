@@ -146,7 +146,7 @@ export default {
       this.timeBeforeMouseMove = 0
       
       const y = evt.pageY
-      if (y && y < 15) {
+      if (y && y < (!this.hideNavbar ? 65 : 15)) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = false
@@ -169,7 +169,7 @@ export default {
       let firstNav = false
 
       if (
-        (this.isStandAlone() && !this.initialSmartViewRender) || 
+        (!this.initialSmartViewRender) || 
         (path === '/user' && atLeastOneUndefined)
       ) {
         firstNav = true
@@ -194,11 +194,6 @@ export default {
         })
       }
     },
-    isStandAlone() {
-      const navigator = window.navigator
-      return (navigator.standalone === true)
-      || (window.matchMedia('(display-mode: standalone)').matches)
-    },
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos']),
@@ -222,7 +217,7 @@ export default {
       if (!this.user || isAnonymous) return false
       if (!this.route || (!this.isDesktop && this.appRoute)) return true
       const isNotOnUser = this.$route.path !== '/user'
-      if (!this.user || this.needsUpdate || this.isStandAlone() || !this.isDesktop || isAnonymous || isNotOnUser) return false
+      if (!this.user || this.needsUpdate || !this.isDesktop || isAnonymous || isNotOnUser) return false
       return this.hided
     },
     isMenuOpened() {
@@ -235,7 +230,7 @@ export default {
       return this.$route.fullPath
     },
     hidePassive() {
-      return this.timeBeforeMouseMove > 4 && this.isStandAlone() && this.isDesktop
+      return this.timeBeforeMouseMove > 4 && this.isDesktop
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null

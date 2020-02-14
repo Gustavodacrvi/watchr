@@ -211,7 +211,7 @@ export default {
       this.$store.dispatch('list/updateOrder', ids)
     },
     getListProgress(list) {
-      return this.$store.getters['list/pieProgress'](this.tasks, list.id, task => this.isTaskInView(task, "Completed"))
+      return this.$store.getters['list/pieProgress'](this.tasks, list.id, task => this.isTaskInView(task, "Logbook"))
     },
     getListIcon(list) {
       const arr = []

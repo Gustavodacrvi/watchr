@@ -283,6 +283,7 @@ export default {
       folders: 'folder/folders',
       tags: 'tag/tags',
       storeTasks: 'task/tasks',
+      logTasks: 'task/logTasks',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskCanceled: 'task/isTaskCanceled',
@@ -319,8 +320,11 @@ export default {
       return headings.map(head => {
         
         const nonFiltered = !head.directFiltering ?
-          head.sort(mainTasks.filter(task => head.filter(task)))
+          head.sort(
+            (!head.log ? mainTasks : this.logTasks).filter(task => head.filter(task))
+          )
           : head.sort((!head.listType ? this.storeTasks : this.lists).filter(item => head.filter(item)))
+        
 
         if (head.react)
           for (const p of head.react) nonFiltered[p]

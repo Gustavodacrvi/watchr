@@ -214,7 +214,7 @@ export default {
           return heads
         }
         case 'Logbook': {
-          return this.completedHeadingsOptions
+          return this.logbookHeadings
         }
       }
       return []

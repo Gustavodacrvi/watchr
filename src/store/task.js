@@ -20,9 +20,23 @@ export default {
     groupTasks: {},
   },
   getters: {
+    logTasks(state) {
+      const keys = Object.keys(state.tasks).filter(
+        k => state.tasks[k] && state.tasks[k].logbook
+      )
+      const groupKeys = Object.keys(state.groupTasks).filter(
+        k => state.tasks[k] && state.tasks[k].logbook
+      )
+      
+      return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
+    },
     tasks(state) {
-      const keys = Object.keys(state.tasks).filter(k => state.tasks[k])
-      const groupKeys = Object.keys(state.groupTasks).filter(k => state.groupTasks[k])
+      const keys = Object.keys(state.tasks).filter(
+        k => state.tasks[k] && !state.tasks[k].logbook
+      )
+      const groupKeys = Object.keys(state.groupTasks).filter(
+        k => state.tasks[k] && !state.tasks[k].logbook
+      )
       
       return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
     },
@@ -198,9 +212,8 @@ export default {
         
           if (task.deadline && !task.checked && mom(task.deadline, 'Y-M-D').isBefore(getTod(), 'day')) return true
           
-          if (!calendar || getters.isTaskInView(task, "Completed")) return false
+          if (!calendar || getters.isTaskInView(task, "Logbook")) return false
           
-  
           const c = calendar
           if (c.type === 'specific') {
             const spec = mom(c.specific, 'Y-M-D')
@@ -321,16 +334,12 @@ export default {
           return JSON.stringify({t: args[0].completeDate, c: args[0].checkDate})
         }
       },
-      isTaskInCompletedView: {
-        getter({getters}, task) {
-          return getters.isTaskCompleted(task) || getters.isTaskCanceled(task)
+      isTaskInLogbookView: {
+        getter({}, task) {
+          return task.logbook
         },
         cache(args) {
-          return JSON.stringify({
-            t: args[0].calendar,
-            c: args[0].completed,
-            ca: args[0].canceled,
-          })
+          return args[0].logbook + ''
         },
       },
       getTaskDeadlineStr: {
@@ -365,7 +374,7 @@ export default {
             case 'Overdue': return getters.isTaskOverdue(task)
             case 'Anytime': return getters.isTaskAnytime(task)
             case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
-            case 'Logbook': return getters.isTaskInCompletedView(task)
+            case 'Logbook': return getters.isTaskInLogbookView(task)
           }
         },
         cache(args) {
@@ -470,8 +479,7 @@ export default {
       },
       isTaskInbox: {
         getter({}, task) {
-          return !task.completed && !task.checked &&
-          !task.group &&
+          return !task.group &&
           !utilsTask.hasCalendarBinding(task) &&
           !task.list &&
           !task.folder &&
@@ -702,7 +710,7 @@ export default {
           return {
             total: ts.length,
             notCompleted: ts.filter(
-              task => !getters.isTaskInView(task, "Completed")
+              task => !getters.isTaskInView(task, "Logbook")
             ).length,
           }
         },
@@ -781,7 +789,7 @@ export default {
           return {
             total: ts.length,
             notCompleted: ts.filter(
-              task => !getters.isTaskInView(task, "Completed")
+              task => !getters.isTaskInView(task, "Logbook")
             ).length,
           }
         },
@@ -988,6 +996,36 @@ export default {
   
         b.commit()
       }
+    },
+    async logTasks({rootState}, tasks) {
+      const b = fire.batch()
+
+      const writes = []
+
+      await batchSetTasks(b, {
+        logbook: true,
+        logFire: serverTimestamp(),
+        logDate: mom().format('Y-M-D HH:mm ss'),
+      }, tasks, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+      
+      b.commit()
+    },
+    async unlogTasks({rootState}, tasks) {
+      const b = fire.batch()
+
+      const writes = []
+
+      await batchSetTasks(b, {
+        logbook: false,
+        logFire: fd().delete(),
+        logDate: fd().delete(),
+      }, tasks, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+      
+      b.commit()
     },
     completeTasks({commit, rootState}, tasks) {
       const b = fire.batch()
@@ -1216,7 +1254,7 @@ export default {
           break
         }
         case 'Logbook': {
-          dispatch('completeTasks', getters.getTasksById(taskIds))
+          dispatch('logTasks', taskIds)
           break
         }
       }

@@ -129,11 +129,13 @@ export default {
         }, 10)
       },
       onStart: () => {
+        this.$store.commit('moving', true)
         this.isDragging = true
         this.$emit('is-moving', true)
         window.navigator.vibrate(100)
       },
       onEnd: () => {
+        this.$store.commit('moving', false)
         this.isDragging = false
         this.$emit('is-moving', false)
       },
