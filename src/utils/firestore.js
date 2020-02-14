@@ -583,7 +583,6 @@ export const addGroup = (batch, name, rootState) => {
 export const setList = (batch, list, id, rootState, writes) => {
 
   id = id ? id : utils.getUid()
-
   
   const groupLists = rootState.list.groupLists
   const individualLists = rootState.list.lists
@@ -752,7 +751,7 @@ export const setList = (batch, list, id, rootState, writes) => {
       console.log('LIST', 'Create and add list to personal/update')
 
       setPersonalList()
-
+      
       if (!writes)
         setPersonalCache()
       else if (writes.push)

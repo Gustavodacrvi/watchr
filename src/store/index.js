@@ -32,11 +32,11 @@ firebase.initializeApp({
 
 let snapshotsListeners = []
 
-const perf = firebase.performance()
-
 export const fire = firebase.firestore()
 export const auth = firebase.auth()
 export const sto = firebase.storage()
+
+fire.enablePersistence()
 
 import task from './task'
 import tag from './tag'
@@ -573,22 +573,6 @@ const store = new Vuex.Store({
     },
   }
 })
-
-fire.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED })
-
-fire.enablePersistence().then(() => enabled = true)
-.catch(err => {
-  if (err.code === 'failed-precondition') {
-    // handle error
-  }
-  else if (err.code === 'unimplemented')
-    store.commit('pushToast', {
-      name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
-      seconds: 8,
-      type: 'error',
-    })
-})
-
 
 store.commit('saveUser', null)
 

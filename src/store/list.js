@@ -589,9 +589,8 @@ export default {
       }
       if (index === undefined && folder === null) {
         setList(b, obj, undefined, rootState)
+        b.commit()
       }
-
-      b.commit()
     },
     completeLists({rootState}, lists) {
       const b = fire.batch()
