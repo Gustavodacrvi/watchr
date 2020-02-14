@@ -79,6 +79,7 @@
 
           :enableSort='true'
           :showColor='true'
+          :isSubElement='true'
           :list="subList"
           :onSortableAdd='onSubTagSortableAdd'
 
@@ -154,7 +155,7 @@ export default {
       s.opacity = 0
       requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
-        s.height = (this.subList.length * (this.isDesktop ? 35 : 42)) + 'px'
+        s.height = this.sublistHeight
         s.opacity = 1
         setTimeout(() => {
           s.height = 'auto'
@@ -166,7 +167,7 @@ export default {
     sublistLeave(el, done) {
       const s = el.style
       
-      s.height = (this.subList.length * (this.isDesktop ? 35 : 42)) + 'px'
+      s.height = this.sublistHeight
       requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
         s.height = '0px'
@@ -233,6 +234,9 @@ export default {
       getGroupsById: 'group/getGroupsById',
       getAssignedTasksByList: 'task/getAssignedTasksByList',
     }),
+    sublistHeight() {
+      return ((this.subList.length) * (this.isDesktop ? 35 : 42)) + 'px'
+    },
     hasSubList() {
       return this.subList && this.subList.length > 0
     },

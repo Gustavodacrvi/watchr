@@ -92,16 +92,15 @@
           Add heading
         </span>
       </div>
-    </div>
-    <div v-if="isDesktop && !hasEdit && !moving"
-      class="add-item-wrapper"
-      :style="{top: `${nonEditGetItems.length * 35}px`}"
-    >
-      <div
-        class="add-item rb"
-        @click="addEditComp(nonEditGetItems.length)"
+      <div v-if="isDesktop && !hasEdit && !moving && !disableFloatingButton"
+        class="add-item-wrapper"
       >
-        Add item
+        <div
+          class="add-item rb"
+          @click="addEditComp(nonEditGetItems.length)"
+        >
+          Add item
+        </div>
       </div>
     </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
@@ -167,7 +166,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
+  'disableFloatingButton', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
@@ -425,6 +425,7 @@ export default {
       let moveId = null
       let moveIsSmart = null
       let finalIds = []
+      let divs = []
       let lastToElement = null
       
       const obj = {
@@ -451,7 +452,7 @@ export default {
           put: (j,o,item) => {
             const d = item.dataset
             const type = d.type
-            if (type === 'headingbutton' || type === 'add-task-floatbutton') return true
+            if (type === 'headingbutton' || type === 'add-task-floatbutton') return !this.disableFloatingButton
             if (type === 'sidebar-element') return true
             if (!this.onSortableAdd) return false
             if (type === 'Task' && this.comp === "Task") return true
@@ -607,16 +608,20 @@ export default {
                   target = target.closest(`.${specialClass}`)
   
                 if (containsInfo(target)) {
-                  const d = target.dataset
-                  if (!lastToElement || lastToElement === evt.to || moveType === d.type || ((moveType === 'folder' && d.type === 'list') || (moveType === 'group' && d.type === 'list'))) {
+                  if (!divs.includes(target) && target)
+                    divs.push(target)
+
+                  if (divs[0]) {
+                    const d = divs[0].dataset
+                    
                     cancel = false
                     
                     moveType = d.type
                     moveId = d.id
                     moveIsSmart = d.smart
+  
+                    lastToElement = evt.to
                   }
-
-                  lastToElement = evt.to
                 }
               }
             }
@@ -652,6 +657,7 @@ export default {
         },
         onStart: evt => {
           cancel = true
+          divs = []
           lastToElement = null
           moveIsSmart = null
 
@@ -892,10 +898,12 @@ export default {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
         if (!isTyping && !this.isOnControl) {
-          if (key === 'a')
-            this.addEditComp(this.lazyItems.length)
-          else if (key === 'A')
-            this.addEditComp(0)
+          if (!this.disableFloatingButton) {
+            if (key === 'a')
+              this.addEditComp(this.lazyItems.length)
+            else if (key === 'A')
+              this.addEditComp(0)
+          }
           if (this.viewType === 'list' && !this.isSmart) {
             if (key === 'h')
               this.addHeadingsEdit(this.lazyItems.length)
@@ -1016,11 +1024,11 @@ export default {
         return this.pressingSelectKeys
     },
     inflate() {
-      if (!(this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
-        return null
-      return {
-        minHeight: '700px',
-      }
+      if ((this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
+        return {
+          minHeight: '700px',
+        }
+      return null
     },
     draggableRoot() {
       return this.$el.getElementsByClassName('item-renderer-root')[0]
@@ -1217,10 +1225,8 @@ export default {
 
 .add-item-wrapper {
   height: 35px;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 50;
+  position: relative;
+  z-index: 1000;
 }
 
 .add-item {
@@ -1238,6 +1244,7 @@ export default {
   height: 35px;
   opacity: 1;
   cursor: pointer;
+  outline: none;
 }
 
 .add-item-wrapper:active .add-item {

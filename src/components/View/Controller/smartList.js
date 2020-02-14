@@ -270,6 +270,10 @@ export default {
       if (n === 'Pomodoro') return 'Pomodoro'
       if (n === 'Statistics') return 'Statistics'
     },
+    disableFloatingButton() {
+      const n = this.viewName
+      return n === 'Upcoming' || n === 'Completed'
+    },
     savedSchedule() {
       const n = this.viewName
       if (!this.isCalendarOrderViewType) {

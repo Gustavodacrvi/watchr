@@ -38,7 +38,7 @@ export default {
 
 .SearchButton {
   height: 35px;
-  background-color: var(--card);
+  background-color: var(--dark);
   transition: background-color .15s;
   display: flex;
   align-items: center;
@@ -60,7 +60,7 @@ export default {
 }
 
 .SearchButton:hover {
-  background-color: var(--light-gray);
+  background-color: var(--card);
 }
 
 </style>

@@ -24,6 +24,7 @@
     :removeListHandlerWhenThereArentLists='removeListHandlerWhenThereArentLists'
 
     :mainFilter='mainFilter'
+    :disableFloatingButton='disableFloatingButton'
     :rootFilter='rootFilter'
     :tasksOrder='tasksOrder'
     :onSortableAdd='onSortableAdd'

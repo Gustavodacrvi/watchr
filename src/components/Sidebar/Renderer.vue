@@ -39,17 +39,21 @@
         />
       </template>
     </transition-group>
-    <div v-if="isDesktop && !hasEdit && !isSmart && !moving"
-      class="add-item-wrapper"
-      :style="{top: `${nonEditGetItems.length * 35}px`}"
+    <transition
+      appear
+      name='item-wrapper'
     >
-      <div
-        class="add-item rb"
-        @click.stop="addEdit(nonEditGetItems.length)"
+      <div v-if="!isSubElement && isDesktop && !hasEdit && !isSmart && !moving"
+        class="add-item-wrapper"
       >
-        Add item
+        <div
+          class="add-item rb"
+          @click.stop="addEdit(nonEditGetItems.length)"
+        >
+          Add item
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -71,7 +75,7 @@ export default {
     SidebarElement: SidebarElementVue,
     ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem', 'isSubElement'],
   data() {
     return {
       sortable: null,
@@ -347,8 +351,6 @@ export default {
 
 .add-item-wrapper {
   height: 35px;
-  position: absolute;
-  top: 0;
   width: 100%;
   z-index: 50;
 }
@@ -364,10 +366,21 @@ export default {
   transform: scale(1,1);
 }
 
+.item-wrapper-enter, .item-wrapper-leave-to {
+  height: 0;
+  transition-duration: .2s;
+}
+
+.item-wrapper-leave, .item-wrapper-enter-to {
+  height: 35px;
+  transition-duration: .2s;
+}
+
 .add-item-wrapper:hover .add-item {
   height: 35px;
   opacity: 1;
   cursor: pointer;
+  outline: none;
 }
 
 .add-item-wrapper:active .add-item {

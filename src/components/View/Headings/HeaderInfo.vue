@@ -16,7 +16,7 @@
         class="icon faded"
         :icon="icon"
         :title='title'
-        :width='icon === "file" ? "18px" : undefined'
+        :width='icon === "file" ? "19px" : undefined'
       />
       <span v-show="content || right">
         <transition
