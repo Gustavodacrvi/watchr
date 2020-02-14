@@ -115,6 +115,7 @@ export default {
       lists: 'list/lists',
       folders: 'folder/folders',
       tags: 'tag/tags',
+      logTasks: 'task/logTasks',
       tasks: 'task/tasks',
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
@@ -767,13 +768,15 @@ export default {
       
       return arr
     },
-    completedHeadingsOptions() {
+    logbookHeadings() {
       const arr = []
-      const filtered = this.tasks.filter(task => this.isTaskInView(task, 'Completed'))
+      const filtered = this.logTasks
+
       const set = new Set()
+    
       for (const t of filtered)
-        if (!set.has(t.checkDate || t.completeDate))
-          set.add(t.checkDate || t.completeDate)
+        if (!set.has(t.logDate))
+          set.add(t.logDate)
       const dates = Array.from(set)
       dates.sort((a, b) => {
         const ta = mom(a, 'Y-M-D')
@@ -786,17 +789,21 @@ export default {
       })
 
       for (const date of dates) {
-        const filterFunction = pipeBooleanFilters(
-          task => this.hasTaskBeenCompletedOnDate(task, date),
-        )
+        const filterFunction = t => t.logDate === date
 
         const dispatch = this.$store.dispatch
         arr.push({
           dateType: true,
           disableSortableMount: true,
           name: date,
-          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullCheckDate'), 
+          log: true,
+          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate'), 
           options: tasks => [
+            {
+              name: 'Remove from logbook',
+              icon: 'logbook',
+              callback: () => dispatch('task/unlogTasks', tasks.map(el => el.id)),
+            },
             {
               name: 'Uncomplete tasks',
               icon: 'circle',
@@ -1122,7 +1129,7 @@ export default {
     },
     notHeadingHeaderView() {
       const n = this.viewName
-      return n !== 'Upcoming' && n !== 'Completed'
+      return n !== 'Upcoming' && n !== 'Logbook'
     },
     isListType() {
       return !this.isSmart && this.viewList && this.viewType === 'list'

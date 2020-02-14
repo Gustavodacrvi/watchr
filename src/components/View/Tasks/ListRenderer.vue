@@ -92,7 +92,7 @@
           Add heading
         </span>
       </div>
-      <div v-if="isDesktop && !hasEdit && !moving && !disableFloatingButton"
+      <div v-if="isDesktop && !hasEdit && !moving && !disableFloatingButton && !disableSortableMount"
         class="add-item-wrapper"
       >
         <div
@@ -427,6 +427,8 @@ export default {
       let finalIds = []
       let divs = []
       let lastToElement = null
+
+      const onMove = () => divs = []
       
       const obj = {
         disabled: this.disableSortableMount,
@@ -608,20 +610,17 @@ export default {
                   target = target.closest(`.${specialClass}`)
   
                 if (containsInfo(target)) {
-                  if (!divs.includes(target) && target)
-                    divs.push(target)
+                  divs.push(target)
+                  
+                  const d = divs[0].dataset
+                  
+                  cancel = false
+                  
+                  moveType = d.type
+                  moveId = d.id
+                  moveIsSmart = d.smart
 
-                  if (divs[0]) {
-                    const d = divs[0].dataset
-                    
-                    cancel = false
-                    
-                    moveType = d.type
-                    moveId = d.id
-                    moveIsSmart = d.smart
-  
-                    lastToElement = evt.to
-                  }
+                  lastToElement = evt.to
                 }
               }
             }
@@ -634,6 +633,11 @@ export default {
           }
         },
         onEnd: evt => {
+          this.$store.commit('moving', false)
+          
+          if (this.isDesktop)
+            window.removeEventListener('mousemove', onMove)
+          
           if (!cancel) {
             const handle = obj => this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', obj)
 
@@ -656,6 +660,11 @@ export default {
           }
         },
         onStart: evt => {
+          this.$store.commit('moving', true)
+          
+          if (this.isDesktop)
+            window.addEventListener('mousemove', onMove)
+          
           cancel = true
           divs = []
           lastToElement = null
@@ -1226,7 +1235,6 @@ export default {
 .add-item-wrapper {
   height: 35px;
   position: relative;
-  z-index: 1000;
 }
 
 .add-item {

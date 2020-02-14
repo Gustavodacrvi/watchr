@@ -91,7 +91,7 @@ export default {
       return this.payload.allowed.find(s => s === str)
     },
     getOptions() {
-      const { search, tasks, tags, lists, folders, views } = this
+      const { search, tasks, tags, lists, folders, views, groups } = this
       if (!search) return []
       const lower = search.toLowerCase()
       const arr = []
@@ -100,6 +100,7 @@ export default {
 
       const tg = filter(tags)
       const lt = filter(lists)
+      const gr = filter(groups)
       const ts = filter(tasks)
       const fs = filter(folders)
       const vs = filter(views)
@@ -123,6 +124,14 @@ export default {
             id: t.id,
             color: 'var(--red)',
             callback: () => go('/user?tag=' + t.name, t)
+          })
+      if (a('gr'))
+        for (const g of gr)
+          arr.push({
+            name: g.name,
+            icon: 'group',
+            id: g.id,
+            callback: () => go('/user?group=' + g.name, g)
           })
       if (a('folders'))
         for (const f of fs)
@@ -182,6 +191,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      groups: state => state.group.groups,
+    }),
     ...mapGetters({
       lists: 'list/lists',
       tags: 'tag/tags',
@@ -240,8 +252,8 @@ export default {
           color: 'var(--purple)'
         },
         {
-          name: 'Completed',
-          icon: 'circle-check',
+          name: 'Logbook',
+          icon: 'logbook',
           color: 'var(--olive)'
         },
         {

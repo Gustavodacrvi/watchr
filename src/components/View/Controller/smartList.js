@@ -86,7 +86,7 @@ export default {
     onSortableAdd() {
       const n = this.viewName
 
-      if (n === 'Upcoming' || n === 'Completed' || n === 'Later lists')
+      if (n === 'Upcoming' || n === 'Logbook' || n === 'Later lists')
         return null
       
       return (evt, taskIds, type, ids) => {
@@ -106,7 +106,7 @@ export default {
     
     updateHeadingIds() {
       const n = this.viewName
-      if (n === 'Upcoming' || n === 'Completed' || n === 'Later lists')
+      if (n === 'Upcoming' || n === 'Logbook' || n === 'Later lists')
         return null
       
       if (this.isSmartOrderViewType)
@@ -146,7 +146,7 @@ export default {
                          this.isTaskInView(task, 'Today')
         return task => this.isTaskInView(task, n)
       }
-      return task => this.isTaskInView(task, 'Completed')
+      return task => this.isTaskInView(task, 'Logbook')
     },
     rootFilter() {
       const n = this.viewName
@@ -163,7 +163,7 @@ export default {
       return () => false
     },
     configFilterOptions() {
-      if (this.viewName === 'Completed')
+      if (this.viewName === 'Logbook')
         return pipe => pipe !== 'pipeCanceled' && pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
       return null
     },
@@ -179,7 +179,7 @@ export default {
     },
 
     headingsPagination() {
-      if (this.viewName !== 'Completed') return null
+      if (this.viewName !== 'Logbook') return null
       return 7
     },
     showEmptyHeadings() {
@@ -213,8 +213,8 @@ export default {
         case 'Calendar': {
           return heads
         }
-        case 'Completed': {
-          return this.completedHeadingsOptions
+        case 'Logbook': {
+          return this.logbookHeadings
         }
       }
       return []
@@ -249,13 +249,10 @@ export default {
           case 'Statistics': return 'pie'
           case 'Upcoming': return 'calendar'
           case 'Anytime': return 'layer-group'
-          case 'Completed': return 'circle-check'
+          case 'Logbook': return 'logbook'
           case 'Someday': return 'archive'
         }
       }
-    },
-    getPieProgress() {
-      return undefined
     },
     smartComponent() {
       if (this.viewName === 'Calendar')
@@ -272,7 +269,7 @@ export default {
     },
     disableFloatingButton() {
       const n = this.viewName
-      return n === 'Upcoming' || n === 'Completed'
+      return n === 'Upcoming' || n === 'Logbook'
     },
     savedSchedule() {
       const n = this.viewName

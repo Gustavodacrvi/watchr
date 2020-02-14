@@ -208,8 +208,8 @@ export default {
             iconColor: 'var(--purple)'
           },
           {
-            name: 'Completed',
-            icon: 'circle-check',
+            name: 'Logbook',
+            icon: 'logbook',
             iconColor: 'var(--olive)'
           },
           {
@@ -389,7 +389,7 @@ export default {
     },
     mapProgress(link) {
       if (link.type === 'list')
-        return this.$store.getters['list/pieProgress'](this.tasks, link.id, task => this.isTaskInView(task, "Completed"))
+        return this.$store.getters['list/pieProgress'](this.tasks, link.id, task => this.isTaskInView(task, "Logbook"))
       return null
     },
     mapFavorites(link) {
@@ -532,7 +532,7 @@ export default {
       if (this.userInfo && this.userInfo.links) {
         return this.userInfo.links
       }
-      return ['Today', 'Tomorrow', 'Inbox', 'Upcoming', 'Anytime', 'Someday', 'Pomodoro', 'Calendar', 'Completed', 'Completed']
+      return ['Today', 'Tomorrow', 'Inbox', 'Upcoming', 'Anytime', 'Someday', 'Pomodoro', 'Calendar', 'Logbook']
     },
     getLinksOrdered() {
       return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.nonHidedLinks)

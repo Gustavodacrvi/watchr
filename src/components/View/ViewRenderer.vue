@@ -1096,6 +1096,12 @@ export default {
           }
         })
       }
+
+      const logItems = () => {
+        if (this.shortcutsType === "Task") {
+          this.$store.dispatch('task/logTasks', ids)
+        }
+      }
       
       if (ids.length === 0) {
         let opt = [
@@ -1199,6 +1205,11 @@ export default {
         return opt
       } else {
         const opt = [
+          {
+            name: 'Move to logbook',
+            icon: 'logbook',
+            callback: () => logItems()
+          },
           {
             name: 'Move to list',
             icon: 'tasks',

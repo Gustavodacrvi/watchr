@@ -195,8 +195,8 @@ export default {
           color: 'var(--purple)'
         },
         {
-          name: 'Completed',
-          icon: 'circle-check',
+          name: 'Logbook',
+          icon: 'logbook',
           color: 'var(--olive)'
         },
         {
