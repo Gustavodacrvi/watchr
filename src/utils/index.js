@@ -260,9 +260,11 @@ export default {
           .replace(/\{(.*?)(?: ([^\]]*))?\}/g, "<span style='color: $1'>$2</span>")
   },
   addIdsToObjectFromKeys(obj) {
-    for (const k in obj)
-      if (obj.hasOwnProperty(k))
-        obj[k] = {...obj[k], id: k}
+    if (obj)
+      for (const k in obj)
+        if (obj.hasOwnProperty(k) && obj[k])
+          obj[k] = {...obj[k], id: k}
+    return obj
   },
   getUserProfileData(user) {
     return {
@@ -276,6 +278,8 @@ export default {
     const target = state[objName]
     const targetKeys = Object.keys(target)
     const sourceKeys = Object.keys(source)
+
+    this.addIdsToObjectFromKeys(source)
 
     for (const k of sourceKeys)
       if (!target[k])

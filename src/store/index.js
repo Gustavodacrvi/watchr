@@ -52,7 +52,7 @@ import { userRef, cacheRef, setInfo } from "../utils/firestore"
 
 const uid = () => auth.currentUser.uid
 
-const version = '092'
+const version = '093'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -482,14 +482,14 @@ const store = new Vuex.Store({
                   const el = state.group.groups.find(el => el.id === newGroup.id)
                   if (!el) {
                     state.group.groups.push(newGroup)
-                    state.task.groupTasks = {
+                    state.task.groupTasks = utils.addIdsToObjectFromKeys({
                       ...state.task.groupTasks,
                       ...newGroup.tasks,
-                    }
-                    state.list.groupLists = {
+                    })
+                    state.list.groupLists = utils.addIdsToObjectFromKeys({
                       ...state.list.groupLists,
                       ...newGroup.lists,
-                    }
+                    })
                   }
                 } else if (change.type === 'removed') {
                   const index = state.group.groups.findIndex(el => el.id === newGroup.id)
@@ -501,12 +501,12 @@ const store = new Vuex.Store({
                   for (const k of keys)
                     if (state.task.groupTasks[k] && state.task.groupTasks[k].group === newGroup.id)
                       state.task.groupTasks[k] = undefined
-                  state.task.groupTasks = {...state.task.groupTasks}
+                  state.task.groupTasks = utils.addIdsToObjectFromKeys({...state.task.groupTasks})
                   keys = Object.keys(state.list.groupLists)
                   for (const k of keys)
                     if (state.list.groupLists[k] && state.list.groupLists[k].group === newGroup.id)
                       state.list.groupLists[k] = undefined
-                  state.list.groupLists = {...state.list.groupLists}
+                  state.list.groupLists = utils.addIdsToObjectFromKeys({...state.list.groupLists})
                 } else {
                   const i = state.group.groups.findIndex(el => el.id === newGroup.id)
           
@@ -553,6 +553,12 @@ const store = new Vuex.Store({
       b.set(ref.collection('cache').doc('cache'), {
         userId: user.uid,
         id: 'cache',
+        lists: {dummy: null},
+        folders: {dummy: null},
+        stats: {dummy: null},
+        tasks: {dummy: null},
+        tags: {dummy: null},
+        info: {dummy: null},
       }, {merge: true})
       
       return b.commit()
@@ -567,6 +573,12 @@ const store = new Vuex.Store({
       b.set(ref.collection('cache').doc('cache'), {
         id: 'cache',
         userId: userId,
+        lists: {dummy: null},
+        folders: {dummy: null},
+        stats: {dummy: null},
+        tasks: {dummy: null},
+        tags: {dummy: null},
+        info: {dummy: null},
       })
 
       return b.commit()

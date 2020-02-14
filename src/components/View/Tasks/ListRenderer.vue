@@ -83,16 +83,7 @@
         :value='showMoreItemsMessage'
         @click="showingMoreItems = true"
       />
-      <div v-if="isDesktop && viewType === 'list' && !isSmart"
-        class="heading-add"
-        @click.stop="addHeadingsEdit(lazyItems.length)"
-      >
-        <span class="heading-add-line"></span>
-        <span class="heading-add-message">
-          Add heading
-        </span>
-      </div>
-      <div v-if="isDesktop && !hasEdit && !moving && !disableFloatingButton && !disableSortableMount"
+      <div v-if="showAddItemButton"
         class="add-item-wrapper"
       >
         <div
@@ -101,6 +92,15 @@
         >
           Add item
         </div>
+      </div>
+      <div v-if="isDesktop && viewType === 'list' && !isSmart"
+        class="heading-add"
+        @click.stop="addHeadingsEdit(lazyItems.length)"
+      >
+        <span class="heading-add-line"></span>
+        <span class="heading-add-message">
+          Add heading
+        </span>
       </div>
     </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
@@ -968,6 +968,9 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    showAddItemButton() {
+      return this.isDesktop && !this.hasEdit && !this.moving && !this.disableFloatingButton && !this.disableSortableMount
+    },
     allItemsIds() {
       if (!this.isRoot)
         return this.getItems.map(el => el.id)

@@ -39,21 +39,6 @@
         />
       </template>
     </transition-group>
-    <transition
-      appear
-      name='item-wrapper'
-    >
-      <div v-if="!isSubElement && isDesktop && !hasEdit && !isSmart && !moving"
-        class="add-item-wrapper"
-      >
-        <div
-          class="add-item rb"
-          @click.stop="addEdit(nonEditGetItems.length)"
-        >
-          Add item
-        </div>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -349,44 +334,6 @@ export default {
 .Renderer {
   position: relative;
   pointer-events: all;
-}
-
-.add-item-wrapper {
-  height: 35px;
-  width: 100%;
-  z-index: 50;
-}
-
-.add-item {
-  background-color: var(--back-color);
-  height: 0;
-  opacity: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition-duration: .2s;
-  transform: scale(1,1);
-}
-
-.item-wrapper-enter, .item-wrapper-leave-to {
-  height: 0;
-  transition-duration: .2s;
-}
-
-.item-wrapper-leave, .item-wrapper-enter-to {
-  height: 35px;
-  transition-duration: .2s;
-}
-
-.add-item-wrapper:hover .add-item {
-  height: 35px;
-  opacity: 1;
-  cursor: pointer;
-  outline: none;
-}
-
-.add-item-wrapper:active .add-item {
-  transform: scale(.95,.95);
 }
 
 </style>

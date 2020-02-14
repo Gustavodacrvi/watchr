@@ -578,7 +578,13 @@ export const addGroup = (batch, name, rootState) => {
 
   batch.set(ref, groupObj, {merge: true})
   batch.set(infoRef, infoObj, {merge: true})
-  batch.set(cacheRef, infoObj, {merge: true})
+  batch.set(cacheRef, {
+    ...infoObj,
+    lists: {dummy: null},
+    smartViewsOrders: {dummy: null},
+    tasks: {dummy: null},
+    comments: {dummy: null},
+  }, {merge: true})
 }
 export const setList = (batch, list, id, rootState, writes) => {
 
@@ -836,7 +842,7 @@ export const deleteTag = (batch, id, rootState, writes) => {
 export const deleteList = (batch, id, rootState, writes) => {
   const groupLists = rootState.list.groupLists
   const sharedList = groupLists[id]
-  
+
   const obj = {
     lists: {
       [id]: fd().delete(),

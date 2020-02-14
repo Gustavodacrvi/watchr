@@ -25,7 +25,7 @@ export default {
         k => state.tasks[k] && state.tasks[k].logbook
       )
       const groupKeys = Object.keys(state.groupTasks).filter(
-        k => state.tasks[k] && state.tasks[k].logbook
+        k => state.groupTasks[k] && state.groupTasks[k].logbook
       )
       
       return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
@@ -35,8 +35,10 @@ export default {
         k => state.tasks[k] && !state.tasks[k].logbook
       )
       const groupKeys = Object.keys(state.groupTasks).filter(
-        k => state.tasks[k] && !state.tasks[k].logbook
+        k => state.groupTasks[k] && !state.groupTasks[k].logbook
       )
+
+      console.log(state.groupTasks)
       
       return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
     },

@@ -71,7 +71,6 @@ export default {
             type: 'success',
             seconds: 2,
           })
-          this.$store.dispatch('closePopup')
         } else if (!tag && this.isEditing) {
           this.$store.dispatch('tag/saveTag', {
             name: this.name,
