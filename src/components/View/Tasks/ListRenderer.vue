@@ -1,7 +1,13 @@
 <template>
   <div class="ListRenderer floating-btn-container" :class='[platform, `${comp}-ListRenderer`, {isHeading: !isRoot}]' @click='click'>
     <transition name="illus-trans" appear>
-      <div v-if="showIllustration" class="illustration">
+      <div v-if="showIllustration"
+        class="illustration"
+        :style="{
+          width: `calc(100% - ${width}px)`,
+          left: width + 'px',
+        }"
+      >
         <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
       </div>
     </transition>
@@ -86,6 +92,16 @@
           Add heading
         </span>
       </div>
+      <div v-if="isDesktop && !hasEdit && !moving && !disableFloatingButton"
+        class="add-item-wrapper"
+      >
+        <div
+          class="add-item rb"
+          @click="addEditComp(nonEditGetItems.length)"
+        >
+          Add item
+        </div>
+      </div>
     </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
       :viewName='viewName'
@@ -105,9 +121,9 @@
       :scheduleObject='scheduleObject'
       :disableSortableMount='disableSortableMount'
       :onAddExistingItem='onAddExistingItem'
+      :isRootAddingHeadings='isAddingHeadings'
       :getItemFirestoreRef='getItemFirestoreRef'
       :showHeadingFloatingButton='showHeadingFloatingButton'
-      :movingButton='movingButton'
       :justAddedHeading='justAddedHeading'
       :updateHeadingIds='updateHeadingIds'
       :itemPlaceholder='itemPlaceholder'
@@ -150,7 +166,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton',  'addedHeading', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
+  'disableFloatingButton', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
@@ -180,12 +197,12 @@ export default {
       lastHeadingName: null,
       lastButtonElement: null,
       editMoveType: 'add',
-      compHeight: 0,
       headingsItemsIds: [],
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
       justAddedHeading: false,
+      isAddingHeadings: false,
 
       completeAnimationStack: [],
       completeAnimationSettimeout: null,
@@ -201,7 +218,6 @@ export default {
       this.addEditComp(0)
       this.$emit('added-heading-complete-mount')
     }
-    this.getCompHeight()
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
     window.addEventListener('touchmove', this.mousemove)
@@ -244,12 +260,6 @@ export default {
       else
         this.$emit('items-ids', this.allItemsIds)
     },
-    getCompHeight() {
-      const el = this.$refs['item-renderer-root']
-      const offsetTop = el.getBoundingClientRect().top
-      const height = document.documentElement.clientHeight
-      this.compHeight = (height - offsetTop - 300) + 'px'
-    },
     changeTime(args) {
       this.$emit('change-time', args)
     },
@@ -261,7 +271,7 @@ export default {
       this.$emit('go', bool)
     },
     mousemove(evt) {
-      if (this.movingButton) {
+      if (this.moving) {
         const addHeadingElement = document.querySelector('.ListRenderer .action-heading') || {}
         const createElement = document.querySelector('.ListRenderer .create') || {}
         const addElement = document.querySelector('.ListRenderer .add') || {}
@@ -415,6 +425,7 @@ export default {
       let moveId = null
       let moveIsSmart = null
       let finalIds = []
+      let divs = []
       let lastToElement = null
       
       const obj = {
@@ -441,7 +452,7 @@ export default {
           put: (j,o,item) => {
             const d = item.dataset
             const type = d.type
-            if (type === 'headingbutton' || type === 'add-task-floatbutton') return true
+            if (type === 'headingbutton' || type === 'add-task-floatbutton') return !this.disableFloatingButton
             if (type === 'sidebar-element') return true
             if (!this.onSortableAdd) return false
             if (type === 'Task' && this.comp === "Task") return true
@@ -597,16 +608,20 @@ export default {
                   target = target.closest(`.${specialClass}`)
   
                 if (containsInfo(target)) {
-                  const d = target.dataset
-                  if (!lastToElement || lastToElement === evt.to || moveType === d.type || ((moveType === 'folder' && d.type === 'list') || (moveType === 'group' && d.type === 'list'))) {
+                  if (!divs.includes(target) && target)
+                    divs.push(target)
+
+                  if (divs[0]) {
+                    const d = divs[0].dataset
+                    
                     cancel = false
                     
                     moveType = d.type
                     moveId = d.id
                     moveIsSmart = d.smart
+  
+                    lastToElement = evt.to
                   }
-
-                  lastToElement = evt.to
                 }
               }
             }
@@ -642,6 +657,7 @@ export default {
         },
         onStart: evt => {
           cancel = true
+          divs = []
           lastToElement = null
           moveIsSmart = null
 
@@ -707,6 +723,7 @@ export default {
     },
     slowlyAddHeadings(headings) {
       return new Promise(solve => {
+        this.isAddingHeadings = true
         this.lazyHeadings = []
         let i = 0
         const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.items && h.items.length > 0)
@@ -723,11 +740,17 @@ export default {
               const h = headinsgWithItems[i]
               if (h) add(h)
             }, timeout))
-          else solve()
+          else {
+            this.isAddingHeadings = false
+            solve()
+          }
         }
         const h = headinsgWithItems[0]
         if (h) add(h)
-        else solve()
+        else {
+          this.isAddingHeadings = false 
+          solve()
+        }
       })
     },
     addHeading(name, ...args) {
@@ -875,10 +898,12 @@ export default {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
         if (!isTyping && !this.isOnControl) {
-          if (key === 'a')
-            this.addEditComp(this.lazyItems.length)
-          else if (key === 'A')
-            this.addEditComp(0)
+          if (!this.disableFloatingButton) {
+            if (key === 'a')
+              this.addEditComp(this.lazyItems.length)
+            else if (key === 'A')
+              this.addEditComp(0)
+          }
           if (this.viewType === 'list' && !this.isSmart) {
             if (key === 'h')
               this.addHeadingsEdit(this.lazyItems.length)
@@ -923,6 +948,8 @@ export default {
       pressingKey: state => state.pressingKey,
       mainSelection: state => state.mainSelection,
       toggleClipboardPaste: state => state.toggleClipboardPaste,
+
+      moving: state => state.moving,
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
@@ -946,6 +973,9 @@ export default {
     getItems() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyItems
       return this.showingMoreItems ? this.lazyItems : this.lazyItems.slice(0, this.hasEdit ? 4 : 3)
+    },
+    nonEditGetItems() {
+      return this.getItems.filter(el => !el.isEdit)
     },
     nonEditLazyTasks() {
       return this.lazyItems.filter(el => !el.isEdit)
@@ -994,12 +1024,11 @@ export default {
         return this.pressingSelectKeys
     },
     inflate() {
-      if (!((this.isRoot && this.comp === 'Task' && this.getHeadings.length === 0) || this.isLast) || this.showIllustration) return null
-      return this.isRoot ? {
-        minHeight: this.compHeight,
-      } : {
-        minHeight: '700px',
-      }
+      if ((this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
+        return {
+          minHeight: '700px',
+        }
+      return null
     },
     draggableRoot() {
       return this.$el.getElementsByClassName('item-renderer-root')[0]
@@ -1107,12 +1136,11 @@ export default {
 <style scoped>
 
 .illustration {
-  position: absolute;
-  top: 0;
+  position: fixed;
   height: 100%;
   min-height: 100%;
-  width: 100%;
   display: flex;
+  top: 0;
   justify-content: center;
   align-items: center;
   transition-duration: .15s;
@@ -1123,7 +1151,7 @@ export default {
 }
 
 .mobile .illustration {
-  width: 100%;
+  width: 100% !important;
 }
 
 .front {
@@ -1132,6 +1160,7 @@ export default {
 }
 
 .ListRenderer {
+  position: relative;
   margin-top: 16px;
 }
 
@@ -1194,8 +1223,36 @@ export default {
   background-color: var(--back-color);
 }
 
+.add-item-wrapper {
+  height: 35px;
+  position: relative;
+  z-index: 1000;
+}
+
+.add-item {
+  background-color: var(--sidebar-color);
+  height: 0;
+  opacity: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition-duration: .2s;
+  transform: scale(1,1);
+}
+
+.add-item-wrapper:hover .add-item {
+  height: 35px;
+  opacity: 1;
+  cursor: pointer;
+  outline: none;
+}
+
+.add-item-wrapper:active .add-item {
+  transform: scale(.95,.95);
+}
+
 .dontHaveItems {
-  min-height: 15px;
+  min-height: 35px;
 }
 
 .isRootAndHaveItems {

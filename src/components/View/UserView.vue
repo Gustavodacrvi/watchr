@@ -12,7 +12,7 @@
     <div v-if="isDesktop"
       class="nav"
       :class="{pressingHandle}"
-      :style="[getNavTopPosition, {width: navWidth}]"
+      :style="[navObj, {width: navWidth}]"
     >
       <Sidebar class="Sidebar"
         :value="viewName"
@@ -28,6 +28,8 @@
     </div>
     <div class="cont" :class="[platform, {pressingHandle}]">
       <ViewControler
+        :width='width'
+      
         :isSmart="isSmart"
         :viewType='viewType'
         :viewName='viewName'
@@ -60,15 +62,17 @@ export default {
       handleStart: 0,
 
       interval: null,
+      navObj: {},
     }
   },
   created() {
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
 
-    this.interval = setInterval(() => {
-      this.getScrollTop()
-    }, 1500)
+    if (this.isDesktop)
+      this.interval = setInterval(() => {
+        this.getNavTopPosition()
+      }, 500)
 
     const savedWidth = localStorage.getItem('watchr_menu_width')
     if (savedWidth !== null)
@@ -101,30 +105,32 @@ export default {
     toggleSidebar() {
       this.sidebarHided = !this.sidebarHided
     },
+    getNavTopPosition() {
+      setTimeout(() => {
+        let increment = 0
+        if (this.hideNavbar) increment = 22
+        const app = document.getElementById('app')
+        const scroll = this.scrollTop + increment
+        if (app) {
+          const winHeight = app.offsetHeight
+          let top = (75 - scroll) + 'px'
+          let height = ((winHeight - 100) + scroll) + 'px'
+          if (scroll > 50) {
+            top = '30px'
+            height = (winHeight - 100 + 45) + 'px'
+          }
+  
+          this.navObj = {
+            top,
+            height,
+          }
+        }
+      })
+    },
   },
   computed: {
     ...mapState(['viewName', 'viewType']),
     ...mapGetters(['platform', 'isDesktop']),
-    getNavTopPosition() {
-      let increment = 0
-      if (this.hideNavbar) increment = 22
-      const app = document.getElementById('app')
-      const scroll = this.scrollTop + increment
-      if (app) {
-        const winHeight = app.offsetHeight
-        let top = (75 - scroll) + 'px'
-        let height = ((winHeight - 100) + scroll) + 'px'
-        if (scroll > 50) {
-          top = '30px'
-          height = (winHeight - 100 + 45) + 'px'
-        }
-
-        return {
-          top,
-          height,
-        }
-      }
-    },
     isSmart() {
       if (this.viewType === 'search') return true
       if (this.viewType !== 'list') return false
@@ -147,6 +153,14 @@ export default {
       return this.width + 'px'
     },
   },
+  watch: {
+    scrollTop() {
+      this.getNavTopPosition()
+    },
+    hideNavbar() {
+      this.getNavTopPosition()
+    },
+  }
 }
 
 </script>
@@ -175,6 +189,7 @@ export default {
 
 .nav {
   position: fixed;
+  transition-duration: .2s !important;
   left: 0;
   z-index: 4;
 }

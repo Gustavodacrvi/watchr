@@ -17,7 +17,7 @@
           <transition name="bar-trans">
           <div v-if="!isDesktop || showing" class="sidebar-content">
             <transition name="search-t">
-              <SearchButton v-if="showingSearch && isDesktop"
+              <SearchButton v-if="isDesktop"
                 @click="$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})"
                 @mouseenter="showSearch"
                 @mouseleave="hideSearch"

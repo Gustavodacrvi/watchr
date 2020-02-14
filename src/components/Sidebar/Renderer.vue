@@ -39,12 +39,21 @@
         />
       </template>
     </transition-group>
-    <div v-if="folder && items.length === 0"
-      class="add-item-message rb"
-      @click.stop='addEdit(0)'
+    <transition
+      appear
+      name='item-wrapper'
     >
-      Add item
-    </div>
+      <div v-if="!isSubElement && isDesktop && !hasEdit && !isSmart && !moving"
+        class="add-item-wrapper"
+      >
+        <div
+          class="add-item rb"
+          @click.stop="addEdit(nonEditGetItems.length)"
+        >
+          Add item
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -66,7 +75,7 @@ export default {
     SidebarElement: SidebarElementVue,
     ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem', 'isSubElement'],
   data() {
     return {
       sortable: null,
@@ -278,8 +287,15 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedItems', 'movingTask']),
+    ...mapState({
+      selectedItems: state => state.selectedItems,
+      movingTask: state => state.movingTask,
+      moving: state => state.moving,
+    }),
     ...mapGetters(['isDesktop']),
+    nonEditGetItems() {
+      return this.items.filter(el => !el.isEdit)
+    },
     draggableRoot() {
       return this.$el.getElementsByClassName('sidebar-renderer-root')[0]
     },
@@ -333,22 +349,42 @@ export default {
   pointer-events: all;
 }
 
-.add-item-message {
+.add-item-wrapper {
   height: 35px;
+  width: 100%;
+  z-index: 50;
+}
+
+.add-item {
+  background-color: var(--back-color);
+  height: 0;
+  opacity: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--light-sidebar-color);
   transition-duration: .2s;
-  cursor: pointer;
   transform: scale(1,1);
 }
 
-.add-item-message:hover {
-  background-color: var(--dark);
+.item-wrapper-enter, .item-wrapper-leave-to {
+  height: 0;
+  transition-duration: .2s;
 }
 
-.add-item-message:active {
+.item-wrapper-leave, .item-wrapper-enter-to {
+  height: 35px;
+  transition-duration: .2s;
+}
+
+.add-item-wrapper:hover .add-item {
+  height: 35px;
+  opacity: 1;
+  cursor: pointer;
+  outline: none;
+}
+
+.add-item-wrapper:active .add-item {
   transform: scale(.95,.95);
 }
+
 </style>

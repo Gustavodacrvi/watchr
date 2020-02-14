@@ -2,6 +2,8 @@
   <ViewRenderer
     v-bind="$props"
 
+    :width='width'
+
     :prefix='prefix'
     :viewName='viewName'
     :viewType='viewType'
@@ -22,6 +24,7 @@
     :removeListHandlerWhenThereArentLists='removeListHandlerWhenThereArentLists'
 
     :mainFilter='mainFilter'
+    :disableFloatingButton='disableFloatingButton'
     :rootFilter='rootFilter'
     :tasksOrder='tasksOrder'
     :onSortableAdd='onSortableAdd'
@@ -72,7 +75,7 @@ import mainMixin from './mixins/controler.js'
 
 export default {
   mixins: [...mixins, mainMixin],
-  props: ['isSmart', 'viewName', 'viewType'],
+  props: ['isSmart', 'viewName', 'viewType', 'width'],
   components: {
     ViewRenderer: ViewRendererVue,
   },

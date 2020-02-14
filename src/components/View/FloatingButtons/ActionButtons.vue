@@ -75,7 +75,7 @@ export default {
   },
   watch: {
     moving() {
-      this.$emit('moving', this.moving)
+      this.$store.commit('moving', this.moving)
     }
   }
 }

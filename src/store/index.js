@@ -30,6 +30,8 @@ firebase.initializeApp({
   measurementId: process.env.VUE_APP_MEASUREMENT_ID,
 })
 
+let snapshotsListeners = []
+
 const perf = firebase.performance()
 
 export const fire = firebase.firestore()
@@ -123,6 +125,7 @@ const store = new Vuex.Store({
     isOnControl: false,
     isOnShift: false,
     isOnAlt: false,
+    moving: false,
     pressingKey: null,
     historyPos: 0,
 
@@ -237,6 +240,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    moving(state, moving) {
+      state.moving = moving
+    },
     pasteTask(state) {
       state.toggleClipboardPaste = !state.toggleClipboardPaste
     },
@@ -356,9 +362,7 @@ const store = new Vuex.Store({
       
       auth.signOut().then(() => {
         state.authState = false
-        location.reload()
       })
-      fire.clearPersistence()
     },
     pushKeyShortcut({dispatch, commit, state}, key) {
       const pop = (comp) => {
@@ -413,7 +417,7 @@ const store = new Vuex.Store({
       b.commit()
     },
     getData({state, dispatch}, userId) {
-      cacheRef().onSnapshot(snap => {
+      snapshotsListeners.push(cacheRef().onSnapshot(snap => {
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
 
@@ -462,9 +466,9 @@ const store = new Vuex.Store({
           }
         }
         
-      })
+      }))
       if (userId)
-        fire.collectionGroup('groupCache')
+        snapshotsListeners.push(fire.collectionGroup('groupCache')
           .where(`users.${userId}`, '==', true)
           .onSnapshot(snap => {
             const isFromHere = snap.metadata.hasPendingWrites
@@ -513,22 +517,22 @@ const store = new Vuex.Store({
                 }
               })
             }
-          })
+          }))
       
       if (userId)
-        fire.collectionGroup('invites')
+        snapshotsListeners.push(fire.collectionGroup('invites')
           .where('to', '==', userId)
           .where('denied', '==', null)
           .onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state.invites, snap.docChanges(), 'toMe')
-          })
+          }))
 
       if (userId)
-        fire.collectionGroup('invites')
+        snapshotsListeners.push(fire.collectionGroup('invites')
           .where('userId', '==', userId)
           .onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state.invites, snap.docChanges(), 'fromMe')
-          })
+          }))
     },
     update({}, info) {
       const b = fire.batch()
@@ -590,6 +594,10 @@ store.commit('saveUser', null)
 
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
+  if (!isLogged) {
+    snapshotsListeners.forEach(u => u())
+    snapshotsListeners = []
+  }
 
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)

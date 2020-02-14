@@ -88,11 +88,12 @@ export default {
   flex-wrap: wrap;
   position: relative;
   margin: 0;
-  transition-duration: .15s;
+  transition-duration: .2s;
   z-index: 199;
 }
 
 .margins {
+  transition-duration: .2s;
   margin-top: 30px;
 }
 

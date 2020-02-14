@@ -42,7 +42,6 @@
       <component v-if="extraListView && defer(3)" :is='extraListView.comp'
         v-bind="{...$props, ...extraListView}"
 
-        :movingButton='movingButton'
         :showCompleted='showCompleted'
         :showSomeday='passSomedayTasks'
         :selectEverythingToggle='selectEverythingToggle'
@@ -61,7 +60,6 @@
           :headings="getHeadings"
           :updateHeadingIds='updateHeadingIds'
           :showHeadingFloatingButton='showHeadingFloatingButton'
-          :movingButton='movingButton'
           :showCompleted='showCompleted'
           :showSomeday='passSomedayTasks'
           :pipeFilterOptions='pipeFilterOptions'
@@ -92,7 +90,7 @@
     />
     <transition name="fade-t" mode="out-in">
       <ActionButtons
-        v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'
+        v-if="!getHelperComponent && isTaskHandler" key="buttons"
       />
       <HelperComponent v-else-if='getHelperComponent'
         :comp='getHelperComponent'
@@ -135,8 +133,10 @@ export default {
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
+  'width',
+
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
-  'headerOptions', 'headerInfo',
+  'headerOptions', 'headerInfo', 'disableFloatingButton',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'getCalendarOrderDate', 'viewItem',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
@@ -152,7 +152,6 @@ export default {
   },
   data() {
     return {
-      movingButton: false,
       pagination: 0,
       showingTagSelection: false,
       showingListSelection: false,

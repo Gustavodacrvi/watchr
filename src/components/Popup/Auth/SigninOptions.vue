@@ -39,7 +39,7 @@ export default {
 
       const credential = provider.credential(token)
 
-      firebase.auth().signInAndRetrieveDataWithCredential(credential).then(res => {
+      firebase.auth().signInWithCredential(credential).then(res => {
         const user = res.user
         const toast = (t) => this.$store.commit('pushToast', t)
         const dispatch = this.$store.dispatch
@@ -50,7 +50,6 @@ export default {
         })
         dispatch('createUser', user).then(() => {
           this.$router.push('/user')
-          window.location.reload()
           this.$store.dispatch('closePopup')
         }).catch(err => {
           firebase.auth().currentUser.delete()

@@ -42,6 +42,7 @@
           :editComp='h.editComp || editComp'
 
           :hideListName="h.hideListName"
+          :isRootAddingHeadings='isRootAddingHeadings'
           :hideGroupName="h.hideGroupName"
           :viewName='viewName'
           :viewType='viewType'
@@ -92,7 +93,7 @@ export default {
   },
   props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
   , 'scheduleObject', 'selectEverythingToggle', 'justAddedHeading',
-  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton', 'updateHeadingIds'],
+  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {
       sortable: null,
@@ -194,12 +195,12 @@ export default {
       s.borderBoddom = '0px solid var(--back-color)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
-        w.transitionDuration = '.2s'
+        s.transitionDuration = '.4s'
+        w.transitionDuration = '.4s'
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = this.isDesktop ? '50px': '25px'
+          w.marginTop = this.isDesktop ? '50px': '4px'
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
@@ -220,13 +221,13 @@ export default {
 
       if (c) {
         c = c.style
-        c.transitionDuration = '.2s'
+        c.transitionDuration = '.4s'
         c.height = 0
         c.overflow = 'hidden'
       }
 
-      s.transitionDuration = '.2s'
-      w.transitionDuration = '.2s'
+      s.transitionDuration = '.4s'
+      w.transitionDuration = '.4s'
       w.opacity = 0
       w.height = 0
       w.overflow = 'hidden'
