@@ -240,7 +240,7 @@ export default {
           color: 'var(--purple)'
         },
         {
-          name: 'Completed',
+          name: 'Logbook',
           icon: 'logbook',
           color: 'var(--olive)'
         },

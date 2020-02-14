@@ -769,7 +769,7 @@ export default {
     },
     completedHeadingsOptions() {
       const arr = []
-      const filtered = this.tasks.filter(task => this.isTaskInView(task, 'Completed'))
+      const filtered = this.tasks.filter(task => this.isTaskInView(task, 'Logbook'))
       const set = new Set()
       for (const t of filtered)
         if (!set.has(t.checkDate || t.completeDate))
@@ -1122,7 +1122,7 @@ export default {
     },
     notHeadingHeaderView() {
       const n = this.viewName
-      return n !== 'Upcoming' && n !== 'Completed'
+      return n !== 'Upcoming' && n !== 'Logbook'
     },
     isListType() {
       return !this.isSmart && this.viewList && this.viewType === 'list'

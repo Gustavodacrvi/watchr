@@ -769,7 +769,7 @@ export default {
     },
     showCheckDate() {
       const n = this.viewName
-      if (!(this.canceled || this.completed) || (!this.item.checkDate && !this.item.completeDate) || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
+      if (!(this.canceled || this.completed) || (!this.item.checkDate && !this.item.completeDate) || n === 'Logbook' || n === 'Logbook' || n === 'Canceled')
         return null
       return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate)
     },

@@ -329,7 +329,7 @@ export default {
       return this.listTasks.length
     },
     getListProgress() {
-      return this.$store.getters['list/pieProgress'](this.tasks, this.item.id, task => this.$store.getters['task/isTaskInList'](task, 'Completed'))
+      return this.$store.getters['list/pieProgress'](this.tasks, this.item.id, task => this.$store.getters['task/isTaskInList'](task, 'Logbook'))
     },
   },
   watch: {

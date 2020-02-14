@@ -144,7 +144,7 @@ export default {
         case 'Anytime': return true
         case 'Someday': return true
         case 'Tomorrow': return true
-        case 'Completed': return true
+        case 'Logbook': return true
         case 'Inbox': return true
       }
       return false

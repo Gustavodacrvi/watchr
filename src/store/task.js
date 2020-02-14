@@ -365,7 +365,7 @@ export default {
             case 'Overdue': return getters.isTaskOverdue(task)
             case 'Anytime': return getters.isTaskAnytime(task)
             case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
-            case 'Completed': return getters.isTaskInCompletedView(task)
+            case 'Logbook': return getters.isTaskInCompletedView(task)
           }
         },
         cache(args) {
@@ -427,7 +427,7 @@ export default {
               }
               break
             }
-            case 'Completed': {
+            case 'Logbook': {
               obj = {
                 cal: t.calendar,
                 deadline: t.deadline,
@@ -1215,7 +1215,7 @@ export default {
           })
           break
         }
-        case 'Completed': {
+        case 'Logbook': {
           dispatch('completeTasks', getters.getTasksById(taskIds))
           break
         }

@@ -208,7 +208,7 @@ export default {
             iconColor: 'var(--purple)'
           },
           {
-            name: 'Completed',
+            name: 'Logbook',
             icon: 'logbook',
             iconColor: 'var(--olive)'
           },
@@ -532,7 +532,7 @@ export default {
       if (this.userInfo && this.userInfo.links) {
         return this.userInfo.links
       }
-      return ['Today', 'Tomorrow', 'Inbox', 'Upcoming', 'Anytime', 'Someday', 'Pomodoro', 'Calendar', 'Completed', 'Completed']
+      return ['Today', 'Tomorrow', 'Inbox', 'Upcoming', 'Anytime', 'Someday', 'Pomodoro', 'Calendar', 'Logbook']
     },
     getLinksOrdered() {
       return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.nonHidedLinks)
