@@ -797,8 +797,13 @@ export default {
           disableSortableMount: true,
           name: date,
           log: true,
-          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'logDate'), 
+          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate'), 
           options: tasks => [
+            {
+              name: 'Remove from logbook',
+              icon: 'logbook',
+              callback: () => dispatch('task/unlogTasks', tasks.map(el => el.id)),
+            },
             {
               name: 'Uncomplete tasks',
               icon: 'circle',

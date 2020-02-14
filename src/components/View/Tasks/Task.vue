@@ -471,6 +471,15 @@ export default {
           },
         },
         {
+          name: !this.item.logbook ? 'Move to logbook' : 'Remove from logbook',
+          icon: 'logbook',
+          callback: () => {
+            if (!this.item.logbook)
+              this.$store.dispatch('task/logTasks', [this.item.id])
+            else this.$store.dispatch('task/unlogTasks', [this.item.id])
+          }
+        },
+        {
           type: 'optionsList',
           name: 'Deadline',
           options: [

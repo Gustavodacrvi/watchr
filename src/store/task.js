@@ -1005,7 +1005,8 @@ export default {
       await batchSetTasks(b, {
         logbook: true,
         logFire: serverTimestamp(),
-        logDate: mom().format('Y-M-D HH:mm ss'),
+        logDate: mom().format('Y-M-D'),
+        fullLogDate: mom().format('Y-M-D HH:mm ss'),
       }, tasks, rootState, writes)
 
       cacheBatchedItems(b, writes)
@@ -1021,6 +1022,7 @@ export default {
         logbook: false,
         logFire: fd().delete(),
         logDate: fd().delete(),
+        fullLogDate: fd().delete(),
       }, tasks, rootState, writes)
 
       cacheBatchedItems(b, writes)
