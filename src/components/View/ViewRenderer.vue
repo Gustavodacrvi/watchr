@@ -61,7 +61,6 @@
         <component v-if="defer(2)" :is='getViewComp' class='view-renderer-move'
           v-bind="$props"
 
-          :headings="getHeadings"
           :updateHeadingIds='updateHeadingIds'
           :showHeadingFloatingButton='showHeadingFloatingButton'
           :showCompleted='showCompleted'
@@ -87,11 +86,6 @@
       </transition>
       <div style='height: 400px'></div>
     </div>
-    <PaginationVue v-if="headingsPagination"
-      :page='pagination'
-      :numberOfPages='getNumberOfPages'
-      @select='selectPagination'
-    />
     <transition name="fade-t" mode="out-in">
       <ActionButtons
         v-if="!getHelperComponent && isTaskHandler" key="buttons"
@@ -109,7 +103,6 @@
 
 import HeaderVue from './Headings/Header/Header.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
-import PaginationVue from './Pagination.vue'
 import SlimModeNav from './SlimModeNav.vue'
 import HelperComponent from './HelperComponent.vue'
 import TaskHandler from './Views/TaskHandler.vue'
@@ -146,10 +139,10 @@ export default {
   'getCalendarOrderDate', 'viewItem',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
-  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
+  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
   components: {
     ListHandler, CalendarEvents,
-    PaginationVue, TaskHandler,
+    TaskHandler,
     Header: HeaderVue, HelperComponent,
     ActionButtons: ActionButtonsVue,
     ViewRendererLongCalendarPicker,
@@ -1349,17 +1342,6 @@ export default {
           opt.unshift(this.getAssigneeIconDrop({group: this.viewItem.group || this.viewItem.id}, uid => this.assignUser(uid)))
         return opt
       }
-    },
-    getNumberOfPages() {
-      return Math.floor(this.headings.length / this.headingsPagination)
-    },
-    getHeadings() {
-      if (!this.headingsPagination) return this.headings
-      const num = this.headingsPagination
-      const page = this.pagination
-      const init = (page * num)
-
-      return this.headings.slice(init, init + num)
     },
 
     getFilterOptions() {

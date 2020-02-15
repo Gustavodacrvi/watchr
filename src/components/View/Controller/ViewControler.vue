@@ -36,7 +36,6 @@
     :mainFallbackItem='mainFallbackItem'
     :showHeading='showHeading'
     :itemCompletionCompareDate='itemCompletionCompareDate'
-    :headingsPagination='headingsPagination'
     :configFilterOptions='configFilterOptions'
     :smartComponent='smartComponent'
     :onSmartComponentUpdate='onSmartComponentUpdate'
@@ -134,6 +133,8 @@ export default {
       isListBeginDay: 'list/isListBeginDay',
       getEndsTodayTasks: 'task/getEndsTodayTasks',
       getOverdueTasks: 'task/getOverdueTasks',
+      wasTaskLoggedInMonth: 'task/wasTaskLoggedInMonth',
+      isOldTask: 'task/isOldTask',
       isTaskInSevenDays: 'task/isTaskInSevenDays',
       isTaskInFolder: 'task/isTaskInFolder',
       isTaskInListRoot: 'task/isTaskInListRoot',
@@ -639,8 +640,7 @@ export default {
       })
       now.add(1, 'month')
 
-      for (let month = now.month(); month < 12; month++) {
-        const monthNum = now.month()
+      for (let monthNum = now.month(); monthNum < 12; monthNum++) {
         const name = now.format('MMMM')
 
         arr.push({
@@ -774,34 +774,27 @@ export default {
     },
     logbookHeadings() {
       const arr = []
-      const filtered = this.logTasks
+      const tod = mom()
+      const sort = tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate')
 
-      const set = new Set()
-    
-      for (const t of filtered)
-        if (!set.has(t.logDate))
-          set.add(t.logDate)
-      const dates = Array.from(set)
-      dates.sort((a, b) => {
-        const ta = mom(a, 'Y-M-D')
-        const tb = mom(b, 'Y-M-D')
-        if (ta.isAfter(tb, 'day'))
-          return -1
-        if (ta.isBefore(tb, 'day'))
-          return 1
-        return 0
-      })
-
-      for (const date of dates) {
-        const filterFunction = t => t.logDate === date
-
+      for (let i = 0; i < 7;i++) {
+        const date = tod.format('Y-M-D')
+        
         const dispatch = this.$store.dispatch
+
+        let name = date
+        if (i === 0)
+          name = 'Today'
+        else if (i === 1)
+          name = 'Yesterday'
+        
         arr.push({
           dateType: true,
           disableSortableMount: true,
-          name: date,
+          name,
           log: true,
-          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate'), 
+
+          sort, 
           options: tasks => [
             {
               name: 'Remove from logbook',
@@ -821,10 +814,51 @@ export default {
               callback: () => dispatch('task/deleteTasks', tasks.map(t => t.id)),
             },
           ],
-          filter: filterFunction,
+          filter: t => t.logDate === date,
           id: date,
         })
+        tod.subtract(1, 'd')
       }
+
+      const now = mom()
+      const m = now.month()
+      arr.push({
+        name: 'This month',
+        disableSortableMount: true,
+        dateType: true,
+        logStr: true,
+        log: true,
+        sort,
+        filter: t => this.wasTaskLoggedInMonth(t, m),
+        id: 'this month',
+      })
+      now.subtract(1, 'month')
+
+      for (let month = now.month();month > -1;month--) {
+        arr.push({
+          name: now.format('MMMM'),
+          id: month,
+          showHeading: true,
+          disableSortableMount: true,
+          logStr: true,
+          log: true,
+          sort,
+          filter: t => this.wasTaskLoggedInMonth(t, month),
+        })
+        
+        now.subtract(1, 'month')
+      }
+      arr.push({
+        name: 'Old stuff',
+        id: 'old',
+        showHeading: true,
+        disableSortableMount: true,
+        logStr: true,
+        log: true,
+        sort,
+        filter: this.isOldTask
+      })
+      
       return arr
     },
     todayHeadingsOptions() {

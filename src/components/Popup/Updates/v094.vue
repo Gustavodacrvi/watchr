@@ -5,6 +5,7 @@
 
     <br>
     <li>Slim mode navigation dropdown.</li>
+    <li>Show all the month events on Upcoming.</li>
     <br>
 
     <h3>Bug fixes</h3>

@@ -10,8 +10,10 @@ import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask
 
 import mom from 'moment'
 
-const TODAY_DATE = mom().format('Y-M-D')
-const TOM_DATE = mom().add(1, 'day').format('Y-M-D')
+const TODAY_MOM = mom()
+
+const TODAY_DATE = TODAY_MOM.format('Y-M-D')
+const TOM_DATE = TODAY_MOM.clone().add(1, 'day').format('Y-M-D')
 
 export default {
   namespaced: true,
@@ -457,6 +459,24 @@ export default {
         },
         cache(args) {
           return JSON.stringify(args[0].calendar)
+        },
+      },
+      isOldTask: {
+        getter({}, task) {
+          if (!task.logDate)
+            return false
+          return mom(task.logDate, 'Y-M-D').isBefore(TODAY_MOM, 'year')
+        },
+        cache(args) {
+          return args[0].logDate
+        },
+      },
+      wasTaskLoggedInMonth: {
+        getter({}, task, monthNum) {
+          return mom(task.logDate, 'Y-M-D').isSame(mom().month(monthNum), 'month')
+        },
+        cache(args) {
+          return ('' + args[0].logDate) + args[1]
         },
       },
       isTaskInMonth: {

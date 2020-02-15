@@ -166,13 +166,11 @@ export default {
       let firstNav = false
 
       if (
-        (!this.initialSmartViewRender) || 
         (path === '/user' && atLeastOneUndefined)
       ) {
         firstNav = true
         const view = this.getInitialSmartView
         this.$router.replace(`/user?${view.viewType}=${view.viewName}`)
-        this.initialSmartViewRender = true
       }
       if (saveRoute) {
         if (viewName && viewType)

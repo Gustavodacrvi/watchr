@@ -107,6 +107,13 @@
                     >
                       <span v-if="showCheckDate" class="check-date" ref='check-name'>{{ showCheckDate }}</span>
                     </transition>
+                    <transition
+                      appear
+                      @enter='infoEnter'
+                      @leave='infoLeave'
+                    >
+                      <span v-if="logStr" class="check-date" ref='check-name'>{{ logStr }}</span>
+                    </transition>
                     <span v-html="parsedName" ref='parsed-name'></span>
                     <Icon v-if="haveChecklist"
                       class="txt-icon checklist-icon"
@@ -188,7 +195,7 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'activeTags', 'header', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  props: ['item', 'activeTags', 'header', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
@@ -772,6 +779,10 @@ export default {
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
     },
+    logStr() {
+      if (!this.allowLogStr || !this.item.logDate) return null
+      return utils.getHumanReadableDate(this.item.logDate)
+    },
     deadlineStr() {
       return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
@@ -882,7 +893,7 @@ export default {
   width: 0;
   transform: translateY(-50%);
   border-radius: 100px;
-  border: 0 solid transparent;
+  border: 0px solid transparent !important;
   transition-duration: .25s;
 }
 

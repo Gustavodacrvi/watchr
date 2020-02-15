@@ -51,6 +51,7 @@
           :headingFilterFunction='h.filterFunction'
           :headingFallbackItem='h.fallbackItem'
           :allowCalendarStr='h.calendarStr'
+          :allowLogStr='h.logStr'
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
           :showHeadingName="h.showHeadingName"
