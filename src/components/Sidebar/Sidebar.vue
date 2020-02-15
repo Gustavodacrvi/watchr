@@ -97,7 +97,7 @@
               <Icon v-for="i in sideIcons" :key='i.icon'
                 class="sect-icon passive cursor remove-highlight primary-hover"
                 :icon='i.icon'
-                :circle='true'
+               
                 :number='i.number'
                 color='var(--fade)'
                 @click="i.callback"
@@ -106,14 +106,14 @@
                 <IconDrop
                   class="right passive"
                   handle='settings-h'
-                  :circle='true'
+                 
                   handleColor='var(--fade)'
                   :options="getSectionOptions"
                 />
               </transition>
             </div>
             <div></div>
-            <Icon v-if="isDesktop" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" :circle='true'  @click="toggleSidebar"/>
+            <Icon v-if="isDesktop" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="toggleSidebar"/>
           </div>
         </div>
       </div>

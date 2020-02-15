@@ -140,7 +140,7 @@
                 class="opt-icon"
                 width="22px"
                 :options="getTags"
-                :circle='true'
+               
                 handleColor='var(--red)'
                 title='Add tags'
                 :center='true'
@@ -150,7 +150,7 @@
                 class="opt-icon"
                 width="22px"
                 :options="priorityOptions"
-                :circle='true'
+               
                 handleColor='var(--yellow)'
                 title='Add priority'
                 :center='true'
@@ -160,7 +160,7 @@
                 width="22px"
                 class="opt-icon"
                 :options="listOptions"
-                :circle='true'
+               
                 handleColor='var(--primary)'
                 title='Add to list'
                 :center='true'
@@ -170,7 +170,7 @@
                 width="22px"
                 class="opt-icon"
                 :options="folderOptions"
-                :circle='true'
+               
                 title='Add to folder'
                 :center='true'
               />
@@ -179,7 +179,7 @@
                 width="24px"
                 class="opt-icon"
                 :options="groupOptions"
-                :circle='true'
+               
                 title='Add to group'
                 :center='true'
               />
@@ -188,7 +188,7 @@
                 width="22px"
                 class="opt-icon"
                 :options="calendarOptions"
-                :circle='true'
+               
                 handleColor='var(--green)'
                 title='Add date'
                 :center='true'
@@ -197,7 +197,7 @@
                 class="opt-icon primary-hover cursor"
                 style="margin-right: 7px;margin-top: 2px"
                 width="21px"
-                :circle='true'
+               
                 icon='file'
                 :file='true'
                 @add='addFile'
@@ -208,7 +208,7 @@
                 width="22px"
                 class="opt-icon"
                 :options="deadlineOptions"
-                :circle='true'
+               
                 handleColor='var(--orange)'
                 title='Add deadline'
                 :center='true'
@@ -218,7 +218,7 @@
                 width="22px"
                 class="opt-icon"
                 :options="durationOptions"
-                :circle='true'
+               
                 handleColor='var(--purple)'
                 title='Add task duration'
                 :center='true'

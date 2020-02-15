@@ -2,13 +2,13 @@
   <div class="Menu cbd">
     <div class="sidebar-wrapper">
       <span class="arrow-wrapper">
-        <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--fade)" width="25px" :circle='true'/>
+        <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--fade)" width="25px"/>
         <div>
-          <Icon class="cursor help-icon primary-hover" icon="user" color="var(--fade)" @click="toggleMenu" :circle='true'/>
+          <Icon class="cursor help-icon primary-hover" icon="user" color="var(--fade)" @click="toggleMenu"/>
           <IconDrop v-if="!appSection"
             class="help-icon drop rigth"
             handle="globe"
-            :circle='true'
+           
             handleColor="var(--fade)"
           />
           <VersionApp class="version"/>

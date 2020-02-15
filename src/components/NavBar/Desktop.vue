@@ -13,7 +13,7 @@
         class="drop"
         handle="user"
         handleColor="var(--fade)"
-        :circle='true'
+       
         :options="dropLinks"
         @handle-toggle='v => isLinksIconDropOpen = v'
       />

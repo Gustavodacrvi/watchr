@@ -11,6 +11,7 @@
       :shadow='true'
       :width="isDesktop ? '40px' : '30px'"
       @click="openMenu"
+      :style="{filter: `drop-shadow(0 0 ${isDesktop ? 20 : 10}px ${getIconColor})`}"
     />
     <HeaderSearch v-if="!isDesktop"/>
     <span v-if="!editing || !isEditable"
@@ -45,7 +46,7 @@
         :handle="optionsHandle"
         handleColor="var(--fade)"
         :options="options"
-        :circle='true'
+       
       />
     </div>
   </div>

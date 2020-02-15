@@ -2,7 +2,7 @@
   <div class="MobileIcondrop" @click="closeIconDrop">
     <IconDrop class="central"
       :options='iconDrop'
-      :circle='true'
+     
       :defaultShowing='true'
       :center='true'
     />

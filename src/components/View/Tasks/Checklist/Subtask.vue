@@ -18,7 +18,7 @@
     </div>
     <transition name="fade-t">
       <div v-if="showDeleteIcon" class="delete-wrapper">
-        <Icon icon="trash" class="delete" @click="$emit('remove')" :circle='true'/>
+        <Icon icon="trash" class="delete" @click="$emit('remove')"/>
       </div>
     </transition>
   </div>

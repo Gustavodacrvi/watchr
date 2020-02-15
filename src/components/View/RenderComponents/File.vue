@@ -22,7 +22,7 @@
             class="icon remove-highlight cursor primary-hover"
             icon='import'
             title='Download file'
-            :circle='true'
+           
             @click.native="$emit('download')"
           />
           <Icon
@@ -30,7 +30,7 @@
             icon='trash'
             color='var(--red)'
             title='Delete file'
-            :circle='true'
+           
             @click.native="$emit('delete')"
           />
         </div>

@@ -21,14 +21,12 @@
         @touchmove.passive='touchmove'
         @touchend.passive='touchEnd'
       >
-        <div class="icon-wrapper">
+        <div class="icon-wrapper" @click="clickIcon">
           <Icon class="main-icon"
             :class="{cursor: icon === 'tasks'}"
             :style="iconStyle"
             :icon="icon"
             :progress='progress'
-            :circle='true'
-            @click.native='clickIcon'
           />
         </div>
         <div class="name-wrapper">
@@ -42,7 +40,6 @@
           <template v-if="helpIcons">
             <Icon v-for="i in helpIcons" :key="i" class="inf faded"
               :icon='i'
-              :circle='true'
             />
           </template>
           <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
@@ -357,10 +354,10 @@ export default {
 }
 
 .main-icon {
-  position: absolute;
+  position: absolute !important;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%) !important;
   margin-top: 1.5px;
   transition: color .15s;
 }
