@@ -18,9 +18,6 @@ export default {
     RadioOptions,
   },
   props: ['options'],
-  created() {
-
-  },
   computed: {
     radioOptions() {
       return [

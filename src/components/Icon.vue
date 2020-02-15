@@ -30,14 +30,6 @@
         @click.stop
         @change='handleFile'
       >
-      <transition
-        @enter='enter'
-      >
-        <div v-if="circle && activate" class="circle-wrapper"
-          :style="{transform: `translate(-${offset/2}px, -${offset/2}px)`, width: this.circleWidth + 'px', height: this.circleWidth + 'px'}">
-          <div class="circle"></div>
-        </div>
-      </transition>
     </span>
     <span v-show="number" class="counter">
       <span class='num'>{{ number }}</span>
@@ -126,10 +118,9 @@ import crown from '@/assets/icons/crown.svg'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle', 'stop', 'title', 'number'],
+  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'stop', 'title', 'number'],
   data() {
     return {
-      activate: false,
       showingTitle: false,
       timeoutTitle: null,
       icons: {

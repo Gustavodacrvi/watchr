@@ -288,7 +288,7 @@ export default {
 
 .menu {
   transform: translateX(-100%);
-  transition: transform .3s;
+  transition: transform .15s;
   transition-timing-function: ease-in;
 }
 
