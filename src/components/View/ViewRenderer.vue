@@ -1427,7 +1427,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 85px;
+  margin: 0 95px;
   min-height: 100%;
   position: relative;
   display: flex;

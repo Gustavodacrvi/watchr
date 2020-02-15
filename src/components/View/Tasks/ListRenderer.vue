@@ -712,7 +712,7 @@ export default {
         let i = 0
         const length = items.length
 
-        const multiplier = this.isDesktop ? 3.5 : 5
+        const multiplier = this.isDesktop ? 1.5 : 5
         const timeout = length * multiplier
         
         const add = item => {
@@ -722,7 +722,7 @@ export default {
               i++
               const t = items[i]
               if (t) add(t)
-            }, multiplier))
+            }, timeout))
           else solve()
         }
         const t = items[0]

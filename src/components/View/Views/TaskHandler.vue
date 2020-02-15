@@ -203,7 +203,7 @@ export default {
       this.$emit('save-schedule-object', obj)
     },
     notChar(s) {
-      return s => s !== 'A' && s !== 'M' && s !== 'P'
+      return s !== 'A' && s !== 'M' && s !== 'P'
     },
     getScheduleObject() {
       if (!this.autoSchedule) return null

@@ -15,42 +15,41 @@
 
 <script>
 
-import Signup from './Auth/Signup.vue'
-import SigninOptions from './Auth/SigninOptions.vue'
-import Signin from './Auth/Signin.vue'
-import Profile from './Auth/Profile.vue'
-import ChangeUsername from './Auth/ChangeUsername.vue'
-import ChangeEmail from './Auth/ChangeEmail.vue'
-import Confirm from './Auth/Confirm.vue'
+import utils from "@/utils/"
+
+const c = utils.asyncComp
+
 import Icon from '../Icon.vue'
-import AddTask from './Tasks/AddTask.vue'
-import AddTag from './Tags/AddTag.vue'
-import AddFilter from './Filters/AddFilter.vue'
-import AddTagNote from './Tags/AddTagNote.vue'
-import AddList from './Lists/AddList.vue'
-import AddListNote from './Lists/AddListNote.vue'
-import AddHeadingNote from './Lists/AddHeadingNote.vue'
-import Updates from './Updates.vue'
-import FastSearch from './FastSearch.vue'
-import AddFolder from './Folder/AddFolder.vue'
-import AddGroup from './Group/AddGroup.vue'
-import Comments from './Group/Comments.vue'
-import InvitePeople from './Group/InvitePeople.vue'
-import SentInvites from './Group/SentInvites.vue'
-import Invites from './Group/Invites.vue'
-import RecentData from './Statistics/RecentData.vue'
-import Shortcuts from './Shortcuts.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Signup, SigninOptions, Signin, AddTag, FastSearch,
-    AddListNote, AddTagNote, Icon, AddList, AddFilter,
-    AddTask, Updates, ChangeUsername, ChangeEmail,
-    Confirm, AddHeadingNote, AddFolder, Profile,
-    RecentData, Shortcuts, AddGroup, InvitePeople,
-    SentInvites, Invites, Comments,
+    Icon,
+    Signup: c(import(/* webpackChunkName: "Signup" */ './Auth/Signup.vue')),
+    SigninOptions: c(import(/* webpackChunkName: "SigninOptions" */ './Auth/SigninOptions.vue')),
+    Signin: c(import(/* webpackChunkName: "Signin" */ './Auth/Signin.vue')),
+    AddTag: c(import(/* webpackChunkName: "AddTag" */ './Tags/AddTag.vue')),
+    FastSearch: c(import(/* webpackChunkName: "FastSearch" */ './FastSearch.vue')),
+    AddListNote: c(import(/* webpackChunkName: "AddListNote" */ './Lists/AddListNote.vue')),
+    AddTagNote: c(import(/* webpackChunkName: "AddTagNote" */ './Tags/AddTagNote.vue')),
+    AddList: c(import(/* webpackChunkName: "AddList" */ './Lists/AddList.vue')),
+    AddFilter: c(import(/* webpackChunkName: "AddFilter" */ './Filters/AddFilter.vue')),
+    AddTask: c(import(/* webpackChunkName: "AddTask" */ './Tasks/AddTask.vue')),
+    Updates: c(import(/* webpackChunkName: "Updates" */ './Updates.vue')),
+    ChangeUsername: c(import(/* webpackChunkName: "ChangeUsername" */ './Auth/ChangeUsername.vue')),
+    ChangeEmail: c(import(/* webpackChunkName: "ChangeEmail" */ './Auth/ChangeEmail.vue')),
+    Confirm: c(import(/* webpackChunkName: "Confirm" */ './Auth/Confirm.vue')),
+    AddHeadingNote: c(import(/* webpackChunkName: "AddHeadingNote" */ './Lists/AddHeadingNote.vue')),
+    AddFolder: c(import(/* webpackChunkName: "AddFolder" */ './Folder/AddFolder.vue')),
+    Profile: c(import(/* webpackChunkName: "Profile" */ './Auth/Profile.vue')),
+    RecentData: c(import(/* webpackChunkName: "RecentData" */ './Statistics/RecentData.vue')),
+    Shortcuts: c(import(/* webpackChunkName: "Shortcuts" */ './Shortcuts.vue')),
+    AddGroup: c(import(/* webpackChunkName: "AddGroup" */ './Group/AddGroup.vue')),
+    InvitePeople: c(import(/* webpackChunkName: "InvitePeople" */ './Group/InvitePeople.vue')),
+    SentInvites: c(import(/* webpackChunkName: "SentInvites" */ './Group/SentInvites.vue')),
+    Invites: c(import(/* webpackChunkName: "Invites" */ './Group/Invites.vue')),
+    Comments: c(import(/* webpackChunkName: "Comments" */ './Group/Comments.vue')),
   },
   methods: {
     closeMobilePopup() {

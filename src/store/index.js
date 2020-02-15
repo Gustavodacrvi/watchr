@@ -457,7 +457,7 @@ const store = new Vuex.Store({
         if (data.stats) {
           utils.findChangesBetweenObjs(state.pomo.stats, data.stats.pomo, (key, val) => Vue.set(state.pomo.stats, key, val))
 
-          const info = state.pomo.stats && state.pomo.stats.dates[TOD_STR]
+          const info = state.pomo.stats && state.pomo.stats.dates && state.pomo.stats.dates[TOD_STR]
           if (info) {
             if (info.completedPomos !== state.pomo.cycles)
               state.pomo.cycles = info.completedPomos

@@ -28,23 +28,20 @@
 
 <script>
 
-import NavBarVue from './components/NavBar/NavBar.vue'
-import PopupVue from './components/Popup/Popup.vue'
-import ToastVue from './components/Toast.vue'
-import MenuVue from './components/NavBar/Menu.vue'
-import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
-import FileReader from './components/View/FileReader/FileReader.vue'
+import utils from './utils/'
+
+const c = utils.asyncComp
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    FileReader,
-    NavBar: NavBarVue,
-    Popup: PopupVue,
-    Toast: ToastVue,
-    Menu: MenuVue,
-    MobileIcondrop: MobileIcondropVue,
+    FileReader: c(import(/* webpackChunkName: "FileReader" */ './components/View/FileReader/FileReader.vue')),
+    NavBar: c(import(/* webpackChunkName: "NavBar" */ './components/NavBar/NavBar.vue')),
+    Popup: c(import(/* webpackChunkName: "Popup" */ './components/Popup/Popup.vue')),
+    Toast: c(import(/* webpackChunkName: "Toast" */ './components/Toast.vue')),
+    Menu: c(import(/* webpackChunkName: "Menu" */ './components/NavBar/Menu.vue')),
+    MobileIcondrop: c(import(/* webpackChunkName: "MobileIconDrop" */ './components/Popup/MobileIcondrop.vue')),
   },
   data() {
     return {

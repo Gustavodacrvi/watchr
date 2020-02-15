@@ -6,12 +6,12 @@ Vue.use(Router)
 import LoadingComponent from './components/Illustrations/LoadingComponent.vue'
 import ErrorComponent from './components/Illustrations/ErrorComponent.vue'
 
-const AsyncComponent = (comp) => () => ({
+const AsyncComponent = comp => () => ({
   component: comp,
   loading: LoadingComponent,
   error: ErrorComponent,
-  delay: 0,
-  timeout: 7500,
+  delay: 200,
+  timeout: 5000,
 })
 
 export default new Router({

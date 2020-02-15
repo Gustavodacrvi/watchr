@@ -7,6 +7,9 @@ import firebase from 'firebase/app'
 import Vue from 'vue'
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
+import LoadingComponent from '../components/Illustrations/LoadingComponent.vue'
+import ErrorComponent from '../components/Illustrations/ErrorComponent.vue'
+
 let contextMenuRunned = false
 
 export default {
@@ -258,6 +261,15 @@ export default {
           .replace(/__(.*?)__/g, "<b>$1</b>")
           .replace(/\*(.*?)\*/g, "<i>$1</i>")
           .replace(/\{(.*?)(?: ([^\]]*))?\}/g, "<span style='color: $1'>$2</span>")
+  },
+  asyncComp(comp) {
+    return () => ({
+      component: comp,
+      loading: LoadingComponent,
+      error: ErrorComponent,
+      delay: 300,
+      timeout: 7500,
+    })
   },
   addIdsToObjectFromKeys(obj) {
     if (obj)

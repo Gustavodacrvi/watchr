@@ -38,8 +38,6 @@ export default {
         k => state.groupTasks[k] && !state.groupTasks[k].logbook
       )
 
-      console.log(state.groupTasks)
-      
       return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
     },
     priorityOptions() {
