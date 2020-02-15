@@ -249,6 +249,7 @@ export default {
     }
   },
   created() {
+    this.showing = !this.sidebarHided
     const saved = localStorage.getItem('section')
     if (saved) this.section = saved
 

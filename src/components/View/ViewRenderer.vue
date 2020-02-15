@@ -2,6 +2,9 @@
 <template>
   <div class="ViewRenderer" :class="platform">
     <div class='view-wrapper'>
+      <SlimModeNav v-if='isDesktop'
+        :render='sidebarHided'
+      />
       <Header
         v-bind="$props"
 
@@ -106,6 +109,7 @@
 import HeaderVue from './Headings/Header/Header.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
+import SlimModeNav from './SlimModeNav.vue'
 import HelperComponent from './HelperComponent.vue'
 import TaskHandler from './Views/TaskHandler.vue'
 import ListHandler from './Views/ListHandler.vue'
@@ -133,7 +137,7 @@ export default {
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
-  'width',
+  'width', 'sidebarHided',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableFloatingButton',
@@ -149,6 +153,7 @@ export default {
     ActionButtons: ActionButtonsVue,
     ViewRendererLongCalendarPicker,
     Pomodoro, Statistics,
+    SlimModeNav,
   },
   data() {
     return {

@@ -29,6 +29,7 @@
     <div class="cont" :class="[platform, {pressingHandle}]">
       <ViewControler
         :width='width'
+        :sidebarHided='sidebarHided'
       
         :isSmart="isSmart"
         :viewType='viewType'
@@ -66,6 +67,8 @@ export default {
     }
   },
   created() {
+    this.sidebarHided = localStorage.getItem('watchr_slim_mode') === 'true'
+    
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
 
@@ -104,6 +107,7 @@ export default {
     },
     toggleSidebar() {
       this.sidebarHided = !this.sidebarHided
+      localStorage.setItem('watchr_slim_mode', this.sidebarHided)
     },
     getNavTopPosition() {
       setTimeout(() => {
@@ -211,7 +215,8 @@ export default {
 }
 
 .sidebarHided .cont {
-  flex-basis: 925px !important;
+  flex-basis: 1075px !important;
+  margin: 0 20px;
   flex-grow: 0;
   margin-left: 0;
 }

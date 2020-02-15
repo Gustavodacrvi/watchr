@@ -23,6 +23,8 @@
     :getCalendarOrderDate='getCalendarOrderDate'
     :removeListHandlerWhenThereArentLists='removeListHandlerWhenThereArentLists'
 
+    :sidebarHided='sidebarHided'
+
     :mainFilter='mainFilter'
     :disableFloatingButton='disableFloatingButton'
     :rootFilter='rootFilter'
@@ -75,7 +77,7 @@ import mainMixin from './mixins/controler.js'
 
 export default {
   mixins: [...mixins, mainMixin],
-  props: ['isSmart', 'viewName', 'viewType', 'width'],
+  props: ['isSmart', 'viewName', 'viewType', 'width', 'sidebarHided'],
   components: {
     ViewRenderer: ViewRendererVue,
   },
