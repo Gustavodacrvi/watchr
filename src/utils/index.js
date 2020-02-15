@@ -132,27 +132,27 @@ export default {
         get: m => setMonth(1),
       },
       {
-        match: ['february', 'feb'],
+        match: ['march', 'mar'],
         get: m => setMonth(2),
       },
       {
-        match: ['march', 'mar'],
+        match: ['april', 'apr'],
         get: m => setMonth(3),
       },
       {
-        match: ['april', 'apr'],
+        match: 'may',
         get: m => setMonth(4),
       },
       {
-        match: 'may',
+        match: ['june', 'jun'],
         get: m => setMonth(5),
       },
       {
-        match: ['june', 'jun'],
+        match: ['july', 'jul'],
         get: m => setMonth(6),
       },
       {
-        match: ['jul', 'july'],
+        match: ['august', 'aug'],
         get: m => setMonth(7),
       },
       {

@@ -144,6 +144,7 @@ export default {
       isTaskInOneMonth: 'task/isTaskInOneMonth',
       isTaskWeekly: 'task/isTaskWeekly',
       isTaskInOneYear: 'task/isTaskInOneYear',
+      isTaskInMonth: 'task/isTaskInMonth',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       isListInView: 'list/isListInView',
@@ -575,13 +576,11 @@ export default {
 
         specific: date,
       })
-      const filtered = this.tasks.filter(el => {
-        return el.calendar && el.calendar.type === 'specific'
-      })
       const calendarOrders = this.calendarOrders
       const sort = utilsTask.sortTasksByTaskDate
       const TOD_STR = mom().format('Y-M-D')
 
+      let first = false
       for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
@@ -592,7 +591,7 @@ export default {
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
         arr.push({
-          name: date,
+          name: !first ? 'Tomorrow' : date,
           id: date,
           calendarEvents: date,
           showHeading: true,
@@ -621,6 +620,7 @@ export default {
             this.$store.dispatch('task/saveCalendarOrder', {ids, date})
           }
         })
+        first = true
       }
       const thisMonthPipe = pipeBooleanFilters(
         this.isTaskInSevenDays,
@@ -635,22 +635,29 @@ export default {
         filter: thisMonthPipe,
         id: 'this month',
       })
-      // this year
-      const thisYearPipe = pipeBooleanFilters(
-        this.isTaskInOneMonth,
-        task => this.isTaskInPeriod(task, TOD_STR, 'year', true)
-      )
-      arr.push({
-        name: 'This year',
-        disableSortableMount: true,
-        calendarStr: true,
-        sort,
-        filter: thisYearPipe,
-        id: 'this year'
-      })
+      const now = mom().add(1, 'month')
+
+      for (let month = now.month(); month < 12; month++) {
+        const monthNum = now.month()
+        const name = now.format('MMMM')
+
+        arr.push({
+          name: now.format('MMMM'),
+          id: name,
+          calendarStr: true,
+          showHeading: true,
+          disableSortableMount: true,
+
+          sort,
+          filter: t => this.isTaskInMonth(t, monthNum)
+        })
+
+        now.add(1, 'month')
+      }
+      
       // next years
       arr.push({
-        name: 'Next years',
+        name: 'Upcoming years',
         disableSortableMount: true,
         calendarStr: true,
         sort,
@@ -663,18 +670,10 @@ export default {
         name: 'Periodic tasks',
         calendarStr: true,
         sort,
-        filter: task => task.calendar && task.calendar.type === 'periodic',
+        filter: task => task.calendar && task.calendar.type !== 'specific' && task.calendar.type !== 'someday',
         id: 'periodic tasks'
       })
       // weekly tasks
-      arr.push({
-        disableSortableMount: true,
-        name: 'Weekly tasks',
-        calendarStr: true,
-        sort,
-        filter: task => task.calendar && task.calendar.type === 'weekly',
-        id: 'weekly tasks'
-      })
       return arr
     },
     laterListsHeadings() {

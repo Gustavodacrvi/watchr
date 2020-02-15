@@ -222,8 +222,8 @@ service cloud.firestore {
           (!('calendar' in incomingData()) || incomingData().calendar == null) ||
           (
             incomingData().calendar.type == 'specific' ||
-            incomingData().calendar.type == 'after completion' ||
             incomingData().calendar.type == 'someday' ||
+            incomingData().calendar.type == 'after completion' ||
             incomingData().calendar.type == 'daily' ||
             incomingData().calendar.type == 'weekly' ||
             incomingData().calendar.type == 'monthly' ||

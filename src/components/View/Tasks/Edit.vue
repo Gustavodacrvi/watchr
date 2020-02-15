@@ -291,6 +291,7 @@ export default {
       savingTask: false,
       optionsType: '',
       options: [],
+      isFirstEdit: true,
 
       lastKeys: [],
       keydownSettimeout: null,
@@ -331,6 +332,7 @@ export default {
       this.task.group = this.groupName
       this.task.tags = this.getTagNames
     }
+    setTimeout(() => this.isFirstEdit = false, 200)
 
     window.addEventListener('click', this.remove)
     window.addEventListener('keydown', this.keydown)
@@ -1007,14 +1009,16 @@ export default {
         }
       }
 
-      const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
-      if (res) {
-        this.toReplace = res.matches
-        this.task.calendar = res.calendar
-        this.fromIconDrop = null
-      } else if (!this.fromIconDrop) {
-        this.toReplace = null
-        this.task.calendar = null
+      if (!this.isFirstEdit) {
+        const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
+        if (res) {
+          this.toReplace = res.matches
+          this.task.calendar = res.calendar
+          this.fromIconDrop = null
+        } else if (!this.fromIconDrop) {
+          this.toReplace = null
+          this.task.calendar = null
+        }
       }
 
       parsePriority()

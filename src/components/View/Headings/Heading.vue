@@ -301,7 +301,7 @@ export default {
       return this.hasProgress || this.icon
     },
     getHeadingColor() {
-      return this.color ? this.color : 'var(--primary)'
+      return this.color ? this.color : 'var(--txt)'
     },
   },
   watch: {

@@ -452,11 +452,20 @@ export default {
       },
       isTaskInOneYear: {
         getter({}, task) {
-          if (!task.calendar) return false
+          if (!task.calendar || task.calendar.type !== 'specific') return false
           return mom().add(1, 'y').startOf('year').isBefore(mom(task.calendar.specific, 'Y-M-D'), 'day')
         },
         cache(args) {
           return JSON.stringify(args[0].calendar)
+        },
+      },
+      isTaskInMonth: {
+        getter({}, task, monthNum) {
+          if (!task.calendar || task.calendar.type !== 'specific') return false
+          return mom(task.calendar.specific, 'Y-M-D').isSame(mom().month(monthNum), 'month')
+        },
+        cache(args) {
+          return JSON.stringify([args[0].calendar, args[1]])
         },
       },
       isTaskInSevenDays: {

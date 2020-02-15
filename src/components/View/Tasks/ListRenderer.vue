@@ -505,6 +505,8 @@ export default {
             s.overflow = 'hidden'
             root.insertBefore(items[i], root.children[indicies[i]])
           }
+
+          items.forEach(this.deSelectItem)
         },
         onAdd: (evt, original) => {
           const items = evt.items
@@ -736,7 +738,7 @@ export default {
         let i = 0
         const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.items && h.items.length > 0)
         const length = headinsgWithItems.length
-        let timeout = this.isDesktop ? 155 : 230
+        let timeout = this.isDesktop ? 80 : 230
 
         if (length < 5 || this.viewName === 'Upcoming') timeout = 175
         
