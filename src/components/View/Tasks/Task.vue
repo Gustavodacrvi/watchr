@@ -166,7 +166,6 @@
 
 <script>
 
-import IconVue from '../../Icon.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
@@ -193,7 +192,6 @@ export default {
   components: {
     CommentCounter,
     Timeline, TaskIcons,
-    Icon: IconVue,
     IconDrop: IconDropVue,
     Edit: EditVue,
     Tag: TagVue,

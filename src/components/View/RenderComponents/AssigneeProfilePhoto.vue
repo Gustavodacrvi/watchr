@@ -21,14 +21,12 @@
 <script>
 
 import ProfilePhoto from "@/components/View/RenderComponents/ProfilePhoto.vue"
-import Icon from "@/components/Icon.vue"
 
 import { mapState } from 'vuex'
 
 export default {
   components: {
     ProfilePhoto,
-    Icon,
   },
   props: ['assigned', 'owner', 'userPhoto'],
   computed: {

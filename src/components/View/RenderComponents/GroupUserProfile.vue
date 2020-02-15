@@ -54,7 +54,6 @@
 <script>
 
 import ProfilePhoto from './ProfilePhoto.vue'
-import Icon from '@/components/Icon.vue'
 
 import utils from '@/utils'
 import { mapGetters } from 'vuex'
@@ -62,7 +61,6 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     ProfilePhoto,
-    Icon,
   },
   props: ['displayName', 'email', 'uid', 'photoURL', 'created', 'denied', 'groupName', 'member', 'allowRemove', 'isOwner'],
   methods: {

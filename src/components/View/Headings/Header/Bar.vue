@@ -53,7 +53,6 @@
 
 <script>
 
-import Icon from '../../../Icon.vue'
 import IconDrop from '../../../IconDrop/IconDrop.vue'
 import HeaderSearch from './HeaderSearch.vue'
 
@@ -62,7 +61,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     HeaderSearch,
-    Icon, IconDrop,
+    IconDrop,
   },
   props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
   data() {

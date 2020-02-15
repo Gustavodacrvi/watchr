@@ -33,7 +33,6 @@
 
 import Checkbox from '@/components/Auth/Checkbox.vue'
 import Options from '@/components/Auth/Options.vue'
-import Icon from '@/components/Icon.vue'
 
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
 

@@ -130,7 +130,6 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
 import SidebarElementVue from './SidebarElement.vue'
 import ListsVue from './Sections/Lists.vue'
 import FiltersVue from './Sections/Filters.vue'
@@ -150,7 +149,6 @@ import utilsGroup from '@/utils/group'
 export default {
   props: ['value', 'width', 'sidebarHided', 'pressingHandle'],
   components: {
-    Icon: IconVue,
     SidebarElement: SidebarElementVue,
     IconDrop: IconDropVue,
     Lists: ListsVue,

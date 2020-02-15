@@ -26,7 +26,6 @@
 
 <script>
 
-import IconVue from '../../../Icon.vue'
 import InputApp from "@/components/Auth/Input.vue"
 
 import { mapGetters } from 'vuex'
@@ -34,7 +33,6 @@ import { mapGetters } from 'vuex'
 export default {
   props: ['name', 'completed', 'id'],
   components: {
-    Icon: IconVue,
     InputApp,
   },
   data() {

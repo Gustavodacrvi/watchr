@@ -47,11 +47,8 @@
 
 <script>
 
-import Icon from "@/components/Icon.vue"
-
 export default {
   props: ['co', 'so', 'ca', 'se', 'progress'],
-  components: {Icon},
 }
 
 </script>

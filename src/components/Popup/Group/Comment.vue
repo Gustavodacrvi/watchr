@@ -28,7 +28,6 @@
 <script>
 
 import ProfilePhoto from '@/components/View/RenderComponents/ProfilePhoto.vue'
-import Icon from "@/components/Icon.vue"
 
 import utils from '@/utils'
 

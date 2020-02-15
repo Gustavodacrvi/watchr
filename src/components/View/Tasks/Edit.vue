@@ -242,7 +242,6 @@ import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
-import IconVue from '../../Icon.vue'
 import ChecklistVue from './Checklist/Checklist.vue'
 import FileApp from './../RenderComponents/File.vue'
 import FileDragDrop from './../RenderComponents/FileDragDrop.vue'
@@ -263,7 +262,6 @@ export default {
     ButtonApp: ButtonVue,
     Checklist: ChecklistVue,
     IconDrop: IconDropVue,
-    Icon: IconVue,
     Tag: TagVue,
   },
   data() {

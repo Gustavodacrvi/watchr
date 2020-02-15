@@ -41,17 +41,12 @@
 
 <script>
 
-import Icon from '@/components/Icon.vue'
-
 import utils from '@/utils'
 
 import { mapGetters } from 'vuex'
 
 export default {
   props: ['name', 'status', 'disableDelete'],
-  components: {
-    Icon,
-  },
   data() {
     return {
       hover: false,

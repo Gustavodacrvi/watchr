@@ -73,7 +73,6 @@
 <script>
 
 import IconDropVue from '../../IconDrop/IconDrop.vue'
-import IconVue from '../../Icon.vue'
 import EditVue from './../RenderComponents/Edit.vue'
 import Notes from './Notes.vue'
 import Defer from '@/mixins/defer'
@@ -93,8 +92,7 @@ export default {
   ],
   props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon'],
   components: {
-    IconDrop: IconDropVue, CalendarEvents,
-    Icon: IconVue,
+    CalendarEvents,
     EditHeading: EditVue,
     NotesApp: Notes,
   },

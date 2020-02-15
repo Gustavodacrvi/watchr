@@ -122,8 +122,6 @@
 
 <script>
 
-import Icon from '@/components/Icon.vue'
-
 import mom from 'moment'
 
 import utils from "@/utils/"
@@ -135,9 +133,6 @@ const TOD_STR = TOD.format('Y-M-D')
 
 export default {
   props: ['helper'],
-  components: {
-    Icon,
-  },
   data() {
     return {
       active: TOD_STR,

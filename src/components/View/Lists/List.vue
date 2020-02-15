@@ -113,8 +113,6 @@
 
 <script>
 
-import Icon from '@/components/Icon.vue'
-
 import utils from "@/utils"
 import utilsList from "@/utils/list"
 
@@ -133,7 +131,7 @@ import ListItemMixin from "@/mixins/listItem"
 export default {
   mixins: [ListItemMixin],
   components: {
-    Icon, ListIcons,
+    ListIcons,
     ListEdit, CommentCounter,
   },
   props: ['item', 'changingViewName', 'itemHeight'],

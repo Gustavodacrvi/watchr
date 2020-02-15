@@ -29,7 +29,6 @@ import LogoVue from '../Illustrations/Logo.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import ButtonVue from '../Auth/Button.vue'
 import VersionApp from '@/components/Version.vue'
-import Icon from "@/components/Icon.vue"
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -37,7 +36,6 @@ import firebase from 'firebase/app'
 
 export default {
   components: {
-    Icon,
     DropIcon: IconDropVue,
     LogoApp: LogoVue, VersionApp,
     ButtonApp: ButtonVue,

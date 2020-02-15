@@ -60,11 +60,8 @@
 
 <script>
 
-import Icon from "@/components/Icon.vue"
-
 export default {
   props: ['co', 'so', 'ca', 'se', 'color'],
-  components: {Icon},
 }
 
 </script>

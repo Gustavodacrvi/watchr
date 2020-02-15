@@ -5,6 +5,7 @@ import router from "./router"
 import store from "./store/"
 import "./registerServiceWorker"
 import vuetify from '@/plugins/vuetify'
+import Icon from "@/components/Icon.vue"
 
 import VueWorker from 'vue-worker'
 import vueSmoothScroll from 'vue2-smooth-scroll'
@@ -12,6 +13,7 @@ import vueSmoothScroll from 'vue2-smooth-scroll'
 import CircleBubble from "@/components/CircleBubble.vue"
 
 Vue.component('CircleBubble', CircleBubble)
+Vue.component('Icon', Icon)
 
 Vue.use(vueSmoothScroll)
 Vue.use(VueWorker, '$worker')

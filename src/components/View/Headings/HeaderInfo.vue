@@ -44,15 +44,10 @@
 
 <script>
 
-import Icon from '@/components/Icon.vue'
-
 import utils from '@/utils'
 
 export default {
   props: ['content', 'right', 'icon', 'options', 'title', 'number'],
-  components: {
-    Icon,
-  },
   data() {
     return {
       hover: false,

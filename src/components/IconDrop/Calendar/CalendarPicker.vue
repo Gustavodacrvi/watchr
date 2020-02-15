@@ -49,7 +49,6 @@
 
 <script>
 
-import IconVue from '../../Icon.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import TagVue from '@/components/View/Tag.vue'
 
@@ -61,7 +60,6 @@ import utils from '@/utils'
 export default {
   props: ['repeat', 'onlyDates', 'defaultTime', 'initial', 'noTime', 'allowNull'],
   components: {
-    Icon: IconVue,
     Button: ButtonVue,
     Tag: TagVue,
   },

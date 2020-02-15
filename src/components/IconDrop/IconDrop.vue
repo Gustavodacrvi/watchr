@@ -44,8 +44,6 @@
 
 <script>
 
-import Icon from './../Icon.vue'
-
 import ListIcons from './ListIcons.vue'
 import CalendarPicker from './Calendar.vue'
 import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
@@ -57,7 +55,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center'],
   components: {
-    Icon, ListIcons, CalendarPicker,
+    ListIcons, CalendarPicker,
     TimePicker, RepeatPicker,
     Confirm,
   },

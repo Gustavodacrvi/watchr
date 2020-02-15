@@ -19,13 +19,10 @@ import utils from "@/utils/"
 
 const c = utils.asyncComp
 
-import Icon from '../Icon.vue'
-
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Icon,
     Signup: c(import(/* webpackChunkName: "Signup" */ './Auth/Signup.vue')),
     SigninOptions: c(import(/* webpackChunkName: "SigninOptions" */ './Auth/SigninOptions.vue')),
     Signin: c(import(/* webpackChunkName: "Signin" */ './Auth/Signin.vue')),

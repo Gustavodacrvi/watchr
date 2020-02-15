@@ -37,15 +37,10 @@
 
 <script>
 
-import IconVue from '../../Icon.vue'
-
 import { mapGetters } from 'vuex'
 
 export default {
   props: ['icon', 'color' ,'txt'],
-  components: {
-    Icon: IconVue,
-  },
   computed: {
     ...mapGetters(['platform', 'isDesktop']),
     styles() {

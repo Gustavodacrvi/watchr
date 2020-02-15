@@ -99,7 +99,6 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import AssigneeProfilePhoto from "@/components/View/RenderComponents/AssigneeProfilePhoto.vue"
 
@@ -114,7 +113,6 @@ export default {
   'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned'],
   components: {
     Renderer: () => import('./Renderer.vue'),
-    Icon: IconVue,
     AssigneeProfilePhoto,
     IconDrop: IconDropVue,
   },

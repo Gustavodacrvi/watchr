@@ -35,7 +35,6 @@
 
 <script>
 
-import Icon from "@/components/Icon.vue"
 import AssigneeProfilePhoto from "./AssigneeProfilePhoto.vue"
 
 import { mapState } from 'vuex'
@@ -43,7 +42,6 @@ import { mapState } from 'vuex'
 export default {
   props: ['number', 'isOwner', 'hover', 'assigned', 'groupId'],
   components: {
-    Icon,
     AssigneeProfilePhoto,
   },
   computed: {

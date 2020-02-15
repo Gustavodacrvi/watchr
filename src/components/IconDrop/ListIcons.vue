@@ -89,7 +89,6 @@
 
 <script>
 
-import Icon from './../Icon.vue'
 import ButtonApp from '@/components/Auth/Button.vue'
 import ProfilePhoto from "@/components/View/RenderComponents/ProfilePhoto.vue"
 
@@ -99,7 +98,7 @@ import { mapGetters } from 'vuex'
 export default {
   props: ['content'],
   components: {
-    Icon, ButtonApp,
+    ButtonApp,
     ProfilePhoto,
   },
   data() {

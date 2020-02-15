@@ -34,7 +34,6 @@
 <script>
 
 import SidebarVue from '../Sidebar/Sidebar.vue'
-import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import VersionApp from '@/components/Version.vue'
 import ActionButtons from '@/components/View/FloatingButtons/ActionButtons.vue'
@@ -45,7 +44,7 @@ export default {
   components: {
     ActionButtons,
     Sidebar: SidebarVue,
-    Icon: IconVue, VersionApp,
+    VersionApp,
     IconDrop: IconDropVue
   },
   data() {

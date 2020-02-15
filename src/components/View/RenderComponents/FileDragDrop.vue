@@ -21,12 +21,7 @@
 
 <script>
 
-import Icon from "@/components/Icon.vue"
-
 export default {
-  components: {
-    Icon,
-  },
   props: ['onDrop'],
   data() {
     return {
