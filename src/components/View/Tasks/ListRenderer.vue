@@ -437,7 +437,7 @@ export default {
         forceFallback: true,
         fallbackOnBody: true,
         animation: 80,
-        delay: this.isDesktop ? 0 : 100,
+        delay: this.isDesktop ? 25 : 100,
         handle: '.item-handle',
         
         group: this.group || {

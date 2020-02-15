@@ -80,8 +80,11 @@
               <div class="check" ref='check'
                 :class="{changeColor}"
 
-                @click.stop
-                @contextmenu.stop
+                @click.stop="desktopComplete"
+                @contextmenu.prevent.stop='desktopCancel'
+
+                @touchstart.passive='checkTouchStart'
+                @touchend.passive='touchComplete'
               >
                 <TaskIcons class="check-icon icon"
                   :co='completed'
@@ -89,11 +92,6 @@
                   :se='isSelecting'
                   :ca='canceled'
                   :so='isSomeday'
-                  @click.native="desktopComplete"
-                  @contextmenu.native.prevent='desktopCancel'
-                  
-                  @touchstart.native.passive='checkTouchStart'
-                  @touchend.native.passive='touchComplete'
                 />
               </div>
               <div class="text"

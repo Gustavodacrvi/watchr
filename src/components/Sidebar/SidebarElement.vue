@@ -31,7 +31,7 @@
         </div>
         <div class="name-wrapper">
           <transition name="name-t">
-            <span key="normal" class="name" :style="hoverStyle">
+            <span key="normal" class="name" @click="click" :style="hoverStyle">
               {{ getName }}
             </span>
           </transition>

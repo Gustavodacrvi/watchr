@@ -55,9 +55,8 @@ export default {
           return false
         }
       },
-      delay: 150,
+      delay: this.isDesktop ? 25 : 150,
       animation: 80,
-      delayOnTouchOnly: true,
       handle: '.handle',
 
       onUpdate: () => {

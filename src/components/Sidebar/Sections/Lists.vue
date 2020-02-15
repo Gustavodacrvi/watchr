@@ -124,10 +124,9 @@ export default {
         if (type === 'Task') return true
         return false
       }},
-      delay: 225,
+      delay: this.isDesktop ? 25 : 150,
       filter: '.ignore-item',
       animation: 80,
-      delayOnTouchOnly: true,
       handle: '.handle-folder',
 
       onUpdate: (evt) => {

@@ -60,18 +60,19 @@
           opacity='0'
         />
         <div class="cont">
-          <div class="icon-wrapper">
+          <div class="icon-wrapper"
+            @click.stop="desktopComplete"
+            @contextmenu.stop.prevent='desktopCancel'
+            
+            @touchstart.passive='checkTouchStart'
+            @touchend.passive='touchComplete'
+          >
             <ListIcons class="check-icon icon"
               :co='completed'
               :se='isSelecting'
               :ca='canceled'
               :so='isSomeday'
               :progress='getListProgress'
-              @click.native.stop="desktopComplete"
-              @contextmenu.native.stop.prevent='desktopCancel'
-              
-              @touchstart.native.passive='checkTouchStart'
-              @touchend.native.passive='touchComplete'
             />
           </div>
           <div class="name">

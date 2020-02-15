@@ -80,6 +80,15 @@ export default {
   transform: translateY(50px);
 }
 
+.active-el {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
 .SlimModeNav {
   margin: 0;
   position: relative;
@@ -93,17 +102,15 @@ export default {
   transform: translateY(-20px);
 }
 
+.SlimModeNav.render .active-el {
+  height: 35px;
+  opacity: 1;
+}
+
 .slim-sidebar {
   position: absolute;
   top: 0;
   width: 100%;
-}
-
-.active-el {
-  display: flex;
-  height: 35px;
-  align-items: center;
-  justify-content: center;
 }
 
 .name {
