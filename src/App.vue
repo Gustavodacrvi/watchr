@@ -143,16 +143,16 @@ export default {
       this.timeBeforeMouseMove = 0
       
       const y = evt.pageY
-      if (y && y < (!this.hideNavbar ? 65 : 15)) {
+      if (y && y < (!this.hideNavbar ? 65 : 10)) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = false
-        }, 150)
+        }, 200)
       } else if (y) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = true
-        }, 200)
+        }, 250)
       }
     },
     updateViewType(saveRoute) {

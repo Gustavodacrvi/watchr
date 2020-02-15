@@ -9,19 +9,21 @@
         @click.stop="active = !active"
       >{{ viewNameValue }}</span>
     </div>
-    <Sidebar v-if="active"
-      ref="side"
-      class="Sidebar-comp"
-      :value='viewNameValue'
-      width='100%'
-      :slimMode='true'
-      :sidebarHided='false'
-      :pressingHandle='false'
-      :disableSearch='true'
-      :removeHandle='true'
-      :removeBacklayer='true'
-      :removeFooter='true'
-    />
+    <transition name="side-t">
+      <Sidebar v-if="active"
+        ref="side"
+        class="Sidebar-comp"
+        :value='viewNameValue'
+        width='100%'
+        :slimMode='true'
+        :sidebarHided='false'
+        :pressingHandle='false'
+        :disableSearch='true'
+        :removeHandle='true'
+        :removeBacklayer='true'
+        :removeFooter='true'
+      />
+    </transition>
   </div>
 </template>
 
@@ -63,6 +65,9 @@ export default {
         window.addEventListener('click', this.click)
       else
         window.removeEventListener('click', this.click)
+    },
+    getIcon() {
+      this.active = false
     },
   },
 }
@@ -125,6 +130,18 @@ export default {
   justify-content: center;
   align-items: center;
   transform: translateY(1.5px);
+}
+
+.side-t-enter, .side-t-leave-to {
+  transform: translateY(0px);
+  opacity: 0;
+  transition-duration: .2s;
+}
+
+.side-t-leave, .side-t-enter-to {
+  transform: translateY(50px);
+  opacity: 1;
+  transition-duration: .2s;
 }
 
 </style>
