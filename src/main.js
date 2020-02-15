@@ -5,7 +5,7 @@ import router from "./router"
 import store from "./store/"
 import "./registerServiceWorker"
 import vuetify from '@/plugins/vuetify'
-import Icon from "@/components/Icon.vue"
+import Icon from "@/components/Icons/IconWrapper.vue"
 
 import VueWorker from 'vue-worker'
 import vueSmoothScroll from 'vue2-smooth-scroll'

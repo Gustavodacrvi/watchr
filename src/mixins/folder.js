@@ -1,6 +1,5 @@
 
 
-import Icon from '@/components/Icon.vue'
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 import { mapGetters, mapState, mapActions } from 'vuex'
@@ -10,7 +9,7 @@ import utils from "@/utils"
 export default {
   props: ['viewName', 'viewType', 'listLength', 'name', 'id', 'defaultShowing', 'item'],
   components: {
-    Icon, IconDrop,
+    IconDrop,
   },
   data() {
     return {
