@@ -38,7 +38,6 @@ import { mapState } from 'vuex'
 export default {
   components: {
     ProfilePhoto,
-    Icon,
   },
   props: ['name', 'userId', 'files', 'reactions', 'created', 'groupId'],
   computed: {

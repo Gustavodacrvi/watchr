@@ -87,6 +87,9 @@
           :getItemRef='getItemRef'
           :fallbackItem='fallbackItem'
 
+          :existingItems='existingItems'
+          :alreadyExistMessage='alreadyExistMessage'
+
           :mapNumbers='mapSubTagNumbers'
           @buttonAdd='onSubTagAdd'
           @update='onSubTagUpdate'
@@ -110,7 +113,7 @@ export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
-  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned'],
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned', 'existingItems', 'alreadyExistMessage'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     AssigneeProfilePhoto,
