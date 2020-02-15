@@ -627,15 +627,17 @@ export default {
         task => this.isTaskInPeriod(task, TOD_STR, 'month', true)
       )
       // this month
+      const now = mom()
       arr.push({
         name: 'This month',
         disableSortableMount: true,
+        calendarEvents: [now.startOf('month').format('Y-M-D'), now.endOf('month').format('Y-M-D')],
         calendarStr: true,
         sort,
         filter: thisMonthPipe,
         id: 'this month',
       })
-      const now = mom().add(1, 'month')
+      now.add(1, 'month')
 
       for (let month = now.month(); month < 12; month++) {
         const monthNum = now.month()
@@ -644,6 +646,7 @@ export default {
         arr.push({
           name: now.format('MMMM'),
           id: name,
+          calendarEvents: [now.startOf('month').format('Y-M-D'), now.endOf('month').format('Y-M-D')],
           calendarStr: true,
           showHeading: true,
           disableSortableMount: true,
