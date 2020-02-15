@@ -82,6 +82,10 @@ export default {
   background-color: var(--dark);
 }
 
+.slim-sidebar .ItemEdit {
+  background-color: var(--dark-light-gray);
+}
+
 .wrapper {
   height: 35px;
 }

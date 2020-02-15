@@ -174,6 +174,11 @@ export default {
   background-color: var(--card);
 }
 
+.slim-sidebar .Lists .list-act, .slim-sidebar .Tags .tags-act {
+  border-radius: 10px;
+  background-color: var(--dark-light-gray);
+}
+
 .Checklist .heading, .Checklist .existing {
   display: none !important;
 }

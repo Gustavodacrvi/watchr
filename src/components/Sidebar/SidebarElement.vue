@@ -401,6 +401,10 @@ export default {
   background-color: var(--card);
 }
 
+.slim-sidebar .desktop .link-inner-wrapper:hover, .slim-sidebar .notSmartActive, .slim-sidebar .link-inner-wrapper:active, .slim-sidebar .isActive {
+  background-color: var(--dark-light-gray);
+}
+
 .sortable-drag {
   background-color: var(--card) !important;
 }

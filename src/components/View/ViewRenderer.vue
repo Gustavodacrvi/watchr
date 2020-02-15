@@ -4,6 +4,7 @@
     <div class='view-wrapper'>
       <SlimModeNav v-if='isDesktop'
         :render='sidebarHided'
+        :viewNameValue='viewNameValue'
       />
       <Header
         v-bind="$props"

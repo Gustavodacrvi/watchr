@@ -20,6 +20,10 @@
   background-color: var(--dark);
 }
 
+.slim-sidebar .header:hover, .slim-sidebar .isActive {
+  background-color: var(--dark-light-gray);
+}
+
 .icon {
   color: var(--fade);
   transform: translateY(2px);

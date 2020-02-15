@@ -1,12 +1,12 @@
 <template>
   <div class="Sidebar-wrapper"
-    :class="[platform, {'scroll-thin': isDesktop}]"
+    :class="[platform, {'scroll-thin': isDesktop, 'slim-sidebar': slimMode}]"
 
     @mouseenter="sidebarHover = true"
     @mouseleave="sidebarHover = false"
   >
-    <div class="margin-wrapper">
-      <div v-if="isDesktop"
+    <div class="margin-wrapper" :class="{'scroll-thin': slimMode}">
+      <div v-if="isDesktop && !removeBacklayer"
         class="back-layer"
         :class="{showing, pressingHandle}"
         :style="{width}"
@@ -17,7 +17,7 @@
           <transition name="bar-trans">
           <div v-if="!isDesktop || showing" class="sidebar-content">
             <transition name="search-t">
-              <SearchButton v-if="isDesktop"
+              <SearchButton v-if="isDesktop && !disableSearch"
                 @click="$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})"
                 @mouseenter="showSearch"
                 @mouseleave="hideSearch"
@@ -86,12 +86,12 @@
                   />
                 </transition>
               </div>
-              <div style="height: 300px"></div>
+              <div class='extra-margin' style="height: 300px"></div>
             </div>
           </transition>
         </div>
         <div v-if="isDesktop" style="height: 35px;"></div>
-        <div class="footer" :class="[platform, {showing}]" :style="{width}">
+        <div v-if="!removeFooter" class="footer" :class="[platform, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop" v-if="showIconDropdown">
               <Icon v-for="i in sideIcons" :key='i.icon'
@@ -118,7 +118,7 @@
         </div>
       </div>
     </div>
-    <div v-if="isDesktop && !sidebarHided"
+    <div v-if="isDesktop && !sidebarHided && !removeHandle"
       class="sidebar-handle passive"
       :class="{sidebarHover}"
       :style="sidebarHandle"
@@ -147,7 +147,10 @@ import utilsFolder from '@/utils/folder'
 import utilsGroup from '@/utils/group'
 
 export default {
-  props: ['value', 'width', 'sidebarHided', 'pressingHandle'],
+  props: ['value', 'width', 'sidebarHided', 'pressingHandle',
+    'disableSearch', 'removeHandle', 'removeBacklayer', 'removeFooter',
+    'slimMode',
+  ],
   components: {
     SidebarElement: SidebarElementVue,
     IconDrop: IconDropVue,
@@ -887,6 +890,24 @@ export default {
   transform: translateX(0px);
   opacity: 1;
   transition: transform .4s, opacity .4s;
+}
+
+.slim-sidebar {
+  padding: 0 !important;
+}
+
+.slim-sidebar .extra-margin {
+  display: none;
+}
+
+.slim-sidebar .margin-wrapper {
+  margin: 0;
+  padding: 12px;
+  max-height: 350px;
+  overflow: auto;
+  background-color: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(10,10,10,.3);
 }
 
 .bar-trans-enter-to {

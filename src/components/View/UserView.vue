@@ -28,7 +28,7 @@
     </div>
     <div class="cont" :class="[platform, {pressingHandle}]">
       <ViewControler
-        :width='width'
+        :width='!sidebarHided ? width : 0'
         :sidebarHided='sidebarHided'
       
         :isSmart="isSmart"
