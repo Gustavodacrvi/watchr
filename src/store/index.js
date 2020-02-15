@@ -176,6 +176,45 @@ const store = new Vuex.Store({
         return ordered
       },
     }),
+    getIcon(state) {
+      if (state.viewType === 'search') return 'search'
+      const obj = {
+        Today: 'star',
+        Tomorrow: 'sun',
+        Someday: 'archive',
+        Anytime: 'layer-group',
+        Inbox: 'inbox',
+        Calendar: 'calendar-star',
+        Pomodoro: 'pomo',
+        Statistics: 'pie',
+        Upcoming: 'calendar',
+        Logbook: 'logbook',
+        "Later lists": 'later-lists',
+      }
+      return obj[state.viewName]
+    },
+    getIconColor(state) {
+      if (state.viewType === 'folder' || state.viewType === 'group') return ''
+      if (state.viewType === 'list') {
+        const obj = {
+          Today: 'var(--yellow)',
+          Tomorrow: 'var(--orange)',
+          Someday: 'var(--brown)',
+          Anytime: 'var(--dark-blue)',
+          Inbox: 'var(--primary)',
+          Calendar: 'var(--purple)',
+          Pomodoro: 'var(--dark-red)',
+          Statistics: 'var(--primary)',
+          Upcoming: 'var(--green)',
+          Logbook: 'var(--olive)',
+        }
+        const color = obj[state.viewName]
+        if (!color) return 'var(--primary)'
+        return color
+      }
+      if (state.viewType === 'search') return ''
+      return 'var(--red)'
+    },
     fallbackSelected(state) {
       if (state.selectedItems.length > 0)
         return state.selectedItems

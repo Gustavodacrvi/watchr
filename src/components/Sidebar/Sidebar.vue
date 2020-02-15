@@ -13,7 +13,6 @@
       ></div>
       <div class="inner-wrapper">
         <div>
-          <div class="search-shadow" @mouseenter="showSearch" @mouseleave="hideSearch"></div>
           <transition name="bar-trans">
           <div v-if="!isDesktop || showing" class="sidebar-content">
             <transition name="search-t">
@@ -670,14 +669,6 @@ export default {
 </script>
 
 <style scoped>
-
-.search-shadow {
-  z-index: 100;
-  top: -35px;
-  width: 100%;
-  position: absolute;
-  height: 35px;
-}
 
 .sidebar-handle {
   position: fixed;
