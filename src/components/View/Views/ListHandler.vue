@@ -6,12 +6,12 @@
       :items="sortLaseredLists"
       :headings='emptyArr'
       :showSomedayButton='showSomedayButton'
-      :itemIconDropOptions='emptyArr'
 
       :addItem='addList'
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
       :selectEverythingToggle='selectEverythingToggle'
+      :itemIconDropOptions='taskIconDropOptions'
       :disableFallback='true'
       :rootFilterFunction='rootFilterFunction'
       :group='group'
@@ -51,7 +51,8 @@ export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday', 'width', 'removeListHandlerWhenThereArentLists', 'selectEverythingToggle'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday',
+  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'selectEverythingToggle'],
   components: {
     ListRendererVue,
   },

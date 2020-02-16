@@ -1373,8 +1373,10 @@ export default {
 
       b.commit()
     },
-    deleteMultipleListsByIds({getters, rootState}, {ids, tasks}) {
+    deleteMultipleListsByIds({getters, rootState, rootGetters}, ids) {
       const b = fire.batch()
+
+      const tasks = rootGetters['task/allTasks']
 
       const writes = []
 

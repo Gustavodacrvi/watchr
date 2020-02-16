@@ -22,6 +22,16 @@ export default {
     groupTasks: {},
   },
   getters: {
+    allTasks(state) {
+      const keys = Object.keys(state.tasks).filter(
+        k => state.tasks[k]
+      )
+      const groupKeys = Object.keys(state.groupTasks).filter(
+        k => state.groupTasks[k]
+      )
+      
+      return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
+    },
     logTasks(state) {
       const keys = Object.keys(state.tasks).filter(
         k => state.tasks[k] && state.tasks[k].logbook
