@@ -11,7 +11,9 @@
           @input='v => name = v'
           :focus='true'
           placeholder='Subtask name...'
+
           @enter='addSubtask'
+          @cancel='$emit("cancel")'
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />

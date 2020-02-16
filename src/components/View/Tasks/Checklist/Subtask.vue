@@ -5,7 +5,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Subtask rb cursor handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
+    <div class="Subtask rb cursor item-handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
       <span class="icons" @click.stop="$emit('toggle')">
         <Icon v-if="!completed" class="icon" icon="circle"/>
         <Icon v-else class="icon" icon="circle-check"/>
@@ -122,7 +122,7 @@ export default {
 }
 
 .name {
-  padding: 0 10px;
+  padding: 0 8px;
   max-width: 100%;
   position: absolute;
   white-space: nowrap;

@@ -1,6 +1,6 @@
 <template>
   <transition name="trans" appear>
-    <div v-if="dragging"
+    <div v-if="dragging && !moving"
       class="FileDragDrop"
 
       @drop.prevent.stop='drop'
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+
+import { mapState } from 'vuex'
 
 export default {
   props: ['onDrop'],
@@ -55,6 +57,9 @@ export default {
     dragEnd() {
       this.dragging = false
     },
+  },
+  computed: {
+    ...mapState(['moving'])
   },
 }
 

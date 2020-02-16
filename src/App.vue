@@ -38,7 +38,7 @@ export default {
   components: {
     FileReader: c(import(/* webpackChunkName: "FileReader" */ './components/View/FileReader/FileReader.vue')),
     NavBar: c(import(/* webpackChunkName: "NavBar" */ './components/NavBar/NavBar.vue')),
-    Popup: c(import(/* webpackChunkName: "Popup" */ './components/Popup/Popup.vue')),
+    Popup: c(import(/* webpackChunkName: "Popup" */ './components/Popup/Popup.vue'), false),
     Toast: c(import(/* webpackChunkName: "Toast" */ './components/Toast.vue')),
     Menu: c(import(/* webpackChunkName: "Menu" */ './components/NavBar/Menu.vue')),
     MobileIcondrop: c(import(/* webpackChunkName: "MobileIconDrop" */ './components/Popup/MobileIcondrop.vue')),

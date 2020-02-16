@@ -262,11 +262,11 @@ export default {
           .replace(/\*(.*?)\*/g, "<i>$1</i>")
           .replace(/\{(.*?)(?: ([^\]]*))?\}/g, "<span style='color: $1'>$2</span>")
   },
-  asyncComp(comp) {
+  asyncComp(comp, allowComp = true) {
     return () => ({
       component: comp,
-      loading: LoadingComponent,
-      error: ErrorComponent,
+      loading: allowComp ? LoadingComponent : undefined,
+      error: allowComp ? ErrorComponent : undefined,
       delay: 300,
       timeout: 7500,
     })

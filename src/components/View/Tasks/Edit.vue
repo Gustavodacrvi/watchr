@@ -102,7 +102,7 @@
             :onDrop='onDrop'
           />
         </div>
-        <Checklist class="hide" :class="{show}"
+        <Checklist v-if="!isFirstEdit"
           :list='task.checklist'
           :order='task.order'
           :toggle='toggleChecklist'

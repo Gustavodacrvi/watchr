@@ -19,9 +19,11 @@
         <SubtaskEdit v-else
           ref='Edit'
           :key="sub.isEdit"
-          id='Edit'
+          data-id='Edit'
 
           @add='addSubtask'
+
+          @cancel='removeEdit'
 
           @goup='moveTaskRenderer("up")'
           @godown='moveTaskRenderer("down")'
@@ -68,9 +70,11 @@ export default {
           return false
         }
       },
-      delay: this.isDesktop ? 25 : 150,
+      direction: 'vertical',
+      delay: this.isDesktop ? 0 : 150,
       animation: 80,
-      handle: '.handle',
+      handle: '.item-handle',
+
 
       onUpdate: () => {
         this.$emit('update', this.getIds(true))
@@ -81,8 +85,8 @@ export default {
 
         if (type === 'add-task-floatbutton') {
 
-          this.addEdit(evt.index)
-          
+          this.addEdit(evt.newIndex)
+
         } else if (type === 'Task') {
           const childs = this.draggableRoot.childNodes
           let i = 0
@@ -94,9 +98,15 @@ export default {
           this.$emit('convert-task', {
             index: i, id: item.dataset.id, ids: this.getIds(true)
           })
-          item.style.display = 'none'
         }
-      }
+        item.remove()
+      },
+      onStart: () => {
+        this.$store.commit('moving', true)
+      },
+      onEnd: () => {
+        this.$store.commit('moving', false)
+      },
     })
   },
   beforeDestroy() {
@@ -120,7 +130,7 @@ export default {
         isEdit: true,
       }
       
-      this.editIndex = 0
+      this.editIndex = i
       this.edit = obj
       this.hasEdit = true
       window.addEventListener('click', this.hide)
@@ -196,6 +206,15 @@ export default {
 
 </script>
 
+<style>
+
+.sortable-ghost .icons, .sortable-ghost .name-wrapper, .sortable-ghost .no-back {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+</style>
+
 <style scoped>
 
 .Checklist {
@@ -216,10 +235,14 @@ export default {
   opacity: 1;
 }
 
+.sortable-drag {
+  background-color: var(--light-gray) !important; 
+  border-radius: 6px;
+}
+
 .sortable-ghost {
-  background-color: var(--back-color) !important;
+  background-color: var(--sidebar-color) !important;
   transition-duration: 0;
-  transition: none;
   height: 38px;
   padding: 0;
 }
