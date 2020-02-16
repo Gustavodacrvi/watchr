@@ -1,27 +1,37 @@
 
 <template>
-  <div class="Subtask rb cursor handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
-    <span class="icons" @click.stop="$emit('toggle')">
-      <Icon v-if="!completed" class="icon" icon="circle"/>
-      <Icon v-else class="icon" icon="circle-check"/>
-    </span>
-    <span v-if="!editing" class="name">{{ str }}</span>
-    <InputApp v-else
-      :value='str'
-      @input='v => str = v'
-      class="no-back"
-      :focus='true'
-      @enter='save'
-    />
-    <div class="line-wrapper">
-      <div class="line rb"></div>
-    </div>
-    <transition name="fade-t">
-      <div v-if="showDeleteIcon" class="delete-wrapper">
-        <Icon icon="trash" class="delete" @click="$emit('remove')"/>
+  <transition
+    appear
+    @enter='enter'
+    @leave='leave'
+  >
+    <div class="Subtask rb cursor handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
+      <span class="icons" @click.stop="$emit('toggle')">
+        <Icon v-if="!completed" class="icon" icon="circle"/>
+        <Icon v-else class="icon" icon="circle-check"/>
+      </span>
+      <span v-if="!editing" class="name-wrapper">
+        <span class="name">
+          {{ str }}
+        </span>
+      </span>
+      <InputApp v-else
+        :value='str'
+        @input='v => str = v'
+        class="no-back"
+        :focus='true'
+        @enter='save'
+      />
+      <div class="line-wrapper">
+        <div class="line rb"></div>
       </div>
-    </transition>
-  </div>
+      <transition name="fade-t">
+        <div v-if="showDeleteIcon && !editing" class="delete-wrapper">
+          <Icon icon="trash" class="delete" @click="$emit('remove')"/>
+        </div>
+      </transition>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -57,6 +67,30 @@ export default {
       this.editing = false
       this.$emit("save", this.str)
     },
+
+    enter(el, done) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.height = 0
+      s.opacity = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+        s.height = '35px'
+        s.opacity = 1
+
+        setTimeout(done, 205)
+      })
+    },
+    leave(el) {
+
+      const s = el.style
+
+      s.height = 0
+      s.opacity = 0
+
+    },
   },
   computed: {
     ...mapGetters(['isDesktop']),
@@ -78,6 +112,23 @@ export default {
   position: relative;
   display: flex;
   transition-duration: .15s;
+}
+
+.name-wrapper {
+  position: relative;
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  padding: 0 10px;
+  max-width: 100%;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity .15s;
 }
 
 .line-wrapper {
@@ -145,16 +196,6 @@ export default {
 .icon {
   transform: translateY(2px);
   margin-left: 6px;
-}
-
-.name {
-  margin-left: 6px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding-left: 6px;
-  transition: opacity .15s;
-  flex-basis: 100%;
 }
 
 </style>

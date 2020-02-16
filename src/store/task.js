@@ -981,6 +981,8 @@ export default {
           const list = savedLists.find(l => l.id === task.list)
           if (list && list.folder) folder = list.folder
         }
+        if (task.folder)
+          folder = task.folder
         if (task.group) {
           group = task.group
         }

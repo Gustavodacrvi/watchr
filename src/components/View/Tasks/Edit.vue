@@ -130,7 +130,7 @@
               style="margin-left: 4px;margin-top: 0px;opacity: .6"
               type="card"
               value="Add checklist"
-              @click="addChecklist"
+              @click.native.stop="addChecklist"
             />
           </transition>
           <transition name="btn">

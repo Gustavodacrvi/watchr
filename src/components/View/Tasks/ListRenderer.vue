@@ -5,7 +5,7 @@
         class="illustration"
         :style="{
           width: `calc(100% - ${width}px)`,
-          left: width + 'px',
+          left: (isDesktop ? width : 0) + 'px',
         }"
       >
         <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
@@ -88,7 +88,7 @@
       >
         <div
           class="add-item rb"
-          @click="addEditComp(nonEditGetItems.length)"
+          @click.stop="addEditComp(nonEditGetItems.length)"
         >
           Add item
         </div>
@@ -1238,7 +1238,8 @@ export default {
 
 .add-item-wrapper {
   height: 35px;
-  position: relative;
+  position: absolute;
+  width: 100%;
 }
 
 .add-item {

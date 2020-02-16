@@ -5,12 +5,6 @@
         <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--fade)" width="25px"/>
         <div>
           <Icon class="cursor help-icon primary-hover" icon="user" color="var(--fade)" @click="toggleMenu"/>
-          <IconDrop v-if="!appSection"
-            class="help-icon drop rigth"
-            handle="globe"
-           
-            handleColor="var(--fade)"
-          />
           <VersionApp class="version"/>
         </div>
       </span>
