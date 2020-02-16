@@ -66,6 +66,11 @@
               @input="togglepmFormat"
             />
             <CheckboxApp class="rb"
+              name='Manually log tasks'
+              :value='manuallyLogTasks'
+              @input="manuallyLogTasks = !manuallyLogTasks"
+            />
+            <CheckboxApp class="rb"
               name='Group folder/list tasks in headings on Today, Tomorrow and Calendar smart views.'
               :value='!ungroupTasksInHeadings'
               @input="ungroupTasksInHeadings = !ungroupTasksInHeadings"
@@ -212,6 +217,7 @@ export default {
       goToLastViewOnEnter: false,
       changedSection: false,
       forceUpdate: false,
+      manuallyLogTasks: false,
 
       folderFilters: false,
       tagFilters: false,
@@ -287,12 +293,14 @@ export default {
         hidedSections: this.hidedSections || null,
         hidedViews: this.hidedSmartViews || null,
         ungroupTasksInHeadings: this.ungroupTasksInHeadings || null,
+        manuallyLogTasks: this.manuallyLogTasks || null,
       })
       this.changedSection = false
       this.forceUpdate = !this.forceUpdate
     },
     update() {
       this.ungroupTasksInHeadings = this.userInfo.ungroupTasksInHeadings
+      this.manuallyLogTasks = this.userInfo.manuallyLogTasks
       this.pmFormat = this.getPmFormat
       this.goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter') === 'true'
       this.tagFilters = localStorage.getItem('tagFilters') === 'true'
@@ -313,6 +321,8 @@ export default {
       if (this.folderFilters !== (localStorage.getItem('folderFilters') === 'true')) return true
       if (this.listFilters !== (localStorage.getItem('listFilters') === 'true')) return true
       if (this.ungroupTasksInHeadings !== this.userInfo.ungroupTasksInHeadings)
+        return true
+      if (this.manuallyLogTasks !== this.userInfo.manuallyLogTasks)
         return true
       if (this.changedSection) return true
       

@@ -1058,7 +1058,7 @@ export default {
       
       b.commit()
     },
-    completeTasks({commit, rootState}, tasks) {
+    completeTasks({rootState}, tasks) {
       const b = fire.batch()
 
       const writes = []
@@ -1079,7 +1079,7 @@ export default {
         }
 
         const tod = mom()
-        setTask(b, {
+        let obj = {
           completedFire: serverTimestamp(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
@@ -1091,7 +1091,19 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, rootState, t.id, writes)
+        }
+
+        if (!rootState.userInfo.manuallyLogTasks) {
+          obj = {
+            ...obj,
+            logbook: true,
+            logFire: serverTimestamp(),
+            logDate: mom().format('Y-M-D'),
+            fullLogDate: mom().format('Y-M-D HH:mm ss'),
+          }
+        }
+        
+        setTask(b, obj, rootState, t.id, writes)
       }
 
       cacheBatchedItems(b, writes)
@@ -1127,7 +1139,8 @@ export default {
       const b = fire.batch()
 
       const tod = mom()
-      await batchSetTasks(b, {
+
+      const obj = {
         canceled: true,
         checked: true,
         cancelDate: tod.format('Y-M-D'),
@@ -1137,7 +1150,19 @@ export default {
         completedFire: null,
         completeDate: null,
         completed: false,
-      }, ids, rootState)
+      }
+
+      if (!rootState.userInfo.manuallyLogTasks) {
+        obj = {
+          ...obj,
+          logbook: true,
+          logFire: serverTimestamp(),
+          logDate: mom().format('Y-M-D'),
+          fullLogDate: mom().format('Y-M-D HH:mm ss'),
+        }
+      }
+
+      await batchSetTasks(b, obj, ids, rootState)
 
       b.commit()
     },

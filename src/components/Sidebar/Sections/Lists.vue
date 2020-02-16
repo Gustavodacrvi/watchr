@@ -149,6 +149,7 @@ export default {
       if (comp === "Group")
         this.$store.dispatch('list/addListInGroupByIndex', obj)
       else
+      
         this.$store.dispatch('list/addListInFolderByIndex', obj)
     },
     addListInRoot(obj) {

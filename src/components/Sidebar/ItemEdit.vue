@@ -57,9 +57,9 @@ export default {
       if (key === 'Escape')
         this.$emit('close')
       if (this.isOnShift) {
-        if (key === 'ArrowUp')
+        if (key === 'ArrowLeft') 
           this.go(-1)
-        else if (key === 'ArrowDown')
+        else if (key === 'ArrowRight')
           this.go(1)
       }
       if (key === "Enter") {
