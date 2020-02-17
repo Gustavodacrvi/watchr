@@ -53,7 +53,7 @@ import Sortable from 'sortablejs'
 import utils from '@/utils/'
 
 export default {
-  props: ['order', 'list', 'activeChecklistId'],
+  props: ['list', 'activeChecklistId'],
   components: {
     Subtask,
     SubtaskEdit,
@@ -194,7 +194,7 @@ export default {
       return ids
     },
     addChecklist() {
-      if (this.getList && this.getList.length === 0)
+      if (this.list && this.list.length === 0)
         setTimeout(() => this.addEdit(0))
     },
   },
@@ -203,13 +203,10 @@ export default {
       return this.$refs['draggable-root']
     },
     getItems() {
-      const l = this.getList.slice()
+      const l = this.list.slice()
       if (this.edit)
         l.splice(this.editIndex, 0, this.edit)
       return l
-    },
-    getList() {
-      return this.$store.getters.checkMissingIdsAndSortArr(this.order, this.list)
     },
   },
 }

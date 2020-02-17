@@ -133,7 +133,8 @@ export default {
       }
 
       if (!this.isOnShift) {
-        switch (key) {case ' ': {
+        switch (key) {
+          case ' ': {
           if (!isTyping) {
             p()
             this.$emit('add-item-after', 1)

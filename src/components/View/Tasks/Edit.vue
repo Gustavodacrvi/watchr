@@ -105,8 +105,7 @@
         </div>
         <Checklist v-if="!isFirstEdit"
           ref='checklist'
-          :list='task.checklist'
-          :order='task.order'
+          :list='getChecklist'
 
           :activeChecklistId='activeChecklistId'
 
@@ -411,6 +410,12 @@ export default {
         switch (key) {
           case "Delete": {
             this.removeSubtask(this.activeChecklistId)
+            break
+          }
+          case " ": {
+            console.log('espcae')
+            this.$refs.checklist.addEdit(this.cursorPos - 1)
+            break
           }
         }
       }
@@ -780,7 +785,7 @@ export default {
       else {
         let num = 2
         
-        for (const t of this.task.checklist) {
+        for (const t of this.getChecklist) {
           obj[num] = t.id
           num++ 
         }
@@ -821,7 +826,7 @@ export default {
       return this.defaultTask
     },
     doesntHaveChecklist() {
-      return !this.task.checklist || this.task.checklist.length === 0
+      return !this.getChecklist || this.getChecklist.length === 0
     },
     calendarOptions() {
       return {
@@ -902,6 +907,9 @@ export default {
       if (this.task.folder)
         return this.$store.getters['folder/getFoldersById']([this.task.folder])[0].name
       return ''
+    },
+    getChecklist() {
+      return this.$store.getters.checkMissingIdsAndSortArr(this.task.order, this.task.checklist)
     },
     folderId() {
       if (this.task.folder)
