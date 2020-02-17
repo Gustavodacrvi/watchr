@@ -16,6 +16,7 @@
           :icon="getIcon(el)"
           :showColor='showColor'
           :type="type || el.rendererType"
+          :existingItems='existingItems'
 
           :tabindex="i + 1"
           :active="active"
@@ -102,7 +103,7 @@ export default {
           if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
-      delay: this.isDesktop ? 25 : 150,
+      delay: this.isDesktop ? 5 : 150,
       forceFallback: true,
       fallbackOnBody: true,
       handle: '.item-handle',

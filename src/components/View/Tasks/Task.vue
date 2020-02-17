@@ -1008,6 +1008,8 @@ export default {
 .task-name {
   margin: 0 4px;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .icon {

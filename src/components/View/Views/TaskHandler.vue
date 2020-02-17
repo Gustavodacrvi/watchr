@@ -75,7 +75,8 @@ export default {
   data() {
     return {
       scheduleObject: null,
-      order: [],
+      tempoOrder: {},
+      tempoTimeout: null,
     }
   },
   created() {
@@ -317,14 +318,14 @@ export default {
       const headings = this.headings
       if (!headings) return []
       const mainTasks = this.mainTasks
+      
       return headings.map(head => {
         
         const nonFiltered = !head.directFiltering ?
-          head.sort(
+          head.sort(this.tempoOrder[head.id] || head.order || [],
             (!head.log ? mainTasks : this.logTasks).filter(task => head.filter(task))
           )
-          : head.sort((!head.listType ? this.storeTasks : this.lists).filter(item => head.filter(item)))
-        
+          : head.sort(this.tempoOrder[head.id] || head.order || [], (!head.listType ? this.storeTasks : this.lists).filter(item => head.filter(item)))
 
         if (head.react)
           for (const p of head.react) nonFiltered[p]
@@ -423,7 +424,11 @@ export default {
               [head.listType ? 'newListRef' : 'newTaskRef']: obj.newItemRef,
             }
             this.fixPosition(newObj, nonFiltered.map(el => el.id), () => {
-              this.order = newObj.ids.slice()
+              head.order = newObj.ids.slice()
+              this.tempoOrder[head.id] = head.order.slice()
+              if (this.tempoTimeout)
+                clearTimeout(this.tempoTimeout)
+              this.tempoTimeout = setTimeout(() => this.tempoOrder = {}, 400)
               head.onAddItem(newObj)
             })
           },
@@ -463,7 +468,7 @@ export default {
       }
     },
     sortTasksFunction() {
-      const order = this.order
+      const order = this.tasksOrder
       return tasks => this.checkMissingIdsAndSortArr(order || [], tasks)
     },
 
@@ -555,9 +560,6 @@ export default {
     },
     rootNonFiltered() {
       this.$emit('root-non-filtered', this.rootNonFiltered)
-    },
-    tasksOrder() {
-      this.order = this.tasksOrder.slice()
     },
     autoSchedule: {
       handler() {

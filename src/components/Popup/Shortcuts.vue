@@ -1,5 +1,5 @@
 <template>
-  <div class="Signin popup cb shadow rb scroll-thin" :class="platform">
+  <div class="Shortcuts popup cb shadow rb scroll-thin" :class="platform">
     <div class="tac title">
       <h2 class="pc">Shortcuts</h2>
     </div>
@@ -179,6 +179,10 @@ export default {
 
 <style scoped>
 
+.Shortcuts {
+  flex-basis: 1000px;
+}
+
 .line {
   display: flex;
   justify-content: space-between;
@@ -198,7 +202,7 @@ h3 {
 }
 
 .popup {
-  max-height: 550px;
+  max-height: 650px;
   overflow: auto;
 }
 

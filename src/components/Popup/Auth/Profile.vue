@@ -356,10 +356,10 @@ export default {
 <style scoped>
 
 .Profile.desktop {
-  flex-basis: 800px;
+  flex-basis: 1050px;
   margin-left: 12px;
   margin-right: 12px;
-  height: 400px;
+  height: 600px;
 }
 
 .Profile {

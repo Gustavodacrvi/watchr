@@ -211,7 +211,7 @@ export default {
       if (Array.isArray(this.date))
         return this.getIsoString(this.date[1], true)
       else
-        return this.getIsoString(this.date[1], true)
+        return this.getIsoString(this.date, true)
     },
     getFormat() {
       return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'

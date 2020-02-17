@@ -13,15 +13,15 @@
           :focus="true"
           :options="options"
           :placeholder="placeholder"
-          :focusToggle='focusToggle'
           :onPaste='onPaste'
+          :focusToggle='focusToggle'
           @select="select"
           @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />
-        <DropInput
+        <DropInput ref='task-notes'
           class="notes hide"
           :msg='isDesktop ? "Shift + Enter to save" : ""'
           :class="{'no-back': !popup, show}"
@@ -126,10 +126,13 @@
         <div class="options hide" :class="{show}">
           <transition name="btn">
             <ButtonApp v-if="showingOptions && doesntHaveChecklist"
+              ref='checklist'
               class="add-checklist-button"
               style="margin-left: 4px;margin-top: 0px;opacity: .6"
               type="card"
               value="Add checklist"
+
+              :class="{selected: cursorPos === 2}"
               @click.native.stop="addChecklist"
             />
           </transition>
@@ -137,9 +140,11 @@
             <div v-if="showingOptions" class="icons">
               <IconDrop
                 handle="tag"
-                class="opt-icon"
+                :box='true'
                 width="22px"
                 :options="getTags"
+                :active='cursorPos === 11'
+                ref='priority'
                
                 handleColor='var(--red)'
                 title='Add tags'
@@ -147,9 +152,11 @@
               />
               <IconDrop
                 handle="priority"
-                class="opt-icon"
+                :box='true'
                 width="22px"
                 :options="priorityOptions"
+                :active='cursorPos === 10'
+                ref='priority'
                
                 handleColor='var(--yellow)'
                 title='Add priority'
@@ -158,8 +165,10 @@
               <IconDrop
                 handle="tasks"
                 width="22px"
-                class="opt-icon"
+                :box='true'
                 :options="listOptions"
+                :active='cursorPos === 9'
+                ref='tasks'
                
                 handleColor='var(--primary)'
                 title='Add to list'
@@ -167,18 +176,22 @@
               />
               <IconDrop
                 handle="folder"
-                width="22px"
-                class="opt-icon"
+                width="23.5px"
+                :box='true'
                 :options="folderOptions"
+                :active='cursorPos === 8'
+                ref='folder'
                
                 title='Add to folder'
                 :center='true'
               />
               <IconDrop
                 handle="group"
-                width="24px"
-                class="opt-icon"
+                width="23.5px"
+                :box='true'
                 :options="groupOptions"
+                :active='cursorPos === 7'
+                ref='group'
                
                 title='Add to group'
                 :center='true'
@@ -186,19 +199,23 @@
               <IconDrop
                 handle="calendar"
                 width="22px"
-                class="opt-icon"
+                :box='true'
                 :options="calendarOptions"
+                :active='cursorPos === 6'
+                ref='calendar'
                
                 handleColor='var(--green)'
                 title='Add date'
                 :center='true'
               />
               <Icon
-                class="opt-icon primary-hover cursor"
-                style="margin-right: 7px;margin-top: 2px"
-                width="21px"
+                class="icon-box primary-hover cursor"
+                width="22px"
                
                 icon='file'
+                :active='cursorPos === 5'
+                ref='file'
+                :box='true'
                 :file='true'
                 @add='addFile'
                 title='Add files'
@@ -206,7 +223,9 @@
               <IconDrop
                 handle="deadline"
                 width="22px"
-                class="opt-icon"
+                :box='true'
+                :active='cursorPos === 4'
+                ref='deadline'
                 :options="deadlineOptions"
                
                 handleColor='var(--orange)'
@@ -216,7 +235,9 @@
               <IconDrop
                 handle="clock"
                 width="22px"
-                class="opt-icon"
+                :box='true'
+                :active='cursorPos === 3'
+                ref='clock'
                 :options="durationOptions"
                
                 handleColor='var(--purple)'
@@ -265,6 +286,8 @@ export default {
     Tag: TagVue,
   },
   data() {
+    const c = ref => () => this.$refs[ref].click()
+    
     return {
       show: false,
       toggleChecklist: false,
@@ -293,8 +316,26 @@ export default {
       options: [],
       isFirstEdit: true,
 
+      cursorPos: 0,
+
       lastKeys: [],
       keydownSettimeout: null,
+
+      keyboardActions: {
+        0: this.focusName,
+        1: this.focusNotes,
+        
+        2: () => this.$refs['checklist'].$el.click(),
+        3: c('clock'),
+        4: c('deadline'),
+        5: c('file'),
+        6: c('calendar'),
+        7: c('group'),
+        8: c('folder'),
+        9: c('tasks'),
+        10: c('priority'),
+        11: c('tag'),
+      },
     }
   },
   created() {
@@ -353,9 +394,28 @@ export default {
       this.fromIconDrop = false
       this.toReplace = null
     },
+    focusName() {
+      this.$refs['task-name'].focusInput(0)
+    },
+    focusNotes() {
+      this.$refs['task-notes'].focusInput(0)
+    },
+    incrementPos(inc) {
+      const newIndex = this.cursorPos + inc
+      if (this.keyboardActions[newIndex])
+        this.cursorPos = newIndex
+      else if (inc > 0)
+        this.cursorPos = 0
+      else this.cursorPos = 11
+    },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
+
+      if (key === "Escape")
+        this.cancel()
+      if (key === "Enter")
+        this.keyboardActions[this.cursorPos]()
 
       utils.saveByShortcut(this, true, key, p, (type, task) => {
         switch (type) {
@@ -387,6 +447,14 @@ export default {
           }
         }
       })
+
+      if (key === "ArrowUp") {
+        p()
+        this.incrementPos(-1)
+      } else if (key === "ArrowDown") {
+        p()
+        this.incrementPos(1)
+      }
     },
     onPaste(txt) {
       if (this.fallbackItem) {
@@ -1029,6 +1097,17 @@ export default {
 
       if (!changedOptions) this.options = []
     },
+    cursorPos(newPos, oldPos) {
+      if (this.isAddingChecklist)
+        this.toggleChecklist = !this.toggleChecklist
+      if (newPos === 2 && oldPos === 1)
+        this.$refs['task-notes'].removeFocus()
+      else if (newPos === 11 && oldPos === 0)
+        this.$refs['task-name'].removeFocus()
+      
+      if (this.cursorPos < 2)
+        this.keyboardActions[this.cursorPos]()
+    },
   }
 }
 
@@ -1081,6 +1160,10 @@ export default {
 
 .hide {
   opacity: 0;
+}
+
+.selected {
+  background-color: var(--light-gray);
 }
 
 .notPopup .notes {
@@ -1200,10 +1283,6 @@ export default {
 .mobile .icons {
   display: flex;
   width: 100%;
-}
-
-.opt-icon {
-  margin-right: 12px !important;
 }
 
 .progress {

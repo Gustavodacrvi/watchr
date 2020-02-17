@@ -187,11 +187,11 @@ export default {
       changingViewName: false,
 
       addedItem: null,
-      hasEdit: null,
       edit: null,
       focusToggle: false,
       movingItem: false,
 
+      hasEdit: null,
       lastSelectedId: null,
       lastHeadingName: null,
       lastButtonElement: null,
@@ -437,7 +437,7 @@ export default {
         forceFallback: true,
         fallbackOnBody: true,
         animation: 80,
-        delay: this.isDesktop ? 25 : 100,
+        delay: this.isDesktop ? 5 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -559,11 +559,9 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
-            setTimeout(() => {
-              this.onSortableAdd(evt, ids, type, this.lazyItems.map(el => el.id))
-            })
+            this.onSortableAdd(evt, ids, type, this.lazyItems.map(el => el.id))
             this.sourceVueInstance = null
-          } else {
+          } else {  
             const i = evt.newIndex
             if (this.editMoveType === 'create')
               this.addEditComp(i)
@@ -867,6 +865,7 @@ export default {
         }
 
         this.addedItem = t.id
+
         this.addItem({
           item: t, ids: this.getIds(true),
           newId: t.id,
@@ -984,6 +983,9 @@ export default {
       return this.changingViewName || this.rootChanging
     },
     getItems() {
+      return this.sliceItems.filter(el => el)
+    },
+    sliceItems() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyItems
       return this.showingMoreItems ? this.lazyItems : this.lazyItems.slice(0, this.hasEdit ? 4 : 3)
     },
@@ -1075,23 +1077,36 @@ export default {
         clearTimeout(this.waitingUpdateTimeout)
         this.waitingUpdateTimeout = null
       }
+      
+      const log = (...args) => {
+/*         if (this.header && this.header.name === '2020-2-18') {
+          console.log(...args)
+        } */
+      }
+      
+      log(newArr.slice(), this.lazyItems.slice())
       const items = newArr.slice()
-      const isSmartListHeading = this.isSmart && !this.isRoot && this.viewType === 'list'
       
       this.waitingUpdateTimeout = setTimeout(() => {
+  
         if (!this.changedViewName) {
           this.clearLazySettimeout()
 
+          log(this.hasEdit, this.addedItem, this.edit)
           if (this.hasEdit && this.addedItem && this.edit) {
             const oldEditIndex = this.lazyItems.findIndex(el => el.isEdit)
+            log(oldEditIndex)
             if (oldEditIndex > -1)
               this.lazyItems.splice(oldEditIndex, 1)
             const itemIndex = items.findIndex(el => el.id === this.addedItem)
+            log(itemIndex)
             if (itemIndex > -1) {
               items.splice(itemIndex + 1, 0, this.edit)
             }
           }
-          this.lazyItems = items
+
+          log(items.map(el => el.name).slice())
+          this.lazyItems = items.slice()
           const ts = this.lazyItems
           const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))
           for (const el of removedEls)
@@ -1101,7 +1116,7 @@ export default {
             this.focusToggle = !this.focusToggle
           })
         }
-      }, isSmartListHeading ? 200 : 0)
+      }, 100)
     },
     headings(newArr) {
       if (this.isRoot) {

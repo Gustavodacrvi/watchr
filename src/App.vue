@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="{hidePassive}">
+  <div id="app" :class="[{hidePassive}, platform]">
     <transition name="fade-t">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
@@ -19,7 +19,7 @@
         />
       </transition>
       <transition name="fade-t" appear mode="out-in">
-          <router-view class="router-view" :class="{hided: hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
+          <router-view class="router-view" :class="{'non-hided': !hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
         />
       </transition>
     </div>
@@ -192,7 +192,7 @@ export default {
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos']),
-    ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate']),
+    ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate', 'platform']),
     isReady() {
       return this.$store.state.googleCalendarReady
     },
@@ -276,12 +276,15 @@ export default {
 
 .router-view {
   position: relative;
-  top: 0;
   transition-duration: .3s;
 }
 
-.hided {
-  top: 46px !important;
+.desktop .router-view {
+  top: 46px;
+}
+
+.non-hided {
+  top: 0;
 }
 
 .menu {
@@ -296,14 +299,14 @@ export default {
 }
 
 .nav-trans-enter, .nav-trans-leave-to {
-  opacity: 0;
-  height: 0;
+  opacity: 0 !important;
+  height: 0 !important;
   transition: opacity .3s ease-out, height .3s ease-out;
 }
 
 .nav-trans-leave, .nav-trans-enter-to {
-  opacity: 1;
-  height: 65px;
+  opacity: 1 !important;
+  height: 65px !important;
   transition: opacity .3s ease-in, height .3s ease-in;
 }
 

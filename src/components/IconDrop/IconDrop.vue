@@ -12,6 +12,8 @@
       <Icon v-if="handle && !hideHandle"
         class="cursor handle primary-hover"
         :icon="handle"
+        :box='box'
+        :active='active'
         :circle='circle'
         :title='title'
         :color="handleColor"
@@ -53,7 +55,7 @@ import Confirm from './Confirm.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center'],
+  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center', 'box', 'active'],
   components: {
     ListIcons, CalendarPicker,
     TimePicker, RepeatPicker,
@@ -149,6 +151,9 @@ export default {
         this.showing = false
         setTimeout(() => this.opt = this.options, 150)
       }
+    },
+    click() {
+      this.toggleIconDrop()
     },
     toggleIconDrop() {
       if (!this.center && this.isDesktop) {

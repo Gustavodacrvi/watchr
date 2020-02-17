@@ -109,17 +109,16 @@ export default {
           tag.fallbackItem = obj => ({...obj, parent: tag.id})
           tag.getItemRef = () => tagRef()
           tag.onItemAdd = obj => this.$store.dispatch('tag/addSubTagByIndex', obj)
-          tag.existingItems = this.tags
           tag.alreadyExistMessage = 'This tag already exist.'
 
           tag.mapSubTagNumbers = tag => ({
               total: getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
-          })
+            })
 
           tag.subList = getTags(tag.id, tag.order || [])
         }
         if (!parentId) return tags
-        return this.checkMissingIdsAndSortArr(order, tags)
+        return this.checkMissingIdsAndSortArr(order, this.tags.map(el => ({...el, subList: null})))
       }
 
       return getTags()

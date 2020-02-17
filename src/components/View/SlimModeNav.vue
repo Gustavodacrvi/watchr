@@ -117,6 +117,7 @@ export default {
   padding: 0 16px;
   height: 100%;
   flex-basis: 10px;
+  white-space: nowrap;
   display: inline-flex;
   justify-content: center;
   align-items: center;

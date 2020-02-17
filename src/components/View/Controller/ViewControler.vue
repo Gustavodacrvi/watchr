@@ -262,8 +262,6 @@ export default {
 
           const filterFunction = task => this.isTaskInList(task, list.id)
 
-          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
-
           arr.push({
             name: list.name,
             allowEdit: true,
@@ -277,7 +275,8 @@ export default {
                 name, id: list.id,
               })
             },
-            sort,
+            sort: this.sortArray,
+            order: viewTasksOrder,
             progress: () => this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
             filter: filterFunction,
             options: tasks => [
@@ -373,8 +372,6 @@ export default {
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
-          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
-          
           arr.push({
             name: folder.name,
             allowEdit: true,
@@ -388,7 +385,8 @@ export default {
                 name, id: folder.id,
               })
             },
-            sort,
+            sort: this.sortArray,
+            order: viewTasksOrder,
             filter: filterFunction,
             options: tasks => [
               {
@@ -477,8 +475,6 @@ export default {
 
           const filterFunction = task => this.isTaskInGroup(task, group.id)
 
-          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
-
           arr.push({
             name: group.name,
             allowEdit: true,
@@ -492,7 +488,8 @@ export default {
                 name, id: group.id,
               })
             },
-            sort,
+            sort: this.sortArray,
+            order: viewTasksOrder,
             filter: filterFunction,
             options: tasks => [
               {
@@ -566,7 +563,7 @@ export default {
       if (type === 'group') return 'group'
       return 'tag'
     },
-    upcomingHeadingsOptions() {
+    upcomingHeadings() {
       const arr = []
       const tod = mom()
       const calObj = date => ({
@@ -586,8 +583,7 @@ export default {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
 
-        const sortHeading = tasks =>
-          this.$store.getters.checkMissingIdsAndSortArr((calendarOrders[date] && calendarOrders[date].tasks) || [], tasks)
+        const itemsOrder = (calendarOrders[date] && calendarOrders[date].tasks) || []
 
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
@@ -598,7 +594,9 @@ export default {
           showHeading: true,
           dateType: true,
 
-          sort: sortHeading,
+          sort: this.sortArray,
+          order: itemsOrder,
+
           filter: filterFunction,
           fallbackItem: task => {
             if (!task.calendar)
@@ -606,9 +604,8 @@ export default {
             return task
           },
           onAddItem: obj => {
-            const date = obj.header.id
-            this.$store.dispatch('task/addTask', {
-              ...obj.task
+            this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
+              ...obj, date,
             })
           },
           onSortableAdd: (evt, taskIds, type, ids) => {
@@ -731,7 +728,8 @@ export default {
             editComp: 'ListEdit',
             itemPlaceholder: 'List name...',
             
-            sort: lists => this.sortArray(itemsOrder, lists),
+            sort: this.sortArray,
+            order: itemsOrder,
             options: lists => [],
             filter,
 
@@ -775,7 +773,7 @@ export default {
     logbookHeadings() {
       const arr = []
       const tod = mom()
-      const sort = tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate')
+      const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate')
 
       for (let i = 0; i < 7;i++) {
         const date = tod.format('Y-M-D')
@@ -868,7 +866,7 @@ export default {
           ids, task: {calendar: this.$store.getters['task/getSpecificDayCalendarObj'](mom)}
         })
       }
-      const sort = tasks => utilsTask.sortTasksByTaskDate(tasks)
+      const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks)
 
       let todayTasks = []
       const viewOrder = this.viewOrders['Today']
@@ -917,7 +915,8 @@ export default {
           },
         },
         {
-          sort: tasks => this.$store.getters.checkMissingIdsAndSortArr(todayTasks, tasks),
+          sort: this.sortArray,
+          order: todayTasks,
           name: 'Today',
           id: 'todya',
           filter: task => this.isTaskInView(task, 'Today'),
@@ -962,7 +961,8 @@ export default {
           editComp: 'ListEdit',
           itemPlaceholder: 'List name...',
           
-          sort: lists => this.sortArray(itemsOrder, lists),
+          sort: this.sortArray,
+          order: itemsOrder,
           filter: filterFunction,
           options: lists => [{
             name: 'Change deadline',
@@ -1008,7 +1008,8 @@ export default {
           editComp: 'ListEdit',
           itemPlaceholder: 'List name...',
           
-          sort: lists => this.sortArray(itemsOrder, lists),
+          sort: this.sortArray,
+          order: itemsOrder,
           filter: filterFunction,
           options: lists => [{
             name: 'Change date',
@@ -1054,7 +1055,8 @@ export default {
 
           directFiltering: true,
           
-          sort: tasks => this.sortArray(itemsOrder, tasks),
+          sort: this.sortArray,
+          order: itemsOrder,
           filter: filterFunction,
           options: tasks => [{
             name: 'Change deadline',
@@ -1125,7 +1127,8 @@ export default {
         editComp: 'ListEdit',
         itemPlaceholder: 'List name...',
         
-        sort: lists => this.sortArray(itemsOrder, lists),
+        sort: this.sortArray,
+        order: itemsOrder,
         filter: filterFunction,
         options: lists => [],
         updateIds: ids => {

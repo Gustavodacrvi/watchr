@@ -146,7 +146,6 @@ export default {
         const headings = this.$store.getters['list/getListHeadingsById'](viewList.id)
         for (const h of headings) {
           const pipedFilter = task => this.isTaskInHeading(task, h)
-          const sort = tasks => this.$store.getters.checkMissingIdsAndSortArr(h.tasks, tasks)
 
           arr.push({
             name: h.name,
@@ -163,7 +162,8 @@ export default {
                 headingId: h.id,
               })
             },
-            sort,
+            sort: this.sortArray,
+            order: h.tasks,
             filter: pipedFilter,
             options: tasks => {
               return utilsList.listHeadingOptions(viewList, h, this.$store, tasks, this.l)

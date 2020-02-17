@@ -1,5 +1,5 @@
 <template>
-  <div class="Icon">
+  <div class="Icon" :class="{box, active}">
     <span
       class="icon remove-highlight"
       :style="{width: getWidth, color}"
@@ -50,7 +50,7 @@ import ActualIcon from './Icon.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'file', 'title', 'number'],
+  props: ['icon', 'width', 'color', 'progress', 'file', 'title', 'number', 'box', 'active'],
   components: {
     ActualIcon,
   },
@@ -120,6 +120,21 @@ export default {
   transform: scale(1,1);
 }
 
+.box {
+  padding: 6px;
+  background-color: transparent;
+  transition-duration: .2s;
+  border-radius: 7px;
+}
+
+.box .icon {
+  transform: translateY(1px);
+}
+
+.box:hover, .active {
+  background-color: var(--light-gray);
+}
+
 .counter {
   position: absolute;
   left: -10px;
@@ -165,11 +180,6 @@ export default {
 .icon {
   display: inline-block;
   position: relative;
-}
-
-.primary-hover .icon:hover {
-  transition-duration: .15s;
-  color: var(--primary) !important;
 }
 
 .svg {

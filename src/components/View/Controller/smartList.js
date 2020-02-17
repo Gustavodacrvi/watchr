@@ -195,7 +195,7 @@ export default {
         return []
       const heads = this.getListHeadingsByView
       switch (this.viewName) {
-        case 'Upcoming': return this.upcomingHeadingsOptions
+        case 'Upcoming': return this.upcomingHeadings
         case 'Today': {
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return heads

@@ -12,14 +12,14 @@
     <div v-if="isDesktop"
       class="nav"
       :class="{pressingHandle}"
-      :style="[navObj, {width: navWidth}]"
+      :style="[navObj, {width: getNavWidth}]"
     >
       <Sidebar class="Sidebar"
         :value="viewName"
         :pressingHandle='pressingHandle'
         :view-type="viewType"
         :sidebarHided='sidebarHided'
-        :width='navWidth'
+        :width='getNavWidth'
         @sidebar="toggleSidebar"
         @section="v => section = v"
 
@@ -153,6 +153,9 @@ export default {
       }
       return false
     },
+    getNavWidth() {
+      return !this.sidebarHided ? this.navWidth : '0px'
+    },
     navWidth() {
       return this.width + 'px'
     },
@@ -195,7 +198,7 @@ export default {
   position: fixed;
   transition-duration: .2s !important;
   left: 0;
-  z-index: 4;
+  z-index: 5;
 }
 
 .cont {
@@ -204,7 +207,7 @@ export default {
   flex-grow: 1;
   transition-delay: .4s;
   transition-duration: .6s;
-  z-index: 5;
+  z-index: 4;
 }
 
 .sidebarHided .nav-shadow {

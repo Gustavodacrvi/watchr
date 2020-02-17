@@ -177,6 +177,7 @@ const store = new Vuex.Store({
       },
     }),
     getIcon(state) {
+      if (state.viewType === 'tag') return 'tag'      
       if (state.viewType === 'search') return 'search'
       if (state.viewType === 'folder') return 'folder'
       if (state.viewType === 'group') return 'group'

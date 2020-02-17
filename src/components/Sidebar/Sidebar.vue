@@ -678,7 +678,7 @@ export default {
   top: 50%;
   border-radius: 100px;
   transform: translateY(-50%);
-  z-index: 1000px;
+  z-index: 100px;
   cursor: pointer;
   opacity: 0 !important;
   transition: opacity .2s, background-color .2s, width .2s, transform .2s;

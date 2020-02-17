@@ -62,7 +62,8 @@ export default {
       this.active = this.options[0]
   },
   mounted() {
-    this.focusInput(200)
+    if (this.focus)
+      this.focusInput(200)
     setTimeout(this.fixHeight)
   },
   methods: {
@@ -75,11 +76,9 @@ export default {
         this.onDrop(args[0].dataTransfer.files, ...args)
     },
     focusInput(timeout) {
-      if (this.focus) {
-        const el = this.$refs.input
-        if (el)
-          setTimeout(() => el.focus(), timeout)
-      }
+      const el = this.$refs.input
+      if (el)
+        setTimeout(() => el.focus(), timeout)
     },
     fixHeight() {
       const el = this.$refs.input
@@ -111,6 +110,9 @@ export default {
     blur() {
       this.showing = false
       this.active = ''
+    },
+    removeFocus() {
+      this.$refs.input.blur()
     },
     enter(el, done) {
       let height = el.offsetHeight

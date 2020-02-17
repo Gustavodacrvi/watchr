@@ -372,9 +372,7 @@ export default {
           return utils.getHumanReadableDate(task.deadline, l) + ' ' + getDaysLeft(task.deadline, date)
         },
         cache(args) {
-          return JSON.stringify({
-            c: args[0].deadline,
-          })
+          return args[0].deadline
         },
       },
       isTaskInView: {
@@ -692,7 +690,7 @@ export default {
         cache(args) {
           return JSON.stringify({
             t: args[0].heading,
-            h: args[1].name,
+            h: args[1].id,
           })
         },
       },
@@ -734,7 +732,7 @@ export default {
           return getters.tasks.filter(t => getters.isTaskLastDeadlineDay(t, date)) 
         },
         cache(args) {
-          return JSON.stringify(args[0])
+          return args[0]
         },
       },
       getNumberOfTasksByTag: {
@@ -844,7 +842,7 @@ export default {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, rootState).then(() => {
+      }, rootState, obj.id).then(() => {
         b.commit()
       })
     },
@@ -1152,7 +1150,7 @@ export default {
 
       const tod = mom()
 
-      const obj = {
+      let obj = {
         canceled: true,
         checked: true,
         cancelDate: tod.format('Y-M-D'),

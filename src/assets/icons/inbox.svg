@@ -2,29 +2,28 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="78px" height="78px" viewBox="0 0 78 78" enable-background="new 0 0 78 78" xml:space="preserve">
+	 width="77px" height="77.023px" viewBox="0 0 77 77.023" enable-background="new 0 0 77 77.023" xml:space="preserve">
 <g>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-		M39,75H9c-3.3,0-6-2.7-6-6V53.625"/>
+		M38.5,74.523h-30c-3.3,0-6-2.7-6-6v-13.5"/>
 </g>
 <g>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-		M39,75h30c3.3,0,6-2.7,6-6V53.625"/>
+		M38.5,74.523h30c3.3,0,6-2.7,6-6v-13.5"/>
 </g>
 <g>
-	<g>
-		<path fill="currentColor" fill-opacity='.2' d="M39,3H22.167c-2.75,0-5.735,2.127-6.633,4.726L4.633,39.274C3.735,41.873,5.25,44,8,44h8
-			c2.75,0,6.591,1.591,8.536,3.536l1.929,1.929C28.409,51.409,32.025,53,34.5,53s4.5,0,4.5,0"/>
-		<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-			M39,3H22.167c-2.75,0-5.735,2.127-6.633,4.726L4.633,39.274C3.735,41.873,5.25,44,8,44h8c2.75,0,6.591,1.591,8.536,3.536
-			l1.929,1.929C28.409,51.409,32.025,53,34.5,53s4.5,0,4.5,0"/>
-	</g>
-	<g>
-		<path fill="currentColor" fill-opacity='.2' d="M39,3h16.833c2.75,0,5.735,2.127,6.633,4.726l10.901,31.548C74.265,41.873,72.75,44,70,44h-8
-			c-2.75,0-6.591,1.591-8.536,3.536l-1.929,1.929C49.591,51.409,45.975,53,43.5,53S39,53,39,53"/>
-		<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-			M39,3h16.833c2.75,0,5.735,2.127,6.633,4.726l10.901,31.548C74.265,41.873,72.75,44,70,44h-8c-2.75,0-6.591,1.591-8.536,3.536
-			l-1.929,1.929C49.591,51.409,45.975,53,43.5,53S39,53,39,53"/>
-	</g>
+	<path fill="currentColor" fill-opacity='.2' d="M38.5,2.523H21.667c-2.75,0-5.735,2.127-6.633,4.726L4.133,38.797C3.235,41.396,4.75,43.523,7.5,43.523h8
+		c2.75,0,6.591,1.591,8.536,3.536l1.929,1.929c1.945,1.945,5.561,3.536,8.036,3.536c2.475,0,4.5,0,4.5,0"/>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M38.5,2.523H21.667c-2.75,0-5.735,2.127-6.633,4.726L4.133,38.797C3.235,41.396,4.75,43.523,7.5,43.523h8
+		c2.75,0,6.591,1.591,8.536,3.536l1.929,1.929c1.945,1.945,5.561,3.536,8.036,3.536c2.475,0,4.5,0,4.5,0"/>
+</g>
+<g>
+	<path fill="currentColor" fill-opacity='.2' d="M37.54,2.5l17.794,0.018c2.75,0.003,5.735,2.132,6.633,4.731l10.901,31.548
+		c0.898,2.599-0.617,4.726-3.367,4.726h-8c-2.75,0-6.591,1.591-8.536,3.536l-1.929,1.929c-1.945,1.945-5.777,3.53-8.516,3.524
+		c-2.739-0.006-4.98-0.011-4.98-0.011"/>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M37.54,2.5l17.794,0.018c2.75,0.003,5.735,2.132,6.633,4.731l10.901,31.548c0.898,2.599-0.617,4.726-3.367,4.726h-8
+		c-2.75,0-6.591,1.591-8.536,3.536l-1.929,1.929c-1.945,1.945-5.777,3.53-8.516,3.524c-2.739-0.006-4.98-0.011-4.98-0.011"/>
 </g>
 </svg>
