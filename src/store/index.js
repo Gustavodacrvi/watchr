@@ -123,6 +123,7 @@ const store = new Vuex.Store({
     selectedType: null,
     
     isOnControl: false,
+    isEditing: false,
     isOnShift: false,
     isOnAlt: false,
     moving: false,
@@ -284,6 +285,9 @@ const store = new Vuex.Store({
   mutations: {
     moving(state, moving) {
       state.moving = moving
+    },
+    isEditing(state, toggle) {
+      state.isEditing = toggle
     },
     pasteTask(state) {
       state.toggleClipboardPaste = !state.toggleClipboardPaste

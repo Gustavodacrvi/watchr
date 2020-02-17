@@ -1078,13 +1078,7 @@ export default {
         this.waitingUpdateTimeout = null
       }
       
-      const log = (...args) => {
-/*         if (this.header && this.header.name === '2020-2-18') {
-          console.log(...args)
-        } */
-      }
       
-      log(newArr.slice(), this.lazyItems.slice())
       const items = newArr.slice()
       
       this.waitingUpdateTimeout = setTimeout(() => {
@@ -1092,20 +1086,16 @@ export default {
         if (!this.changedViewName) {
           this.clearLazySettimeout()
 
-          log(this.hasEdit, this.addedItem, this.edit)
           if (this.hasEdit && this.addedItem && this.edit) {
             const oldEditIndex = this.lazyItems.findIndex(el => el.isEdit)
-            log(oldEditIndex)
             if (oldEditIndex > -1)
               this.lazyItems.splice(oldEditIndex, 1)
             const itemIndex = items.findIndex(el => el.id === this.addedItem)
-            log(itemIndex)
             if (itemIndex > -1) {
               items.splice(itemIndex + 1, 0, this.edit)
             }
           }
 
-          log(items.map(el => el.name).slice())
           this.lazyItems = items.slice()
           const ts = this.lazyItems
           const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))

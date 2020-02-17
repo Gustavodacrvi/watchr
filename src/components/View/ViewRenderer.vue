@@ -348,7 +348,7 @@ export default {
           }
         }
   
-        utils.saveByShortcut(this, false, key, p, (type, item) => {
+        utils.saveByShortcut(this, this.isEditingComp, key, p, (type, item) => {
           const dispatch = this.$store.dispatch
   
           if (this.shortcutsType === 'Task') {
@@ -680,6 +680,7 @@ export default {
       userInfo: state => state.userInfo,
       selectedType: state => state.selectedType,
       runningPomo: state => state.pomo.running,
+      isEditingComp: state => state.isEditing,
       rest: state => state.pomo.rest,
       openHelper: state => state.pomo.openHelper,
       mainSelection: state => state.mainSelection,

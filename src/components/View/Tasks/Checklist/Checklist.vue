@@ -6,6 +6,7 @@
     >
       <template v-for="sub in getItems">
         <Subtask v-if="!sub.isEdit"
+          :ref='sub.id'
           :key="sub.id"
           v-bind='sub'
           @toggle='toggleTask(sub.id)'
@@ -121,6 +122,9 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    editChecklist(id) {
+      this.$refs[id][0].edit()
+    },
     hide(evt) {
       const path = event.path || (event.composedPath && event.composedPath())
       let found

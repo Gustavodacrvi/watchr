@@ -365,10 +365,12 @@ export default {
     window.addEventListener('keydown', this.keydown)
   },
   beforeDestroy() {
+    this.$store.commit('isEditing', false)
     window.removeEventListener('click', this.remove)
     window.removeEventListener('keydown', this.keydown)
   },
   mounted() {
+    this.$store.commit('isEditing', true)
     if (this.editAction) {
       this[this.editAction]()
       this.$emit('done-action')
@@ -412,9 +414,21 @@ export default {
             this.removeSubtask(this.activeChecklistId)
             break
           }
+          case '.': {
+            this.$refs.checklist.toggleTask(this.activeChecklistId)
+            p()
+            break
+          }
           case " ": {
-            console.log('espcae')
             this.$refs.checklist.addEdit(this.cursorPos - 1)
+            p()
+            break
+          }
+          case "Enter": {
+            if (!isTyping) {
+              p()
+              this.$refs.checklist.editChecklist(this.activeChecklistId)
+            }
             break
           }
         }

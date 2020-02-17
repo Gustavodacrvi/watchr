@@ -9,7 +9,7 @@ export default {
   data() {
     return {
       str: '',
-      control: false,
+      shfit: false,
     }
   },
   created() {
@@ -26,7 +26,7 @@ export default {
       }, 200)
     },
     keyup({key}) {
-      if (key === 'Control') this.control = false
+      if (key === 'Control') this.shfit = false
     },
     keydown(evt) {
       this.$emit('keydown', evt)
@@ -34,8 +34,8 @@ export default {
       if (key === 'Enter') this.$emit('enter')
       else if (key === "Escape")
         this.$emit('cancel')
-      else if (key === 'Control') this.control = true
-      if (this.control) {
+      else if (key === 'Shift') this.shfit = true
+      if (this.shfit) {
         if (key === 'ArrowLeft') this.$emit('goup')
         if (key === 'ArrowRight') this.$emit('godown')
         this.focusInput()

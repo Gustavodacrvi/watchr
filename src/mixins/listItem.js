@@ -106,7 +106,7 @@ export default {
       }
 
       const hasSelected = this.selectedItems.length > 0
-      if (!isTyping && !(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
+      if (!isTyping && !this.isEditingComp && !(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
         switch (key) {
           case 'ArrowDown': {
             this.$emit('go', true)
@@ -122,7 +122,7 @@ export default {
 
       switch (key) {
         case 'Enter': {
-          if (!isTyping)
+          if (!isTyping && !this.isEditingComp)
             if (!this.isOnControl && !this.justSaved)
               this.isEditing = true
             else if (this.isOnControl) {
@@ -132,7 +132,7 @@ export default {
         }
       }
 
-      if (!this.isOnShift) {
+      if (!this.isOnShift && !this.isEditingComp) {
         switch (key) {
           case ' ': {
           if (!isTyping) {
@@ -142,7 +142,7 @@ export default {
           break
         }}
       }
-      if (this.isOnShift && !isTyping) {
+      if (this.isOnShift && !isTyping && !this.isEditingComp) {
         switch (key) {
           case "C": {
             if (!this.isEditing && this.comp === 'Task') {
@@ -163,7 +163,7 @@ export default {
           }
         }
       }
-      if (this.isOnControl && !this.isOnShift) {
+      if (this.isOnControl && !this.isOnShift && !this.isEditingComp) {
         switch (key) {
           case ' ': {
             if (!isTyping) {
@@ -343,6 +343,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isEditingComp: state => state.isEditing,
       selectedItems: state => state.selectedItems,
       mainSelection: state => state.mainSelection,
       isOnControl: state => state.isOnControl,

@@ -5,7 +5,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Subtask rb item-handle" :class="{completed, active}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
+    <div class="Subtask rb item-handle" :class="{completed, active}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="edit">
       <span class="icons cursor" @click.stop="$emit('toggle')">
         <Icon v-if="!completed" class="icon primary-hover" icon="circle"/>
         <Icon v-else class="icon primary-hover" icon="circle-check"/>
@@ -18,7 +18,7 @@
       <InputApp v-else
         :value='str'
         @input='v => str = v'
-        class="no-back"
+        class="no-back input"
         :focus='true'
         @enter='save'
 
@@ -61,6 +61,9 @@ export default {
     window.removeEventListener('click', this.stopEditing)
   },
   methods: {
+    edit() {
+      this.editing = true
+    },
     keydown({key}) {
       if (key === "ArrowUp")
         this.$emit('move-cursor-up')
@@ -72,7 +75,9 @@ export default {
       this.editing = false
     },
     save() {
-      this.editing = false
+      setTimeout(() => {
+        this.editing = false
+      })
       this.$emit("save", this.str)
     },
 
@@ -199,6 +204,10 @@ export default {
   justify-content: center;
   align-items: center;
   transition: opacity .15s;
+}
+
+.input {
+  padding-left: 8px;
 }
 
 .icon {
