@@ -404,9 +404,20 @@ export default {
       const p = () => evt.preventDefault()
       const {key} = evt
 
-      if (key === "Escape" && !this.isAddingChecklist)
+      const active = document.activeElement
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+
+      if (this.isCursorInChecklist) {
+        switch (key) {
+          case "Delete": {
+            this.removeSubtask(this.activeChecklistId)
+          }
+        }
+      }
+
+      if (key === "Escape" && !isTyping)
         this.cancel()
-      if (key === "Enter")
+      if (key === "Enter" && this.isElementFunction)
         this.keyboardActions[this.cursorPos]()
 
       utils.saveByShortcut(this, true, key, p, (type, task) => {
@@ -748,6 +759,9 @@ export default {
     activeChecklistId() {
       return this.keyboardActions[this.cursorPos]
     },
+    isCursorInChecklist() {
+      return this.task.checklist.some(el => el.id === this.activeChecklistId)
+    },
     hasChecklist() {
       return this.task.checklist.length > 0
     },
@@ -948,6 +962,10 @@ export default {
     },
     priorities() {
       return this.$store.getters['task/priorityOptions']
+    },
+    isElementFunction() {
+      const el = this.keyboardActions[this.cursorPos]
+      return el && {}.toString.call(el) === '[object Function]'
     },
     groupOptions() {
       return {
@@ -1167,13 +1185,8 @@ export default {
       else if (newPos === this.lastKeyboardActionIndex && oldPos === 0)
         this.$refs['task-name'].removeFocus()
       
-      if (this.cursorPos < 2) {
-        const el = this.keyboardActions[this.cursorPos]
-        
-        const isFunction = el && {}.toString.call(el) === '[object Function]'
-        if (isFunction)
-          el()
-      }
+      if (this.cursorPos < 2 && this.isElementFunction)
+        this.keyboardActions[this.cursorPos]()
     },
   }
 }
