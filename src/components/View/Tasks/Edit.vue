@@ -29,6 +29,7 @@
           :enterOnShift='true'
           :options="[]"
           :placeholder="notesPlaceholder"
+
           @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
@@ -103,9 +104,15 @@
           />
         </div>
         <Checklist v-if="!isFirstEdit"
+          ref='checklist'
           :list='task.checklist'
           :order='task.order'
-          :toggle='toggleChecklist'
+
+          :activeChecklistId='activeChecklistId'
+
+          @move-cursor='moveCursor'
+
+          @reset-cursor='resetCursor'
           @add='addSubtask'
           @remove='removeSubtask'
           @update='updateIds'
@@ -126,7 +133,6 @@
         <div class="options hide" :class="{show}">
           <transition name="btn">
             <ButtonApp v-if="showingOptions && doesntHaveChecklist"
-              ref='checklist'
               class="add-checklist-button"
               style="margin-left: 4px;margin-top: 0px;opacity: .6"
               type="card"
@@ -143,7 +149,7 @@
                 :box='true'
                 width="22px"
                 :options="getTags"
-                :active='cursorPos === 11'
+                :active='isIcon(11)'
                 ref='priority'
                
                 handleColor='var(--red)'
@@ -155,7 +161,7 @@
                 :box='true'
                 width="22px"
                 :options="priorityOptions"
-                :active='cursorPos === 10'
+                :active='isIcon(10)'
                 ref='priority'
                
                 handleColor='var(--yellow)'
@@ -167,7 +173,7 @@
                 width="22px"
                 :box='true'
                 :options="listOptions"
-                :active='cursorPos === 9'
+                :active='isIcon(9)'
                 ref='tasks'
                
                 handleColor='var(--primary)'
@@ -179,7 +185,7 @@
                 width="23.5px"
                 :box='true'
                 :options="folderOptions"
-                :active='cursorPos === 8'
+                :active='isIcon(8)'
                 ref='folder'
                
                 title='Add to folder'
@@ -190,7 +196,7 @@
                 width="23.5px"
                 :box='true'
                 :options="groupOptions"
-                :active='cursorPos === 7'
+                :active='isIcon(7)'
                 ref='group'
                
                 title='Add to group'
@@ -201,7 +207,7 @@
                 width="22px"
                 :box='true'
                 :options="calendarOptions"
-                :active='cursorPos === 6'
+                :active='isIcon(6)'
                 ref='calendar'
                
                 handleColor='var(--green)'
@@ -213,7 +219,7 @@
                 width="22px"
                
                 icon='file'
-                :active='cursorPos === 5'
+                :active='isIcon(5)'
                 ref='file'
                 :box='true'
                 :file='true'
@@ -224,7 +230,7 @@
                 handle="deadline"
                 width="22px"
                 :box='true'
-                :active='cursorPos === 4'
+                :active='isIcon(4)'
                 ref='deadline'
                 :options="deadlineOptions"
                
@@ -236,7 +242,7 @@
                 handle="clock"
                 width="22px"
                 :box='true'
-                :active='cursorPos === 3'
+                :active='isIcon(3)'
                 ref='clock'
                 :options="durationOptions"
                
@@ -286,11 +292,8 @@ export default {
     Tag: TagVue,
   },
   data() {
-    const c = ref => () => this.$refs[ref].click()
-    
     return {
       show: false,
-      toggleChecklist: false,
       isAddingChecklist: false,
       task: {
         name: '',
@@ -320,22 +323,6 @@ export default {
 
       lastKeys: [],
       keydownSettimeout: null,
-
-      keyboardActions: {
-        0: this.focusName,
-        1: this.focusNotes,
-        
-        2: () => this.$refs['checklist'].$el.click(),
-        3: c('clock'),
-        4: c('deadline'),
-        5: c('file'),
-        6: c('calendar'),
-        7: c('group'),
-        8: c('folder'),
-        9: c('tasks'),
-        10: c('priority'),
-        11: c('tag'),
-      },
     }
   },
   created() {
@@ -397,6 +384,11 @@ export default {
     focusName() {
       this.$refs['task-name'].focusInput(0)
     },
+    moveCursor(dire) {
+      const newIndex = this.cursorPos + dire
+      if (this.keyboardActions[newIndex])
+        this.cursorPos = newIndex
+    },
     focusNotes() {
       this.$refs['task-notes'].focusInput(0)
     },
@@ -406,13 +398,13 @@ export default {
         this.cursorPos = newIndex
       else if (inc > 0)
         this.cursorPos = 0
-      else this.cursorPos = 11
+      else this.cursorPos = this.lastKeyboardActionIndex
     },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
 
-      if (key === "Escape")
+      if (key === "Escape" && !this.isAddingChecklist)
         this.cancel()
       if (key === "Enter")
         this.keyboardActions[this.cursorPos]()
@@ -450,10 +442,18 @@ export default {
 
       if (key === "ArrowUp") {
         p()
-        this.incrementPos(-1)
+
+        if (this.isOnShift)
+          this.cursorPos = 0
+        else        
+          this.incrementPos(-1)
       } else if (key === "ArrowDown") {
         p()
-        this.incrementPos(1)
+
+        if (this.isOnShift)
+          this.cursorPos = this.lastKeyboardActionIndex
+        else        
+          this.incrementPos(1)
       }
     },
     onPaste(txt) {
@@ -498,6 +498,10 @@ export default {
           order: this.task.order || [],
         })
     },
+    resetCursor() {
+      if (!this.isAddingChecklist)
+        this.cursorPos = 0
+    },
     remove(evt) {
       if (this.readyToRemove) {
         let found = false
@@ -513,7 +517,7 @@ export default {
       }
     },
     addChecklist() {
-      this.toggleChecklist = !this.toggleChecklist
+      this.$refs.checklist.addChecklist()
     },
     cancel() {
       this.leave(this.$el)
@@ -715,6 +719,9 @@ export default {
       this.task.heading = ''
       this.task.headingId = ''
     },
+    isIcon(num) {
+      return !this.hasChecklist ? num === this.cursorPos : (num + this.task.checklist.length - 1) === this.cursorPos
+    },
   },
   computed: {
     ...mapState({
@@ -738,6 +745,61 @@ export default {
       groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
     }),
+    activeChecklistId() {
+      return this.keyboardActions[this.cursorPos]
+    },
+    hasChecklist() {
+      return this.task.checklist.length > 0
+    },
+    keyboardActions() {
+      const c = ref => () => this.$refs[ref].click()
+
+      const obj = {
+        0: this.focusName,
+        1: this.focusNotes,
+      }
+
+      const hasChecklist = this.hasChecklist
+
+      if (!hasChecklist)
+        obj[2] = () => this.addChecklist()
+      else {
+        let num = 2
+        
+        for (const t of this.task.checklist) {
+          obj[num] = t.id
+          num++ 
+        }
+      }
+      
+      const getIconsObj = () => {
+        let num = !hasChecklist ? 3 : this.task.checklist.length + 2
+
+        return [
+          'clock',
+          'deadline',
+          'file',
+          'calendar',
+          'group',
+          'folder',
+          'tasks',
+          'priority',
+          'tag',
+        ].reduce((obj, icon) => {
+          obj[num] = c(icon)
+          num++
+          return obj
+        }, {})
+      }
+      
+      return {
+        ...obj,
+        ...getIconsObj(),
+      }
+    },
+    lastKeyboardActionIndex() {
+      return Object.keys(this.keyboardActions).length - 1
+    },
     showingOptions() {
       return !this.isAddingChecklist
     },
@@ -1099,14 +1161,19 @@ export default {
     },
     cursorPos(newPos, oldPos) {
       if (this.isAddingChecklist)
-        this.toggleChecklist = !this.toggleChecklist
+        this.$refs.checklist.removeEdit()
       if (newPos === 2 && oldPos === 1)
         this.$refs['task-notes'].removeFocus()
-      else if (newPos === 11 && oldPos === 0)
+      else if (newPos === this.lastKeyboardActionIndex && oldPos === 0)
         this.$refs['task-name'].removeFocus()
       
-      if (this.cursorPos < 2)
-        this.keyboardActions[this.cursorPos]()
+      if (this.cursorPos < 2) {
+        const el = this.keyboardActions[this.cursorPos]
+        
+        const isFunction = el && {}.toString.call(el) === '[object Function]'
+        if (isFunction)
+          el()
+      }
     },
   }
 }

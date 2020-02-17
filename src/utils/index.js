@@ -578,25 +578,20 @@ export default {
       return mom(c.lastCompleteDate, 'Y-M-D').isSameOrAfter(tod, 'day')
     }
     
-/*             if (c.type === 'periodic' || c.type === 'weekly') {
-      const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-      if (!moment.isValid()) moment = mom()
-      return lastComplete.isSameOrAfter(moment, 'day')
-    } */
-
     return false
   },
   saveByShortcut(vm, isEditing, key, preventDefault, save) {
     const p = preventDefault
     const {isOnControl, isOnShift, isOnAlt} = vm
 
-    switch (key) {
-      case 'Delete': {
-        save('delete')
-        vm.$store.commit('clearSelected')
-        break
+    if (!isEditing)
+      switch (key) {
+        case 'Delete': {
+          save('delete')
+          vm.$store.commit('clearSelected')
+          break
+        }
       }
-    }
     
     if (isOnShift && !isEditing) {
       switch (key) {

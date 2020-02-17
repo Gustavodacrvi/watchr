@@ -5,10 +5,10 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Subtask rb cursor item-handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
-      <span class="icons" @click.stop="$emit('toggle')">
-        <Icon v-if="!completed" class="icon" icon="circle"/>
-        <Icon v-else class="icon" icon="circle-check"/>
+    <div class="Subtask rb item-handle" :class="{completed, active}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
+      <span class="icons cursor" @click.stop="$emit('toggle')">
+        <Icon v-if="!completed" class="icon primary-hover" icon="circle"/>
+        <Icon v-else class="icon primary-hover" icon="circle-check"/>
       </span>
       <span v-if="!editing" class="name-wrapper">
         <span class="name">
@@ -21,13 +21,15 @@
         class="no-back"
         :focus='true'
         @enter='save'
+
+        @keydown="keydown"
       />
       <div class="line-wrapper">
         <div class="line rb"></div>
       </div>
       <transition name="fade-t">
         <div v-if="showDeleteIcon && !editing" class="delete-wrapper">
-          <Icon icon="trash" class="delete" @click="$emit('remove')"/>
+          <Icon icon="trash" class="delete cursor" @click="$emit('remove')"/>
         </div>
       </transition>
     </div>
@@ -41,7 +43,7 @@ import InputApp from "@/components/Auth/Input.vue"
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['name', 'completed', 'id'],
+  props: ['name', 'completed', 'id', 'active'],
   components: {
     InputApp,
   },
@@ -59,6 +61,12 @@ export default {
     window.removeEventListener('click', this.stopEditing)
   },
   methods: {
+    keydown({key}) {
+      if (key === "ArrowUp")
+        this.$emit('move-cursor-up')
+      else if (key === 'ArrowDown')
+        this.$emit('move-cursor-down')
+    },
     stopEditing() {
       this.str = this.name
       this.editing = false
@@ -156,7 +164,7 @@ export default {
   width: 100%;
 }
 
-.Subtask:hover {
+.Subtask:hover, .active {
   background-color: var(--light-gray);
 }
 

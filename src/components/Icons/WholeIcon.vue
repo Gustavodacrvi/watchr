@@ -34,7 +34,7 @@
       <span class='num'>{{ number }}</span>
     </span>
     <transition name="title-trans">
-      <div v-if="showingTitle && title && isDesktop"
+      <div v-if="(showingTitle || active) && title && isDesktop"
         class="icon-title rb"
       >
         {{ title }}

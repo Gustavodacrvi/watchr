@@ -12,6 +12,11 @@
           @remove='remove(sub.id)'
           @save='str => sub.name = str'
 
+          @move-cursor-up='removeEdit(-1)'
+          @move-cursor-down='removeEdit(1)'
+
+          :active='sub.id === activeChecklistId'
+
           data-type='subtask'
           :data-id='sub.id'
           :data-name='sub.name'
@@ -22,6 +27,9 @@
           data-id='Edit'
 
           @add='addSubtask'
+
+          @move-cursor-up='removeEdit(-1)'
+          @move-cursor-down='removeEdit(1)'
 
           @cancel='removeEdit'
 
@@ -45,7 +53,7 @@ import Sortable from 'sortablejs'
 import utils from '@/utils/'
 
 export default {
-  props: ['order', 'list', 'toggle'],
+  props: ['order', 'list', 'activeChecklistId'],
   components: {
     Subtask,
     SubtaskEdit,
@@ -137,14 +145,18 @@ export default {
       
       this.$emit('is-adding-toggle', true)
     },
-    removeEdit() {
+    removeEdit(moveDire = undefined) {
       const i = this.getItems.findIndex(el => el.isEdit)
       if (i > -1) {
         this.getItems.splice(i, 1)
         this.edit = null
         this.editIndex = null
         this.hasEdit = false
+
         this.$emit('is-adding-toggle', false)
+        if (moveDire !== undefined)
+          this.$emit('move-cursor', moveDire)
+        else this.$emit('reset-cursor')
 
         window.removeEventListener('click', this.hide)
       }
@@ -181,6 +193,10 @@ export default {
         ids = ids.filter(id => id !== 'Edit')
       return ids
     },
+    addChecklist() {
+      if (this.getList && this.getList.length === 0)
+        setTimeout(() => this.addEdit(0))
+    },
   },
   computed: {
     draggableRoot() {
@@ -196,12 +212,6 @@ export default {
       return this.$store.getters.checkMissingIdsAndSortArr(this.order, this.list)
     },
   },
-  watch: {
-    toggle() {
-      if (this.getList && this.getList.length === 0)
-        setTimeout(() => this.addEdit(0))
-    },
-  }
 }
 
 </script>
