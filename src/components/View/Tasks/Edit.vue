@@ -108,6 +108,7 @@
           :list='getChecklist'
 
           :activeChecklistId='activeChecklistId'
+          :compareDate='getCompareDate'
 
           @move-cursor='moveCursor'
 
@@ -782,6 +783,11 @@ export default {
       groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
     }),
+    getCompareDate() {
+      if (!this.defaultTask || !this.defaultTask.calendar)
+        return null
+      return this.defaultTask.calendar.lastCompleteDate
+    },
     activeChecklistId() {
       return this.keyboardActions[this.cursorPos]
     },

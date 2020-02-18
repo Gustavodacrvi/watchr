@@ -13,8 +13,7 @@
     </transition>
     <div
       class="front item-renderer-root"
-      :class="{dontHaveItems: lazyItems.length === 0, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
-      :style="inflate"
+      :class="{inflate, dontHaveItems: lazyItems.length === 0, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
 
       data-name='item-renderer'
@@ -1023,10 +1022,8 @@ export default {
     },
     inflate() {
       if ((this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
-        return {
-          minHeight: '700px',
-        }
-      return null
+        return true
+      return false
     },
     draggableRoot() {
       return this.$el.getElementsByClassName('item-renderer-root')[0]
@@ -1254,6 +1251,14 @@ export default {
 
 .dontHaveItems {
   min-height: 35px;
+}
+
+.inflate {
+  min-height: 700px;
+}
+
+.sortable-ghost .inflate {
+  min-height: unset;
 }
 
 .isRootAndHaveItems {

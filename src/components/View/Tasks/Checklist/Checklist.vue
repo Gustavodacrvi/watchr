@@ -17,6 +17,7 @@
           @move-cursor-down='removeEdit(1)'
 
           :active='sub.id === activeChecklistId'
+          :compareDate='compareDate'
 
           data-type='subtask'
           :data-id='sub.id'
@@ -49,12 +50,14 @@ import Vue from 'vue'
 import Subtask from './Subtask.vue'
 import SubtaskEdit from './Edit.vue'
 
+import mom from 'moment'
+
 import Sortable from 'sortablejs'
 
 import utils from '@/utils/'
 
 export default {
-  props: ['list', 'activeChecklistId'],
+  props: ['list', 'compareDate', 'activeChecklistId'],
   components: {
     Subtask,
     SubtaskEdit,
@@ -168,6 +171,10 @@ export default {
     toggleTask(id) {
       const subtask = this.list.find(el => el.id === id)
       subtask.completed = !subtask.completed
+      if (subtask.completed)
+        subtask.completeDate = mom().format('Y-M-D')
+      else
+        subtask.completeDate = null
       this.$emit('save-checklist')
     },
     remove(id) {

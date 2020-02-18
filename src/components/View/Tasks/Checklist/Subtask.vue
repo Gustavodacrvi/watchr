@@ -5,9 +5,9 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Subtask rb item-handle" :class="{completed, active}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="edit">
+    <div class="Subtask rb item-handle" :class="{isTaskCompleted, active}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="edit">
       <span class="icons cursor" @click.stop="$emit('toggle')">
-        <Icon v-if="!completed" class="icon primary-hover" icon="circle"/>
+        <Icon v-if="!isTaskCompleted" class="icon primary-hover" icon="circle"/>
         <Icon v-else class="icon primary-hover" icon="circle-check"/>
       </span>
       <span v-if="!editing" class="name-wrapper">
@@ -40,10 +40,12 @@
 
 import InputApp from "@/components/Auth/Input.vue"
 
+import mom from 'moment'
+
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['name', 'completed', 'id', 'active'],
+  props: ['name', 'compareDate', 'completeDate', 'completed', 'id', 'active'],
   components: {
     InputApp,
   },
@@ -110,6 +112,14 @@ export default {
     showDeleteIcon() {
       return !this.isDesktop || this.hover
     },
+    isTaskCompleted() {
+      if (!this.compareDate)
+        return this.completed
+      if (!this.completeDate)
+        return false
+
+      return this.completed && mom(this.completeDate, 'Y-M-D').isSameOrAfter(mom(this.compareDate, 'Y-M-D'), 'day')
+    },
   },
   watch: {
     name() {
@@ -165,7 +175,7 @@ export default {
   background-color: var(--extra-light-gray);
 }
 
-.completed .line {
+.isTaskCompleted .line {
   width: 100%;
 }
 
@@ -193,7 +203,7 @@ export default {
   color: var(--red);
 }
 
-.completed .icons, .completed .name, .completed .delete {
+.isTaskCompleted .icons, .isTaskCompleted .name, .isTaskCompleted .delete {
   opacity: .2;
 }
 
