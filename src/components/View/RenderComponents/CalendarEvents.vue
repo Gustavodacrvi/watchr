@@ -57,6 +57,19 @@ export default {
     this.getEvents()
   },
   methods: {
+    getIsoString(date, end = false) {
+      date = mom(date, 'Y-M-D')
+      if (!end) {
+        date.hour(0)
+        date.minute(0)
+        date.second(0)
+      } else {
+        date.hour(23)
+        date.minute(59)
+        date.second(59)
+      }
+      return date.toISOString()
+    },
     enter(el, done) {
       const s = el.style
 
@@ -186,21 +199,19 @@ export default {
         return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'
     },
     getInit() {
-      const date = mom(this.date, 'Y-M-D')
-      date.hour(0)
-      date.minute(0)
-      date.second(0)
-      return date.toISOString()
+      if (Array.isArray(this.date))
+        return this.getIsoString(this.date[0])
+      else
+        return this.getIsoString(this.date)
     },
     getCalendars() {
       return this.events.filter(el => el.items.length > 0)
     },
     getFinal() {
-      const date = mom(this.date, 'Y-M-D')
-      date.hour(23)
-      date.minute(59)
-      date.second(59)
-      return date.toISOString()
+      if (Array.isArray(this.date))
+        return this.getIsoString(this.date[1], true)
+      else
+        return this.getIsoString(this.date, true)
     },
     getFormat() {
       return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'

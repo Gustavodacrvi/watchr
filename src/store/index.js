@@ -123,6 +123,7 @@ const store = new Vuex.Store({
     selectedType: null,
     
     isOnControl: false,
+    isEditing: false,
     isOnShift: false,
     isOnAlt: false,
     moving: false,
@@ -176,6 +177,48 @@ const store = new Vuex.Store({
         return ordered
       },
     }),
+    getIcon(state) {
+      if (state.viewType === 'tag') return 'tag'      
+      if (state.viewType === 'search') return 'search'
+      if (state.viewType === 'folder') return 'folder'
+      if (state.viewType === 'group') return 'group'
+      const obj = {
+        Today: 'star',
+        Tomorrow: 'sun',
+        Someday: 'archive',
+        Anytime: 'layer-group',
+        Inbox: 'inbox',
+        Calendar: 'calendar-star',
+        Pomodoro: 'pomo',
+        Statistics: 'pie',
+        Upcoming: 'calendar',
+        Logbook: 'logbook',
+        "Later lists": 'later-lists',
+      }
+      return obj[state.viewName]
+    },
+    getIconColor(state) {
+      if (state.viewType === 'folder' || state.viewType === 'group') return ''
+      if (state.viewType === 'list') {
+        const obj = {
+          Today: 'var(--yellow)',
+          Tomorrow: 'var(--orange)',
+          Someday: 'var(--brown)',
+          Anytime: 'var(--dark-blue)',
+          Inbox: 'var(--primary)',
+          Calendar: 'var(--purple)',
+          Pomodoro: 'var(--dark-red)',
+          Statistics: 'var(--primary)',
+          Upcoming: 'var(--green)',
+          Logbook: 'var(--olive)',
+        }
+        const color = obj[state.viewName]
+        if (!color) return 'var(--primary)'
+        return color
+      }
+      if (state.viewType === 'search') return ''
+      return 'var(--red)'
+    },
     fallbackSelected(state) {
       if (state.selectedItems.length > 0)
         return state.selectedItems
@@ -242,6 +285,9 @@ const store = new Vuex.Store({
   mutations: {
     moving(state, moving) {
       state.moving = moving
+    },
+    isEditing(state, toggle) {
+      state.isEditing = toggle
     },
     pasteTask(state) {
       state.toggleClipboardPaste = !state.toggleClipboardPaste
@@ -457,7 +503,7 @@ const store = new Vuex.Store({
         if (data.stats) {
           utils.findChangesBetweenObjs(state.pomo.stats, data.stats.pomo, (key, val) => Vue.set(state.pomo.stats, key, val))
 
-          const info = state.pomo.stats && state.pomo.stats.dates[TOD_STR]
+          const info = state.pomo.stats && state.pomo.stats.dates && state.pomo.stats.dates[TOD_STR]
           if (info) {
             if (info.completedPomos !== state.pomo.cycles)
               state.pomo.cycles = info.completedPomos

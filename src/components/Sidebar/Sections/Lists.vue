@@ -16,6 +16,9 @@
       :mapString='mapString'
       :onSortableAdd="rootAdd"
 
+      alreadyExistMessage="This list already exists."
+      :existingItems='sortedLists'
+
       :getItemRef='getItemRef'
       
       @update='update'
@@ -60,6 +63,9 @@
             :mapHelpIcon='getListIcon'
             :mapString='mapString'
             :onSortableAdd='(folder, id, ids) => betweenFolders(folder, id, ids, f.comp)'
+
+            alreadyExistMessage="This list already exists."
+            :existingItems='sortedLists'
 
             :fallbackItem='fallbackItem(f.id)'
             :getItemRef='getItemRef'
@@ -118,10 +124,9 @@ export default {
         if (type === 'Task') return true
         return false
       }},
-      delay: 225,
+      delay: this.isDesktop ? 5 : 150,
       filter: '.ignore-item',
       animation: 80,
-      delayOnTouchOnly: true,
       handle: '.handle-folder',
 
       onUpdate: (evt) => {
@@ -144,6 +149,7 @@ export default {
       if (comp === "Group")
         this.$store.dispatch('list/addListInGroupByIndex', obj)
       else
+      
         this.$store.dispatch('list/addListInFolderByIndex', obj)
     },
     addListInRoot(obj) {
@@ -211,7 +217,7 @@ export default {
       this.$store.dispatch('list/updateOrder', ids)
     },
     getListProgress(list) {
-      return this.$store.getters['list/pieProgress'](this.tasks, list.id, task => this.isTaskInView(task, "Logbook"))
+      return this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], list.id, task => this.isTaskInView(task, "Logbook"))
     },
     getListIcon(list) {
       const arr = []

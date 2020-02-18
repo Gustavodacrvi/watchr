@@ -2,15 +2,9 @@
   <div class="Menu cbd">
     <div class="sidebar-wrapper">
       <span class="arrow-wrapper">
-        <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--fade)" width="25px" :circle='true'/>
+        <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--fade)" width="25px"/>
         <div>
-          <Icon class="cursor help-icon primary-hover" icon="user" color="var(--fade)" @click="toggleMenu" :circle='true'/>
-          <IconDrop v-if="!appSection"
-            class="help-icon drop rigth"
-            handle="globe"
-            :circle='true'
-            handleColor="var(--fade)"
-          />
+          <Icon class="cursor help-icon primary-hover" icon="user" color="var(--fade)" @click="toggleMenu"/>
           <VersionApp class="version"/>
         </div>
       </span>
@@ -34,7 +28,6 @@
 <script>
 
 import SidebarVue from '../Sidebar/Sidebar.vue'
-import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import VersionApp from '@/components/Version.vue'
 import ActionButtons from '@/components/View/FloatingButtons/ActionButtons.vue'
@@ -45,7 +38,7 @@ export default {
   components: {
     ActionButtons,
     Sidebar: SidebarVue,
-    Icon: IconVue, VersionApp,
+    VersionApp,
     IconDrop: IconDropVue
   },
   data() {

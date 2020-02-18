@@ -1,40 +1,52 @@
 
 <template>
-  <div class="Subtask rb cursor handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
-    <span class="icons" @click.stop="$emit('toggle')">
-      <Icon v-if="!completed" class="icon" icon="circle"/>
-      <Icon v-else class="icon" icon="circle-check"/>
-    </span>
-    <span v-if="!editing" class="name">{{ str }}</span>
-    <InputApp v-else
-      :value='str'
-      @input='v => str = v'
-      class="no-back"
-      :focus='true'
-      @enter='save'
-    />
-    <div class="line-wrapper">
-      <div class="line rb"></div>
-    </div>
-    <transition name="fade-t">
-      <div v-if="showDeleteIcon" class="delete-wrapper">
-        <Icon icon="trash" class="delete" @click="$emit('remove')" :circle='true'/>
+  <transition
+    appear
+    @enter='enter'
+    @leave='leave'
+  >
+    <div class="Subtask rb item-handle" :class="{isTaskCompleted, active}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="edit">
+      <span class="icons cursor" @click.stop="$emit('toggle')">
+        <Icon v-if="!isTaskCompleted" class="icon primary-hover" icon="circle"/>
+        <Icon v-else class="icon primary-hover" icon="circle-check"/>
+      </span>
+      <span v-if="!editing" class="name-wrapper">
+        <span class="name">
+          {{ str }}
+        </span>
+      </span>
+      <InputApp v-else
+        :value='str'
+        @input='v => str = v'
+        class="no-back input"
+        :focus='true'
+        @enter='save'
+
+        @keydown="keydown"
+      />
+      <div class="line-wrapper">
+        <div class="line rb"></div>
       </div>
-    </transition>
-  </div>
+      <transition name="fade-t">
+        <div v-if="showDeleteIcon && !editing" class="delete-wrapper">
+          <Icon icon="trash" class="delete cursor" @click="$emit('remove')"/>
+        </div>
+      </transition>
+    </div>
+  </transition>
 </template>
 
 <script>
 
-import IconVue from '../../../Icon.vue'
 import InputApp from "@/components/Auth/Input.vue"
+
+import mom from 'moment'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['name', 'completed', 'id'],
+  props: ['name', 'compareDate', 'completeDate', 'completed', 'id', 'active'],
   components: {
-    Icon: IconVue,
     InputApp,
   },
   data() {
@@ -51,19 +63,62 @@ export default {
     window.removeEventListener('click', this.stopEditing)
   },
   methods: {
+    edit() {
+      this.editing = true
+    },
+    keydown({key}) {
+      if (key === "ArrowUp")
+        this.$emit('move-cursor-up')
+      else if (key === 'ArrowDown')
+        this.$emit('move-cursor-down')
+    },
     stopEditing() {
       this.str = this.name
       this.editing = false
     },
     save() {
-      this.editing = false
+      setTimeout(() => {
+        this.editing = false
+      })
       this.$emit("save", this.str)
+    },
+
+    enter(el, done) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.height = 0
+      s.opacity = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+        s.height = '35px'
+        s.opacity = 1
+
+        setTimeout(done, 205)
+      })
+    },
+    leave(el) {
+
+      const s = el.style
+
+      s.height = 0
+      s.opacity = 0
+
     },
   },
   computed: {
     ...mapGetters(['isDesktop']),
     showDeleteIcon() {
       return !this.isDesktop || this.hover
+    },
+    isTaskCompleted() {
+      if (!this.compareDate)
+        return this.completed
+      if (!this.completeDate)
+        return false
+
+      return this.completed && mom(this.completeDate, 'Y-M-D').isSameOrAfter(mom(this.compareDate, 'Y-M-D'), 'day')
     },
   },
   watch: {
@@ -80,6 +135,23 @@ export default {
   position: relative;
   display: flex;
   transition-duration: .15s;
+}
+
+.name-wrapper {
+  position: relative;
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  padding: 0 8px;
+  max-width: 100%;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity .15s;
 }
 
 .line-wrapper {
@@ -103,11 +175,11 @@ export default {
   background-color: var(--extra-light-gray);
 }
 
-.completed .line {
+.isTaskCompleted .line {
   width: 100%;
 }
 
-.Subtask:hover {
+.Subtask:hover, .active {
   background-color: var(--light-gray);
 }
 
@@ -131,7 +203,7 @@ export default {
   color: var(--red);
 }
 
-.completed .icons, .completed .name, .completed .delete {
+.isTaskCompleted .icons, .isTaskCompleted .name, .isTaskCompleted .delete {
   opacity: .2;
 }
 
@@ -144,19 +216,13 @@ export default {
   transition: opacity .15s;
 }
 
+.input {
+  padding-left: 8px;
+}
+
 .icon {
   transform: translateY(2px);
   margin-left: 6px;
-}
-
-.name {
-  margin-left: 6px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding-left: 6px;
-  transition: opacity .15s;
-  flex-basis: 100%;
 }
 
 </style>

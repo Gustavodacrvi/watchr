@@ -13,15 +13,15 @@
           :focus="true"
           :options="options"
           :placeholder="placeholder"
-          :focusToggle='focusToggle'
           :onPaste='onPaste'
+          :focusToggle='focusToggle'
           @select="select"
           @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />
-        <DropInput
+        <DropInput ref='task-notes'
           class="notes hide"
           :msg='isDesktop ? "Shift + Enter to save" : ""'
           :class="{'no-back': !popup, show}"
@@ -29,6 +29,7 @@
           :enterOnShift='true'
           :options="[]"
           :placeholder="notesPlaceholder"
+
           @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
@@ -102,10 +103,16 @@
             :onDrop='onDrop'
           />
         </div>
-        <Checklist class="hide" :class="{show}"
-          :list='task.checklist'
-          :order='task.order'
-          :toggle='toggleChecklist'
+        <Checklist v-if="!isFirstEdit"
+          ref='checklist'
+          :list='getChecklist'
+
+          :activeChecklistId='activeChecklistId'
+          :compareDate='getCompareDate'
+
+          @move-cursor='moveCursor'
+
+          @reset-cursor='resetCursor'
           @add='addSubtask'
           @remove='removeSubtask'
           @update='updateIds'
@@ -130,27 +137,33 @@
               style="margin-left: 4px;margin-top: 0px;opacity: .6"
               type="card"
               value="Add checklist"
-              @click="addChecklist"
+
+              :class="{selected: cursorPos === 2}"
+              @click.native.stop="addChecklist"
             />
           </transition>
           <transition name="btn">
             <div v-if="showingOptions" class="icons">
               <IconDrop
                 handle="tag"
-                class="opt-icon"
+                :box='true'
                 width="22px"
                 :options="getTags"
-                :circle='true'
+                :active='isIcon(11)'
+                ref='tag'
+               
                 handleColor='var(--red)'
                 title='Add tags'
                 :center='true'
               />
               <IconDrop
                 handle="priority"
-                class="opt-icon"
+                :box='true'
                 width="22px"
                 :options="priorityOptions"
-                :circle='true'
+                :active='isIcon(10)'
+                ref='priority'
+               
                 handleColor='var(--yellow)'
                 title='Add priority'
                 :center='true'
@@ -158,47 +171,57 @@
               <IconDrop
                 handle="tasks"
                 width="22px"
-                class="opt-icon"
+                :box='true'
                 :options="listOptions"
-                :circle='true'
+                :active='isIcon(9)'
+                ref='tasks'
+               
                 handleColor='var(--primary)'
                 title='Add to list'
                 :center='true'
               />
               <IconDrop
                 handle="folder"
-                width="22px"
-                class="opt-icon"
+                width="23.5px"
+                :box='true'
                 :options="folderOptions"
-                :circle='true'
+                :active='isIcon(8)'
+                ref='folder'
+               
                 title='Add to folder'
                 :center='true'
               />
               <IconDrop
                 handle="group"
-                width="24px"
-                class="opt-icon"
+                width="23.5px"
+                :box='true'
                 :options="groupOptions"
-                :circle='true'
+                :active='isIcon(7)'
+                ref='group'
+               
                 title='Add to group'
                 :center='true'
               />
               <IconDrop
                 handle="calendar"
                 width="22px"
-                class="opt-icon"
+                :box='true'
                 :options="calendarOptions"
-                :circle='true'
+                :active='isIcon(6)'
+                ref='calendar'
+               
                 handleColor='var(--green)'
                 title='Add date'
                 :center='true'
               />
               <Icon
-                class="opt-icon primary-hover cursor"
-                style="margin-right: 7px;margin-top: 2px"
-                width="21px"
-                :circle='true'
+                class="icon-box primary-hover cursor"
+                width="22px"
+               
                 icon='file'
+                :active='isIcon(5)'
+                ref='file'
+                :box='true'
                 :file='true'
                 @add='addFile'
                 title='Add files'
@@ -206,9 +229,11 @@
               <IconDrop
                 handle="deadline"
                 width="22px"
-                class="opt-icon"
+                :box='true'
+                :active='isIcon(4)'
+                ref='deadline'
                 :options="deadlineOptions"
-                :circle='true'
+               
                 handleColor='var(--orange)'
                 title='Add deadline'
                 :center='true'
@@ -216,9 +241,11 @@
               <IconDrop
                 handle="clock"
                 width="22px"
-                class="opt-icon"
+                :box='true'
+                :active='isIcon(3)'
+                ref='clock'
                 :options="durationOptions"
-                :circle='true'
+               
                 handleColor='var(--purple)'
                 title='Add task duration'
                 :center='true'
@@ -242,7 +269,6 @@ import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
-import IconVue from '../../Icon.vue'
 import ChecklistVue from './Checklist/Checklist.vue'
 import FileApp from './../RenderComponents/File.vue'
 import FileDragDrop from './../RenderComponents/FileDragDrop.vue'
@@ -263,13 +289,11 @@ export default {
     ButtonApp: ButtonVue,
     Checklist: ChecklistVue,
     IconDrop: IconDropVue,
-    Icon: IconVue,
     Tag: TagVue,
   },
   data() {
     return {
       show: false,
-      toggleChecklist: false,
       isAddingChecklist: false,
       task: {
         name: '',
@@ -293,6 +317,10 @@ export default {
       savingTask: false,
       optionsType: '',
       options: [],
+      fromDefaultTask: false,
+      isFirstEdit: true,
+
+      cursorPos: 0,
 
       lastKeys: [],
       keydownSettimeout: null,
@@ -332,16 +360,22 @@ export default {
       this.task.folder = this.folderName
       this.task.group = this.groupName
       this.task.tags = this.getTagNames
+
+      if (this.task.calendar)
+        this.fromDefaultTask = true
     }
+    setTimeout(() => this.isFirstEdit = false, 200)
 
     window.addEventListener('click', this.remove)
     window.addEventListener('keydown', this.keydown)
   },
   beforeDestroy() {
+    this.$store.commit('isEditing', false)
     window.removeEventListener('click', this.remove)
     window.removeEventListener('keydown', this.keydown)
   },
   mounted() {
+    this.$store.commit('isEditing', true)
     if (this.editAction) {
       this[this.editAction]()
       this.$emit('done-action')
@@ -350,12 +384,66 @@ export default {
   methods: {
     removeCalendar() {
       this.task.calendar = null
+      this.fromDefaultTask = false
       this.fromIconDrop = false
       this.toReplace = null
+    },
+    focusName() {
+      this.$refs['task-name'].focusInput(0)
+    },
+    moveCursor(dire) {
+      const newIndex = this.cursorPos + dire
+      if (this.keyboardActions[newIndex])
+        this.cursorPos = newIndex
+    },
+    focusNotes() {
+      this.$refs['task-notes'].focusInput(0)
+    },
+    incrementPos(inc) {
+      const newIndex = this.cursorPos + inc
+      if (this.keyboardActions[newIndex])
+        this.cursorPos = newIndex
+      else if (inc > 0)
+        this.cursorPos = 0
+      else this.cursorPos = this.lastKeyboardActionIndex
     },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
+
+      const active = document.activeElement
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+
+      if (this.isCursorInChecklist) {
+        switch (key) {
+          case "Delete": {
+            this.removeSubtask(this.activeChecklistId)
+            break
+          }
+          case '.': {
+            this.$refs.checklist.toggleTask(this.activeChecklistId)
+            p()
+            break
+          }
+          case " ": {
+            this.$refs.checklist.addEdit(this.cursorPos - 1)
+            p()
+            break
+          }
+          case "Enter": {
+            if (!isTyping) {
+              p()
+              this.$refs.checklist.editChecklist(this.activeChecklistId)
+            }
+            break
+          }
+        }
+      }
+
+      if (key === "Escape" && !isTyping)
+        this.cancel()
+      if (key === "Enter" && this.isElementFunction)
+        this.keyboardActions[this.cursorPos]()
 
       utils.saveByShortcut(this, true, key, p, (type, task) => {
         switch (type) {
@@ -387,6 +475,24 @@ export default {
           }
         }
       })
+
+      if (!this.iconDrop && this.options.length === 0) {
+        if (key === "ArrowUp") {
+          p()
+  
+          if (this.isOnShift)
+            this.cursorPos = 0
+          else        
+            this.incrementPos(-1)
+        } else if (key === "ArrowDown") {
+          p()
+  
+          if (this.isOnShift)
+            this.cursorPos = this.lastKeyboardActionIndex
+          else        
+            this.incrementPos(1)
+        }
+      }
     },
     onPaste(txt) {
       if (this.fallbackItem) {
@@ -430,6 +536,10 @@ export default {
           order: this.task.order || [],
         })
     },
+    resetCursor() {
+      if (!this.isAddingChecklist)
+        this.cursorPos = 0
+    },
     remove(evt) {
       if (this.readyToRemove) {
         let found = false
@@ -445,7 +555,7 @@ export default {
       }
     },
     addChecklist() {
-      this.toggleChecklist = !this.toggleChecklist
+      this.$refs.checklist.addChecklist()
     },
     cancel() {
       this.leave(this.$el)
@@ -647,6 +757,9 @@ export default {
       this.task.heading = ''
       this.task.headingId = ''
     },
+    isIcon(num) {
+      return !this.hasChecklist ? num === this.cursorPos : (num + this.task.checklist.length - 1) === this.cursorPos
+    },
   },
   computed: {
     ...mapState({
@@ -670,6 +783,69 @@ export default {
       groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
     }),
+    getCompareDate() {
+      if (!this.defaultTask || !this.defaultTask.calendar)
+        return null
+      return this.defaultTask.calendar.lastCompleteDate
+    },
+    activeChecklistId() {
+      return this.keyboardActions[this.cursorPos]
+    },
+    isCursorInChecklist() {
+      return this.task.checklist.some(el => el.id === this.activeChecklistId)
+    },
+    hasChecklist() {
+      return this.task.checklist.length > 0
+    },
+    keyboardActions() {
+      const c = ref => () => this.$refs[ref].click()
+
+      const obj = {
+        0: this.focusName,
+        1: this.focusNotes,
+      }
+
+      const hasChecklist = this.hasChecklist
+
+      if (!hasChecklist)
+        obj[2] = () => this.addChecklist()
+      else {
+        let num = 2
+        
+        for (const t of this.getChecklist) {
+          obj[num] = t.id
+          num++ 
+        }
+      }
+      
+      const getIconsObj = () => {
+        let num = !hasChecklist ? 3 : this.task.checklist.length + 2
+
+        return [
+          'clock',
+          'deadline',
+          'file',
+          'calendar',
+          'group',
+          'folder',
+          'tasks',
+          'priority',
+          'tag',
+        ].reduce((obj, icon) => {
+          obj[num] = c(icon)
+          num++
+          return obj
+        }, {})
+      }
+      
+      return {
+        ...obj,
+        ...getIconsObj(),
+      }
+    },
+    lastKeyboardActionIndex() {
+      return Object.keys(this.keyboardActions).length - 1
+    },
     showingOptions() {
       return !this.isAddingChecklist
     },
@@ -677,7 +853,7 @@ export default {
       return this.defaultTask
     },
     doesntHaveChecklist() {
-      return !this.task.checklist || this.task.checklist.length === 0
+      return !this.getChecklist || this.getChecklist.length === 0
     },
     calendarOptions() {
       return {
@@ -688,6 +864,7 @@ export default {
             this.toReplace = null
           
           this.task.calendar = date
+          this.fromDefaultTask = false
         }, repeat: true}
       }
     },
@@ -759,6 +936,9 @@ export default {
         return this.$store.getters['folder/getFoldersById']([this.task.folder])[0].name
       return ''
     },
+    getChecklist() {
+      return this.$store.getters.checkMissingIdsAndSortArr(this.task.order, this.task.checklist)
+    },
     folderId() {
       if (this.task.folder)
         return this.$store.getters['folder/getFoldersByName']([this.task.folder]).map(el => el.id)[0]
@@ -818,6 +998,10 @@ export default {
     },
     priorities() {
       return this.$store.getters['task/priorityOptions']
+    },
+    isElementFunction() {
+      const el = this.keyboardActions[this.cursorPos]
+      return el && {}.toString.call(el) === '[object Function]'
     },
     groupOptions() {
       return {
@@ -1009,14 +1193,18 @@ export default {
         }
       }
 
-      const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
-      if (res) {
-        this.toReplace = res.matches
-        this.task.calendar = res.calendar
-        this.fromIconDrop = null
-      } else if (!this.fromIconDrop) {
-        this.toReplace = null
-        this.task.calendar = null
+      if (!this.isFirstEdit) {
+        const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
+        if (res && res.calendar) {
+          this.toReplace = res.matches
+          this.task.calendar = res.calendar
+          this.fromDefaultTask = false
+          this.fromIconDrop = null
+        } else if (!this.fromIconDrop && !this.fromDefaultTask) {
+          this.toReplace = null
+          this.fromDefaultTask = false
+          this.task.calendar = null
+        }
       }
 
       parsePriority()
@@ -1026,6 +1214,17 @@ export default {
       parseGroup()
 
       if (!changedOptions) this.options = []
+    },
+    cursorPos(newPos, oldPos) {
+      if (this.isAddingChecklist)
+        this.$refs.checklist.removeEdit()
+      if (newPos === 2 && oldPos === 1)
+        this.$refs['task-notes'].removeFocus()
+      else if (newPos === this.lastKeyboardActionIndex && oldPos === 0)
+        this.$refs['task-name'].removeFocus()
+      
+      if (this.cursorPos < 2 && this.isElementFunction)
+        this.keyboardActions[this.cursorPos]()
     },
   }
 }
@@ -1079,6 +1278,10 @@ export default {
 
 .hide {
   opacity: 0;
+}
+
+.selected {
+  background-color: var(--light-gray);
 }
 
 .notPopup .notes {
@@ -1198,10 +1401,6 @@ export default {
 .mobile .icons {
   display: flex;
   width: 100%;
-}
-
-.opt-icon {
-  margin-right: 12px !important;
 }
 
 .progress {

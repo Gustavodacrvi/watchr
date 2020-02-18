@@ -2,8 +2,12 @@
 <template>
   <div class="ListIcons scroll-thin" :class="{overflow: links.allowSearch}">
     <div class="links" ref='main-content'>
+      <span v-if="select && allowKeyboard" class="notes">
+        Shift + Enter to save
+      </span>
       <div v-if="links.allowSearch" class="search hide-trans">
         <input class="input"
+          ref='input'
           :value="search"
           @input="v => search = v.target.value"
         >
@@ -12,9 +16,9 @@
         @enter='enterItems'
         @leave='leaveItems'
       >
-        <template v-for="l in getLinks">
+        <template v-for="(l, index) in getLinks">
           <div v-if="!l.type" class="link cursor hide-trans"
-            :class="{important: l.important}"
+            :class="{important: l.important, active: (allowKeyboard && index === selectionPos)}"
             :key="l.name"
             :ref="l.name"
             @click="linkClick(l)"
@@ -34,10 +38,13 @@
               />
               <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
               <span class="name" v-html="l.name"></span>
-              <Icon v-if="select && selected.includes(l.name)"
+              <span v-if="select && selected.includes(l.name)"
                 class='check-icon'
-                icon='check'
-              />
+              >
+                <Icon
+                  icon='check'
+                />
+              </span>
             </div>
             <CircleBubble
               innerColor='rgba(87,160,222,.1)'
@@ -89,17 +96,16 @@
 
 <script>
 
-import Icon from './../Icon.vue'
 import ButtonApp from '@/components/Auth/Button.vue'
 import ProfilePhoto from "@/components/View/RenderComponents/ProfilePhoto.vue"
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 
 export default {
-  props: ['content'],
+  props: ['content', 'allowKeyboard'],
   components: {
-    Icon, ButtonApp,
+    ButtonApp,
     ProfilePhoto,
   },
   data() {
@@ -107,13 +113,64 @@ export default {
       links: this.content,
       search: '',
       selected: [],
+
+      selectionPos: 0,
     }
   },
   created() {
     if (this.select && this.links.selected)
       this.selected = this.links.selected.slice()
   },
+  mounted() {
+    if (this.allowKeyboard) {
+      window.addEventListener('keydown', this.keydown)
+      if (this.$refs.input)
+        this.$refs.input.focus()
+    }
+  },
+  beforeDestroy() {
+    if (this.allowKeyboard)
+      window.removeEventListener('keydown', this.keydown)
+  },
   methods: {
+    increment(inc) {
+      const newIndex = this.selectionPos + inc
+      if (this.getLinks[newIndex])
+        this.selectionPos = newIndex
+    },
+    keydown(evt) {
+      const { key } = evt
+      const p = () => {
+        evt.stopPropagation()
+        evt.preventDefault()
+      }
+
+      if (key === "Escape")
+        this.$emit('close')
+
+      if (key === 'Enter' && !this.isOnShift)
+        this.keyboardActions[this.selectionPos]()
+      else if (key === "Enter" && this.isOnShift)
+        this.saveSelected()
+
+      if (key === 'ArrowDown') {
+        p()
+
+        if (this.isOnShift)
+          this.selectionPos = this.getLinks.length - 1
+        else
+          this.increment(1)
+      } else if (key === 'ArrowUp') {
+        p()
+
+        if (this.isOnShift)
+          this.selectionPos = 0
+        else
+          this.increment(-1)
+      }
+
+    },
+    
     linkClick(l) {
       l.important ? this.blink(l.name) : this.linkCallback(l.callback, l)
     },
@@ -187,6 +244,17 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      isOnShift: state => state.isOnShift,
+    }),
+    keyboardActions() {
+      let num = 0
+      return this.getLinks.reduce((obj, l) => {
+        obj[num] = () => this.linkClick(l)
+        num++
+        return obj
+      }, {})
+    },
     select() {
       return this.links && this.links.select
     },
@@ -228,13 +296,19 @@ export default {
   position: relative;
 }
 
-.link:hover {
+.link:hover, .active {
   color: var(--primary);
   background-color: rgba(87,160,222,.1);
 }
 
 .link:hover .check-icon {
   color: var(--primary) !important;
+}
+
+.notes {
+  opacity: .7;
+  font-size: .8em;
+  margin-left: 13px;
 }
 
 .check-icon {

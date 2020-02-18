@@ -21,19 +21,17 @@
         @touchmove.passive='touchmove'
         @touchend.passive='touchEnd'
       >
-        <div class="icon-wrapper">
+        <div class="icon-wrapper" @click="clickIcon">
           <Icon class="main-icon"
             :class="{cursor: icon === 'tasks'}"
             :style="iconStyle"
             :icon="icon"
             :progress='progress'
-            :circle='true'
-            @click.native='clickIcon'
           />
         </div>
         <div class="name-wrapper">
           <transition name="name-t">
-            <span key="normal" class="name" :style="hoverStyle">
+            <span key="normal" class="name" @click="click" :style="hoverStyle">
               {{ getName }}
             </span>
           </transition>
@@ -42,7 +40,6 @@
           <template v-if="helpIcons">
             <Icon v-for="i in helpIcons" :key="i" class="inf faded"
               :icon='i'
-              :circle='true'
             />
           </template>
           <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
@@ -87,6 +84,9 @@
           :getItemRef='getItemRef'
           :fallbackItem='fallbackItem'
 
+          :existingItems='existingItems'
+          :alreadyExistMessage='alreadyExistMessage'
+
           :mapNumbers='mapSubTagNumbers'
           @buttonAdd='onSubTagAdd'
           @update='onSubTagUpdate'
@@ -99,7 +99,6 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import AssigneeProfilePhoto from "@/components/View/RenderComponents/AssigneeProfilePhoto.vue"
 
@@ -111,10 +110,9 @@ export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
-  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned'],
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned', 'existingItems', 'alreadyExistMessage'],
   components: {
     Renderer: () => import('./Renderer.vue'),
-    Icon: IconVue,
     AssigneeProfilePhoto,
     IconDrop: IconDropVue,
   },
@@ -356,10 +354,10 @@ export default {
 }
 
 .main-icon {
-  position: absolute;
+  position: absolute !important;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%) !important;
   margin-top: 1.5px;
   transition: color .15s;
 }
@@ -401,6 +399,10 @@ export default {
 
 .desktop .link-inner-wrapper:hover, .notSmartActive, .link-inner-wrapper:active, .isActive {
   background-color: var(--card);
+}
+
+.slim-sidebar .desktop .link-inner-wrapper:hover, .slim-sidebar .notSmartActive, .slim-sidebar .link-inner-wrapper:active, .slim-sidebar .isActive {
+  background-color: var(--dark-light-gray);
 }
 
 .sortable-drag {

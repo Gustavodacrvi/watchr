@@ -28,7 +28,6 @@
 <script>
 
 import ProfilePhoto from '@/components/View/RenderComponents/ProfilePhoto.vue'
-import Icon from "@/components/Icon.vue"
 
 import utils from '@/utils'
 
@@ -39,7 +38,6 @@ import { mapState } from 'vuex'
 export default {
   components: {
     ProfilePhoto,
-    Icon,
   },
   props: ['name', 'userId', 'files', 'reactions', 'created', 'groupId'],
   computed: {

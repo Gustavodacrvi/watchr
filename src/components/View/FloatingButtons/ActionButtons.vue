@@ -5,7 +5,7 @@
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
-      txt='Create'
+      txt='Add item'
     />
   </div>
 </template>
@@ -142,6 +142,28 @@ export default {
   justify-content: center !important;
   align-items: center !important;
   height: 100%;
+}
+
+.act-button-wrapper .main {
+  background-color: var(--sidebar-color);
+  border-radius: 10px;
+  transition: background-color .2s, box-shadow;
+}
+
+.act-button-wrapper .heading {
+  border: none;
+  justify-content: unset !important;
+  padding-left: 6px;
+  border-bottom: 1px solid var(--fade);
+  border-bottom-style: dashed;
+  opacity: 0;
+}
+
+.heading .main {
+  display: flex;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100%;
   flex-basis: 100%;
   background-color: var(--sidebar-color);
   border-radius: 10px;
@@ -172,6 +194,11 @@ export default {
 .Lists .list-act, .Tags .tags-act {
   border-radius: 10px;
   background-color: var(--card);
+}
+
+.slim-sidebar .Lists .list-act, .slim-sidebar .Tags .tags-act {
+  border-radius: 10px;
+  background-color: var(--dark-light-gray);
 }
 
 .Checklist .heading, .Checklist .existing {

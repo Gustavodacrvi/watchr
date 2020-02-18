@@ -22,7 +22,7 @@
             class="icon remove-highlight cursor primary-hover"
             icon='import'
             title='Download file'
-            :circle='true'
+           
             @click.native="$emit('download')"
           />
           <Icon
@@ -30,7 +30,7 @@
             icon='trash'
             color='var(--red)'
             title='Delete file'
-            :circle='true'
+           
             @click.native="$emit('delete')"
           />
         </div>
@@ -41,17 +41,12 @@
 
 <script>
 
-import Icon from '@/components/Icon.vue'
-
 import utils from '@/utils'
 
 import { mapGetters } from 'vuex'
 
 export default {
   props: ['name', 'status', 'disableDelete'],
-  components: {
-    Icon,
-  },
   data() {
     return {
       hover: false,

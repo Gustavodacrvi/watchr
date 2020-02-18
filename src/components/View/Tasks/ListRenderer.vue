@@ -5,7 +5,7 @@
         class="illustration"
         :style="{
           width: `calc(100% - ${width}px)`,
-          left: width + 'px',
+          left: (isDesktop ? width : 0) + 'px',
         }"
       >
         <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
@@ -13,8 +13,7 @@
     </transition>
     <div
       class="front item-renderer-root"
-      :class="{dontHaveItems: lazyItems.length === 0, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
-      :style="inflate"
+      :class="{inflate, dontHaveItems: lazyItems.length === 0, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
 
       data-name='item-renderer'
@@ -61,6 +60,7 @@
           @cancel='removeEdit'
         />
         <EditComp v-else
+          :heading='true'
           :key="item.isEdit"
 
           v-bind='item.propsData'
@@ -88,7 +88,7 @@
       >
         <div
           class="add-item rb"
-          @click="addEditComp(nonEditGetItems.length)"
+          @click.stop="addEditComp(nonEditGetItems.length)"
         >
           Add item
         </div>
@@ -148,7 +148,6 @@ import TaskEdit from './Edit.vue'
 import ListEdit from './../Lists/Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import EditComp from './../RenderComponents/Edit.vue'
-import Icon from '@/components/Icon.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import HeadingsRenderer from './HeadingsRenderer.vue' 
 
@@ -167,11 +166,11 @@ import utils from '@/utils/'
 
 export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
-  'disableFloatingButton', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
+  'disableFloatingButton', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
-    Task, Icon, ButtonVue, List, ListEdit,
+    Task, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
     Illustration: IllustrationVue,
   },
@@ -188,11 +187,11 @@ export default {
       changingViewName: false,
 
       addedItem: null,
-      hasEdit: null,
       edit: null,
       focusToggle: false,
       movingItem: false,
 
+      hasEdit: null,
       lastSelectedId: null,
       lastHeadingName: null,
       lastButtonElement: null,
@@ -274,49 +273,37 @@ export default {
       if (this.moving) {
         const addHeadingElement = document.querySelector('.ListRenderer .action-heading') || {}
         const createElement = document.querySelector('.ListRenderer .create') || {}
-        const addElement = document.querySelector('.ListRenderer .add') || {}
-        const obj = {
-          'action-heading': addHeadingElement.style || {},
-          create: createElement.style || {},
-          add: addElement.style || {},
-        }
         
         const { left, width } = this.$el.getBoundingClientRect()
         const pos = (evt.pageX || evt.touches[0].pageX) - left
         
-        const headingStart = width * .333333
-        const addStart = this.showHeadingFloatingButton ? width * .66666 : width * .5
+        const addHeading = pos < 76
 
-        let type
-        if (pos < headingStart)
-          type = 'action-heading'
-        else if (pos < addStart)
-          type = 'create'
-        else type = 'add'
-
-        if (!this.showHeadingFloatingButton && type === 'action-heading')
-          type = 'create'
-
-        const possibleValues = ['action-heading', 'create', 'add']
-
-        if (!this.showHeadingFloatingButton) {
-          obj['action-heading'].flexBasis = '0px'
-          obj['action-heading'].overflow = 'hidden'
-        }
-        const act = obj[type]
-        for (const s of possibleValues)
-          if (s !== type) {
-            obj[s].backgroundColor = 'var(--sidebar-color)'
-            obj[s].zIndex = '1'
-            obj[s].boxShadow = 'none'
+        const show = s => {
+          if (s) {
+            s.opacity = 1
+            s.transitionDuration = '.2s'
           }
+        }
+        const hide = s => {
+          if (s) {
+            s.opacity = 0
+            s.transitionDuration = '.2s'
+          }
+        }
 
-        act.backgroundColor = 'var(--dark-gray)'
-        act.boxShadow = '0 3px 8px rgba(15,15,15,.3)'
-        act.color = 'white'
-        act.zIndex = '2'
+        if (!addHeading || !this.showHeadingFloatingButton) {
+          this.editMoveType = 'create'
 
-        this.editMoveType = type
+          show(createElement.style)
+          hide(addHeadingElement.style)
+
+        } else {
+          this.editMoveType = 'action-heading'
+
+          hide(createElement.style)
+          show(addHeadingElement.style)
+        }
       }
     },
     selectMultipleIds(newId) {
@@ -438,7 +425,7 @@ export default {
         forceFallback: true,
         fallbackOnBody: true,
         animation: 80,
-        delay: this.isDesktop ? 0 : 100,
+        delay: this.isDesktop ? 5 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -506,6 +493,8 @@ export default {
             s.overflow = 'hidden'
             root.insertBefore(items[i], root.children[indicies[i]])
           }
+
+          items.forEach(this.deSelectItem)
         },
         onAdd: (evt, original) => {
           const items = evt.items
@@ -558,22 +547,14 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
-            setTimeout(() => {
-              this.onSortableAdd(evt, ids, type, this.lazyItems.map(el => el.id))
-            })
+            this.onSortableAdd(evt, ids, type, this.lazyItems.map(el => el.id))
             this.sourceVueInstance = null
-          } else {
+          } else {  
             const i = evt.newIndex
             if (this.editMoveType === 'create')
               this.addEditComp(i)
             else if (this.editMoveType === 'action-heading')
               this.addHeadingsEdit(i)
-            else
-              this.onAddExistingItem(i, this.lazyItems, this.fallbackItem, () => {
-                setTimeout(() => {
-                  this.$emit('update', this.getIds(true))
-                }, 10)
-              })
           }
         },
         onMove: (t, e) => {
@@ -712,7 +693,7 @@ export default {
         let i = 0
         const length = items.length
 
-        const multiplier = this.isDesktop ? 3.5 : 5
+        const multiplier = this.isDesktop ? 1.5 : 5
         const timeout = length * multiplier
         
         const add = item => {
@@ -722,7 +703,7 @@ export default {
               i++
               const t = items[i]
               if (t) add(t)
-            }, multiplier))
+            }, timeout))
           else solve()
         }
         const t = items[0]
@@ -737,7 +718,7 @@ export default {
         let i = 0
         const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.items && h.items.length > 0)
         const length = headinsgWithItems.length
-        let timeout = this.isDesktop ? 155 : 230
+        let timeout = this.isDesktop ? 80 : 230
 
         if (length < 5 || this.viewName === 'Upcoming') timeout = 175
         
@@ -866,6 +847,7 @@ export default {
         }
 
         this.addedItem = t.id
+
         this.addItem({
           item: t, ids: this.getIds(true),
           newId: t.id,
@@ -983,6 +965,9 @@ export default {
       return this.changingViewName || this.rootChanging
     },
     getItems() {
+      return this.sliceItems.filter(el => el)
+    },
+    sliceItems() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyItems
       return this.showingMoreItems ? this.lazyItems : this.lazyItems.slice(0, this.hasEdit ? 4 : 3)
     },
@@ -1037,10 +1022,8 @@ export default {
     },
     inflate() {
       if ((this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
-        return {
-          minHeight: '700px',
-        }
-      return null
+        return true
+      return false
     },
     draggableRoot() {
       return this.$el.getElementsByClassName('item-renderer-root')[0]
@@ -1074,10 +1057,12 @@ export default {
         clearTimeout(this.waitingUpdateTimeout)
         this.waitingUpdateTimeout = null
       }
+      
+      
       const items = newArr.slice()
-      const isSmartListHeading = this.isSmart && !this.isRoot && this.viewType === 'list'
       
       this.waitingUpdateTimeout = setTimeout(() => {
+  
         if (!this.changedViewName) {
           this.clearLazySettimeout()
 
@@ -1090,7 +1075,8 @@ export default {
               items.splice(itemIndex + 1, 0, this.edit)
             }
           }
-          this.lazyItems = items
+
+          this.lazyItems = items.slice()
           const ts = this.lazyItems
           const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))
           for (const el of removedEls)
@@ -1100,7 +1086,7 @@ export default {
             this.focusToggle = !this.focusToggle
           })
         }
-      }, isSmartListHeading ? 200 : 0)
+      }, 100)
     },
     headings(newArr) {
       if (this.isRoot) {
@@ -1237,7 +1223,8 @@ export default {
 
 .add-item-wrapper {
   height: 35px;
-  position: relative;
+  position: absolute;
+  width: 100%;
 }
 
 .add-item {
@@ -1264,6 +1251,14 @@ export default {
 
 .dontHaveItems {
   min-height: 35px;
+}
+
+.inflate {
+  min-height: 700px;
+}
+
+.sortable-ghost .inflate {
+  min-height: unset;
 }
 
 .isRootAndHaveItems {

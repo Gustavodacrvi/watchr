@@ -10,8 +10,10 @@ import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask
 
 import mom from 'moment'
 
-const TODAY_DATE = mom().format('Y-M-D')
-const TOM_DATE = mom().add(1, 'day').format('Y-M-D')
+const TODAY_MOM = mom()
+
+const TODAY_DATE = TODAY_MOM.format('Y-M-D')
+const TOM_DATE = TODAY_MOM.clone().add(1, 'day').format('Y-M-D')
 
 export default {
   namespaced: true,
@@ -20,6 +22,16 @@ export default {
     groupTasks: {},
   },
   getters: {
+    allTasks(state) {
+      const keys = Object.keys(state.tasks).filter(
+        k => state.tasks[k]
+      )
+      const groupKeys = Object.keys(state.groupTasks).filter(
+        k => state.groupTasks[k]
+      )
+      
+      return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
+    },
     logTasks(state) {
       const keys = Object.keys(state.tasks).filter(
         k => state.tasks[k] && state.tasks[k].logbook
@@ -38,8 +50,6 @@ export default {
         k => state.groupTasks[k] && !state.groupTasks[k].logbook
       )
 
-      console.log(state.groupTasks)
-      
       return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
     },
     priorityOptions() {
@@ -300,6 +310,18 @@ export default {
           })
         },
       },
+      wasTaskLoggedLastWeek: {
+        getter({}, task) {
+          if (!task.logbook || !task.logDate)
+            return false
+          return mom(task.logbook, 'Y-M-D').isSame(
+            mom(TODAY_DATE, 'Y-M-D').subtract(1, 'week')
+          , 'week')
+        },
+        cache(args) {
+          return args[0].logDate
+        }
+      },
       doesTaskPassInclusivePriority: {
         getter({}, task, inclusive) {
           if (inclusive === 'No priority')
@@ -362,9 +384,7 @@ export default {
           return utils.getHumanReadableDate(task.deadline, l) + ' ' + getDaysLeft(task.deadline, date)
         },
         cache(args) {
-          return JSON.stringify({
-            c: args[0].deadline,
-          })
+          return args[0].deadline
         },
       },
       isTaskInView: {
@@ -454,11 +474,38 @@ export default {
       },
       isTaskInOneYear: {
         getter({}, task) {
-          if (!task.calendar) return false
+          if (!task.calendar || task.calendar.type !== 'specific') return false
           return mom().add(1, 'y').startOf('year').isBefore(mom(task.calendar.specific, 'Y-M-D'), 'day')
         },
         cache(args) {
           return JSON.stringify(args[0].calendar)
+        },
+      },
+      isOldTask: {
+        getter({}, task) {
+          if (!task.logDate)
+            return false
+          return mom(task.logDate, 'Y-M-D').isBefore(TODAY_MOM, 'year')
+        },
+        cache(args) {
+          return args[0].logDate
+        },
+      },
+      wasTaskLoggedInMonth: {
+        getter({}, task, monthNum) {
+          return mom(task.logDate, 'Y-M-D').isSame(mom().month(monthNum), 'month')
+        },
+        cache(args) {
+          return ('' + args[0].logDate) + args[1]
+        },
+      },
+      isTaskInMonth: {
+        getter({}, task, monthNum) {
+          if (!task.calendar || task.calendar.type !== 'specific') return false
+          return mom(task.calendar.specific, 'Y-M-D').isSame(mom().month(monthNum), 'month')
+        },
+        cache(args) {
+          return JSON.stringify([args[0].calendar, args[1]])
         },
       },
       isTaskInSevenDays: {
@@ -655,7 +702,7 @@ export default {
         cache(args) {
           return JSON.stringify({
             t: args[0].heading,
-            h: args[1].name,
+            h: args[1].id,
           })
         },
       },
@@ -697,7 +744,7 @@ export default {
           return getters.tasks.filter(t => getters.isTaskLastDeadlineDay(t, date)) 
         },
         cache(args) {
-          return JSON.stringify(args[0])
+          return args[0]
         },
       },
       getNumberOfTasksByTag: {
@@ -807,7 +854,7 @@ export default {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, rootState).then(() => {
+      }, rootState, obj.id).then(() => {
         b.commit()
       })
     },
@@ -944,6 +991,8 @@ export default {
           const list = savedLists.find(l => l.id === task.list)
           if (list && list.folder) folder = list.folder
         }
+        if (task.folder)
+          folder = task.folder
         if (task.group) {
           group = task.group
         }
@@ -1031,7 +1080,7 @@ export default {
       
       b.commit()
     },
-    completeTasks({commit, rootState}, tasks) {
+    completeTasks({rootState}, tasks) {
       const b = fire.batch()
 
       const writes = []
@@ -1052,7 +1101,7 @@ export default {
         }
 
         const tod = mom()
-        setTask(b, {
+        let obj = {
           completedFire: serverTimestamp(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
@@ -1064,7 +1113,19 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, rootState, t.id, writes)
+        }
+
+        if (!rootState.userInfo.manuallyLogTasks) {
+          obj = {
+            ...obj,
+            logbook: true,
+            logFire: serverTimestamp(),
+            logDate: mom().format('Y-M-D'),
+            fullLogDate: mom().format('Y-M-D HH:mm ss'),
+          }
+        }
+        
+        setTask(b, obj, rootState, t.id, writes)
       }
 
       cacheBatchedItems(b, writes)
@@ -1100,7 +1161,8 @@ export default {
       const b = fire.batch()
 
       const tod = mom()
-      await batchSetTasks(b, {
+
+      let obj = {
         canceled: true,
         checked: true,
         cancelDate: tod.format('Y-M-D'),
@@ -1110,7 +1172,19 @@ export default {
         completedFire: null,
         completeDate: null,
         completed: false,
-      }, ids, rootState)
+      }
+
+      if (!rootState.userInfo.manuallyLogTasks) {
+        obj = {
+          ...obj,
+          logbook: true,
+          logFire: serverTimestamp(),
+          logDate: mom().format('Y-M-D'),
+          fullLogDate: mom().format('Y-M-D HH:mm ss'),
+        }
+      }
+
+      await batchSetTasks(b, obj, ids, rootState)
 
       b.commit()
     },

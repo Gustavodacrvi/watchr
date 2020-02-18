@@ -204,8 +204,10 @@ export const setTask = (batch, task, rootState, id, writes) => {
             ...savedPersonalTasks,
             [id]: getObj(),
           }
+
         
         if (isNewTask || updatingPersonalTask) { // Create and add task to personal/update.
+
 
           setPersonalTask()
 
@@ -696,7 +698,6 @@ export const setList = (batch, list, id, rootState, writes) => {
       }
     
     if (isNewList || updatingGroupList) { // Create and add list to group/update.
-      console.log('LIST', 'Create and add list to group/update')
       
       setGroupList()
       
@@ -706,7 +707,6 @@ export const setList = (batch, list, id, rootState, writes) => {
         addSharedWrite(getObj())
 
     } else if (savedIndividualList) { // Move personal list to shared.
-      console.log('LIST', 'Move personal list to shared')
 
       const savedPersonalLists = rootState.list.lists
       rootState.list.lists = {
@@ -727,7 +727,6 @@ export const setList = (batch, list, id, rootState, writes) => {
       }
 
     } else if (isChangingGroups) {
-      console.log('LIST', 'Moving between groups')
 
       setListTasks()
       deleteGroupList(savedGroupList.group)
@@ -754,7 +753,6 @@ export const setList = (batch, list, id, rootState, writes) => {
       }
     
     if (isNewList || updatingPersonalList) { // Create and add list to personal/update.
-      console.log('LIST', 'Create and add list to personal/update')
 
       setPersonalList()
       
@@ -764,7 +762,6 @@ export const setList = (batch, list, id, rootState, writes) => {
         addPersonalWrite(getObj())
 
     } else if (savedGroupList) { // Move shared list to personal.
-      console.log('LIST', 'Move shared list to personal/update')
 
       const savedGroupLists = rootState.list.groupLists
       rootState.list.groupLists = {

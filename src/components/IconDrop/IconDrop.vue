@@ -12,6 +12,8 @@
       <Icon v-if="handle && !hideHandle"
         class="cursor handle primary-hover"
         :icon="handle"
+        :box='box'
+        :active='active'
         :circle='circle'
         :title='title'
         :color="handleColor"
@@ -32,6 +34,7 @@
           <component v-if="showingCont"
             :is='getComp'
             :content='compContent'
+            :allowKeyboard='center && isDesktop'
             @close='closeIconDrop'
             @calc='calcStyles'
             @update='update'
@@ -44,8 +47,6 @@
 
 <script>
 
-import Icon from './../Icon.vue'
-
 import ListIcons from './ListIcons.vue'
 import CalendarPicker from './Calendar.vue'
 import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
@@ -55,9 +56,9 @@ import Confirm from './Confirm.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center'],
+  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center', 'box', 'active'],
   components: {
-    Icon, ListIcons, CalendarPicker,
+    ListIcons, CalendarPicker,
     TimePicker, RepeatPicker,
     Confirm,
   },
@@ -151,6 +152,9 @@ export default {
         this.showing = false
         setTimeout(() => this.opt = this.options, 150)
       }
+    },
+    click() {
+      this.toggleIconDrop()
     },
     toggleIconDrop() {
       if (!this.center && this.isDesktop) {

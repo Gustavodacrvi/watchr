@@ -68,7 +68,6 @@
 
 <script>
 
-import Icon from "@/components/Icon.vue"
 import AuthButton from "@/components/Auth/Button.vue"
 import Comment from "./Comment.vue"
 
@@ -78,7 +77,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Icon, AuthButton,
+    AuthButton,
     Comment,
   },
   props: ['payload'],

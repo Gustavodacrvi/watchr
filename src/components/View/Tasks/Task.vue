@@ -79,6 +79,12 @@
             >
               <div class="check" ref='check'
                 :class="{changeColor}"
+
+                @click.stop="desktopComplete"
+                @contextmenu.prevent.stop='desktopCancel'
+
+                @touchstart.passive='checkTouchStart'
+                @touchend.passive='touchComplete'
               >
                 <TaskIcons class="check-icon icon"
                   :co='completed'
@@ -86,11 +92,6 @@
                   :se='isSelecting'
                   :ca='canceled'
                   :so='isSomeday'
-                  @click.native.stop="desktopComplete"
-                  @contextmenu.native.stop.prevent='desktopCancel'
-                  
-                  @touchstart.native.passive='checkTouchStart'
-                  @touchend.native.passive='touchComplete'
                 />
               </div>
               <div class="text"
@@ -105,6 +106,13 @@
                       @leave='infoLeave'
                     >
                       <span v-if="showCheckDate" class="check-date" ref='check-name'>{{ showCheckDate }}</span>
+                    </transition>
+                    <transition
+                      appear
+                      @enter='infoEnter'
+                      @leave='infoLeave'
+                    >
+                      <span v-if="logStr" class="check-date" ref='check-name'>{{ logStr }}</span>
                     </transition>
                     <span v-html="parsedName" ref='parsed-name'></span>
                     <Icon v-if="haveChecklist"
@@ -166,7 +174,6 @@
 
 <script>
 
-import IconVue from '../../Icon.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
@@ -188,12 +195,11 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  props: ['item', 'activeTags', 'header', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
     Timeline, TaskIcons,
-    Icon: IconVue,
     IconDrop: IconDropVue,
     Edit: EditVue,
     Tag: TagVue,
@@ -773,6 +779,10 @@ export default {
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
     },
+    logStr() {
+      if (!this.allowLogStr || !this.item.logDate) return null
+      return utils.getHumanReadableDate(this.item.logDate)
+    },
     deadlineStr() {
       return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
@@ -883,7 +893,8 @@ export default {
   width: 0;
   transform: translateY(-50%);
   border-radius: 100px;
-  border: 0 solid transparent;
+  border: 0px solid transparent;
+  background-color: var(--txt);
   transition-duration: .25s;
 }
 
@@ -998,6 +1009,8 @@ export default {
 .task-name {
   margin: 0 4px;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .icon {

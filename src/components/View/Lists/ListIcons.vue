@@ -1,44 +1,44 @@
-<template>
+<template functional>
   <transition-group
     class="root"
     name="trans"
     mode="out-in"
     tag="span"
   >
-    <Icon v-if="!ca && !co && !se && !so" class="tra-icon cursor remove-highlight" key="1"
+    <Icon v-if="!props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="1"
       icon="pie"
       width="16px"
-      :progress='progress'
+      :progress='props.progress'
     />
-    <Icon v-else-if="ca && !co && !se && !so" class="tra-icon cursor remove-highlight" key="2"
+    <Icon v-else-if="props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="2"
       icon="circle-close"
       width="22px"
     />
-    <Icon v-else-if="co && !se && !so" class="tra-icon cursor remove-highlight" key="3"
+    <Icon v-else-if="props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="3"
       icon="circle-check-filled"
       width="22px"
     />
-    <Icon v-else-if="!co && !se && so" class="tra-icon cursor remove-highlight" key="4"
+    <Icon v-else-if="!props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="4"
       icon="circle-dash"
       width="22px"
     />
-    <Icon v-else-if="co && !se && so" class="tra-icon cursor remove-highlight" key="5"
+    <Icon v-else-if="props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="5"
       icon="circle-check-dash"
       width="22px"
     />
-    <Icon v-else-if="!co && se && !so" class="tra-icon cursor remove-highlight" key="6"
+    <Icon v-else-if="!props.co && props.se && !props.so" class="tra-icon cursor remove-highlight" key="6"
       icon="circle"
       width="22px"
     />
-    <Icon v-else-if="!co && se && so" class="tra-icon cursor remove-highlight" key="7"
+    <Icon v-else-if="!props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="7"
       icon="circle-dash"
       width="22px"
     />
-    <Icon v-else-if="co && se && !so" class="tra-icon cursor remove-highlight" key="9"
+    <Icon v-else-if="props.co && props.se && !props.so" class="tra-icon cursor remove-highlight" key="9"
       icon="circle-check"
       width="22px"
     />
-    <Icon v-else-if="co && se && so" class="tra-icon cursor remove-highlight" key="10"
+    <Icon v-else-if="props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="10"
       icon="circle-check-dash"
       width="22px"
     />
@@ -47,11 +47,8 @@
 
 <script>
 
-import Icon from "@/components/Icon.vue"
-
 export default {
   props: ['co', 'so', 'ca', 'se', 'progress'],
-  components: {Icon},
 }
 
 </script>
@@ -63,6 +60,8 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
+  padding-top: 1px;
+  padding-left: 1.5px;
   justify-content: center;
   align-items: center;
 }

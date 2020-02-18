@@ -1,6 +1,11 @@
 
+.cont {
+  margin: 0;
+  transition: margin .15s;
+}
+
 .showCont {
-  margin-bottom: 18px;
+  margin-bottom: 28px;
 }
 
 .header {
@@ -20,6 +25,10 @@
   background-color: var(--dark);
 }
 
+.slim-sidebar .header:hover, .slim-sidebar .isActive {
+  background-color: var(--dark-light-gray);
+}
+
 .icon {
   color: var(--fade);
   transform: translateY(2px);
@@ -34,6 +43,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left: 3px;
   width: 40px;
   height: 100%;
 }
@@ -41,6 +51,7 @@
 .arrow-wrapper-wrapper {
   position: absolute;
   right: -35px;
+  transform: translateY(2.5px);
 }
 
 .arrow-wrapper {

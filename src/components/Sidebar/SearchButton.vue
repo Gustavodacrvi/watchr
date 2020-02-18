@@ -19,14 +19,10 @@
 
 <script>
 
-import IconVue from '@/components/Icon.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  components: {
-    Icon: IconVue,
-  },
   computed: {
     ...mapGetters(['platform']),
   }

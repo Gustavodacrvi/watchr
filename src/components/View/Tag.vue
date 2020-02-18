@@ -30,14 +30,9 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
-
 import { mapGetters } from 'vuex'
 
 export default {
-  components: {
-    Icon: IconVue,
-  },
   props: ['value', 'icon', 'color', 'selected', 'disabled', 'extraIcon'],
   data() {
     return {

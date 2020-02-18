@@ -39,7 +39,6 @@
 <script>
 
 import InputVue from '@/components/Auth/Input.vue'
-import IconVue from '@/components/Icon.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -47,7 +46,6 @@ export default {
   props: ['payload'],
   components: {
     InputApp: InputVue,
-    Icon: IconVue,
   },
   data() {
     return {

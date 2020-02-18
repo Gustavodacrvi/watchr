@@ -40,7 +40,6 @@
 
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
-import Icon from '@/components/Icon.vue'
 
 import priority from './FilterTabs/priority.vue'
 import tasks from './FilterTabs/tasks.vue'
@@ -50,7 +49,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Icon, priority, tasks,
+    priority, tasks,
     calendar,
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,

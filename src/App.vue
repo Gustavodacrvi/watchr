@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="{hidePassive}">
+  <div id="app" :class="[{hidePassive}, platform]">
     <transition name="fade-t">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
@@ -19,7 +19,7 @@
         />
       </transition>
       <transition name="fade-t" appear mode="out-in">
-          <router-view class="router-view" :class="{hided: hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
+          <router-view class="router-view" :class="{'non-hided': !hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
         />
       </transition>
     </div>
@@ -28,23 +28,20 @@
 
 <script>
 
-import NavBarVue from './components/NavBar/NavBar.vue'
-import PopupVue from './components/Popup/Popup.vue'
-import ToastVue from './components/Toast.vue'
-import MenuVue from './components/NavBar/Menu.vue'
-import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
-import FileReader from './components/View/FileReader/FileReader.vue'
+import utils from './utils/'
+
+const c = utils.asyncComp
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    FileReader,
-    NavBar: NavBarVue,
-    Popup: PopupVue,
-    Toast: ToastVue,
-    Menu: MenuVue,
-    MobileIcondrop: MobileIcondropVue,
+    FileReader: c(import(/* webpackChunkName: "FileReader" */ './components/View/FileReader/FileReader.vue')),
+    NavBar: c(import(/* webpackChunkName: "NavBar" */ './components/NavBar/NavBar.vue')),
+    Popup: c(import(/* webpackChunkName: "Popup" */ './components/Popup/Popup.vue'), false),
+    Toast: c(import(/* webpackChunkName: "Toast" */ './components/Toast.vue')),
+    Menu: c(import(/* webpackChunkName: "Menu" */ './components/NavBar/Menu.vue')),
+    MobileIcondrop: c(import(/* webpackChunkName: "MobileIconDrop" */ './components/Popup/MobileIcondrop.vue')),
   },
   data() {
     return {
@@ -146,16 +143,16 @@ export default {
       this.timeBeforeMouseMove = 0
       
       const y = evt.pageY
-      if (y && y < (!this.hideNavbar ? 65 : 15)) {
+      if (y && y < (!this.hideNavbar ? 65 : 10)) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = false
-        }, 150)
+        }, 200)
       } else if (y) {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = true
-        }, 200)
+        }, 250)
       }
     },
     updateViewType(saveRoute) {
@@ -169,13 +166,11 @@ export default {
       let firstNav = false
 
       if (
-        (!this.initialSmartViewRender) || 
         (path === '/user' && atLeastOneUndefined)
       ) {
         firstNav = true
         const view = this.getInitialSmartView
         this.$router.replace(`/user?${view.viewType}=${view.viewName}`)
-        this.initialSmartViewRender = true
       }
       if (saveRoute) {
         if (viewName && viewType)
@@ -197,7 +192,7 @@ export default {
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos']),
-    ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate']),
+    ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate', 'platform']),
     isReady() {
       return this.$store.state.googleCalendarReady
     },
@@ -281,17 +276,20 @@ export default {
 
 .router-view {
   position: relative;
-  top: 0;
   transition-duration: .3s;
 }
 
-.hided {
-  top: 46px !important;
+.desktop .router-view {
+  top: 46px;
+}
+
+.non-hided {
+  top: 0;
 }
 
 .menu {
   transform: translateX(-100%);
-  transition: transform .3s;
+  transition: transform .15s;
   transition-timing-function: ease-in;
 }
 
@@ -301,14 +299,14 @@ export default {
 }
 
 .nav-trans-enter, .nav-trans-leave-to {
-  opacity: 0;
-  height: 0;
+  opacity: 0 !important;
+  height: 0 !important;
   transition: opacity .3s ease-out, height .3s ease-out;
 }
 
 .nav-trans-leave, .nav-trans-enter-to {
-  opacity: 1;
-  height: 65px;
+  opacity: 1 !important;
+  height: 65px !important;
   transition: opacity .3s ease-in, height .3s ease-in;
 }
 

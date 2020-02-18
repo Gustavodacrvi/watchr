@@ -51,6 +51,7 @@
           :headingFilterFunction='h.filterFunction'
           :headingFallbackItem='h.fallbackItem'
           :allowCalendarStr='h.calendarStr'
+          :allowLogStr='h.logStr'
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
           :showHeadingName="h.showHeadingName"
@@ -130,9 +131,8 @@ export default {
           this.sortable = new Sortable(el, {
             disabled: !this.updateHeadingIds,
             group: 'headings',
-            delay: 150,
+            delay: this.isDesktop ? 5 : 150,
             animation: 80,
-            delayOnTouchOnly: true,
             handle: '.handle',
       
             onUpdate: () => {
@@ -195,12 +195,12 @@ export default {
       s.borderBoddom = '0px solid var(--back-color)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.4s'
-        w.transitionDuration = '.4s'
+        s.transitionDuration = '.25s'
+        w.transitionDuration = '.25s'
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = this.isDesktop ? '50px': '4px'
+          w.marginTop = this.isDesktop ? '65px': '4px'
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
@@ -221,13 +221,13 @@ export default {
 
       if (c) {
         c = c.style
-        c.transitionDuration = '.4s'
+        c.transitionDuration = '.25s'
         c.height = 0
         c.overflow = 'hidden'
       }
 
-      s.transitionDuration = '.4s'
-      w.transitionDuration = '.4s'
+      s.transitionDuration = '.25s'
+      w.transitionDuration = '.25s'
       w.opacity = 0
       w.height = 0
       w.overflow = 'hidden'

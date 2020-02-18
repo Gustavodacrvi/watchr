@@ -2,6 +2,10 @@
 <template>
   <div class="ViewRenderer" :class="platform">
     <div class='view-wrapper'>
+      <SlimModeNav v-if='isDesktop'
+        :render='sidebarHided'
+        :viewNameValue='viewNameValue'
+      />
       <Header
         v-bind="$props"
 
@@ -44,6 +48,7 @@
 
         :showCompleted='showCompleted'
         :showSomeday='passSomedayTasks'
+        :taskIconDropOptions='taskIconDropOptions'
         :selectEverythingToggle='selectEverythingToggle'
         :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
@@ -57,7 +62,6 @@
         <component v-if="defer(2)" :is='getViewComp' class='view-renderer-move'
           v-bind="$props"
 
-          :headings="getHeadings"
           :updateHeadingIds='updateHeadingIds'
           :showHeadingFloatingButton='showHeadingFloatingButton'
           :showCompleted='showCompleted'
@@ -83,11 +87,6 @@
       </transition>
       <div style='height: 400px'></div>
     </div>
-    <PaginationVue v-if="headingsPagination"
-      :page='pagination'
-      :numberOfPages='getNumberOfPages'
-      @select='selectPagination'
-    />
     <transition name="fade-t" mode="out-in">
       <ActionButtons
         v-if="!getHelperComponent && isTaskHandler" key="buttons"
@@ -105,7 +104,7 @@
 
 import HeaderVue from './Headings/Header/Header.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
-import PaginationVue from './Pagination.vue'
+import SlimModeNav from './SlimModeNav.vue'
 import HelperComponent from './HelperComponent.vue'
 import TaskHandler from './Views/TaskHandler.vue'
 import ListHandler from './Views/ListHandler.vue'
@@ -133,7 +132,7 @@ export default {
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
-  'width',
+  'width', 'sidebarHided',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableFloatingButton',
@@ -141,14 +140,15 @@ export default {
   'getCalendarOrderDate', 'viewItem',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
-  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
+  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
   components: {
     ListHandler, CalendarEvents,
-    PaginationVue, TaskHandler,
+    TaskHandler,
     Header: HeaderVue, HelperComponent,
     ActionButtons: ActionButtonsVue,
     ViewRendererLongCalendarPicker,
     Pomodoro, Statistics,
+    SlimModeNav,
   },
   data() {
     return {
@@ -348,7 +348,7 @@ export default {
           }
         }
   
-        utils.saveByShortcut(this, false, key, p, (type, item) => {
+        utils.saveByShortcut(this, (this.isEditingComp || this.iconDrop), key, p, (type, item) => {
           const dispatch = this.$store.dispatch
   
           if (this.shortcutsType === 'Task') {
@@ -396,10 +396,7 @@ export default {
   
             switch (type) {
               case 'delete': {
-                dispatch('list/deleteMultipleListsByIds', {
-                  ids: fallbackItems,
-                  tasks: this.tasks,
-                })
+                dispatch('list/deleteMultipleListsByIds', fallbackItems)
                 break
               }
               case 'toggleCompletion': {
@@ -639,10 +636,13 @@ export default {
       this.showCompleted = !this.showCompleted
     },
     saveDates(calendar, ids) {
-      this.$store.dispatch('task/saveTasksById', {
-        ids,
-        task: {calendar},
-      })
+      if (this.shortcutsType === 'Task')
+        this.$store.dispatch('task/saveTasksById', {
+          ids,
+          task: {calendar},
+        })
+      else
+        this.$store.dispatch('list/saveListsById', {ids, list: {calendar}})
     },
     addTagToTasks(id) {
       this.$store.dispatch('task/addTagsToTasksById', {
@@ -676,10 +676,12 @@ export default {
   computed: {
     ...mapState({
       viewOrders: state => state.list.viewOrders,
+      iconDrop: state => state.iconDrop,
       selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
       selectedType: state => state.selectedType,
       runningPomo: state => state.pomo.running,
+      isEditingComp: state => state.isEditing,
       rest: state => state.pomo.rest,
       openHelper: state => state.pomo.openHelper,
       mainSelection: state => state.mainSelection,
@@ -966,12 +968,6 @@ export default {
       return arr
     },
     getIconDropOptionsFolders() {
-      const moveToList = (obj) => {
-        this.$store.dispatch('task/saveTasksById', {
-          ids: this.selectedItems,
-          task: {...obj, folder: null, group: null,},
-        })
-      }
       const links = []
       const folders = this.folders
       for (const fold of folders) {
@@ -979,10 +975,16 @@ export default {
           name: fold.name,
           icon: 'folder',
           callback: () => {
-            this.$store.dispatch('task/saveTasksById', {
-              ids: this.selectedItems,
-              task: {folder: fold.id, list: null, group: null},
-            })
+            if (this.shortcutsType === 'Task')
+              this.$store.dispatch('task/saveTasksById', {
+                ids: this.selectedItems,
+                task: {folder: fold.id, list: null, group: null},
+              })
+            else
+              this.$store.dispatch('list/saveListsById', {
+                ids: this.selectedItems,
+                list: {folder: fold.id, group: null},
+              })
           },
         })
       }
@@ -1089,12 +1091,20 @@ export default {
       }
       
       const saveDeadline = deadline => {
-        this.$store.dispatch('task/saveTasksById', {
-          ids: this.selectedItems,
-          task: {
-            deadline,
-          }
-        })
+        if (this.shortcutsType === 'Task')
+          this.$store.dispatch('task/saveTasksById', {
+            ids,
+            task: {
+              deadline,
+            }
+          })
+        else
+          this.$store.dispatch('list/saveListsById', {
+            ids,
+            list: {
+              deadline,
+            },
+          })
       }
 
       const logItems = () => {
@@ -1204,156 +1214,241 @@ export default {
         }
         return opt
       } else {
-        const opt = [
-          {
-            name: 'Move to logbook',
-            icon: 'logbook',
-            callback: () => logItems()
-          },
-          {
-            name: 'Move to list',
-            icon: 'tasks',
-            callback: () => {return {
-              allowSearch: true,
-              links: this.getIconDropOptionsLists,
-            }}
-          },
-          {
-            name: 'Move to folder',
-            icon: 'folder',
-            callback: () => {return {
-              allowSearch: true,
-              links: this.getIconDropOptionsFolders,
-            }}
-          },
-          {
-            type: 'optionsList',
-            name: 'Deadline',
-            options: [
-              {
-                icon: 'star',
-                id: 'd',
-                callback: () => saveDeadline(mom().format('Y-M-D')),
-              },
-              {
-                icon: 'sun',
-                id: 'çljk',
-                callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
-              },
-              {
-                icon: 'calendar',
-                id: 'çljkasdf',
-                callback: () => ({
-                  comp: 'CalendarPicker',
-                  content: {
-                    onlyDates: true,
-                    noTime: true,
-                    allowNull: true,
-                    callback: ({specific}) => {saveDeadline(specific,
-                    )}
-                  }
-                })
-              },
-              {
-                icon: 'bloqued',
-                id: 'asdf',
-                callback: () => saveDeadline(null),
-              },
-            ]
-          },
-          {
-            type: 'optionsList',
-            name: 'Defer',
-            options: [
-              {
-                icon: 'star',
-                id: 'd',
-                callback: () => this.saveDates({
-                  type: 'specific',
-                  specific: mom().format('Y-M-D'),
-                }, ids),
-              },
-              {
-                icon: 'sun',
-                id: 'çljk',
-                callback: () => this.saveDates({
-                  type: 'specific',
-                  specific: mom().add(1, 'day').format('Y-M-D'),
-                }, ids),
-              },
-              {
-                icon: 'archive',
-                id: 'açlkjsdffds',
-                callback: () => this.saveDates({
-                  type: 'someday',
-                }, ids)
-              },
-              {
-                icon: 'calendar',
-                id: 'çljkasdf',
-                callback: () => {return {
-                  comp: "CalendarPicker",
-                  content: {callback: date => this.saveDates(date, ids)}}},
-              },
-              {
-                id: 'No date',
-                icon: 'bloqued',
-                callback: () => this.saveDates(null, ids)
-              },
-            ]
-          },
-          {
-            type: 'optionsList',
-            name: 'Priority',
-            options: [
-              {
-                icon: 'priority',
-                id: 'd',
-                color: 'var(--fade)',
-                callback: () => savePri('')
-              },
-              {
-                icon: 'priority',
-                id: 'f',
-                color: 'var(--green)',
-                callback: () => savePri('Low priority')
-              },
-              {
-                icon: 'priority',
-                id: 'j',
-                color: 'var(--yellow)',
-                callback: () => savePri('Medium priority')
-              },
-              {
-                icon: 'priority',
-                id: 'l',
-                color: 'var(--red)',
-                callback: () => savePri('High priority')
-              },
-            ],
-          },
-          {
-            name: 'Delete tasks',
-            icon: 'trash',
-            important: true,
-            callback: () => dispatch('task/deleteTasks', ids)
-          },
-        ]
+        let opt
+        if (this.shortcutsType === 'Task')
+          opt = [
+            {
+              name: 'Move to logbook',
+              icon: 'logbook',
+              callback: () => logItems()
+            },
+            {
+              name: 'Move to list',
+              icon: 'tasks',
+              callback: () => {return {
+                allowSearch: true,
+                links: this.getIconDropOptionsLists,
+              }}
+            },
+            {
+              name: 'Move to folder',
+              icon: 'folder',
+              callback: () => {return {
+                allowSearch: true,
+                links: this.getIconDropOptionsFolders,
+              }}
+            },
+            {
+              type: 'optionsList',
+              name: 'Deadline',
+              options: [
+                {
+                  icon: 'star',
+                  id: 'd',
+                  callback: () => saveDeadline(mom().format('Y-M-D')),
+                },
+                {
+                  icon: 'sun',
+                  id: 'çljk',
+                  callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
+                },
+                {
+                  icon: 'calendar',
+                  id: 'çljkasdf',
+                  callback: () => ({
+                    comp: 'CalendarPicker',
+                    content: {
+                      onlyDates: true,
+                      noTime: true,
+                      allowNull: true,
+                      callback: ({specific}) => {saveDeadline(specific,
+                      )}
+                    }
+                  })
+                },
+                {
+                  icon: 'bloqued',
+                  id: 'asdf',
+                  callback: () => saveDeadline(null),
+                },
+              ]
+            },
+            {
+              type: 'optionsList',
+              name: 'Defer',
+              options: [
+                {
+                  icon: 'star',
+                  id: 'd',
+                  callback: () => this.saveDates({
+                    type: 'specific',
+                    specific: mom().format('Y-M-D'),
+                  }, ids),
+                },
+                {
+                  icon: 'sun',
+                  id: 'çljk',
+                  callback: () => this.saveDates({
+                    type: 'specific',
+                    specific: mom().add(1, 'day').format('Y-M-D'),
+                  }, ids),
+                },
+                {
+                  icon: 'archive',
+                  id: 'açlkjsdffds',
+                  callback: () => this.saveDates({
+                    type: 'someday',
+                  }, ids)
+                },
+                {
+                  icon: 'calendar',
+                  id: 'çljkasdf',
+                  callback: () => {return {
+                    comp: "CalendarPicker",
+                    content: {callback: date => this.saveDates(date, ids)}}},
+                },
+                {
+                  id: 'No date',
+                  icon: 'bloqued',
+                  callback: () => this.saveDates(null, ids)
+                },
+              ]
+            },
+            {
+              type: 'optionsList',
+              name: 'Priority',
+              options: [
+                {
+                  icon: 'priority',
+                  id: 'd',
+                  color: 'var(--fade)',
+                  callback: () => savePri('')
+                },
+                {
+                  icon: 'priority',
+                  id: 'f',
+                  color: 'var(--green)',
+                  callback: () => savePri('Low priority')
+                },
+                {
+                  icon: 'priority',
+                  id: 'j',
+                  color: 'var(--yellow)',
+                  callback: () => savePri('Medium priority')
+                },
+                {
+                  icon: 'priority',
+                  id: 'l',
+                  color: 'var(--red)',
+                  callback: () => savePri('High priority')
+                },
+              ],
+            },
+            {
+              name: 'Delete tasks',
+              icon: 'trash',
+              important: true,
+              callback: () => dispatch('task/deleteTasks', ids)
+            },
+          ]
+        else
+          opt = [
+            {
+              name: 'Move to folder',
+              icon: 'folder',
+              callback: () => {return {
+                allowSearch: true,
+                links: this.getIconDropOptionsFolders,
+              }}
+            },
+            {
+              type: 'optionsList',
+              name: 'Deadline',
+              options: [
+                {
+                  icon: 'star',
+                  id: 'd',
+                  callback: () => saveDeadline(mom().format('Y-M-D')),
+                },
+                {
+                  icon: 'sun',
+                  id: 'çljk',
+                  callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
+                },
+                {
+                  icon: 'calendar',
+                  id: 'çljkasdf',
+                  callback: () => ({
+                    comp: 'CalendarPicker',
+                    content: {
+                      onlyDates: true,
+                      noTime: true,
+                      allowNull: true,
+                      callback: ({specific}) => {saveDeadline(specific,
+                      )}
+                    }
+                  })
+                },
+                {
+                  icon: 'bloqued',
+                  id: 'asdf',
+                  callback: () => saveDeadline(null),
+                },
+              ]
+            },
+            {
+              type: 'optionsList',
+              name: 'Defer',
+              options: [
+                {
+                  icon: 'star',
+                  id: 'd',
+                  callback: () => this.saveDates({
+                    type: 'specific',
+                    specific: mom().format('Y-M-D'),
+                  }, ids),
+                },
+                {
+                  icon: 'sun',
+                  id: 'çljk',
+                  callback: () => this.saveDates({
+                    type: 'specific',
+                    specific: mom().add(1, 'day').format('Y-M-D'),
+                  }, ids),
+                },
+                {
+                  icon: 'archive',
+                  id: 'açlkjsdffds',
+                  callback: () => this.saveDates({
+                    type: 'someday',
+                  }, ids)
+                },
+                {
+                  icon: 'calendar',
+                  id: 'çljkasdf',
+                  callback: () => {return {
+                    comp: "CalendarPicker",
+                    content: {callback: date => this.saveDates(date, ids)}}},
+                },
+                {
+                  id: 'No date',
+                  icon: 'bloqued',
+                  callback: () => this.saveDates(null, ids)
+                },
+              ]
+            },
+            {
+              name: 'Delete lists',
+              icon: 'trash',
+              important: true,
+              callback: () => dispatch('list/deleteMultipleListsByIds', ids)
+            },
+          ]
+
         if (((this.viewItem && this.viewItem.group) || (this.viewType === 'group')) && this.viewItem)
           opt.unshift(this.getAssigneeIconDrop({group: this.viewItem.group || this.viewItem.id}, uid => this.assignUser(uid)))
         return opt
       }
-    },
-    getNumberOfPages() {
-      return Math.floor(this.headings.length / this.headingsPagination)
-    },
-    getHeadings() {
-      if (!this.headingsPagination) return this.headings
-      const num = this.headingsPagination
-      const page = this.pagination
-      const init = (page * num)
-
-      return this.headings.slice(init, init + num)
     },
 
     getFilterOptions() {
@@ -1427,7 +1522,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 85px;
+  margin: 0 95px;
   min-height: 100%;
   position: relative;
   display: flex;

@@ -12,14 +12,14 @@
     <div v-if="isDesktop"
       class="nav"
       :class="{pressingHandle}"
-      :style="[navObj, {width: navWidth}]"
+      :style="[navObj, {width: getNavWidth}]"
     >
       <Sidebar class="Sidebar"
         :value="viewName"
         :pressingHandle='pressingHandle'
         :view-type="viewType"
         :sidebarHided='sidebarHided'
-        :width='navWidth'
+        :width='getNavWidth'
         @sidebar="toggleSidebar"
         @section="v => section = v"
 
@@ -28,7 +28,8 @@
     </div>
     <div class="cont" :class="[platform, {pressingHandle}]">
       <ViewControler
-        :width='width'
+        :width='!sidebarHided ? width : 0'
+        :sidebarHided='sidebarHided'
       
         :isSmart="isSmart"
         :viewType='viewType'
@@ -66,6 +67,8 @@ export default {
     }
   },
   created() {
+    this.sidebarHided = localStorage.getItem('watchr_slim_mode') === 'true'
+    
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
 
@@ -104,6 +107,7 @@ export default {
     },
     toggleSidebar() {
       this.sidebarHided = !this.sidebarHided
+      localStorage.setItem('watchr_slim_mode', this.sidebarHided)
     },
     getNavTopPosition() {
       setTimeout(() => {
@@ -149,6 +153,9 @@ export default {
       }
       return false
     },
+    getNavWidth() {
+      return !this.sidebarHided ? this.navWidth : '0px'
+    },
     navWidth() {
       return this.width + 'px'
     },
@@ -191,7 +198,7 @@ export default {
   position: fixed;
   transition-duration: .2s !important;
   left: 0;
-  z-index: 4;
+  z-index: 5;
 }
 
 .cont {
@@ -200,7 +207,7 @@ export default {
   flex-grow: 1;
   transition-delay: .4s;
   transition-duration: .6s;
-  z-index: 5;
+  z-index: 4;
 }
 
 .sidebarHided .nav-shadow {
@@ -211,7 +218,8 @@ export default {
 }
 
 .sidebarHided .cont {
-  flex-basis: 925px !important;
+  flex-basis: 1075px !important;
+  margin: 0 20px;
   flex-grow: 0;
   margin-left: 0;
 }

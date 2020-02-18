@@ -1,23 +1,22 @@
 <template>
   <div class="Sidebar-wrapper"
-    :class="[platform, {'scroll-thin': isDesktop}]"
+    :class="[platform, {'scroll-thin': isDesktop, 'slim-sidebar': slimMode}]"
 
     @mouseenter="sidebarHover = true"
     @mouseleave="sidebarHover = false"
   >
-    <div class="margin-wrapper">
-      <div v-if="isDesktop"
+    <div class="margin-wrapper" :class="{'scroll-thin': slimMode}">
+      <div v-if="isDesktop && !removeBacklayer"
         class="back-layer"
         :class="{showing, pressingHandle}"
         :style="{width}"
       ></div>
       <div class="inner-wrapper">
         <div>
-          <div class="search-shadow" @mouseenter="showSearch" @mouseleave="hideSearch"></div>
           <transition name="bar-trans">
           <div v-if="!isDesktop || showing" class="sidebar-content">
             <transition name="search-t">
-              <SearchButton v-if="isDesktop"
+              <SearchButton v-if="isDesktop && !disableSearch"
                 @click="$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})"
                 @mouseenter="showSearch"
                 @mouseleave="hideSearch"
@@ -86,18 +85,18 @@
                   />
                 </transition>
               </div>
-              <div style="height: 300px"></div>
+              <div class='extra-margin' style="height: 300px"></div>
             </div>
           </transition>
         </div>
         <div v-if="isDesktop" style="height: 35px;"></div>
-        <div class="footer" :class="[platform, {showing}]" :style="{width}">
+        <div v-if="!removeFooter" class="footer" :class="[platform, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop" v-if="showIconDropdown">
               <Icon v-for="i in sideIcons" :key='i.icon'
                 class="sect-icon passive cursor remove-highlight primary-hover"
                 :icon='i.icon'
-                :circle='true'
+               
                 :number='i.number'
                 color='var(--fade)'
                 @click="i.callback"
@@ -106,19 +105,19 @@
                 <IconDrop
                   class="right passive"
                   handle='settings-h'
-                  :circle='true'
+                 
                   handleColor='var(--fade)'
                   :options="getSectionOptions"
                 />
               </transition>
             </div>
             <div></div>
-            <Icon v-if="isDesktop" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" :circle='true'  @click="toggleSidebar"/>
+            <Icon v-if="isDesktop" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="toggleSidebar"/>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="isDesktop && !sidebarHided"
+    <div v-if="isDesktop && !sidebarHided && !removeHandle"
       class="sidebar-handle passive"
       :class="{sidebarHover}"
       :style="sidebarHandle"
@@ -130,7 +129,6 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
 import SidebarElementVue from './SidebarElement.vue'
 import ListsVue from './Sections/Lists.vue'
 import FiltersVue from './Sections/Filters.vue'
@@ -148,9 +146,11 @@ import utilsFolder from '@/utils/folder'
 import utilsGroup from '@/utils/group'
 
 export default {
-  props: ['value', 'width', 'sidebarHided', 'pressingHandle'],
+  props: ['value', 'width', 'sidebarHided', 'pressingHandle',
+    'disableSearch', 'removeHandle', 'removeBacklayer', 'removeFooter',
+    'slimMode',
+  ],
   components: {
-    Icon: IconVue,
     SidebarElement: SidebarElementVue,
     IconDrop: IconDropVue,
     Lists: ListsVue,
@@ -251,6 +251,7 @@ export default {
     }
   },
   created() {
+    this.showing = !this.sidebarHided
     const saved = localStorage.getItem('section')
     if (saved) this.section = saved
 
@@ -263,15 +264,6 @@ export default {
     }, 200)
     this.moveLineToActive()
     window.addEventListener('resize', this.moveLineToActive)
-
-/*     let oldData = JSON.parse(JSON.stringify(this.$data));
-    this.$watch(vm => vm.$data, (newData) => {
-      console.log(3)
-      console.log(DeepDiff.diff(oldData, newData));
-      oldData = JSON.parse(JSON.stringify(newData));
-    }, {
-      deep: true
-    }); */
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.moveLineToActive)
@@ -389,7 +381,7 @@ export default {
     },
     mapProgress(link) {
       if (link.type === 'list')
-        return this.$store.getters['list/pieProgress'](this.tasks, link.id, task => this.isTaskInView(task, "Logbook"))
+        return this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], link.id, task => this.isTaskInView(task, "Logbook"))
       return null
     },
     mapFavorites(link) {
@@ -669,14 +661,6 @@ export default {
 
 <style scoped>
 
-.search-shadow {
-  z-index: 100;
-  top: -35px;
-  width: 100%;
-  position: absolute;
-  height: 35px;
-}
-
 .sidebar-handle {
   position: fixed;
   background-color: var(--card);
@@ -685,7 +669,7 @@ export default {
   top: 50%;
   border-radius: 100px;
   transform: translateY(-50%);
-  z-index: 1000px;
+  z-index: 100px;
   cursor: pointer;
   opacity: 0 !important;
   transition: opacity .2s, background-color .2s, width .2s, transform .2s;
@@ -888,6 +872,24 @@ export default {
   transform: translateX(0px);
   opacity: 1;
   transition: transform .4s, opacity .4s;
+}
+
+.slim-sidebar {
+  padding: 0 !important;
+}
+
+.slim-sidebar .extra-margin {
+  display: none;
+}
+
+.slim-sidebar .margin-wrapper {
+  margin: 0;
+  padding: 12px;
+  max-height: 350px;
+  overflow: auto;
+  background-color: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(10,10,10,.3);
 }
 
 .bar-trans-enter-to {

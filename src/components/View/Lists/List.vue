@@ -60,18 +60,19 @@
           opacity='0'
         />
         <div class="cont">
-          <div class="icon-wrapper">
+          <div class="icon-wrapper"
+            @click.stop="desktopComplete"
+            @contextmenu.stop.prevent='desktopCancel'
+            
+            @touchstart.passive='checkTouchStart'
+            @touchend.passive='touchComplete'
+          >
             <ListIcons class="check-icon icon"
               :co='completed'
               :se='isSelecting'
               :ca='canceled'
               :so='isSomeday'
               :progress='getListProgress'
-              @click.native.stop="desktopComplete"
-              @contextmenu.native.stop.prevent='desktopCancel'
-              
-              @touchstart.native.passive='checkTouchStart'
-              @touchend.native.passive='touchComplete'
             />
           </div>
           <div class="name">
@@ -113,8 +114,6 @@
 
 <script>
 
-import Icon from '@/components/Icon.vue'
-
 import utils from "@/utils"
 import utilsList from "@/utils/list"
 
@@ -133,7 +132,7 @@ import ListItemMixin from "@/mixins/listItem"
 export default {
   mixins: [ListItemMixin],
   components: {
-    Icon, ListIcons,
+    ListIcons,
     ListEdit, CommentCounter,
   },
   props: ['item', 'changingViewName', 'itemHeight'],
@@ -329,7 +328,7 @@ export default {
       return this.listTasks.length
     },
     getListProgress() {
-      return this.$store.getters['list/pieProgress'](this.tasks, this.item.id, task => this.$store.getters['task/isTaskInList'](task, 'Logbook'))
+      return this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], this.item.id, task => this.$store.getters['task/isTaskInList'](task, 'Logbook'))
     },
   },
   watch: {

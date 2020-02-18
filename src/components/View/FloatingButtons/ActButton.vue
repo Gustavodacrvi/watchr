@@ -3,7 +3,7 @@
     <div class="act-button-wrapper" :style='styles'>
       <div class="heading cont side action-heading">
         <div class="floating-btn-msg task-act no-pointer">
-          Heading
+          <h3>Add heading</h3>
         </div>
       </div>
       <div class="main cont create">
@@ -15,11 +15,6 @@
         </div>
         <div class="floating-btn-msg list-act no-pointer">
           Add list
-        </div>
-      </div>
-      <div class="existing side cont add">
-        <div class="floating-btn-msg task-act no-pointer">
-          Add
         </div>
       </div>
     </div>
@@ -37,15 +32,10 @@
 
 <script>
 
-import IconVue from '../../Icon.vue'
-
 import { mapGetters } from 'vuex'
 
 export default {
   props: ['icon', 'color' ,'txt'],
-  components: {
-    Icon: IconVue,
-  },
   computed: {
     ...mapGetters(['platform', 'isDesktop']),
     styles() {
@@ -73,6 +63,15 @@ export default {
   position: relative;
   transform: scale(1,1);
   transition-duration: .3s;
+}
+
+.main {
+  background-color: var(--sidebar-color);
+}
+
+.cont {
+  position: absolute;
+  width: 100%;
 }
 
 .floating:hover {

@@ -11,6 +11,7 @@
       :shadow='true'
       :width="isDesktop ? '40px' : '30px'"
       @click="openMenu"
+      :style="{filter: `drop-shadow(0 0 ${isDesktop ? 20 : 10}px ${getIconColor})`}"
     />
     <HeaderSearch v-if="!isDesktop"/>
     <span v-if="!editing || !isEditable"
@@ -45,7 +46,7 @@
         :handle="optionsHandle"
         handleColor="var(--fade)"
         :options="options"
-        :circle='true'
+       
       />
     </div>
   </div>
@@ -53,7 +54,6 @@
 
 <script>
 
-import Icon from '../../../Icon.vue'
 import IconDrop from '../../../IconDrop/IconDrop.vue'
 import HeaderSearch from './HeaderSearch.vue'
 
@@ -62,7 +62,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     HeaderSearch,
-    Icon, IconDrop,
+    IconDrop,
   },
   props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
   data() {
@@ -124,47 +124,7 @@ export default {
   },
   computed: {
     ...mapState(['selectedItems']),
-    ...mapGetters(['platform', 'isDesktop']),
-    getIcon() {
-      if (this.icon) return this.icon
-      if (this.viewType === 'search') return 'search'
-      const obj = {
-        Today: 'star',
-        Tomorrow: 'sun',
-        Someday: 'archive',
-        Anytime: 'layer-group',
-        Inbox: 'inbox',
-        Calendar: 'calendar-star',
-        Pomodoro: 'pomo',
-        Statistics: 'pie',
-        Upcoming: 'calendar',
-        Logbook: 'logbook',
-        "Later lists": 'later-lists',
-      }
-      return obj[this.viewName]
-    },
-    getIconColor() {
-      if (this.viewType === 'folder' || this.viewType === 'group') return ''
-      if (this.viewType === 'list') {
-        const obj = {
-          Today: 'var(--yellow)',
-          Tomorrow: 'var(--orange)',
-          Someday: 'var(--brown)',
-          Anytime: 'var(--dark-blue)',
-          Inbox: 'var(--primary)',
-          Calendar: 'var(--purple)',
-          Pomodoro: 'var(--dark-red)',
-          Statistics: 'var(--primary)',
-          Upcoming: 'var(--green)',
-          Logbook: 'var(--olive)',
-        }
-        const color = obj[this.viewName]
-        if (!color) return 'var(--primary)'
-        return color
-      }
-      if (this.viewType === 'search') return ''
-      return 'var(--red)'
-    },
+    ...mapGetters(['platform', 'isDesktop', 'getIcon', 'getIconColor']),
     isEditable() {
       return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktop
     },

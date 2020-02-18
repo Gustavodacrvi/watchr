@@ -6,15 +6,15 @@
   >
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
-        <div class="header-wrapper handle cursor remove-highlight" key="wr"
+        <div class="header-wrapper handle remove-highlight" key="wr"
           :class="{notRendering: !renderCont}"
         
-          @click="click"
+          @click.stop="click"
           @touchstart.passive='touchStart'
           @touchmove.passive='touchmove'
           @touchend.passive='touchEnd'
-          
           @dblclick="toggleEditing"
+          
           @mouseenter="onHover = true"
           @mouseleave="onHover = false"
         >
@@ -56,15 +56,27 @@
           </div>
         </transition>
       </div>
-      <div v-else key="edig">
-        <EditHeading
+      <div v-else class="input-wrapper" key="edig">
+        <input
+          class="input cbd"
+          autocomplete="off"
+          type="text"
+          ref='input'
+
+          :value="edit"
+          @input="v => edit = v.target.value"
+          @keydown="keydown"
+        >
+
+<!--         <EditHeading
+          :heading='true'
           :name='name'
           placeholder='Heading name...'
           :errorToast='headingEditOptions.errorToast'
           :names='headingEditOptions.excludeNames'
           @save='save'
           @cancel='toggleEditing'
-        />
+        /> -->
       </div>
     </transition>
   </div>
@@ -73,7 +85,6 @@
 <script>
 
 import IconDropVue from '../../IconDrop/IconDrop.vue'
-import IconVue from '../../Icon.vue'
 import EditVue from './../RenderComponents/Edit.vue'
 import Notes from './Notes.vue'
 import Defer from '@/mixins/defer'
@@ -93,8 +104,7 @@ export default {
   ],
   props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon'],
   components: {
-    IconDrop: IconDropVue, CalendarEvents,
-    Icon: IconVue,
+    CalendarEvents,
     EditHeading: EditVue,
     NotesApp: Notes,
   },
@@ -103,6 +113,8 @@ export default {
   },
   data() {
     return {
+      edit: this.name,
+      
       showing: true,
       onHover: false,
       editing: false,
@@ -119,6 +131,43 @@ export default {
     }
   },
   methods: {
+    keydown({key}) {
+      if (key === "Enter")
+        this.checkText()
+      else if (key === "Escape")
+        this.toggleEditing()
+    },
+    checkText() {
+      const n = this.edit.trim()
+      const opt = this.headingEditOptions
+      if (n) {
+        if (opt.excludeNames.includes(n)) {
+          this.$store.commit('pushToast', {
+            name: opt.errorToast,
+            seconds: 3,
+            type: 'error',
+          })
+        } else {
+          this.toggleEditing()
+          this.save(n)
+        }
+      }
+    },
+    
+    stopEditing(evt) {
+
+      let found
+      const path = event.path || (event.composedPath && event.composedPath())
+      for (const p of path)
+        if (this.$refs.input === p) {
+          found = true
+          break
+        }
+
+      if (!found)
+        this.toggleEditing()
+    },
+    
     enterCont(el, done) {
 
       const s = el.style
@@ -256,6 +305,9 @@ export default {
     toggleEditing() {
       if (this.allowEdit)
         this.editing = !this.editing
+      
+      if (this.editing)
+        setTimeout(() => this.$refs.input.focus(), 250)
     },
     saveNote(notes) {
       this.$emit('save-notes', notes)
@@ -303,16 +355,24 @@ export default {
       return this.hasProgress || this.icon
     },
     getHeadingColor() {
-      return this.color ? this.color : 'var(--primary)'
+      return this.color ? this.color : 'var(--txt)'
     },
   },
   watch: {
     options() {
       this.bindOptions()
     },
+    name() {
+      this.edit = this.name
+    },
     editing() {
-      if (!this.editing)
+      if (!this.editing) {
+        window.removeEventListener('click', this.stopEditing)
+        this.edit = this.name
         this.bindOptions()
+      } else {
+        window.addEventListener('click', this.stopEditing)
+      }
     },
   }
 }
@@ -342,7 +402,7 @@ export default {
 }
 
 .Heading + .Heading {
-  margin-top: 50px;
+  margin-top: 65px;
 }
 
 .Heading.mobile + .Heading {
@@ -372,6 +432,7 @@ export default {
   height: 50px;
   opacity: 1;
   z-index: 50;
+  cursor: text;
 }
 
 .notRendering {
@@ -380,6 +441,7 @@ export default {
 
 .cont {
   position: relative;
+  transition-duration: .2s;
   z-index: 49;
 }
 
@@ -401,6 +463,33 @@ export default {
 
 .name.hasIcon {
   transform: translateX(8px);
+}
+
+.input-wrapper {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1.5px solid var(--light-gray);
+}
+
+.input {
+  font-size: 1.17em;
+  outline: none;
+  font-weight: bold;
+  padding-left: 6px;
+}
+
+.sortable-ghost {
+  background-color: var(--sidebar-color);
+  border-radius: 8px;
+}
+
+.sortable-ghost .header-wrapper {
+  border-bottom: none !important;
+}
+
+.sortable-ghost .header {
+  display: none;
 }
 
 </style>

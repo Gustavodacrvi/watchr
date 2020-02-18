@@ -139,7 +139,7 @@ export default {
 }
 
 .card:hover {
-  background-color: var(--dark);
+  background-color: var(--light-gray);
 }
 
 </style>

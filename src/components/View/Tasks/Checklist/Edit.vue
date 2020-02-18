@@ -11,7 +11,10 @@
           @input='v => name = v'
           :focus='true'
           placeholder='Subtask name...'
+
+          @keydown.native.stop='keydown'
           @enter='addSubtask'
+          @cancel='$emit("cancel")'
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />
@@ -36,6 +39,12 @@ export default {
     }
   },
   methods: {
+    keydown({key}) {
+      if (key === 'ArrowUp')
+        this.$emit('move-cursor-up')
+      else if (key === "ArrowDown")
+        this.$emit('move-cursor-down')
+    },
     leave(el) {
       const cont = el.getElementsByClassName('wrapper')[0]
       const s = el.style

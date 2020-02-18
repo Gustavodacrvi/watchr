@@ -29,12 +29,11 @@
 import { mapState } from 'vuex'
 
 import Photo from "@/components/View/RenderComponents/ProfilePhoto.vue"
-import Icon from "@/components/Icon.vue"
 
 export default {
   props: ['group'],
   components: {
-    Photo, Icon,
+    Photo,
   },
   methods: {
     click() {

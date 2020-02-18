@@ -178,15 +178,13 @@ export default {
       return this.getCurrentScheduleTasksOrder
     },
 
-    headingsPagination() {
-      if (this.viewName !== 'Logbook') return null
-      return 7
-    },
     showEmptyHeadings() {
-      return this.viewName === 'Upcoming'
+      const n = this.viewName
+      return n === 'Upcoming' || n === 'Logbook'
     },
     showHeading() {
-      if (this.viewName === 'Upcoming' || this.isSmartOrderViewType)
+      const n = this.viewName
+      if (n === 'Upcoming' || n === 'Logbook' || this.isSmartOrderViewType)
         return h => {
           return h.showHeading
         }
@@ -197,7 +195,7 @@ export default {
         return []
       const heads = this.getListHeadingsByView
       switch (this.viewName) {
-        case 'Upcoming': return this.upcomingHeadingsOptions
+        case 'Upcoming': return this.upcomingHeadings
         case 'Today': {
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return heads

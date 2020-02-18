@@ -27,16 +27,11 @@
 
 <script>
 
-import Icon from '../../../Icon.vue'
-
 import utils from '@/utils'
 
 const MAXIMUM_TOUCH_DISTANCE = 120
 
 export default {
-  components: {
-    Icon,
-  },
   data() {
     return {
       y: 0,

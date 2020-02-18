@@ -16,7 +16,6 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import LogoVue from '../Illustrations/Logo.vue'
 
@@ -27,7 +26,6 @@ import { mapState, mapGetters } from 'vuex'
 export default {
   props: ['route'],
   components: {
-    Icon: IconVue,
     IconDrop: IconDropVue,
     LogoApp: LogoVue,
   },

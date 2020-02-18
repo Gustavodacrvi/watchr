@@ -57,9 +57,9 @@ export default {
       if (key === 'Escape')
         this.$emit('close')
       if (this.isOnShift) {
-        if (key === 'ArrowUp')
+        if (key === 'ArrowLeft') 
           this.go(-1)
-        else if (key === 'ArrowDown')
+        else if (key === 'ArrowRight')
           this.go(1)
       }
       if (key === "Enter") {
@@ -80,6 +80,10 @@ export default {
 .ItemEdit {
   overflow: hidden;
   background-color: var(--dark);
+}
+
+.slim-sidebar .ItemEdit {
+  background-color: var(--dark-light-gray);
 }
 
 .wrapper {

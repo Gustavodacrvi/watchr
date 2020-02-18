@@ -21,13 +21,8 @@
 
 <script>
 
-import Icon from '@/components/Icon.vue'
-
 export default {
   props: ['name', 'value', 'icon', 'color'],
-  components: {
-    Icon,
-  },
   data() {
     return {
       toggle: this.value,

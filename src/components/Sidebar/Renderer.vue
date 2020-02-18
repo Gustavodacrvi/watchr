@@ -16,6 +16,7 @@
           :icon="getIcon(el)"
           :showColor='showColor'
           :type="type || el.rendererType"
+          :existingItems='existingItems'
 
           :tabindex="i + 1"
           :active="active"
@@ -60,7 +61,7 @@ export default {
     SidebarElement: SidebarElementVue,
     ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem', 'isSubElement'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem', 'isSubElement', 'existingItems', 'alreadyExistMessage'],
   data() {
     return {
       sortable: null,
@@ -102,8 +103,7 @@ export default {
           if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
-      delay: 150,
-      delayOnTouchOnly: true,
+      delay: this.isDesktop ? 5 : 150,
       forceFallback: true,
       fallbackOnBody: true,
       handle: '.item-handle',
@@ -153,6 +153,15 @@ export default {
   methods: {
     addItem(name) {
       if (this.getItemRef) {
+        if (this.existingItems && this.alreadyExistMessage && this.existingItems.find(el => el.name === name)) {
+          this.$store.commit('pushToast', {
+            name: this.alreadyExistMessage,
+            seconds: 3,
+            type: 'error'
+          })
+          return;
+        }
+        
         const newItemRef = this.getItemRef()
         const id = newItemRef.id
         const index = this.items.findIndex(el => el.isEdit)

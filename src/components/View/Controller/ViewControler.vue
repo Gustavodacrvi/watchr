@@ -23,6 +23,8 @@
     :getCalendarOrderDate='getCalendarOrderDate'
     :removeListHandlerWhenThereArentLists='removeListHandlerWhenThereArentLists'
 
+    :sidebarHided='sidebarHided'
+
     :mainFilter='mainFilter'
     :disableFloatingButton='disableFloatingButton'
     :rootFilter='rootFilter'
@@ -34,7 +36,6 @@
     :mainFallbackItem='mainFallbackItem'
     :showHeading='showHeading'
     :itemCompletionCompareDate='itemCompletionCompareDate'
-    :headingsPagination='headingsPagination'
     :configFilterOptions='configFilterOptions'
     :smartComponent='smartComponent'
     :onSmartComponentUpdate='onSmartComponentUpdate'
@@ -75,7 +76,7 @@ import mainMixin from './mixins/controler.js'
 
 export default {
   mixins: [...mixins, mainMixin],
-  props: ['isSmart', 'viewName', 'viewType', 'width'],
+  props: ['isSmart', 'viewName', 'viewType', 'width', 'sidebarHided'],
   components: {
     ViewRenderer: ViewRendererVue,
   },
@@ -131,7 +132,10 @@ export default {
       isListLastDeadlineDay: 'list/isListLastDeadlineDay',
       isListBeginDay: 'list/isListBeginDay',
       getEndsTodayTasks: 'task/getEndsTodayTasks',
+      wasTaskLoggedLastWeek: 'task/wasTaskLoggedLastWeek',
       getOverdueTasks: 'task/getOverdueTasks',
+      wasTaskLoggedInMonth: 'task/wasTaskLoggedInMonth',
+      isOldTask: 'task/isOldTask',
       isTaskInSevenDays: 'task/isTaskInSevenDays',
       isTaskInFolder: 'task/isTaskInFolder',
       isTaskInListRoot: 'task/isTaskInListRoot',
@@ -142,6 +146,7 @@ export default {
       isTaskInOneMonth: 'task/isTaskInOneMonth',
       isTaskWeekly: 'task/isTaskWeekly',
       isTaskInOneYear: 'task/isTaskInOneYear',
+      isTaskInMonth: 'task/isTaskInMonth',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       isListInView: 'list/isListInView',
@@ -258,8 +263,6 @@ export default {
 
           const filterFunction = task => this.isTaskInList(task, list.id)
 
-          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
-
           arr.push({
             name: list.name,
             allowEdit: true,
@@ -273,8 +276,9 @@ export default {
                 name, id: list.id,
               })
             },
-            sort,
-            progress: () => this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
+            sort: this.sortArray,
+            order: viewTasksOrder,
+            progress: () => this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], list.id, this.isTaskCompleted),
             filter: filterFunction,
             options: tasks => [
               {
@@ -369,8 +373,6 @@ export default {
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
-          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
-          
           arr.push({
             name: folder.name,
             allowEdit: true,
@@ -384,7 +386,8 @@ export default {
                 name, id: folder.id,
               })
             },
-            sort,
+            sort: this.sortArray,
+            order: viewTasksOrder,
             filter: filterFunction,
             options: tasks => [
               {
@@ -473,8 +476,6 @@ export default {
 
           const filterFunction = task => this.isTaskInGroup(task, group.id)
 
-          const sort = tasks => this.sortArray(viewTasksOrder, tasks)
-
           arr.push({
             name: group.name,
             allowEdit: true,
@@ -488,7 +489,8 @@ export default {
                 name, id: group.id,
               })
             },
-            sort,
+            sort: this.sortArray,
+            order: viewTasksOrder,
             filter: filterFunction,
             options: tasks => [
               {
@@ -562,7 +564,7 @@ export default {
       if (type === 'group') return 'group'
       return 'tag'
     },
-    upcomingHeadingsOptions() {
+    upcomingHeadings() {
       const arr = []
       const tod = mom()
       const calObj = date => ({
@@ -573,30 +575,29 @@ export default {
 
         specific: date,
       })
-      const filtered = this.tasks.filter(el => {
-        return el.calendar && el.calendar.type === 'specific'
-      })
       const calendarOrders = this.calendarOrders
       const sort = utilsTask.sortTasksByTaskDate
       const TOD_STR = mom().format('Y-M-D')
 
+      let first = false
       for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
 
-        const sortHeading = tasks =>
-          this.$store.getters.checkMissingIdsAndSortArr((calendarOrders[date] && calendarOrders[date].tasks) || [], tasks)
+        const itemsOrder = (calendarOrders[date] && calendarOrders[date].tasks) || []
 
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
         arr.push({
-          name: date,
+          name: !first ? 'Tomorrow' : date,
           id: date,
           calendarEvents: date,
           showHeading: true,
           dateType: true,
 
-          sort: sortHeading,
+          sort: this.sortArray,
+          order: itemsOrder,
+
           filter: filterFunction,
           fallbackItem: task => {
             if (!task.calendar)
@@ -604,9 +605,8 @@ export default {
             return task
           },
           onAddItem: obj => {
-            const date = obj.header.id
-            this.$store.dispatch('task/addTask', {
-              ...obj.task
+            this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
+              ...obj, date,
             })
           },
           onSortableAdd: (evt, taskIds, type, ids) => {
@@ -619,36 +619,46 @@ export default {
             this.$store.dispatch('task/saveCalendarOrder', {ids, date})
           }
         })
+        first = true
       }
       const thisMonthPipe = pipeBooleanFilters(
         this.isTaskInSevenDays,
         task => this.isTaskInPeriod(task, TOD_STR, 'month', true)
       )
       // this month
+      const now = mom()
       arr.push({
         name: 'This month',
         disableSortableMount: true,
+        calendarEvents: [now.startOf('month').format('Y-M-D'), now.endOf('month').format('Y-M-D')],
         calendarStr: true,
         sort,
         filter: thisMonthPipe,
         id: 'this month',
       })
-      // this year
-      const thisYearPipe = pipeBooleanFilters(
-        this.isTaskInOneMonth,
-        task => this.isTaskInPeriod(task, TOD_STR, 'year', true)
-      )
-      arr.push({
-        name: 'This year',
-        disableSortableMount: true,
-        calendarStr: true,
-        sort,
-        filter: thisYearPipe,
-        id: 'this year'
-      })
+      now.add(1, 'month')
+
+      for (let monthNum = now.month(); monthNum < 12; monthNum++) {
+        const name = now.format('MMMM')
+
+        arr.push({
+          name: now.format('MMMM'),
+          id: name,
+          calendarEvents: [now.startOf('month').format('Y-M-D'), now.endOf('month').format('Y-M-D')],
+          calendarStr: true,
+          showHeading: true,
+          disableSortableMount: true,
+
+          sort,
+          filter: t => this.isTaskInMonth(t, monthNum)
+        })
+
+        now.add(1, 'month')
+      }
+      
       // next years
       arr.push({
-        name: 'Next years',
+        name: 'Upcoming years',
         disableSortableMount: true,
         calendarStr: true,
         sort,
@@ -661,18 +671,10 @@ export default {
         name: 'Periodic tasks',
         calendarStr: true,
         sort,
-        filter: task => task.calendar && task.calendar.type === 'periodic',
+        filter: task => task.calendar && task.calendar.type !== 'specific' && task.calendar.type !== 'someday',
         id: 'periodic tasks'
       })
       // weekly tasks
-      arr.push({
-        disableSortableMount: true,
-        name: 'Weekly tasks',
-        calendarStr: true,
-        sort,
-        filter: task => task.calendar && task.calendar.type === 'weekly',
-        id: 'weekly tasks'
-      })
       return arr
     },
     laterListsHeadings() {
@@ -727,7 +729,8 @@ export default {
             editComp: 'ListEdit',
             itemPlaceholder: 'List name...',
             
-            sort: lists => this.sortArray(itemsOrder, lists),
+            sort: this.sortArray,
+            order: itemsOrder,
             options: lists => [],
             filter,
 
@@ -770,57 +773,102 @@ export default {
     },
     logbookHeadings() {
       const arr = []
-      const filtered = this.logTasks
-
-      const set = new Set()
-    
-      for (const t of filtered)
-        if (!set.has(t.logDate))
-          set.add(t.logDate)
-      const dates = Array.from(set)
-      dates.sort((a, b) => {
-        const ta = mom(a, 'Y-M-D')
-        const tb = mom(b, 'Y-M-D')
-        if (ta.isAfter(tb, 'day'))
-          return -1
-        if (ta.isBefore(tb, 'day'))
-          return 1
-        return 0
-      })
-
-      for (const date of dates) {
-        const filterFunction = t => t.logDate === date
-
-        const dispatch = this.$store.dispatch
-        arr.push({
-          dateType: true,
-          disableSortableMount: true,
-          name: date,
-          log: true,
-          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate'), 
-          options: tasks => [
+      const tod = mom()
+      const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate')
+      const dispatch = this.$store.dispatch
+      
+      const options = tasks => [
             {
               name: 'Remove from logbook',
               icon: 'logbook',
               callback: () => dispatch('task/unlogTasks', tasks.map(el => el.id)),
             },
             {
-              name: 'Uncomplete tasks',
-              icon: 'circle',
-              important: true,
-              callback: () => dispatch('task/uncompleteTasks', tasks),
-            },
-            {
               name: 'Delete tasks',
               icon: 'trash',
-              important: true,
               callback: () => dispatch('task/deleteTasks', tasks.map(t => t.id)),
             },
-          ],
-          filter: filterFunction,
+          ]
+
+      for (let i = 0; i < 7;i++) {
+        const date = tod.format('Y-M-D')
+        
+        const dispatch = this.$store.dispatch
+
+        let name = date
+        if (i === 0)
+          name = 'Today'
+        else if (i === 1)
+          name = 'Yesterday'
+        
+        arr.push({
+          dateType: true,
+          disableSortableMount: true,
+          name,
+          log: true,
+
+          sort, 
+          options,
+          filter: t => t.logDate === date,
           id: date,
         })
+        tod.subtract(1, 'd')
       }
+
+      arr.push({
+        name: 'Last week',
+        disableSortableMount: true,
+        dateType: true,
+        logStr: true,
+        log: true,
+        sort,
+        options,
+        filter: t => this.wasTaskLoggedLastWeek(t),
+        id: 'last week',
+      })
+
+      const now = mom()
+      const m = now.month()
+      arr.push({
+        name: 'This month',
+        disableSortableMount: true,
+        dateType: true,
+        logStr: true,
+        log: true,
+        sort,
+        options,
+        filter: t => this.wasTaskLoggedInMonth(t, m),
+        id: 'this month',
+      })
+      now.subtract(1, 'month')
+
+      for (let month = now.month();month > -1;month--) {
+        arr.push({
+          name: now.format('MMMM'),
+          id: month,
+          showHeading: true,
+          disableSortableMount: true,
+          logStr: true,
+          log: true,
+          sort,
+          options,
+          filter: t => this.wasTaskLoggedInMonth(t, month),
+        })
+        
+        now.subtract(1, 'month')
+      }
+      arr.push({
+        name: 'Old stuff',
+        id: 'old',
+        showHeading: true,
+        disableSortableMount: true,
+        logStr: true,
+        log: true,
+        sort,
+        options,
+        filter: this.isOldTask
+      })
+      
       return arr
     },
     todayHeadingsOptions() {
@@ -830,7 +878,7 @@ export default {
           ids, task: {calendar: this.$store.getters['task/getSpecificDayCalendarObj'](mom)}
         })
       }
-      const sort = tasks => utilsTask.sortTasksByTaskDate(tasks)
+      const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks)
 
       let todayTasks = []
       const viewOrder = this.viewOrders['Today']
@@ -879,7 +927,8 @@ export default {
           },
         },
         {
-          sort: tasks => this.$store.getters.checkMissingIdsAndSortArr(todayTasks, tasks),
+          sort: this.sortArray,
+          order: todayTasks,
           name: 'Today',
           id: 'todya',
           filter: task => this.isTaskInView(task, 'Today'),
@@ -924,7 +973,8 @@ export default {
           editComp: 'ListEdit',
           itemPlaceholder: 'List name...',
           
-          sort: lists => this.sortArray(itemsOrder, lists),
+          sort: this.sortArray,
+          order: itemsOrder,
           filter: filterFunction,
           options: lists => [{
             name: 'Change deadline',
@@ -970,7 +1020,8 @@ export default {
           editComp: 'ListEdit',
           itemPlaceholder: 'List name...',
           
-          sort: lists => this.sortArray(itemsOrder, lists),
+          sort: this.sortArray,
+          order: itemsOrder,
           filter: filterFunction,
           options: lists => [{
             name: 'Change date',
@@ -1016,7 +1067,8 @@ export default {
 
           directFiltering: true,
           
-          sort: tasks => this.sortArray(itemsOrder, tasks),
+          sort: this.sortArray,
+          order: itemsOrder,
           filter: filterFunction,
           options: tasks => [{
             name: 'Change deadline',
@@ -1087,7 +1139,8 @@ export default {
         editComp: 'ListEdit',
         itemPlaceholder: 'List name...',
         
-        sort: lists => this.sortArray(itemsOrder, lists),
+        sort: this.sortArray,
+        order: itemsOrder,
         filter: filterFunction,
         options: lists => [],
         updateIds: ids => {

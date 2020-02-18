@@ -17,8 +17,6 @@
 
 <script>
 
-import Icon from "@/components/Icon.vue"
-
 import utils from '@/utils'
 
 import { mapState } from 'vuex'
@@ -30,9 +28,6 @@ const sto = firebase.storage()
 
 export default {
   props: ['photoURL', 'size', 'display', 'stopAuthFallback', 'title'],
-  components: {
-    Icon,
-  },
   mounted() {
     this.bindContext()
   },

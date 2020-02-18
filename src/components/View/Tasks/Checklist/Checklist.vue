@@ -1,23 +1,45 @@
 <template>
   <div class="Checklist" :class="{hasAtLeastOnSubTask}">
-    <transition-group name="trans" appear
+    <div
       class="draggable-root"
-      @enter='enter'
-      @leave='leave'
-      tag="div"
+      ref="draggable-root"
     >
-      <Subtask v-for="sub in getList"
-        :key="sub.id"
-        v-bind='sub'
-        @toggle='toggleTask(sub.id)'
-        @remove='remove(sub.id)'
-        @save='str => sub.name = str'
+      <template v-for="sub in getItems">
+        <Subtask v-if="!sub.isEdit"
+          :ref='sub.id'
+          :key="sub.id"
+          v-bind='sub'
+          @toggle='toggleTask(sub.id)'
+          @remove='remove(sub.id)'
+          @save='str => sub.name = str'
 
-        data-type='subtask'
-        :data-id='sub.id'
-        :data-name='sub.name'
-      />
-    </transition-group>
+          @move-cursor-up='removeEdit(-1)'
+          @move-cursor-down='removeEdit(1)'
+
+          :active='sub.id === activeChecklistId'
+          :compareDate='compareDate'
+
+          data-type='subtask'
+          :data-id='sub.id'
+          :data-name='sub.name'
+        />
+        <SubtaskEdit v-else
+          ref='Edit'
+          :key="sub.isEdit"
+          data-id='Edit'
+
+          @add='addSubtask'
+
+          @move-cursor-up='removeEdit(-1)'
+          @move-cursor-down='removeEdit(1)'
+
+          @cancel='removeEdit'
+
+          @goup='moveTaskRenderer("up")'
+          @godown='moveTaskRenderer("down")'
+        />
+      </template>
+    </div>
   </div>
 </template>
 
@@ -26,26 +48,31 @@
 import Vue from 'vue'
 
 import Subtask from './Subtask.vue'
-import EditVue from './Edit.vue'
+import SubtaskEdit from './Edit.vue'
+
+import mom from 'moment'
 
 import Sortable from 'sortablejs'
 
 import utils from '@/utils/'
 
 export default {
-  props: ['order', 'list', 'toggle'],
+  props: ['list', 'compareDate', 'activeChecklistId'],
   components: {
     Subtask,
-    SubtaskEdit: EditVue,
+    SubtaskEdit,
   },
   data() {
     return {
       sortable: null,
+      hasEdit: false,
+      edit: null,
+      addedTask: true,
+      editIndex: 0,
+      hasAtLeastOnSubTask: false,
     }
   },
   mounted() {
-    this.calculateLeastNumberOfTasks()
-    window.addEventListener('click', this.calculateLeastNumberOfTasks)
     this.sortable = new Sortable(this.draggableRoot, {
       group: {name: 'sub-task-renderer',
         put: (j,o,item) => {
@@ -55,10 +82,11 @@ export default {
           return false
         }
       },
-      delay: 150,
+      direction: 'vertical',
+      delay: this.isDesktop ? 0 : 150,
       animation: 80,
-      delayOnTouchOnly: true,
-      handle: '.handle',
+      handle: '.item-handle',
+
 
       onUpdate: () => {
         this.$emit('update', this.getIds(true))
@@ -68,13 +96,9 @@ export default {
         const type = item.dataset.type
 
         if (type === 'add-task-floatbutton') {
-          const ins = this.taskAdderInstance()
 
-          const el = this.$el.querySelector('.action-button')
-          el.setAttribute('id', 'edit-subtask-task-renderer')
-          ins.$mount('#edit-subtask-task-renderer')
-          this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-          this.applyTaskAdderEventListeners(ins)
+          this.addEdit(evt.newIndex)
+
         } else if (type === 'Task') {
           const childs = this.draggableRoot.childNodes
           let i = 0
@@ -86,116 +110,90 @@ export default {
           this.$emit('convert-task', {
             index: i, id: item.dataset.id, ids: this.getIds(true)
           })
-          item.style.display = 'none'
         }
-      }
+        item.remove()
+      },
+      onStart: () => {
+        this.$store.commit('moving', true)
+      },
+      onEnd: () => {
+        this.$store.commit('moving', false)
+      },
     })
   },
   beforeDestroy() {
     this.sortable.destroy()
-    window.removeEventListener('click', this.calculateLeastNumberOfTasks)
-  },
-  data() {
-    return {
-      addedTask: true,
-      hasAtLeastOnSubTask: false,
-    }
   },
   methods: {
-    applyTaskAdderEventListeners(ins) {
-      ins.$on('add', this.addSubtask)
-      ins.$on('goup', () => this.moveTaskRenderer('up'))
-      ins.$on('godown', () => this.moveTaskRenderer('down'))
-      const hide = () => {
-        ins.$destroy()
-        const $el = ins.$el
-        $el.parentNode.removeChild($el)
-        window.removeEventListener('click', hide)
+    editChecklist(id) {
+      this.$refs[id][0].edit()
+    },
+    hide(evt) {
+      const path = event.path || (event.composedPath && event.composedPath())
+      let found
+      for (const p of path)
+        if (this.$refs.Edit && this.$refs.Edit.$el === p) {
+          found = true
+          break
+        }
+      if (!found)
+        this.removeEdit()
+    },
+    addEdit(i) {
+      this.removeEdit()
+      const obj = {
+        isEdit: true,
       }
-      window.addEventListener('click', hide)
+      
+      this.editIndex = i
+      this.edit = obj
+      this.hasEdit = true
+      window.addEventListener('click', this.hide)
+      
       this.$emit('is-adding-toggle', true)
+    },
+    removeEdit(moveDire = undefined) {
+      const i = this.getItems.findIndex(el => el.isEdit)
+      if (i > -1) {
+        this.getItems.splice(i, 1)
+        this.edit = null
+        this.editIndex = null
+        this.hasEdit = false
+
+        this.$emit('is-adding-toggle', false)
+        if (moveDire !== undefined)
+          this.$emit('move-cursor', moveDire)
+        else this.$emit('reset-cursor')
+
+        window.removeEventListener('click', this.hide)
+      }
     },
     toggleTask(id) {
       const subtask = this.list.find(el => el.id === id)
       subtask.completed = !subtask.completed
+      if (subtask.completed)
+        subtask.completeDate = mom().format('Y-M-D')
+      else
+        subtask.completeDate = null
       this.$emit('save-checklist')
     },
     remove(id) {
       this.$emit("remove", id)
-      setTimeout(() => {
-        this.calculateLeastNumberOfTasks()
-      }, 210)
-    },
-    enter(el) {
-      if (this.addedTask)
-        this.fixTaskRenderer()
-      const s = el.style
-      const height = el.offsetHeight
-
-      s.transitionDuration = '0s'
-      s.height = 0
-      requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
-        if (height < 36)
-          s.height = '36px'
-        else s.height = height + 'px'
-      })
-    },
-    leave(el) {
-      el.style.height = 0
-    },
-    addSubtaskAdderBegin() {
-      setTimeout(() => {
-        const ins = this.taskAdderInstance()
-        const el = document.createElement('div')
-        el.setAttribute('id', 'edit-subtask-task-renderer')
-        this.draggableRoot.appendChild(el)
-        ins.$mount('#edit-subtask-task-renderer')
-        this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-        this.applyTaskAdderEventListeners(ins)
-      })
     },
     moveTaskRenderer(dire) {
-      const i = this.getTaskRendererPosition()
-      const childNodes = this.draggableRoot.childNodes
-      const adder = childNodes[i]
-      let element = null
+      const i = this.editIndex
       if (dire === 'up')
-        element = childNodes[i - 1]
-      else element = childNodes[i + 1]
-      if (element && adder) {
-        if (dire === 'up')
-          this.draggableRoot.insertBefore(adder, element)
-        else
-          this.draggableRoot.insertBefore(element, adder)
-        const input = adder.getElementsByClassName('input')[0]
-        if (input) input.focus()
-      }
-    },
-    fixTaskRenderer() {
-      setTimeout(() => {
-        const i = this.getTaskRendererPosition()
-        const childNodes = this.draggableRoot.childNodes
-        const adder = childNodes[i]
-        const newTask = childNodes[i + 1]
-        if (newTask)
-          this.draggableRoot.insertBefore(newTask, adder)
-        this.addedTask = false
-      }, 10)
+        this.editIndex--
+      else this.editIndex++
     },
     addSubtask(name) {
       this.addedTask = true
+      const index = this.editIndex
+      this.editIndex++
       this.$emit('add', {
         name, ids: this.getIds(true),
-        index: this.getTaskRendererPosition(),
+        index,
       })
-    },
-    getTaskRendererPosition() {
-      const ids = this.getIds()
-      for (let i = 0;i < ids.length;i++) {
-        if (ids[i] === 'Edit')
-          return i
-      }
     },
     getIds(removeAdders) {
       const childs = this.draggableRoot.childNodes
@@ -206,48 +204,34 @@ export default {
         ids = ids.filter(id => id !== 'Edit')
       return ids
     },
-    taskAdderInstance() {
-      const Constructor = Vue.extend(EditVue)
-      return new Constructor({
-        parent: this,
-      })
-    },
-    calculateLeastNumberOfTasks() {
-      setTimeout(() => {
-        if (!this.$el) this.hasAtLeastOnSubTask = false
-        const childs = this.draggableRoot.childNodes
-        this.hasAtLeastOnSubTask = childs && childs.length > 0
-        let found = false
-        for (const node of childs)
-          if (node.dataset.id === 'Edit') {
-            found = true
-            break
-          }
-        this.$emit('is-adding-toggle', found)
-      })
+    addChecklist() {
+      if (this.list && this.list.length === 0)
+        setTimeout(() => this.addEdit(0))
     },
   },
   computed: {
     draggableRoot() {
-      return this.$el.getElementsByClassName('draggable-root')[0]
+      return this.$refs['draggable-root']
     },
-    getList() {
-      return this.$store.getters.checkMissingIdsAndSortArr(this.order, this.list)
+    getItems() {
+      const l = this.list.slice()
+      if (this.edit)
+        l.splice(this.editIndex, 0, this.edit)
+      return l
     },
   },
-  watch: {
-    toggle() {
-      if (this.getList && this.getList.length === 0)
-        this.addSubtaskAdderBegin()
-      this.calculateLeastNumberOfTasks()
-    },
-    list() {
-      this.calculateLeastNumberOfTasks()
-    }
-  }
 }
 
 </script>
+
+<style>
+
+.sortable-ghost .icons, .sortable-ghost .name-wrapper, .sortable-ghost .no-back {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+</style>
 
 <style scoped>
 
@@ -269,10 +253,14 @@ export default {
   opacity: 1;
 }
 
+.sortable-drag {
+  background-color: var(--light-gray) !important; 
+  border-radius: 6px;
+}
+
 .sortable-ghost {
-  background-color: var(--back-color) !important;
+  background-color: var(--sidebar-color) !important;
   transition-duration: 0;
-  transition: none;
   height: 38px;
   padding: 0;
 }

@@ -7,6 +7,9 @@ import firebase from 'firebase/app'
 import Vue from 'vue'
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
+import LoadingComponent from '../components/Illustrations/LoadingComponent.vue'
+import ErrorComponent from '../components/Illustrations/ErrorComponent.vue'
+
 let contextMenuRunned = false
 
 export default {
@@ -129,27 +132,27 @@ export default {
         get: m => setMonth(1),
       },
       {
-        match: ['february', 'feb'],
+        match: ['march', 'mar'],
         get: m => setMonth(2),
       },
       {
-        match: ['march', 'mar'],
+        match: ['april', 'apr'],
         get: m => setMonth(3),
       },
       {
-        match: ['april', 'apr'],
+        match: 'may',
         get: m => setMonth(4),
       },
       {
-        match: 'may',
+        match: ['june', 'jun'],
         get: m => setMonth(5),
       },
       {
-        match: ['june', 'jun'],
+        match: ['july', 'jul'],
         get: m => setMonth(6),
       },
       {
-        match: ['jul', 'july'],
+        match: ['august', 'aug'],
         get: m => setMonth(7),
       },
       {
@@ -258,6 +261,15 @@ export default {
           .replace(/__(.*?)__/g, "<b>$1</b>")
           .replace(/\*(.*?)\*/g, "<i>$1</i>")
           .replace(/\{(.*?)(?: ([^\]]*))?\}/g, "<span style='color: $1'>$2</span>")
+  },
+  asyncComp(comp, allowComp = true) {
+    return () => ({
+      component: comp,
+      loading: allowComp ? LoadingComponent : undefined,
+      error: allowComp ? ErrorComponent : undefined,
+      delay: 300,
+      timeout: 7500,
+    })
   },
   addIdsToObjectFromKeys(obj) {
     if (obj)
@@ -566,25 +578,20 @@ export default {
       return mom(c.lastCompleteDate, 'Y-M-D').isSameOrAfter(tod, 'day')
     }
     
-/*             if (c.type === 'periodic' || c.type === 'weekly') {
-      const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-      if (!moment.isValid()) moment = mom()
-      return lastComplete.isSameOrAfter(moment, 'day')
-    } */
-
     return false
   },
   saveByShortcut(vm, isEditing, key, preventDefault, save) {
     const p = preventDefault
     const {isOnControl, isOnShift, isOnAlt} = vm
 
-    switch (key) {
-      case 'Delete': {
-        save('delete')
-        vm.$store.commit('clearSelected')
-        break
+    if (!isEditing)
+      switch (key) {
+        case 'Delete': {
+          save('delete')
+          vm.$store.commit('clearSelected')
+          break
+        }
       }
-    }
     
     if (isOnShift && !isEditing) {
       switch (key) {
