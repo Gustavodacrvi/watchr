@@ -15,6 +15,7 @@
     <li>New headings adder UI.</li>
     <br>
     <li>Reset subtasks on periodic tasks reset.</li>
+    <li>Complete task adder keyboard navigation.</li>
 
     <h3>Bug fixes</h3>
 
