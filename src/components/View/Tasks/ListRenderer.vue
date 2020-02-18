@@ -61,6 +61,7 @@
           @cancel='removeEdit'
         />
         <EditComp v-else
+          :heading='true'
           :key="item.isEdit"
 
           v-bind='item.propsData'

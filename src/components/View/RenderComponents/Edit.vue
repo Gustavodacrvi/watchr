@@ -1,14 +1,13 @@
 <template>
-  <transition name="trans-t" appear
+  <transition name='trans-t' appear
     @enter='enter'
-    @afterEnter='afterEnter'
     @leave='leave'
   >
-    <div class="Edit handle rb shadow">
+    <div class="Edit handle rb shadow" :class="{heading}">
       <div class="fix-back fade" @click="cancel"></div>
       <div class="edit-wrapper" :class="{show}">
         <InputApp
-          class="no-back"
+          class="no-back input"
           :placeholder="placeholder"
           v-model="str"
           :value='str'
@@ -35,7 +34,7 @@ import ButtonVue from '../../Auth/Button.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['name', 'names', 'errorToast', 'placeholder', 'keepOpen'],
+  props: ['name', 'names', 'errorToast', 'placeholder', 'keepOpen', 'heading'],
   components: {
     InputApp: DropInputVue,
     ButtonApp: ButtonVue,
@@ -78,31 +77,35 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = 0
+      s.opacity = 0
+      s.borderBottom = '0px solid transparent'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         if (height < 36)
           s.height = '35px'
         else
           s.height = height + 'px'
+        
+        s.opacity = 1
+        if (this.heading) {
+          s.borderBottom = '1px solid var(--txt)'
+          s.borderBottomStyle = 'dashed'
+        }
+        
         setTimeout(() => this.show = true, 250)
       })
-    },
-    afterEnter(el) {
-      el.style.height = 'auto'
     },
     leave(el) {
       const s = el.style
 
-      s.transitionDuration = '0s'
-      s.height = el.offsetHeight + 'px'
-      requestAnimationFrame(() => {
-        this.show = false
-        s.transitionDuration = '.3s'
-        s.overflow = 'hidden'
-        s.backgroundColor = 'var(--back-color)'
-        s.boxShadow = '0 0 0 #000'
-        s.height = '0px'
-      })
+      s.transitionDuration = '.2s'
+      s.overflow = 'hidden'
+      s.opacity = 0
+      s.borderBottom = '0px solid transparent'
+      s.borderBottomStyle = 'dashed'
+      s.backgroundColor = 'var(--back-color)'
+      s.boxShadow = '0 0 0 #000'
+      s.height = '0px'
     },
     select(val) {
       this.str = val
@@ -137,4 +140,23 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/editor.css">
+</style>
+
+<style scoped>
+
+.heading {
+  background-color: transparent;
+  box-shadow: none;
+  border-bottom: 1px solid var(--txt);
+  border-bottom-style: dashed;
+  border-radius: 0;
+  font-size: 1.17em;
+  color: var(--txt);
+}
+
+.heading .input {
+  margin-left: -6px;
+  padding: 0;
+}
+
 </style>

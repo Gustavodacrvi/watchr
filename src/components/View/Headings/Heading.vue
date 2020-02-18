@@ -378,6 +378,7 @@ export default {
 
 .cont {
   position: relative;
+  transition-duration: .2s;
   z-index: 49;
 }
 
