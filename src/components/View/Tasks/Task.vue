@@ -893,7 +893,8 @@ export default {
   width: 0;
   transform: translateY(-50%);
   border-radius: 100px;
-  border: 0px solid transparent !important;
+  border: 0px solid transparent;
+  background-color: var(--txt);
   transition-duration: .25s;
 }
 

@@ -273,49 +273,37 @@ export default {
       if (this.moving) {
         const addHeadingElement = document.querySelector('.ListRenderer .action-heading') || {}
         const createElement = document.querySelector('.ListRenderer .create') || {}
-        const addElement = document.querySelector('.ListRenderer .add') || {}
-        const obj = {
-          'action-heading': addHeadingElement.style || {},
-          create: createElement.style || {},
-          add: addElement.style || {},
-        }
         
         const { left, width } = this.$el.getBoundingClientRect()
         const pos = (evt.pageX || evt.touches[0].pageX) - left
         
-        const headingStart = width * .333333
-        const addStart = this.showHeadingFloatingButton ? width * .66666 : width * .5
+        const addHeading = pos < 76
 
-        let type
-        if (pos < headingStart)
-          type = 'action-heading'
-        else if (pos < addStart)
-          type = 'create'
-        else type = 'add'
-
-        if (!this.showHeadingFloatingButton && type === 'action-heading')
-          type = 'create'
-
-        const possibleValues = ['action-heading', 'create', 'add']
-
-        if (!this.showHeadingFloatingButton) {
-          obj['action-heading'].flexBasis = '0px'
-          obj['action-heading'].overflow = 'hidden'
-        }
-        const act = obj[type]
-        for (const s of possibleValues)
-          if (s !== type) {
-            obj[s].backgroundColor = 'var(--sidebar-color)'
-            obj[s].zIndex = '1'
-            obj[s].boxShadow = 'none'
+        const show = s => {
+          if (s) {
+            s.opacity = 1
+            s.transitionDuration = '.2s'
           }
+        }
+        const hide = s => {
+          if (s) {
+            s.opacity = 0
+            s.transitionDuration = '.2s'
+          }
+        }
 
-        act.backgroundColor = 'var(--dark-gray)'
-        act.boxShadow = '0 3px 8px rgba(15,15,15,.3)'
-        act.color = 'white'
-        act.zIndex = '2'
+        if (!addHeading || !this.showHeadingFloatingButton) {
+          this.editMoveType = 'create'
 
-        this.editMoveType = type
+          show(createElement.style)
+          hide(addHeadingElement.style)
+
+        } else {
+          this.editMoveType = 'action-heading'
+
+          hide(createElement.style)
+          show(addHeadingElement.style)
+        }
       }
     },
     selectMultipleIds(newId) {
@@ -567,12 +555,6 @@ export default {
               this.addEditComp(i)
             else if (this.editMoveType === 'action-heading')
               this.addHeadingsEdit(i)
-            else
-              this.onAddExistingItem(i, this.lazyItems, this.fallbackItem, () => {
-                setTimeout(() => {
-                  this.$emit('update', this.getIds(true))
-                }, 10)
-              })
           }
         },
         onMove: (t, e) => {

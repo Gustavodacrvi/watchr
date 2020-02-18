@@ -775,6 +775,20 @@ export default {
       const arr = []
       const tod = mom()
       const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate')
+      const dispatch = this.$store.dispatch
+      
+      const options = tasks => [
+            {
+              name: 'Remove from logbook',
+              icon: 'logbook',
+              callback: () => dispatch('task/unlogTasks', tasks.map(el => el.id)),
+            },
+            {
+              name: 'Delete tasks',
+              icon: 'trash',
+              callback: () => dispatch('task/deleteTasks', tasks.map(t => t.id)),
+            },
+          ]
 
       for (let i = 0; i < 7;i++) {
         const date = tod.format('Y-M-D')
@@ -794,25 +808,7 @@ export default {
           log: true,
 
           sort, 
-          options: tasks => [
-            {
-              name: 'Remove from logbook',
-              icon: 'logbook',
-              callback: () => dispatch('task/unlogTasks', tasks.map(el => el.id)),
-            },
-            {
-              name: 'Uncomplete tasks',
-              icon: 'circle',
-              important: true,
-              callback: () => dispatch('task/uncompleteTasks', tasks),
-            },
-            {
-              name: 'Delete tasks',
-              icon: 'trash',
-              important: true,
-              callback: () => dispatch('task/deleteTasks', tasks.map(t => t.id)),
-            },
-          ],
+          options,
           filter: t => t.logDate === date,
           id: date,
         })
@@ -826,6 +822,7 @@ export default {
         logStr: true,
         log: true,
         sort,
+        options,
         filter: t => this.wasTaskLoggedLastWeek(t),
         id: 'last week',
       })
@@ -839,6 +836,7 @@ export default {
         logStr: true,
         log: true,
         sort,
+        options,
         filter: t => this.wasTaskLoggedInMonth(t, m),
         id: 'this month',
       })
@@ -853,6 +851,7 @@ export default {
           logStr: true,
           log: true,
           sort,
+          options,
           filter: t => this.wasTaskLoggedInMonth(t, month),
         })
         
@@ -866,6 +865,7 @@ export default {
         logStr: true,
         log: true,
         sort,
+        options,
         filter: this.isOldTask
       })
       

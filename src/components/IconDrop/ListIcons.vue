@@ -18,7 +18,7 @@
       >
         <template v-for="(l, index) in getLinks">
           <div v-if="!l.type" class="link cursor hide-trans"
-            :class="{important: l.important, active: index === selectionPos}"
+            :class="{important: l.important, active: (allowKeyboard && index === selectionPos)}"
             :key="l.name"
             :ref="l.name"
             @click="linkClick(l)"

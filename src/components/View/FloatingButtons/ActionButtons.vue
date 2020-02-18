@@ -5,7 +5,7 @@
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
-      txt='Create'
+      txt='Add item'
     />
   </div>
 </template>
@@ -138,6 +138,28 @@ export default {
 }
 
 .act-button-wrapper .cont {
+  display: flex;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100%;
+}
+
+.act-button-wrapper .main {
+  background-color: var(--sidebar-color);
+  border-radius: 10px;
+  transition: background-color .2s, box-shadow;
+}
+
+.act-button-wrapper .heading {
+  border: none;
+  justify-content: unset !important;
+  padding-left: 6px;
+  border-bottom: 1px solid var(--fade);
+  border-bottom-style: dashed;
+  opacity: 0;
+}
+
+.heading .main {
   display: flex;
   justify-content: center !important;
   align-items: center !important;
