@@ -23,16 +23,18 @@
         <span class="name" key="nam"><b>{{ name }}</b></span>
       </span>
       <div class="info">
-        <span class="arrow-wrapper">
-          <span class="arrow-wrapper-wrapper">
-            <Icon
-              class="arrow passive cursor primary-hover"
-              icon='tiny-arrow'
-              :class="{showCont: showing}"
-              @click.native.stop='toggle'
-            />
+        <transition name='fade-t'>
+          <span v-if="headerHover" class="arrow-wrapper">
+            <span class="arrow-wrapper-wrapper">
+              <Icon
+                class="arrow passive cursor primary-hover"
+                icon='tiny-arrow'
+                :class="{showCont: showing}"
+                @click.native.stop='toggle'
+              />
+            </span>
           </span>
-        </span>
+        </transition>
       </div>
     </div>
     <div class="cont" :class="{showCont: showing}">

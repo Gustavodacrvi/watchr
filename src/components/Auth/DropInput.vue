@@ -166,6 +166,7 @@ export default {
           if (this.active) {
             this.$emit('select', this.active)
             this.active = ''
+            event.preventDefault()
           } else {
             this.$emit('enter')
             setTimeout(() => {

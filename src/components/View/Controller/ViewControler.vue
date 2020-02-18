@@ -132,6 +132,7 @@ export default {
       isListLastDeadlineDay: 'list/isListLastDeadlineDay',
       isListBeginDay: 'list/isListBeginDay',
       getEndsTodayTasks: 'task/getEndsTodayTasks',
+      wasTaskLoggedLastWeek: 'task/wasTaskLoggedLastWeek',
       getOverdueTasks: 'task/getOverdueTasks',
       wasTaskLoggedInMonth: 'task/wasTaskLoggedInMonth',
       isOldTask: 'task/isOldTask',
@@ -277,7 +278,7 @@ export default {
             },
             sort: this.sortArray,
             order: viewTasksOrder,
-            progress: () => this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
+            progress: () => this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], list.id, this.isTaskCompleted),
             filter: filterFunction,
             options: tasks => [
               {
@@ -817,6 +818,17 @@ export default {
         })
         tod.subtract(1, 'd')
       }
+
+      arr.push({
+        name: 'Last week',
+        disableSortableMount: true,
+        dateType: true,
+        logStr: true,
+        log: true,
+        sort,
+        filter: t => this.wasTaskLoggedLastWeek(t),
+        id: 'last week',
+      })
 
       const now = mom()
       const m = now.month()

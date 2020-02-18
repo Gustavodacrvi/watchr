@@ -1,6 +1,11 @@
 
+.cont {
+  margin: 0;
+  transition: margin .15s;
+}
+
 .showCont {
-  margin-bottom: 18px;
+  margin-bottom: 28px;
 }
 
 .header {
@@ -46,6 +51,7 @@
 .arrow-wrapper-wrapper {
   position: absolute;
   right: -35px;
+  transform: translateY(2.5px);
 }
 
 .arrow-wrapper {

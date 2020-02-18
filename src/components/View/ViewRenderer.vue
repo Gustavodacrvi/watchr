@@ -348,7 +348,7 @@ export default {
           }
         }
   
-        utils.saveByShortcut(this, this.isEditingComp, key, p, (type, item) => {
+        utils.saveByShortcut(this, (this.isEditingComp || this.iconDrop), key, p, (type, item) => {
           const dispatch = this.$store.dispatch
   
           if (this.shortcutsType === 'Task') {
@@ -676,6 +676,7 @@ export default {
   computed: {
     ...mapState({
       viewOrders: state => state.list.viewOrders,
+      iconDrop: state => state.iconDrop,
       selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
       selectedType: state => state.selectedType,

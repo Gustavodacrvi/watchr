@@ -80,6 +80,9 @@ export default {
         this.$emit('add', inp.files)
       inp.value = ''
     },
+    click() {
+      this.iconClick()
+    },
   },
   computed: {
     ...mapGetters(['isDesktop']),

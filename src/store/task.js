@@ -310,6 +310,18 @@ export default {
           })
         },
       },
+      wasTaskLoggedLastWeek: {
+        getter({}, task) {
+          if (!task.logbook || !task.logDate)
+            return false
+          return mom(task.logbook, 'Y-M-D').isSame(
+            mom(TODAY_DATE, 'Y-M-D').subtract(1, 'week')
+          , 'week')
+        },
+        cache(args) {
+          return args[0].logDate
+        }
+      },
       doesTaskPassInclusivePriority: {
         getter({}, task, inclusive) {
           if (inclusive === 'No priority')

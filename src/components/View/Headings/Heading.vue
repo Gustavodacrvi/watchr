@@ -340,7 +340,7 @@ export default {
 }
 
 .Heading + .Heading {
-  margin-top: 50px;
+  margin-top: 65px;
 }
 
 .Heading.mobile + .Heading {

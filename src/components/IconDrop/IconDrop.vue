@@ -34,6 +34,7 @@
           <component v-if="showingCont"
             :is='getComp'
             :content='compContent'
+            :allowKeyboard='center && isDesktop'
             @close='closeIconDrop'
             @calc='calcStyles'
             @update='update'

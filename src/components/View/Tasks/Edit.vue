@@ -149,7 +149,7 @@
                 width="22px"
                 :options="getTags"
                 :active='isIcon(11)'
-                ref='priority'
+                ref='tag'
                
                 handleColor='var(--red)'
                 title='Add tags'
@@ -316,6 +316,7 @@ export default {
       savingTask: false,
       optionsType: '',
       options: [],
+      fromDefaultTask: false,
       isFirstEdit: true,
 
       cursorPos: 0,
@@ -358,6 +359,9 @@ export default {
       this.task.folder = this.folderName
       this.task.group = this.groupName
       this.task.tags = this.getTagNames
+
+      if (this.task.calendar)
+        this.fromDefaultTask = true
     }
     setTimeout(() => this.isFirstEdit = false, 200)
 
@@ -379,6 +383,7 @@ export default {
   methods: {
     removeCalendar() {
       this.task.calendar = null
+      this.fromDefaultTask = false
       this.fromIconDrop = false
       this.toReplace = null
     },
@@ -470,20 +475,22 @@ export default {
         }
       })
 
-      if (key === "ArrowUp") {
-        p()
-
-        if (this.isOnShift)
-          this.cursorPos = 0
-        else        
-          this.incrementPos(-1)
-      } else if (key === "ArrowDown") {
-        p()
-
-        if (this.isOnShift)
-          this.cursorPos = this.lastKeyboardActionIndex
-        else        
-          this.incrementPos(1)
+      if (!this.iconDrop && this.options.length === 0) {
+        if (key === "ArrowUp") {
+          p()
+  
+          if (this.isOnShift)
+            this.cursorPos = 0
+          else        
+            this.incrementPos(-1)
+        } else if (key === "ArrowDown") {
+          p()
+  
+          if (this.isOnShift)
+            this.cursorPos = this.lastKeyboardActionIndex
+          else        
+            this.incrementPos(1)
+        }
       }
     },
     onPaste(txt) {
@@ -851,6 +858,7 @@ export default {
             this.toReplace = null
           
           this.task.calendar = date
+          this.fromDefaultTask = false
         }, repeat: true}
       }
     },
@@ -1181,12 +1189,14 @@ export default {
 
       if (!this.isFirstEdit) {
         const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
-        if (res) {
+        if (res && res.calendar) {
           this.toReplace = res.matches
           this.task.calendar = res.calendar
+          this.fromDefaultTask = false
           this.fromIconDrop = null
-        } else if (!this.fromIconDrop) {
+        } else if (!this.fromIconDrop && !this.fromDefaultTask) {
           this.toReplace = null
+          this.fromDefaultTask = false
           this.task.calendar = null
         }
       }
