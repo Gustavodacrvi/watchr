@@ -7,52 +7,52 @@
   >
     <Icon v-if="!props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="1"
       icon="box"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="2"
       icon="box-close"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="3"
       icon="box-check-filled"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="!props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="4"
       icon="box-dash"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="5"
       icon="box-check-dash"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="!props.co && props.se && !props.so" class="tra-icon cursor remove-highlight" key="6"
       icon="circle"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="!props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="7"
       icon="circle-dash"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="8"
       icon="box-check"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="props.co && props.se && !props.so" class="tra-icon cursor remove-highlight" key="9"
       icon="circle-check"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
     <Icon v-else-if="props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="10"
       icon="circle-check-dash"
-      :color='color'
+      :color='props.color'
       width="20px"
     />
   </transition-group>

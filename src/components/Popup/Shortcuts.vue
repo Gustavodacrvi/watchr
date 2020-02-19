@@ -81,11 +81,39 @@
       </div>
       <div class="line">
         <span>Open tag quick add</span>
-        <span class="tag">F</span>
+        <span class="tag">T</span>
       </div>
 
       <h3 class="pc">Edit items</h3>
 
+      <div class="line">
+        <span>Add "High priority" to selection</span>
+        <span class="tag">Alt + H</span>
+      </div>
+      <div class="line">
+        <span>Add "Medium priority" to selection</span>
+        <span class="tag">Alt + M</span>
+      </div>
+      <div class="line">
+        <span>Add "Low priority" to selection</span>
+        <span class="tag">Alt + L</span>
+      </div>
+      <div class="line">
+        <span>Remove priority from selection</span>
+        <span class="tag">Alt + N</span>
+      </div>
+      <div class="line">
+        <span>Add selection to logbook</span>
+        <span class="tag">Alt + Shift + L</span>
+      </div>
+      <div class="line">
+        <span>Add selection to group</span>
+        <span class="tag">Alt + L</span>
+      </div>
+      <div class="line">
+        <span>Add deadline to selection</span>
+        <span class="tag">Alt + D</span>
+      </div>
       <div class="line">
         <span>Duplicate item</span>
         <span class="tag">Shift + D</span>
@@ -100,19 +128,19 @@
       </div>
       <div class="line">
         <span>Complete selected</span>
-        <span class="tag">Alt + .</span>
+        <span class="tag">.</span>
       </div>
       <div class="line">
         <span>Cancel selected</span>
-        <span class="tag">Alt + ,</span>
+        <span class="tag">,</span>
       </div>
       <div class="line">
         <span>Move to Someday</span>
-        <span class="tag">Shift + S</span>
+        <span class="tag">Alt + S</span>
       </div>
       <div class="line">
         <span>Move to Today</span>
-        <span class="tag">Shift + T</span>
+        <span class="tag">Alt + T</span>
       </div>
       <div class="line">
         <span>Close task editor</span>

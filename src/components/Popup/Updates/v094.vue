@@ -15,12 +15,68 @@
     <li>New headings adder UI.</li>
     <br>
     <li>Reset subtasks on periodic tasks reset.</li>
+    <br>
     <li>Complete task adder keyboard navigation.</li>
+    <br>
 
+    <h3>New Keyboard shortcuts</h3>
+    <br>
+
+    <div class="line">
+      <span>Add "High priority" to selection</span>
+      <span class="tag">Alt + H</span>
+    </div>
+    <div class="line">
+      <span>Add "Medium priority" to selection</span>
+      <span class="tag">Alt + M</span>
+    </div>
+    <div class="line">
+      <span>Add "Low priority" to selection</span>
+      <span class="tag">Alt + L</span>
+    </div>
+    <div class="line">
+      <span>Remove priority from selection</span>
+      <span class="tag">Alt + N</span>
+    </div>
+    <br>
+    <div class="line">
+      <span>Add selection to logbook</span>
+      <span class="tag">Alt + Shift + L</span>
+    </div>
+    <div class="line">
+      <span>Add selection to group</span>
+      <span class="tag">Alt + L</span>
+    </div>
+    <div class="line">
+      <span>Add deadline to selection</span>
+      <span class="tag">Alt + D</span>
+    </div>
+
+    <br>
     <h3>Bug fixes</h3>
+    <br>
 
     <li>Prevent duplicate list names</li>
+    <br>
 
 
   </div>
 </template>
+
+<style scoped>
+
+.line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.tag {
+  display: inline-block;
+  border-radius: 8px;
+  background-color: var(--dark);
+  padding: 6px;
+  font-size: .8em;
+}
+
+</style>

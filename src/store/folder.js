@@ -56,7 +56,6 @@ export default {
         getter({getters, rootGetters}, {id, lists}) {
           const fold = getters.folders.find(f => f.id === id)
           const arr = []
-          console.log(lists)
           for (const l of lists)
             if (l.folder && l.folder === id) arr.push(l)
           let order = fold.order

@@ -217,11 +217,10 @@
               <Icon
                 class="icon-box primary-hover cursor"
                 width="22px"
-               
                 icon='file'
                 :active='isIcon(5)'
-                ref='file'
                 :box='true'
+                ref='file'
                 :file='true'
                 @add='addFile'
                 title='Add files'
@@ -668,73 +667,75 @@ export default {
       this.saveChecklist()
     },
     save() {
-      const t = this.task
-      if (this.defaultTask && !this.isEditingFiles)
-        this.leave(this.$el)
-      if (t.name) {
-        if (t.folder) {
-          this.task.list = ''
-          this.task.heading = ''
-          this.task.headingId = ''
-          this.task.group = ''
-        }
-        if (t.group) {
-          this.task.heading = ''
-          this.task.headingId = ''
-          this.task.folder = ''
-          this.task.tags = []
-        }
-        if (t.list) {
-          this.task.folder = ''
-        }
-        
-        let n = t.name
-        if (this.toReplace)
-          for (const s of this.toReplace)
-            if (!this.fromIconDrop && s)
-              n = n.replace(new RegExp(s), '')
-        const i = n.indexOf(' $')
-        if (i && i > -1 && t.calendar) {
-          n = n.substr(0, i)
-        }
-        let heading = t.headingId
-        let calendar = t.calendar
-        if (heading === undefined) heading = null
-        if (calendar === undefined) calendar = null
-        if (this.isEditingFiles && this.addedFiles.length > 0)
-          this.savingTask = true
-        this.$emit('save', {
-          ...t,
-          list: this.listId,
-          folder: this.folderId,
-          group: this.groupId,
-          tags: this.tagIds,
-          name: n.trim(), heading,
-          calendar,
-          files: this.files,
-          handleFiles: this.isEditingFiles ? taskId => {
-            return new Promise((solve, reject) => {
-              this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId, 'tasks')
-              .then(() => {
-                this.files = []
-                this.addedFiles = []
-                solve()
-              })
-              .catch(() => {
-                this.$store.commit('pushToast', {
-                  name: 'An error occurred while editing files.',
-                  seconds: 4,
-                  type: 'error',
+      if (!this.iconDrop) {
+        const t = this.task
+        if (this.defaultTask && !this.isEditingFiles)
+          this.leave(this.$el)
+        if (t.name) {
+          if (t.folder) {
+            this.task.list = ''
+            this.task.heading = ''
+            this.task.headingId = ''
+            this.task.group = ''
+          }
+          if (t.group) {
+            this.task.heading = ''
+            this.task.headingId = ''
+            this.task.folder = ''
+            this.task.tags = []
+          }
+          if (t.list) {
+            this.task.folder = ''
+          }
+          
+          let n = t.name
+          if (this.toReplace)
+            for (const s of this.toReplace)
+              if (!this.fromIconDrop && s)
+                n = n.replace(new RegExp(s), '')
+          const i = n.indexOf(' $')
+          if (i && i > -1 && t.calendar) {
+            n = n.substr(0, i)
+          }
+          let heading = t.headingId
+          let calendar = t.calendar
+          if (heading === undefined) heading = null
+          if (calendar === undefined) calendar = null
+          if (this.isEditingFiles && this.addedFiles.length > 0)
+            this.savingTask = true
+          this.$emit('save', {
+            ...t,
+            list: this.listId,
+            folder: this.folderId,
+            group: this.groupId,
+            tags: this.tagIds,
+            name: n.trim(), heading,
+            calendar,
+            files: this.files,
+            handleFiles: this.isEditingFiles ? taskId => {
+              return new Promise((solve, reject) => {
+                this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId, 'tasks')
+                .then(() => {
+                  this.files = []
+                  this.addedFiles = []
+                  solve()
                 })
-                reject()
+                .catch(() => {
+                  this.$store.commit('pushToast', {
+                    name: 'An error occurred while editing files.',
+                    seconds: 4,
+                    type: 'error',
+                  })
+                  reject()
+                })
               })
-            })
-          } : null
-        })
-        t.checklist = []
-        t.notes = ''
-        t.name = ''
-        t.order = []
+            } : null
+          })
+          t.checklist = []
+          t.notes = ''
+          t.name = ''
+          t.order = []
+        }
       }
     },
     removeTag(name) {

@@ -154,9 +154,12 @@ export default {
   color: var(--txt);
 }
 
+.input {
+  padding: 0;
+}
+
 .heading .input {
   margin-left: -6px;
-  padding: 0;
 }
 
 </style>
