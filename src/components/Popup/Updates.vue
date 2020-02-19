@@ -148,11 +148,12 @@ export default {
 <style scoped>
 
 .Update.desktop {
-  max-height: 350px;
+  max-height: 450px;
 }
 
 .Update {
   overflow: auto;
+  flex-basis: 1000px;
 }
 
 .options-wrapper {

@@ -83,7 +83,7 @@
         :value='showMoreItemsMessage'
         @click="showingMoreItems = true"
       />
-      <div v-if="showAddItemButton"
+      <div v-if="showAddItemButton && !moving"
         class="add-item-wrapper"
       >
         <div
@@ -93,7 +93,7 @@
           Add item
         </div>
       </div>
-      <div v-if="isDesktop && viewType === 'list' && !isSmart"
+      <div v-if="isDesktop && viewType === 'list' && !moving && !isSmart"
         class="heading-add"
         @click.stop="addHeadingsEdit(lazyItems.length)"
       >

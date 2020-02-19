@@ -51,16 +51,27 @@ export default {
       },
       getListsByFolderId: {
         react: [
-          'order'
+          'order',
         ],
-        getter({state, getters, rootGetters}, {id, lists}) {
-          const arr = []
+        getter({getters, rootGetters}, {id, lists}) {
           const fold = getters.folders.find(f => f.id === id)
+          const arr = []
+          console.log(lists)
           for (const l of lists)
             if (l.folder && l.folder === id) arr.push(l)
           let order = fold.order
           if (!order) order = []
           return rootGetters.checkMissingIdsAndSortArr(order, arr)
+        },
+        cache(args) {
+          return JSON.stringify({
+            f: args[0].id,
+            l: args[0].lists.map(el => ({
+              i: el.id,
+              f: el.folder,
+              u: el.userId,
+            }))
+          })
         },
       },
       getFoldersByName: {

@@ -375,6 +375,7 @@ export default {
             c: args[0].map(el => ({
               c: el.completed,
               ca: el.canceled,
+              f: el.folder,
               ass: el.assigned,
               cab: el.calendar,
               g: el.group

@@ -442,7 +442,7 @@ export default {
 
       if (key === "Escape" && !isTyping)
         this.cancel()
-      if (key === "Enter" && this.isElementFunction)
+      if (key === "Enter" && this.isElementFunction && !isTyping)
         this.keyboardActions[this.cursorPos]()
 
       utils.saveByShortcut(this, true, key, p, (type, task) => {
@@ -1222,7 +1222,7 @@ export default {
         this.$refs['task-notes'].removeFocus()
       else if (newPos === this.lastKeyboardActionIndex && oldPos === 0)
         this.$refs['task-name'].removeFocus()
-      
+
       if (this.cursorPos < 2 && this.isElementFunction)
         this.keyboardActions[this.cursorPos]()
     },

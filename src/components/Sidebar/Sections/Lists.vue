@@ -261,7 +261,9 @@ export default {
       const sortedFoldersAndGroups = this.sortedFoldersAndGroups
       sortedFoldersAndGroups.forEach(fold => {
         if (!fold.isGroup) {
-          fold.list = this.filterSidebarLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
+          fold.list = this.filterSidebarLists(
+            this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders})
+          )
 
           fold.comp = "Folder"
         } else {
