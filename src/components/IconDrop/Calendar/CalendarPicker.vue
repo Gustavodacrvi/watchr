@@ -2,11 +2,51 @@
   <div class="CalendarPicker">
     <div key="calendar" class="view calendar">
       <div class="fast-options">
-        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="star" @click="today"/>
-        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="sun" @click="tomorrow"/>
-        <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="archive" @click="someday"/>
-        <Icon v-if="!onlyDates || allowNull" class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
-        <Icon v-if="repeat && !onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
+        <Icon
+          class="cursor icon-box"
+          width="24px"
+          icon="star"
+          ref='tod'
+          :box='true'
+          :active='selectionPos === 0 && isDesktop'
+          @click="today"
+        />
+        <Icon
+          class="cursor icon-box"
+          width="24px"
+          icon="sun"
+          ref='tom'
+          :box='true'
+          :active='selectionPos === 1 && isDesktop'
+          @click="tomorrow"
+        />
+        <Icon v-if="allowSomeday"
+          class="cursor icon-box"
+          width="24px"
+          ref='som'
+          icon="archive"
+          :box='true'
+          :active='selectionPos === 2 && isDesktop'
+          @click="someday"
+        />
+        <Icon v-if="allowBloqued"
+          class="cursor icon-box"
+          ref='bloq'
+          width="24px"
+          icon="bloqued"
+          :box='true'
+          :active='selectionPos === 3 && isDesktop'
+          @click="noDate"
+        />
+        <Icon v-if="allowRepeat"
+          class="cursor icon-box"
+          ref='rep'
+          width="24px"
+          icon="repeat"
+          :box='true'
+          :active='selectionPos === 4 && isDesktop'
+          @click="$emit('repeat')"
+        />
       </div>
       <div v-if="!noTime" class="opt cursor remove-highlight rb" @click='$emit("get-time", selectedMoment.format("Y-M-D"))'>
         <span class="msg">Time: {{ getTime }}</span>
@@ -70,14 +110,32 @@ export default {
       selectedMoment: this.initalDate ? mom(this.initalDate, 'Y-M-D') : mom(),
       time: null,
       calendarObj: null,
+
+      selectionPos: 0,
     }
   },
   created() {
     if (this.defaultTime)
       this.time = this.defaultTime
   },
+  mounted() {
+    window.addEventListener('keydown', this.keydown)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.keydown)
+  },
   computed: {
-    ...mapState(['userInfo']),
+    ...mapState(['userInfo', 'isOnShift']),
+    ...mapGetters(['isDesktop']),
+    allowSomeday() {
+      return !this.onlyDates
+    },
+    allowBloqued() {
+      return !this.onlyDates || this.allowNull
+    },
+    allowRepeat() {
+      return this.repeat && !this.onlyDates
+    },
     calendarStr() {
       if (this.calendarObj)
         return utils.parseCalendarObjectToString(this.calendarObj, this.userInfo)
@@ -91,11 +149,64 @@ export default {
       }
       return 'No time'
     },
+    iconKeyboardActions() {
+      const c = ref => () => this.$refs[ref].click()
+
+      const obj = {
+        0: c('tod'),
+        1: c('tom'),
+      }
+
+      const getLength = () => Object.keys(obj).length
+
+      if (this.allowSomeday)
+        obj[getLength()] = c('som')
+      
+      if (this.allowBloqued)
+        obj[getLength()] = c('bloq')
+
+      if (this.allowRepeat)
+        obj[getLength()] = c('rep')
+
+      return obj
+    },
+    keyboardActions() {
+      return this.iconKeyboardActions
+    },
   },
   methods: {
-    keydown({key}) {
-      if (key === "Enter")
-        this.$emit('select', this.calendarObj)
+    keydown(evt) {
+      const { key } = evt
+      const p = () => {
+        evt.stopPropagation()
+        evt.preventDefault()
+      }
+
+      if (key === "ArrowDown") {
+        p()
+
+        if (this.isOnShift)
+          this.selectionPos = Object.keys(this.keyboardActions).length - 1
+        else
+          this.increment(1)
+      } else if (key === 'ArrowUp') {
+        p()
+
+        if (this.isOnShift)
+          this.selectionPos = 0
+        else
+          this.increment(-1)
+      }
+      else if (key === 'Enter') {
+        this.keyboardActions[this.selectionPos]()
+      } else if (key === "Escape") {
+        this.$emit('close')
+      }
+    },
+    increment(inc) {
+      const newIndex = this.selectionPos + inc
+      if (this.keyboardActions[newIndex])
+        this.selectionPos = newIndex
     },
     noDate() {
       if (this.allowNull && this.onlyDates)

@@ -352,7 +352,7 @@ export default {
           const dispatch = this.$store.dispatch
   
           if (this.shortcutsType === 'Task') {
-  
+
             if (fallbackItems)
               switch (type) {
                 case 'delete': {
@@ -364,6 +364,10 @@ export default {
                     ids: fallbackItems,
                     task: item,
                   })
+                  break
+                }
+                case 'logbook': {
+                  dispatch('task/logTasks', fallbackItems)
                   break
                 }
                 case 'toggleCompletion': {
@@ -699,6 +703,7 @@ export default {
       lists: 'list/sortedLists',
       tasks: 'task/tasks',
       folders: 'folder/sortedFolders',
+      groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
       fallbackSelected: 'fallbackSelected',
 

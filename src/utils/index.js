@@ -591,6 +591,14 @@ export default {
           vm.$store.commit('clearSelected')
           break
         }
+        case '.': {
+          save('toggleCompletion')
+          break
+        }
+        case ',': {
+          save('toggleCancel')
+          break
+        }
       }
     
     if (isOnShift && !isEditing) {
@@ -616,45 +624,25 @@ export default {
           })
           break
         }
-        case 'P': {
-          save('save', {
-            priority: 'High priority',
-          })
-          break
-        }
-        case 'M': {
-          save('save', {
-            priority: 'Medium priority',
-          })
-          break
-        }
-        case 'L': {
-          save('save', {
-            priority: 'Low priority',
-          })
-          break
-        }
-        case 'N': {
-          save('save', {
-            priority: '',
-          })
-          break
-        }
       }
     }
 
     const iconDrop = opt => vm.$store.commit('pushIconDrop', opt)
+
+    if (isOnShift && isOnAlt)
+      switch (key) {
+        case 'L': {
+          save('logbook')
+          break
+        }
+        case "A": {
+          save('assign')
+          break
+        }
+      }
           
     if (isOnAlt && !isOnControl)
       switch (key) {
-        case '.': {
-          save('toggleCompletion')
-          break
-        }
-        case ',': {
-          save('toggleCancel')
-          break
-        }
         case 'p': {
           save('pomo')
           break
@@ -665,6 +653,44 @@ export default {
             comp: 'CalendarPicker',
             repeat: true,
             content: {callback: calendar => save('save', {calendar})},
+          })
+          break
+        }
+        case 'd': {
+          p()
+          iconDrop({
+            comp: 'CalendarPicker',
+            repeat: true,
+            content: {
+              onlyDates: true,
+              noTime: true,
+              allowNull: true,
+              callback: ({specific}) => save('save', {deadline: specific})
+            },
+          })
+          break
+        }
+        case 'h': {
+          save('save', {
+            priority: 'High priority',
+          })
+          break
+        }
+        case 'm': {
+          save('save', {
+            priority: 'Medium priority',
+          })
+          break
+        }
+        case 'l': {
+          save('save', {
+            priority: 'Low priority',
+          })
+          break
+        }
+        case 'n': {
+          save('save', {
+            priority: '',
           })
           break
         }
@@ -708,6 +734,23 @@ export default {
                 folder: t.id,
                 list: null,
                 group: null,
+                heading: null,
+              }),
+            })),
+            allowSearch: true,
+          })
+          break
+        }
+        case 'g': {
+          p()
+          iconDrop({
+            links: vm.groups.map(t => ({
+              ...t,
+              icon: 'group',
+              callback: () => save('save', {
+                folder: null,
+                list: null,
+                group: t.id,
                 heading: null,
               }),
             })),

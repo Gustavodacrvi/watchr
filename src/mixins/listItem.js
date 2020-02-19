@@ -186,13 +186,13 @@ export default {
             break
           }
         }
-      
+
       if (this.isOnShift && this.isOnControl) {
         switch (key) {
           case ' ': {
             if (!isTyping) {
               p()
-              this.$emit('add-heading-after', 0)
+              this.$emit('add-heading-after', -1)
             }
             break
           }

@@ -10,6 +10,7 @@
         :allowNull='content.allowNull'
         @repeat='openRepeatOptions'
         @calc='$emit("calc")'
+        @close='$emit("close")'
         @get-time='getTime'
       />
     </div>

@@ -86,7 +86,7 @@
                 @touchstart.passive='checkTouchStart'
                 @touchend.passive='touchComplete'
               >
-                <TaskIcons class="check-icon icon"
+                <TaskIcons
                   :co='completed'
                   :color='circleColor'
                   :se='isSelecting'
