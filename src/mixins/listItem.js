@@ -122,12 +122,13 @@ export default {
 
       switch (key) {
         case 'Enter': {
-          if (!isTyping && !this.isEditingComp && !this.iconDrop)
+          if (!isTyping && !this.isEditingComp && !this.iconDrop) {
             if (!this.isOnControl && !this.justSaved)
-              this.isEditing = true
+            this.isEditing = true
             else if (this.isOnControl) {
               toggleSelect()
             }
+          }
           break
         }
       }

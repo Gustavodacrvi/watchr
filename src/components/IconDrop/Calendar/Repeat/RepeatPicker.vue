@@ -405,6 +405,7 @@ export default {
     ...mapState({
       userInfo: state => state.userInfo,
     }),
+    ...mapGetters(['platform']),
     getDays() {
       return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     },

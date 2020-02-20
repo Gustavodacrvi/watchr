@@ -89,6 +89,7 @@
                 <TaskIcons
                   :co='completed'
                   :color='circleColor'
+                  :re='isRepeatingTask'
                   :se='isSelecting'
                   :ca='canceled'
                   :so='isSomeday'
@@ -114,14 +115,20 @@
                     >
                       <span v-if="logStr" class="check-date" ref='check-name'>{{ logStr }}</span>
                     </transition>
+                    
+                    <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+                    <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+                    <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
+                    <span v-else-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
+                    <span v-else-if="calendarStr && !isToday && !isTomorrow" class="txt-str cb rb">{{ calendarStr }}</span>
+
                     <span v-html="parsedName" ref='parsed-name'></span>
                     <Icon v-if="haveChecklist"
-                      class="txt-icon checklist-icon"
-                      icon="pie"
-                      color="var(--fade)"
-                      width="12px"
-                      :progress='checklistPieProgress'
-                    />
+                    class="txt-icon checklist-icon"
+                    icon="pie"
+                    color="var(--fade)"
+                    width="12px"
+                    :progress='checklistPieProgress'/>
                     <span v-if="!isDesktop && nonReadComments" class="comment-icon">
                       <Icon
                         icon='comment'
@@ -138,11 +145,6 @@
                 </div>
               </div>
               <span class="info" ref='info'>
-                <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
-                <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-                <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
-                <span v-if="deadlineStr" class="tag alert">{{ deadlineStr }}</span>
-                <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                 <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                 <span v-if="groupStr" class="tag cb rb">{{ groupStr }}</span>
                 <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
@@ -634,6 +636,10 @@ export default {
       }
       return arr
     },
+    isRepeatingTask() {
+      const c = this.item.calendar
+      return c && c.type !== 'specific' && c.type !== 'someday'
+    },
     completedItem() {
       return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
     },
@@ -1027,6 +1033,8 @@ export default {
   max-width: 100%;
   position: absolute;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -1045,7 +1053,8 @@ export default {
 }
 
 .name-icon {
-  margin: 0 4px;
+  margin-right: 9px;
+  transform: translateY(2px);
 }
 
 .apply {
@@ -1058,6 +1067,11 @@ export default {
   margin: 0 4px;
   font-size: .75em;
   white-space: nowrap;
+}
+
+.txt-str {
+  margin-right: 9px;
+  font-size: .75em;
 }
 
 .task-tag {

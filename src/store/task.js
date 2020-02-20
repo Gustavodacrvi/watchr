@@ -367,7 +367,7 @@ export default {
         },
       },
       getTaskDeadlineStr: {
-        getter({getters}, task, date, l) {
+        getter({}, task, date, l) {
           const getDaysLeft = (deadline, date) => {
             const dead = mom(deadline, 'Y-M-D')
             const compare = mom(date, 'Y-M-D')
@@ -381,7 +381,8 @@ export default {
           
           if (!task.deadline)
             return null
-          return utils.getHumanReadableDate(task.deadline, l) + ' ' + getDaysLeft(task.deadline, date)
+          const readable = utils.getHumanReadableDate(task.deadline, l)
+          return (readable === 'Today' ? '' : readable) + ' ' + getDaysLeft(task.deadline, date)
         },
         cache(args) {
           return args[0].deadline

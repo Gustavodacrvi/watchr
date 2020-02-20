@@ -211,7 +211,6 @@ export default {
     click() {
       if (this.isDesktop && !this.isSelecting) {
         this.isEditing = true
-        this.focus()
         window.addEventListener('pointerdown', this.hide)
       }
     },
@@ -334,6 +333,10 @@ export default {
   watch: {
     list() {
       this.getListOptions()
+    },
+    isEditing() {
+      if (this.isEditing)
+        this.focus()
     },
   },
 }

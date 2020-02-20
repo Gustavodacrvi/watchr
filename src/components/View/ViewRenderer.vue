@@ -307,21 +307,33 @@ export default {
             }
           }
         }
-  
-        switch (key) {
-          case 'ArrowLeft': {
-            this.go(null)
-            break
-          }
-          case 'ArrowRight': {
-            this.go(null)
-            break
-          }
-          case '/': {
-            this.$emit('sidebar')
-            break
-          }
+
+        if (this.isOnShift)
+          switch (key) {
+            case 'ArrowRight': {
+              if (this.shortcutsType === 'List' && fallbackItems.length === 1) {
+                p()
+                this.$router.push(`/user?list=${this.getListsById(fallbackItems)[0].name}`)
+              }
+              break
+            }
         }
+  
+        if (!this.isOnShift)
+          switch (key) {
+            case 'ArrowLeft': {
+              this.go(null)
+              break
+            }
+            case 'ArrowRight': {
+              this.go(null)
+              break
+            }
+            case '/': {
+              this.$emit('sidebar')
+              break
+            }
+          }
         
         if (this.isOnControl) {
           switch (key) {

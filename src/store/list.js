@@ -159,7 +159,8 @@ export default {
         getter({getters}, list, date, l) {
           if (!list.deadline)
             return null
-          return utils.getHumanReadableDate(list.deadline, l) + ' ' + getters.getListDeadlineDaysLeftStr(list.deadline, date)
+          const readable = utils.getHumanReadableDate(list.deadline, l)
+          return (readable === 'Today' ? '' : readable) + ' ' + getters.getListDeadlineDaysLeftStr(list.deadline, date)
         },
         cache(args) {
           return JSON.stringify({

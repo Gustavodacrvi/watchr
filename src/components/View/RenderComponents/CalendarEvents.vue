@@ -219,7 +219,7 @@ export default {
   },
   watch: {
     date() {
-      if (this.date)
+      if (this.date && this.date !== this.date)
         this.getEvents()
       else this.events = []
     },

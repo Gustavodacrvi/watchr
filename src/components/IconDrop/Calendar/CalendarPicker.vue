@@ -58,7 +58,7 @@
             class="cursor icon-box"
             ref='rep'
             width="24px"
-            icon="repeat"a
+            icon="repeat"
             title='Recurring dates'
             :box='true'
             :active='selectionPos === 5 && isDesktop'
@@ -150,7 +150,8 @@ export default {
   mounted() {
     window.addEventListener('keydown', this.keydown)
 
-    this.focusName()
+    if (this.isDesktop)
+      this.focusName()
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.keydown)

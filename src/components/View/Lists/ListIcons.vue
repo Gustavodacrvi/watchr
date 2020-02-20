@@ -5,7 +5,12 @@
     mode="out-in"
     tag="span"
   >
-    <Icon v-if="!props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="1"
+    <Icon v-if="props.re && !props.se" class="tra-icon cursor remove-highlight" key="0"
+      icon="repeat"
+      :color='props.color'
+      width="22px"
+    />
+    <Icon v-else-if="!props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="1"
       icon="pie"
       width="16px"
       :progress='props.progress'
@@ -48,7 +53,7 @@
 <script>
 
 export default {
-  props: ['co', 'so', 'ca', 'se', 'progress'],
+  props: ['co', 'so', 'ca', 're', 'se', 'progress'],
 }
 
 </script>
