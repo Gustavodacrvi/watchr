@@ -17,7 +17,6 @@ export const cacheRef = id => fire.collection('users').doc(id ? id : uid()).coll
 export const setCache = obj => cacheRef().set(obj, {merge: true})
 export const taskColl = () => userRef().collection('tasks')
 export const listColl = () => userRef().collection('lists')
-export const serverTimestamp = () => fb.firestore.FieldValue.serverTimestamp()
 export const statsColl = () => userRef().collection('stats')
 export const folderColl = () => userRef().collection('folders')
 export const taskRef = id => id ? taskColl().doc(id) : taskColl().doc()
@@ -255,7 +254,7 @@ export const addComment = (b, groupId, room, comment, name, rootState) => {
     files: [],
     reactions: [],
     created: mom().format('Y-M-D HH:mm ss'), 
-    createdFire: serverTimestamp(),
+    createdFire: new Date(),
     readBy: null,
   }
   

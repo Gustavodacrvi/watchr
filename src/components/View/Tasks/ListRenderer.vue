@@ -151,7 +151,7 @@ import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import HeadingsRenderer from './HeadingsRenderer.vue' 
 
-import { serverTimestamp, uid } from '@/utils/firestore'
+import { uid } from '@/utils/firestore'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -547,7 +547,7 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
-            this.onSortableAdd(evt, ids, type, this.lazyItems.map(el => el.id))
+            this.onSortableAdd(evt, ids, type, this.lazyItems.filter(el => el).map(el => el.id))
             this.sourceVueInstance = null
           } else {  
             const i = evt.newIndex
@@ -693,8 +693,7 @@ export default {
         let i = 0
         const length = items.length
 
-        const multiplier = this.isDesktop ? 1.5 : 5
-        const timeout = length * multiplier
+        const timeout = this.isDesktop ? 25 : length * 5
         
         const add = item => {
           this.lazyItems.push(item)
@@ -836,7 +835,7 @@ export default {
           ...t,
           id: newItemRef.id,
           userId: uid(),
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
         }
 

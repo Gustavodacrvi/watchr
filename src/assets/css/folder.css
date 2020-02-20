@@ -93,3 +93,7 @@
   top: 50%;
   transform: translateY(-50%);
 }
+
+.sortable-ghost .header {
+  display: none;
+}

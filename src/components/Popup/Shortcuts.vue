@@ -107,6 +107,10 @@
         <span class="tag">Alt + Shift + L</span>
       </div>
       <div class="line">
+        <span>Assign user to selection</span>
+        <span class="tag">Alt + A</span>
+      </div>
+      <div class="line">
         <span>Add selection to group</span>
         <span class="tag">Alt + L</span>
       </div>

@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, setGroup } from '../utils/firestore'
+import { uid, fd, setInfo, folderRef, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, setGroup } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -851,7 +851,7 @@ export default {
 
       setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
       }, rootState, obj.id).then(() => {
@@ -869,7 +869,7 @@ export default {
         pros.push(
           setTask(b, {
             ...t,
-            createdFire: serverTimestamp(),
+            createdFire: new Date(),
             created: mom().format('Y-M-D HH:mm ss'),
             userId: uid(),
             id: ref.id,
@@ -939,7 +939,7 @@ export default {
               group,
               userId: uid(),
               name: t.name,
-              createdFire: serverTimestamp(),
+              createdFire: new Date(),
               created: mom().format('Y-M-D HH:mm ss'),
               id: t.id,
               priority: '',
@@ -958,7 +958,7 @@ export default {
           smartViewsOrders: {},
           folder,
           group,
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
           name: tasksWithConflictingListNames[task.id] ? task.name + ' (list)' : task.name,
           notes: task.notes || null,
@@ -1007,7 +1007,7 @@ export default {
         for (const t of task.checklist) {
           setTask(b, {
             id: t.id,
-            createdFire: serverTimestamp(),
+            createdFire: new Date(),
             created: mom().format('Y-M-D HH:mm ss'),
             cloud_function_edit: false,
             folder: null,
@@ -1029,7 +1029,7 @@ export default {
           folder,
           group,
           userId: uid(),
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
           users: [uid()],
           assigned: task.assigned || null,
@@ -1055,7 +1055,7 @@ export default {
 
       await batchSetTasks(b, {
         logbook: true,
-        logFire: serverTimestamp(),
+        logFire: new Date(),
         logDate: mom().format('Y-M-D'),
         fullLogDate: mom().format('Y-M-D HH:mm ss'),
       }, tasks, rootState, writes)
@@ -1102,7 +1102,7 @@ export default {
 
         const tod = mom()
         let obj = {
-          completedFire: serverTimestamp(),
+          completedFire: new Date(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
           fullCheckDate: tod.format('Y-M-D HH:mm ss'),
@@ -1119,7 +1119,7 @@ export default {
           obj = {
             ...obj,
             logbook: true,
-            logFire: serverTimestamp(),
+            logFire: new Date(),
             logDate: mom().format('Y-M-D'),
             fullLogDate: mom().format('Y-M-D HH:mm ss'),
           }
@@ -1178,7 +1178,7 @@ export default {
         obj = {
           ...obj,
           logbook: true,
-          logFire: serverTimestamp(),
+          logFire: new Date(),
           logDate: mom().format('Y-M-D'),
           fullLogDate: mom().format('Y-M-D HH:mm ss'),
         }
@@ -1265,7 +1265,7 @@ export default {
 
       setTask(b, {
         ...task, files: [],
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
       }, rootState)
 

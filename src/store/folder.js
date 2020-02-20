@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { folderColl, uid, folderRef, deleteFolder, setFolder, serverTimestamp, listRef, setInfo, taskRef, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks } from '../utils/firestore'
+import { uid, deleteFolder, setFolder, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
@@ -104,7 +104,7 @@ export default {
       setFolder(b, {
         tasks: [],
         files: [],
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...fold,
         defaultShowing: true,

@@ -60,7 +60,7 @@
           opacity='0'
         />
         <div class="cont">
-          <div class="icon-wrapper"
+          <div class="icon-wrapper" :class="{fade: !onHover}"
             @click.stop="desktopComplete"
             @contextmenu.stop.prevent='desktopCancel'
             
@@ -455,7 +455,7 @@ export default {
 }
 
 .fade {
-  opacity: .6;
+  opacity: .3;
 }
 
 .deadline {

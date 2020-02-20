@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { tagColl, tagRef, setInfo, fd, taskRef, setTag, serverTimestamp, cacheRef, setTask, cacheBatchedItems, deleteTag, batchSetTasks } from '../utils/firestore'
+import { tagColl, tagRef, setInfo, fd, taskRef, setTag, cacheRef, setTask, cacheBatchedItems, deleteTag, batchSetTasks } from '../utils/firestore'
 import mom from 'moment'
 
 const uid = () => {
@@ -111,7 +111,7 @@ export default {
     addTag({rootState}, {name, index, ids, parent}) {
       if (!parent) parent = null
       const obj = {
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         name,
         userId: uid(),
@@ -162,7 +162,7 @@ export default {
       const writes = []
       
       await setTask(b, {
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,

@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from "@/utils/task"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
-import { listRef, setInfo, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists, setGroup } from '../utils/firestore'
+import { listRef, setInfo, uid, listColl, taskRef, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists, setGroup } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment'
@@ -451,7 +451,7 @@ export default {
           setTask(b, {
             ...t, id: null, list: newListRef.id,
             group,
-            createdFire: serverTimestamp(),
+            createdFire: new Date(),
             created: mom().format('Y-M-D HH:mm ss'),
           }, rootState, ref.id, writes)
           arr.push({
@@ -484,7 +484,7 @@ export default {
         name,
         group,
         folder: list.folder || null,
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         deadline: list.deadline || null,
         tags: list.tags || [],
@@ -582,7 +582,7 @@ export default {
         name, folder,
         smartViewsOrders: {},
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
@@ -616,7 +616,7 @@ export default {
         
         const tod = mom()
         setList(b, {
-          completedFire: serverTimestamp(),
+          completedFire: new Date(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
           fullCheckDate: tod.format('Y-M-D HH:mm ss'),
@@ -717,7 +717,7 @@ export default {
         name: oldHeading.name,
         notes: oldHeading.notes || null,
         headings: [],
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         headingsOrder: [],
         tasks: taskIds,
@@ -811,7 +811,7 @@ export default {
       
       await setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -832,7 +832,7 @@ export default {
       
       await setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -856,7 +856,7 @@ export default {
       
       await setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -878,7 +878,7 @@ export default {
         name: '',
         smartViewsOrders: {},
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
@@ -901,7 +901,7 @@ export default {
       
       setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -923,7 +923,7 @@ export default {
       
       setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -945,7 +945,7 @@ export default {
       const writes = []
       
       setTask(b, {
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
@@ -1245,7 +1245,7 @@ export default {
         name: '',
         smartViewsOrders: {},
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
@@ -1333,7 +1333,7 @@ export default {
       task.heading = headingId
       setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)

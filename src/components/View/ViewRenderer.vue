@@ -292,7 +292,7 @@ export default {
         const hasSelected = this.selectedItems.length > 0
   
         const fallbackItems = this.fallbackSelected
-        
+
         if (!isTyping && (!this.mainSelection || this.mainSelectionIsNotInView)) {
           switch (key) {
             case 'ArrowDown': {
@@ -345,6 +345,47 @@ export default {
               }
               break
             }
+          }
+        }
+
+        if (this.isOnAlt && key === 'a') {
+          let isTask
+          let items
+          
+          if (this.shortcutsType === 'Task') {
+            isTask = true
+            items = this.getTasksById(fallbackItems)
+          } else {
+            isTask = false
+            items = this.getListsById(fallbackItems)
+          }
+          const groupSet = new Set()
+
+          items.forEach(el => {
+            if (el && el.group && !groupSet.has(el.group))
+              groupSet.add(el.group)
+          })
+
+          if (items.some(el => el && el.group) && groupSet.size === 1) {
+            const ids = fallbackItems.slice()
+
+            const callback = !isTask ?
+                uid => this.$store.dispatch('list/saveListsById', {
+                  ids,
+                  list: {
+                    assigned: uid,
+                  },
+                }) : 
+                uid => this.$store.dispatch('task/saveTasksById', {
+                  ids,
+                  task: {
+                    assigned: uid,
+                  },
+                })
+            
+            this.$store.commit('pushIconDrop',
+              this.getAssigneeIconDrop({group: items[0].group}, callback)
+            )
           }
         }
   
