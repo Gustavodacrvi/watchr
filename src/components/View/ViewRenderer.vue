@@ -135,7 +135,7 @@ export default {
   'width', 'sidebarHided',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
-  'headerOptions', 'headerInfo', 'disableFloatingButton',
+  'headerOptions', 'headerInfo', 'disableRootActions',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'getCalendarOrderDate', 'viewItem',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',

@@ -103,7 +103,7 @@ export default {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
 
-      if (!isTyping)
+      if (!isTyping && !this.isOnShift)
         switch (key) {
           case 'ArrowLeft': {
             if (this.historyPos > 1) {

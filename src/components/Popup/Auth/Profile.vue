@@ -105,7 +105,7 @@
               :name="s.name"
               :value='!isHided(s.name)'
               :icon='s.icon'
-              :color='s.color'
+              :color='s.iconColor'
               @input='toggleSection(s.name)'
             />
             <h4 class="title">Enabled Smart Views</h4>
@@ -114,7 +114,7 @@
               :name="s.name"
               :value='!isSmartViewHided(s.name)'
               :icon='s.icon'
-              :color='s.color'
+              :color='s.iconColor'
               @input='toggleSmartView(s.name)'
             />
           </div>
@@ -157,58 +157,6 @@ export default {
           icon: 'filter',
           color: 'var(--dark-blue)'
         } */
-      ],
-      sidebarSmartViews: [
-        {
-          name: 'Today',
-          icon: 'star',
-          color: 'var(--yellow)'
-        },
-        {
-          name: 'Tomorrow',
-          icon: 'sun',
-          color: 'var(--orange)'
-        },
-        {
-          name: 'Inbox',
-          icon: 'inbox',
-          color: 'var(--primary)'
-        },
-        {
-          name: 'Upcoming',
-          icon: 'calendar',
-          color: 'var(--green)'
-        },
-        {
-          name: 'Anytime',
-          icon: 'layer-group',
-          color: 'var(--dark-blue)',
-        },
-        {
-          name: 'Someday',
-          icon: 'archive',
-          color: 'var(--brown)'
-        },
-        {
-          name: 'Pomodoro',
-          icon: 'pomo',
-          color: 'var(--dark-red)'
-        },
-        {
-          name: 'Calendar',
-          icon: 'calendar-star',
-          color: 'var(--purple)'
-        },
-        {
-          name: 'Logbook',
-          icon: 'logbook',
-          color: 'var(--olive)'
-        },
-        {
-          name: 'Statistics',
-          icon: 'pie',
-          color: 'var(--primary)'
-        },
       ],
       hidedSections: [],
       hidedSmartViews: [],
@@ -313,6 +261,9 @@ export default {
   computed: {
     ...mapGetters(['platform', 'isDesktop']),
     ...mapState(['user', 'userInfo']),
+    sidebarSmartViews() {
+      return this.$store.getters.sidebarElements
+    },
     changedOptions() {
       this.forceUpdate
       if (this.pmFormat !== this.getPmFormat) return true

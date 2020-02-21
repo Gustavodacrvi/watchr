@@ -24,7 +24,7 @@
                 @click="click(o.callback)"
               >
                 <div class="icon-wrapper">
-                  <Icon :icon='o.icon' class="icon" :color="o.color"/>
+                  <Icon :icon='o.icon' class="icon" :color="o.iconColor"/>
                 </div>
                 <span class="name">{{ o.name }}</span>
               </div>
@@ -89,7 +89,7 @@ export default {
       return this.payload.allowed.find(s => s === str)
     },
     getOptions() {
-      const { search, tasks, tags, lists, folders, views, groups } = this
+      const { search, tasks, tags, lists, folders, sidebarElements, groups } = this
       if (!search) return []
       const lower = search.toLowerCase()
       const arr = []
@@ -101,7 +101,7 @@ export default {
       const gr = filter(groups)
       const ts = filter(tasks)
       const fs = filter(folders)
-      const vs = filter(views)
+      const vs = filter(sidebarElements)
 
       const go = this.hasCallback ? this.payload.callback : route => this.$router.push(route)
 
@@ -193,6 +193,7 @@ export default {
       groups: state => state.group.groups,
     }),
     ...mapGetters({
+      sidebarElements: 'sidebarElements',
       lists: 'list/lists',
       tags: 'tag/tags',
       folders: 'folder/folders',
@@ -206,60 +207,6 @@ export default {
       if (this.onlyTasks)
         return 'Search task...'
       return 'Search for tags, lists, folders and tasks...'
-    },
-    views() {
-      return [
-        {
-          name: 'Today',
-          icon: 'star',
-          color: 'var(--yellow)'
-        },
-        {
-          name: 'Tomorrow',
-          icon: 'sun',
-          color: 'var(--orange)'
-        },
-        {
-          name: 'Inbox',
-          icon: 'inbox',
-          color: 'var(--primary)'
-        },
-        {
-          name: 'Upcoming',
-          icon: 'calendar',
-          color: 'var(--green)'
-        },
-        {
-          name: 'Anytime',
-          icon: 'layer-group',
-          color: 'var(--dark-blue)',
-        },
-        {
-          name: 'Someday',
-          icon: 'archive',
-          color: 'var(--brown)'
-        },
-        {
-          name: 'Pomodoro',
-          icon: 'pomo',
-          color: 'var(--dark-red)'
-        },
-        {
-          name: 'Calendar',
-          icon: 'calendar-star',
-          color: 'var(--purple)'
-        },
-        {
-          name: 'Logbook',
-          icon: 'logbook',
-          color: 'var(--olive)'
-        },
-        {
-          name: 'Statistics',
-          icon: 'pie',
-          color: 'var(--primary)'
-        },
-      ]
     },
     noActive() {
       return !this.active.name || !this.active.icon

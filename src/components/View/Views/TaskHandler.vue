@@ -61,7 +61,7 @@ export default {
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
     'selectEverythingToggle', 'getCalendarOrderDate',
-    'width', 'disableFloatingButton',
+    'width', 'disableRootActions',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
@@ -318,7 +318,7 @@ export default {
       const headings = this.headings
       if (!headings) return []
       const mainTasks = this.mainTasks
-      
+
       return headings.map(head => {
         
         const nonFiltered = !head.directFiltering ?

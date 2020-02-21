@@ -197,7 +197,7 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'activeTags', 'header', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  props: ['item', 'activeTags', 'header', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
@@ -780,7 +780,7 @@ export default {
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if ((!c || c.type === 'someday') || (!this.allowCalendarStr && !this.isRoot)) return null
+      if ((!c || c.type === 'someday') || this.disableCalendarStr || !this.isRoot) return null
       const str = utils.parseCalendarObjectToString(c, this.userInfo)
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
@@ -790,6 +790,8 @@ export default {
       return utils.getHumanReadableDate(this.item.logDate)
     },
     deadlineStr() {
+      if (this.disableDeadlineStr)
+        return null
       return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
     showCheckDate() {

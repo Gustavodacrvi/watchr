@@ -86,7 +86,7 @@ export default {
     onSortableAdd() {
       const n = this.viewName
 
-      if (n === 'Upcoming' || n === 'Logbook' || n === 'Later lists')
+      if (this.isFixedHeadingsView)
         return null
       
       return (evt, taskIds, type, ids) => {
@@ -106,7 +106,7 @@ export default {
     
     updateHeadingIds() {
       const n = this.viewName
-      if (n === 'Upcoming' || n === 'Logbook' || n === 'Later lists')
+      if (this.isFixedHeadingsView)
         return null
       
       if (this.isSmartOrderViewType)
@@ -130,17 +130,17 @@ export default {
     },
     mainFilter() {
       const n = this.viewName
-      if (n === 'Later lists')
-        return () => false
+      switch (n) {
+        case 'Later lists': return () => false
+        case 'Calendar': return task => this.isTaskShowingOnDate(task, this.calendarDate)
+        case 'Upcoming': return task => task.calendar
+        case 'Inbox': return this.isTaskInbox
+        case 'Deadlines': return task => task.deadline
+        case 'Logbook': return task => this.isTaskInView(task, 'Logbook')
+      }
       if (this.viewType === 'search')
         return task => this.doesTaskIncludeText(task, n)
-      if (n === 'Calendar')
-        return task => this.isTaskShowingOnDate(task, this.calendarDate)
-      if (n === 'Inbox')
-        return this.isTaskInbox
-      if (n === 'Upcoming')
-        return task => task.calendar
-      if (this.isSmart && this.notHeadingHeaderView) {
+      if (this.isSmart) {
         if (n === 'Today' && this.hasOverdueTasks)
            return task => this.isTaskInView(task, 'Overdue') ||
                          this.isTaskInView(task, 'Today')
@@ -179,12 +179,11 @@ export default {
     },
 
     showEmptyHeadings() {
-      const n = this.viewName
-      return n === 'Upcoming' || n === 'Logbook'
+      return this.isFixedHeadingsView
     },
     showHeading() {
       const n = this.viewName
-      if (n === 'Upcoming' || n === 'Logbook' || this.isSmartOrderViewType)
+      if (this.isFixedHeadingsView || this.isSmartOrderViewType)
         return h => {
           return h.showHeading
         }
@@ -204,6 +203,7 @@ export default {
         case 'Someday': {
           return heads
         }
+        case 'Deadlines': return this.deadlinesViewHeadings
         case 'Later lists': return this.laterListsHeadings
         case 'Anytime': {
           return heads
@@ -236,21 +236,7 @@ export default {
       return null
     },
     icon() {
-      if (this.isSmart) {
-        switch (this.viewName) {
-          case 'Today': return 'star'
-          case 'Later lists': return 'later-lists'
-          case 'Tomorrow': return 'sun'
-          case 'Inbox': return 'inbox'
-          case 'Calendar': return 'calendar-star'
-          case 'Pomodoro': return 'pomo'
-          case 'Statistics': return 'pie'
-          case 'Upcoming': return 'calendar'
-          case 'Anytime': return 'layer-group'
-          case 'Logbook': return 'logbook'
-          case 'Someday': return 'archive'
-        }
-      }
+      return this.isSmart ? this.$store.getters.getIcon : null
     },
     smartComponent() {
       if (this.viewName === 'Calendar')
@@ -265,9 +251,8 @@ export default {
       if (n === 'Pomodoro') return 'Pomodoro'
       if (n === 'Statistics') return 'Statistics'
     },
-    disableFloatingButton() {
-      const n = this.viewName
-      return n === 'Upcoming' || n === 'Logbook'
+    disableRootActions() {
+      return this.disableRootActionsSmartView
     },
     savedSchedule() {
       const n = this.viewName

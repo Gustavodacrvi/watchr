@@ -50,7 +50,8 @@
           :rootChanging='isChangingViewName'
           :headingFilterFunction='h.filterFunction'
           :headingFallbackItem='h.fallbackItem'
-          :allowCalendarStr='h.calendarStr'
+          :disableCalendarStr='h.disableCalendarStr'
+          :disableDeadlineStr='h.disableDeadlineStr'
           :allowLogStr='h.logStr'
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"

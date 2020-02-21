@@ -26,7 +26,7 @@
     :sidebarHided='sidebarHided'
 
     :mainFilter='mainFilter'
-    :disableFloatingButton='disableFloatingButton'
+    :disableRootActions='disableRootActions'
     :rootFilter='rootFilter'
     :tasksOrder='tasksOrder'
     :onSortableAdd='onSortableAdd'
@@ -104,6 +104,104 @@ export default {
     sortArray(...args) {
       return this.$store.getters.checkMissingIdsAndSortArr(...args)
     },
+    getCalendarOrderByDate(date) {
+      const c = this.calendarOrders
+      return (c[date] && c[date].tasks) || []
+    },
+    getWholeYearCalendarHeadings(o = {}, periodic = false) {
+      const arr = []
+      const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks)
+      const TOD_STR = mom().format('Y-M-D')
+      const dispatch = this.$store.dispatch
+
+      // this month
+      const now = mom()
+      arr.push({
+        name: 'This month',
+        disableSortableMount: true,
+        calendarEvents: [now.startOf('month').format('Y-M-D'), now.endOf('month').format('Y-M-D')],
+        sort,
+        filter: task => this.isTaskInPeriod(task, TOD_STR, 'month', true),
+        id: 'this month',
+
+        ...(o['This month'] || {}),
+      })
+      now.add(1, 'month')
+
+      for (let monthNum = now.month(); monthNum < 12; monthNum++) {
+        const name = now.format('MMMM')
+
+        arr.push({
+          name: now.format('MMMM'),
+          id: name,
+          calendarEvents: [now.startOf('month').format('Y-M-D'), now.endOf('month').format('Y-M-D')],
+          showHeading: true,
+          disableSortableMount: true,
+
+          sort,
+          ...(o['months'] || {}),
+          filter: (o['months'] && o['months'].filter) ? t => o['months'].filter(t, monthNum) : t => this.isTaskInMonth(t, monthNum),
+        })
+
+        now.add(1, 'month')
+      }
+      
+      // next years
+      arr.push({
+        name: 'Upcoming years',
+        disableSortableMount: true,
+        sort,
+        filter: t => this.isTaskInOneYear(t),
+        id: 'nextYears',
+
+        ...(o['Upcoming years'] || {}),
+      })
+      // periodic tasks
+      if (periodic)
+        arr.push({
+          disableSortableMount: true,
+          name: 'Periodic tasks',
+          sort,
+          filter: task => task.calendar && task.calendar.type !== 'specific' && task.calendar.type !== 'someday',
+          id: 'periodic tasks'
+        })
+      return arr
+    },
+    getCalendarOrderTypeHeadings(date, o = {}) {
+      const dispatch = this.$store.dispatch
+      return {
+        ...o,
+        name: o.name ? o.name : date,
+        id: date,
+        calendarEvents: o.calendarEvents ? o.calendarEvents : date,
+        showHeading: true,
+        dateType: true,
+
+        sort: o.sort ? o.sort : this.sortArray,
+        order: o.order ? o.order : this.getCalendarOrderByDate(date),
+
+        filter: o.filter ? o.filter : task => this.isTaskShowingOnDate(task, date, true),
+        fallbackItem: o.fallbackItem ? o.fallbackItem : task => {
+          if (!task.calendar)
+            task.calendar = calObj(date)
+          return task
+        },
+        onAddItem: o.onAddItem ? o.onAddItem : obj => {
+          dispatch('list/addTaskByIndexCalendarOrder', {
+            ...obj, date,
+          })
+        },
+        onSortableAdd: o.onSortableAdd ? o.onSortableAdd : (evt, taskIds, type, ids) => {
+          dispatch('task/saveTasksById', {
+            ids: taskIds,
+            task: {calendar: calObj(date)},
+          })
+        },
+        updateIds: o.updateIds ? o.updateIds : ids => {
+          dispatch('task/saveCalendarOrder', {ids, date})
+        }
+      }
+    },
   },
   computed: {
     ...mapState({
@@ -117,6 +215,7 @@ export default {
       folders: 'folder/folders',
       tags: 'tag/tags',
       logTasks: 'task/logTasks',
+      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       tasks: 'task/tasks',
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
@@ -124,6 +223,7 @@ export default {
       getGroupTaskOrderById: 'group/getGroupTaskOrderById',
       getCalendarOrderSmartViewListsOrder: 'list/getCalendarOrderSmartViewListsOrder',
       isTaskInList: 'task/isTaskInList',
+      isTaskDeadlineInMonth: 'task/isTaskDeadlineInMonth',
       getLaterLists: 'list/getLaterLists',
       isLaterList: 'list/isLaterList',
       isTaskLastDeadlineDay: 'task/isTaskLastDeadlineDay',
@@ -147,6 +247,8 @@ export default {
       isTaskWeekly: 'task/isTaskWeekly',
       isTaskInOneYear: 'task/isTaskInOneYear',
       isTaskInMonth: 'task/isTaskInMonth',
+      isTaskDeadlineThisMonth: 'task/isTaskDeadlineThisMonth',
+      isTaskDeadlineInOneYear: 'task/isTaskDeadlineInOneYear',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       isListInView: 'list/isListInView',
@@ -550,6 +652,22 @@ export default {
       if (info && info.viewOrders) return info.viewOrders
       return {}
     },
+    isHeadingsView() {
+      return [
+        'Upcoming',
+        'Logbook',
+        'Deadlines',
+        'Later lists',
+      ].includes(this.viewName)
+    },
+    isFixedHeadingsView() {
+      return [
+        'Logbook',
+        'Deadlines',
+        'Upcoming',
+        'Later lists'
+      ].includes(this.viewName)
+    },
     calendarOrders() {
       const info = this.userInfo
       if (info && info.calendarOrders)
@@ -564,118 +682,66 @@ export default {
       if (type === 'group') return 'group'
       return 'tag'
     },
-    upcomingHeadings() {
+    deadlinesViewHeadings() {
       const arr = []
       const tod = mom()
-      const calObj = date => ({
-        type: 'specific',
-        time: null,
-        editDate: mom().format('Y-M-D'),
-        begins: mom().format('Y-M-D'),
+      const dispatch = this.$store.dispatch
 
-        specific: date,
-      })
-      const calendarOrders = this.calendarOrders
-      const sort = utilsTask.sortTasksByTaskDate
-      const TOD_STR = mom().format('Y-M-D')
-
-      let first = false
       for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
 
-        const itemsOrder = (calendarOrders[date] && calendarOrders[date].tasks) || []
-
-        const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
-        
-        arr.push({
-          name: !first ? 'Tomorrow' : date,
-          id: date,
-          calendarEvents: date,
-          showHeading: true,
-          dateType: true,
-
-          sort: this.sortArray,
-          order: itemsOrder,
-
-          filter: filterFunction,
-          fallbackItem: task => {
-            if (!task.calendar)
-              task.calendar = calObj(date)
-            return task
-          },
-          onAddItem: obj => {
-            this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
-              ...obj, date,
-            })
-          },
-          onSortableAdd: (evt, taskIds, type, ids) => {
-            this.$store.dispatch('task/saveTasksById', {
-              ids: taskIds,
-              task: {calendar: calObj(date)},
-            })
-          },
-          updateIds: ids => {
-            this.$store.dispatch('task/saveCalendarOrder', {ids, date})
-          }
-        })
-        first = true
+        arr.push(
+          this.getCalendarOrderTypeHeadings(date, {
+            disableDeadlineStr: true,
+            
+            filter: task => task.deadline === date,
+            fallbackItem: task => {
+              if (!task.deadline)
+                task.deadline = date
+              return task
+            },
+            onSortableAdd: (evt, taskIds, type, ids) => {
+              dispatch('task/saveTasksById', {
+                ids: taskIds,
+                tasks: {deadline: date},
+              })
+            },
+          })
+        )
       }
-      const thisMonthPipe = pipeBooleanFilters(
-        this.isTaskInSevenDays,
-        task => this.isTaskInPeriod(task, TOD_STR, 'month', true)
+      return arr.concat(
+        this.getWholeYearCalendarHeadings({
+          'This month': {
+            filter: this.isTaskDeadlineThisMonth,
+            disableDeadlineStr: true,
+          },
+          'months': {
+            filter: this.isTaskDeadlineInMonth,
+            disableDeadlineStr: true,
+          },
+          'Upcoming years': {
+            filter: this.isTaskDeadlineInOneYear,
+            disableDeadlineStr: true,
+          },
+        }, false)
       )
-      // this month
-      const now = mom()
-      arr.push({
-        name: 'This month',
-        disableSortableMount: true,
-        calendarEvents: [now.startOf('month').format('Y-M-D'), now.endOf('month').format('Y-M-D')],
-        calendarStr: true,
-        sort,
-        filter: thisMonthPipe,
-        id: 'this month',
-      })
-      now.add(1, 'month')
+    },
+    upcomingHeadings() {
+      const arr = []
+      const tod = mom()
 
-      for (let monthNum = now.month(); monthNum < 12; monthNum++) {
-        const name = now.format('MMMM')
-
-        arr.push({
-          name: now.format('MMMM'),
-          id: name,
-          calendarEvents: [now.startOf('month').format('Y-M-D'), now.endOf('month').format('Y-M-D')],
-          calendarStr: true,
-          showHeading: true,
-          disableSortableMount: true,
-
-          sort,
-          filter: t => this.isTaskInMonth(t, monthNum)
-        })
-
-        now.add(1, 'month')
+      for (let i = 0;i < 7;i++) {
+        tod.add(1, 'day')
+        arr.push(
+          this.getCalendarOrderTypeHeadings(tod.format('Y-M-D'), {
+            disableCalendarStr: true,
+          })
+        )
       }
-      
-      // next years
-      arr.push({
-        name: 'Upcoming years',
-        disableSortableMount: true,
-        calendarStr: true,
-        sort,
-        filter: this.isTaskInOneYear,
-        id: 'nextYears',
-      })
-      // periodic tasks
-      arr.push({
-        disableSortableMount: true,
-        name: 'Periodic tasks',
-        calendarStr: true,
-        sort,
-        filter: task => task.calendar && task.calendar.type !== 'specific' && task.calendar.type !== 'someday',
-        id: 'periodic tasks'
-      })
-      // weekly tasks
-      return arr
+      return arr.concat(
+        this.getWholeYearCalendarHeadings({}, true)
+      )
     },
     laterListsHeadings() {
       const arr = []
@@ -967,6 +1033,7 @@ export default {
           color: 'var(--red)',
 
           listType: true,
+          disableDeadlineStr: true,
           directFiltering: true,
 
           comp: 'List',
@@ -1179,10 +1246,6 @@ export default {
     },
     viewGroup() {
       return this.$store.getters['group/getGroupsByName']([this.viewName])[0]
-    },
-    notHeadingHeaderView() {
-      const n = this.viewName
-      return n !== 'Upcoming' && n !== 'Logbook'
     },
     isListType() {
       return !this.isSmart && this.viewList && this.viewType === 'list'

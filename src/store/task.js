@@ -482,6 +482,16 @@ export default {
           return JSON.stringify(args[0].calendar)
         },
       },
+      isTaskDeadlineInOneYear: {
+        getter({}, task) {
+          if (!task.deadline)
+            return false
+          return mom().add(1, 'y').startOf('year').isBefore(mom(task.deadline, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return args[0].deadline
+        },
+      },
       isOldTask: {
         getter({}, task) {
           if (!task.logDate)
@@ -509,6 +519,26 @@ export default {
           return JSON.stringify([args[0].calendar, args[1]])
         },
       },
+      isTaskDeadlineThisMonth: {
+        getter({}, task) {
+          if (!task.deadline)
+            return false
+          return mom(task.deadline, 'Y-M-D').isSame(mom(), 'month')
+        },
+        cache(args) {
+          return args[0].deadline
+        },
+      },
+      isTaskDeadlineInMonth: {
+        getter({}, task, month) {
+          if (!task.deadline)
+            return false
+          return mom(task.deadline, 'Y-M-D').isSame(mom().month(month), 'month')
+        },
+        cache(args) {
+          return JSON.stringify([args[0].deadline, args[1]])
+        },
+      },
       isTaskInSevenDays: {
         getter({}, task) {
           if (!task.calendar) return false
@@ -530,6 +560,7 @@ export default {
       isTaskInbox: {
         getter({}, task) {
           return !task.group &&
+          !task.deadline &&
           !utilsTask.hasCalendarBinding(task) &&
           !task.list &&
           !task.folder &&
@@ -542,6 +573,7 @@ export default {
             che: t.checked,
             cal: t.calendar,
             gro: t.group,
+            d: t.deadline,
             lis: t.list,
             fol: t.folder,
             tag: t.tags,
@@ -1116,7 +1148,9 @@ export default {
           calendar,
         }
 
-        if (!rootState.userInfo.manuallyLogTasks) {
+        const isNotRecurringTask = !c || (c.type == 'someday' || c.type === 'specific')
+
+        if (!rootState.userInfo.manuallyLogTasks && isNotRecurringTask) {
           obj = {
             ...obj,
             logbook: true,

@@ -6,7 +6,7 @@ import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 export default {
-  props: ['multiSelectOptions', 'comp', 'isSelecting', 'viewName', 'viewNameValue', 'waitForAnotherItemComplete', 'movingItem'],
+  props: ['multiSelectOptions', 'comp', 'isSelecting', 'viewName', 'viewNameValue', 'waitForAnotherItemComplete', 'movingItem', 'disableCalendarStr', 'disableDeadlineStr'],
   data() {
     return {
       startX: 0,

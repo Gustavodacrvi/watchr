@@ -165,8 +165,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
-  'disableFloatingButton', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
@@ -441,7 +441,7 @@ export default {
           put: (j,o,item) => {
             const d = item.dataset
             const type = d.type
-            if (type === 'headingbutton' || type === 'add-task-floatbutton') return !this.disableFloatingButton
+            if (type === 'headingbutton' || type === 'add-task-floatbutton') return !this.disableRootActions
             if (type === 'sidebar-element') return true
             if (!this.onSortableAdd) return false
             if (type === 'Task' && this.comp === "Task") return true
@@ -719,7 +719,7 @@ export default {
         const length = headinsgWithItems.length
         let timeout = this.isDesktop ? 80 : 230
 
-        if (length < 5 || this.viewName === 'Upcoming') timeout = 175
+        if (length < 5) timeout = 175
         
         const add = (head) => {
           this.lazyHeadings.push(head)
@@ -888,7 +888,7 @@ export default {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
         if (!isTyping && !this.isOnControl) {
-          if (!this.disableFloatingButton) {
+          if (!this.disableRootActions) {
             if (key === 'a')
               this.addEditComp(this.lazyItems.length)
             else if (key === 'A')
@@ -950,7 +950,7 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     showAddItemButton() {
-      return this.isDesktop && !this.hasEdit && !this.moving && !this.disableFloatingButton && !this.disableSortableMount
+      return this.isDesktop && !this.hasEdit && !this.moving && !this.disableRootActions && !this.disableSortableMount
     },
     allItemsIds() {
       if (!this.isRoot)

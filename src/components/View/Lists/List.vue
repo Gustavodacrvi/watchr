@@ -311,13 +311,15 @@ export default {
       return this.isListSomeday(this.item)
     },
     calendarStr() {
+      if (this.disableCalendarStr)
+        return null
       const res = this.getListCalendarStr(this.item, this.userInfo)
       if (res === 'Someday') return null
       return res
     },
     deadlineStr() {
       const list = this.item
-      if (!list.deadline) return null
+      if (!list.deadline || this.disableDeadlineStr) return null
       return this.getListDeadlineStr(list, tod.format('Y-M-D'))
     },
     listTasks() {
