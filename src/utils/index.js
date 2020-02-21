@@ -652,7 +652,7 @@ export default {
           iconDrop({
             comp: 'CalendarPicker',
             repeat: true,
-            content: {callback: calendar => save('save', {calendar})},
+            content: {repeat: true,callback: calendar => save('save', {calendar})},
           })
           break
         }

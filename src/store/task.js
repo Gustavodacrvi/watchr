@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, setGroup } from '../utils/firestore'
+import { uid, fd, setInfo, folderRef, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, setGroup } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -83,7 +83,7 @@ export default {
         editDate: mom().format('Y-M-D'),
         begins: mom().format('Y-M-D'),
   
-        specific: moment.format('Y-M-D'),
+        specific: (moment.format) ? moment.format('Y-M-D') : moment,
       }
       return obj
     },
@@ -367,7 +367,7 @@ export default {
         },
       },
       getTaskDeadlineStr: {
-        getter({getters}, task, date, l) {
+        getter({}, task, date, l) {
           const getDaysLeft = (deadline, date) => {
             const dead = mom(deadline, 'Y-M-D')
             const compare = mom(date, 'Y-M-D')
@@ -376,12 +376,18 @@ export default {
               return 'Ends today'
             else if (diff === 1)
               return `1 day left`
+            else if (diff < 0) {
+              if (Math.abs(diff) === 1)
+                return '1 day ago'
+              return `${Math.abs(diff)} days ago`
+            }
             return `${diff} days left`
           }
           
           if (!task.deadline)
             return null
-          return utils.getHumanReadableDate(task.deadline, l) + ' ' + getDaysLeft(task.deadline, date)
+          const readable = utils.getHumanReadableDate(task.deadline, l)
+          return (readable === 'Today' ? '' : readable) + ' ' + getDaysLeft(task.deadline, date)
         },
         cache(args) {
           return args[0].deadline
@@ -410,6 +416,7 @@ export default {
                 completed: t.completed,
                 calendar: t.calendar,
                 list: t.list,
+                d: t.deadline,
                 group: t.group,
                 folder: t.folder,
                 tags: t.tags,
@@ -481,6 +488,25 @@ export default {
           return JSON.stringify(args[0].calendar)
         },
       },
+      isRecurringTask: {
+        getter({}, task) {
+          const c = task.calendar
+          return c && c.type !== 'someday' && c.type !== 'specific'
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
+      isTaskDeadlineInOneYear: {
+        getter({}, task) {
+          if (!task.deadline)
+            return false
+          return mom().add(1, 'y').startOf('year').isBefore(mom(task.deadline, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return args[0].deadline
+        },
+      },
       isOldTask: {
         getter({}, task) {
           if (!task.logDate)
@@ -508,6 +534,26 @@ export default {
           return JSON.stringify([args[0].calendar, args[1]])
         },
       },
+      isTaskDeadlineThisMonth: {
+        getter({}, task) {
+          if (!task.deadline)
+            return false
+          return mom(task.deadline, 'Y-M-D').isSame(mom(), 'month')
+        },
+        cache(args) {
+          return args[0].deadline
+        },
+      },
+      isTaskDeadlineInMonth: {
+        getter({}, task, month) {
+          if (!task.deadline)
+            return false
+          return mom(task.deadline, 'Y-M-D').isSame(mom().month(month), 'month')
+        },
+        cache(args) {
+          return JSON.stringify([args[0].deadline, args[1]])
+        },
+      },
       isTaskInSevenDays: {
         getter({}, task) {
           if (!task.calendar) return false
@@ -529,6 +575,7 @@ export default {
       isTaskInbox: {
         getter({}, task) {
           return !task.group &&
+          !task.deadline &&
           !utilsTask.hasCalendarBinding(task) &&
           !task.list &&
           !task.folder &&
@@ -541,6 +588,7 @@ export default {
             che: t.checked,
             cal: t.calendar,
             gro: t.group,
+            d: t.deadline,
             lis: t.list,
             fol: t.folder,
             tag: t.tags,
@@ -826,11 +874,12 @@ export default {
           'completed',
           'list',
           'folder',
+          'deadline',
           'group',
           'tags',
           'completeDate',
         ],
-        getter({state, getters}, viewName) {
+        getter({getters}, viewName) {
           const ts = getters.tasks.filter(
             task => getters.isTaskInView(task, viewName)
           )
@@ -851,7 +900,7 @@ export default {
 
       setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
       }, rootState, obj.id).then(() => {
@@ -869,7 +918,7 @@ export default {
         pros.push(
           setTask(b, {
             ...t,
-            createdFire: serverTimestamp(),
+            createdFire: new Date(),
             created: mom().format('Y-M-D HH:mm ss'),
             userId: uid(),
             id: ref.id,
@@ -939,7 +988,7 @@ export default {
               group,
               userId: uid(),
               name: t.name,
-              createdFire: serverTimestamp(),
+              createdFire: new Date(),
               created: mom().format('Y-M-D HH:mm ss'),
               id: t.id,
               priority: '',
@@ -958,7 +1007,7 @@ export default {
           smartViewsOrders: {},
           folder,
           group,
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
           name: tasksWithConflictingListNames[task.id] ? task.name + ' (list)' : task.name,
           notes: task.notes || null,
@@ -1007,7 +1056,7 @@ export default {
         for (const t of task.checklist) {
           setTask(b, {
             id: t.id,
-            createdFire: serverTimestamp(),
+            createdFire: new Date(),
             created: mom().format('Y-M-D HH:mm ss'),
             cloud_function_edit: false,
             folder: null,
@@ -1029,7 +1078,7 @@ export default {
           folder,
           group,
           userId: uid(),
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
           users: [uid()],
           assigned: task.assigned || null,
@@ -1055,7 +1104,7 @@ export default {
 
       await batchSetTasks(b, {
         logbook: true,
-        logFire: serverTimestamp(),
+        logFire: new Date(),
         logDate: mom().format('Y-M-D'),
         fullLogDate: mom().format('Y-M-D HH:mm ss'),
       }, tasks, rootState, writes)
@@ -1102,7 +1151,7 @@ export default {
 
         const tod = mom()
         let obj = {
-          completedFire: serverTimestamp(),
+          completedFire: new Date(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
           fullCheckDate: tod.format('Y-M-D HH:mm ss'),
@@ -1115,11 +1164,13 @@ export default {
           calendar,
         }
 
-        if (!rootState.userInfo.manuallyLogTasks) {
+        const isNotRecurringTask = !c || (c.type == 'someday' || c.type === 'specific')
+
+        if (!rootState.userInfo.manuallyLogTasks && isNotRecurringTask) {
           obj = {
             ...obj,
             logbook: true,
-            logFire: serverTimestamp(),
+            logFire: new Date(),
             logDate: mom().format('Y-M-D'),
             fullLogDate: mom().format('Y-M-D HH:mm ss'),
           }
@@ -1178,7 +1229,7 @@ export default {
         obj = {
           ...obj,
           logbook: true,
-          logFire: serverTimestamp(),
+          logFire: new Date(),
           logDate: mom().format('Y-M-D'),
           fullLogDate: mom().format('Y-M-D HH:mm ss'),
         }
@@ -1265,7 +1316,7 @@ export default {
 
       setTask(b, {
         ...task, files: [],
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
       }, rootState)
 

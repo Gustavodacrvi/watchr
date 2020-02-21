@@ -89,6 +89,7 @@
                 <TaskIcons
                   :co='completed'
                   :color='circleColor'
+                  :re='isRepeatingTask'
                   :se='isSelecting'
                   :ca='canceled'
                   :so='isSomeday'
@@ -114,14 +115,20 @@
                     >
                       <span v-if="logStr" class="check-date" ref='check-name'>{{ logStr }}</span>
                     </transition>
+                    
+                    <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+                    <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+                    <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
+                    <span v-else-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
+                    <span v-else-if="calendarStr && !isToday && !isTomorrow" class="txt-str cb rb">{{ calendarStr }}</span>
+
                     <span v-html="parsedName" ref='parsed-name'></span>
                     <Icon v-if="haveChecklist"
-                      class="txt-icon checklist-icon"
-                      icon="pie"
-                      color="var(--fade)"
-                      width="12px"
-                      :progress='checklistPieProgress'
-                    />
+                    class="txt-icon checklist-icon"
+                    icon="pie"
+                    color="var(--fade)"
+                    width="12px"
+                    :progress='checklistPieProgress'/>
                     <span v-if="!isDesktop && nonReadComments" class="comment-icon">
                       <Icon
                         icon='comment'
@@ -138,11 +145,6 @@
                 </div>
               </div>
               <span class="info" ref='info'>
-                <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
-                <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-                <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
-                <span v-if="deadlineStr" class="tag alert">{{ deadlineStr }}</span>
-                <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                 <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                 <span v-if="groupStr" class="tag cb rb">{{ groupStr }}</span>
                 <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
@@ -195,7 +197,7 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'activeTags', 'header', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  props: ['item', 'activeTags', 'header', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
@@ -461,6 +463,7 @@ export default {
       isTaskCanceled: 'task/isTaskCanceled',
       getTaskDeadlineStr: 'task/getTaskDeadlineStr',
       isTaskInView: 'task/isTaskInView',
+      isRecurringTask: 'task/isRecurringTask',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
@@ -634,6 +637,9 @@ export default {
       }
       return arr
     },
+    isRepeatingTask() {
+      return this.isRecurringTask(this.item)
+    },
     completedItem() {
       return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
     },
@@ -774,7 +780,7 @@ export default {
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if ((!c || c.type === 'someday') || (!this.allowCalendarStr && !this.isRoot)) return null
+      if ((!c || c.type === 'someday') || this.disableCalendarStr || !this.isRoot) return null
       const str = utils.parseCalendarObjectToString(c, this.userInfo)
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
@@ -784,6 +790,8 @@ export default {
       return utils.getHumanReadableDate(this.item.logDate)
     },
     deadlineStr() {
+      if (this.disableDeadlineStr)
+        return null
       return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
     showCheckDate() {
@@ -1027,6 +1035,8 @@ export default {
   max-width: 100%;
   position: absolute;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -1045,7 +1055,8 @@ export default {
 }
 
 .name-icon {
-  margin: 0 4px;
+  margin-right: 9px;
+  transform: translateY(2px);
 }
 
 .apply {
@@ -1058,6 +1069,11 @@ export default {
   margin: 0 4px;
   font-size: .75em;
   white-space: nowrap;
+}
+
+.txt-str {
+  margin-right: 9px;
+  font-size: .75em;
 }
 
 .task-tag {

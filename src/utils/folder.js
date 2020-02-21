@@ -30,7 +30,7 @@ export default {
         important: true,
         callback: () => dispatch('folder/deleteFolderById', {
           id: folder.id,
-          lists, tasks,
+          lists: getters['list/allLists'], tasks: getters['task/allTasks'],
         })
       },
     ]

@@ -32,6 +32,7 @@ firebase.initializeApp({
 
 let snapshotsListeners = []
 
+const per = firebase.performance()
 export const fire = firebase.firestore()
 export const auth = firebase.auth()
 export const sto = firebase.storage()
@@ -177,47 +178,118 @@ const store = new Vuex.Store({
         return ordered
       },
     }),
-    getIcon(state) {
+    isSmartList(state) {
+      return [
+        'Today',
+        'Later lists',
+        'Pomodoro',
+        'Statistics',
+        'Someday',
+        'Anytime',
+        'Calendar',
+        'Recurring',
+        'Upcoming',
+        'Logged lists',
+        'Deadlines',
+        'Logbook',
+        'Tomorrow',
+        'Inbox'
+      ].includes(state.viewName) && state.viewType === 'list'
+    },
+    sidebarElements() {
+      return [
+        {
+          name: 'Today',
+          icon: 'star',
+          iconColor: 'var(--yellow)'
+        },
+        {
+          name: 'Tomorrow',
+          id: 'tom',
+          icon: 'sun',
+          iconColor: 'var(--orange)'
+        },
+        {
+          name: 'Inbox',
+          disableAction: true,
+          icon: 'inbox',
+          iconColor: 'var(--primary)'
+        },
+        {
+          name: 'Upcoming',
+          disableAction: true,
+          icon: 'calendar',
+          iconColor: 'var(--green)'
+        },
+        {
+          name: "Recurring",
+          disableAction: true,
+          icon: 'repeat',
+          iconColor: 'var(--txt)',
+        },
+        {
+          name: 'Anytime',
+          disableAction: true,
+          icon: 'layer-group',
+          iconColor: 'var(--dark-blue)',
+        },
+        {
+          name: 'Someday',
+          icon: 'archive',
+          iconColor: 'var(--brown)'
+        },
+        {
+          name: 'Deadlines',
+          disableAction: true,
+          icon: 'deadline',
+          iconColor: 'var(--red)'
+        },
+        {
+          name: 'Pomodoro',
+          disableAction: true,
+          icon: 'pomo',
+          iconColor: 'var(--dark-red)'
+        },
+        {
+          name: 'Calendar',
+          disableAction: true,
+          icon: 'calendar-star',
+          iconColor: 'var(--purple)'
+        },
+        {
+          name: 'Logbook',
+          icon: 'logbook',
+          iconColor: 'var(--purple)'
+        },
+        {
+          name: 'Logged lists',
+          icon: 'logged-lists',
+          iconColor: 'var(--purple)'
+        },
+        {
+          name: 'Statistics',
+          icon: 'pie',
+          iconColor: 'var(--primary)'
+        },
+      ]
+    },
+    getIcon(state, getters) {
       if (state.viewType === 'tag') return 'tag'      
       if (state.viewType === 'search') return 'search'
       if (state.viewType === 'folder') return 'folder'
       if (state.viewType === 'group') return 'group'
-      const obj = {
-        Today: 'star',
-        Tomorrow: 'sun',
-        Someday: 'archive',
-        Anytime: 'layer-group',
-        Inbox: 'inbox',
-        Calendar: 'calendar-star',
-        Pomodoro: 'pomo',
-        Statistics: 'pie',
-        Upcoming: 'calendar',
-        Logbook: 'logbook',
-        "Later lists": 'later-lists',
-      }
-      return obj[state.viewName]
+      if (!getters.isSmartList)
+        return 'tasks'
+      return getters.sidebarElements.find(el => el.name === state.viewName).icon
     },
-    getIconColor(state) {
-      if (state.viewType === 'folder' || state.viewType === 'group') return ''
-      if (state.viewType === 'list') {
-        const obj = {
-          Today: 'var(--yellow)',
-          Tomorrow: 'var(--orange)',
-          Someday: 'var(--brown)',
-          Anytime: 'var(--dark-blue)',
-          Inbox: 'var(--primary)',
-          Calendar: 'var(--purple)',
-          Pomodoro: 'var(--dark-red)',
-          Statistics: 'var(--primary)',
-          Upcoming: 'var(--green)',
-          Logbook: 'var(--olive)',
-        }
-        const color = obj[state.viewName]
-        if (!color) return 'var(--primary)'
-        return color
-      }
-      if (state.viewType === 'search') return ''
-      return 'var(--red)'
+    getIconColor(state, getters) {
+      const t = state.viewType
+      if (t === 'folder' || t === 'group' || t === 'search') return ''
+      if (t === 'tag')
+        return 'var(--red)'
+      if (!getters.isSmartList) 
+          return 'var(--primary)'
+      return getters.sidebarElements.find(el => el.name === state.viewName).iconColor
     },
     fallbackSelected(state) {
       if (state.selectedItems.length > 0)
@@ -604,7 +676,15 @@ const store = new Vuex.Store({
         stats: {dummy: null},
         tasks: {dummy: null},
         tags: {dummy: null},
-        info: {dummy: null},
+        info: {
+          dummy: null,
+          hidedViews: [
+            'Tomorrow',
+            'Pomodoro',
+            'Statistics',
+            'Calendar',
+          ],
+        },
       }, {merge: true})
       
       return b.commit()
@@ -624,7 +704,15 @@ const store = new Vuex.Store({
         stats: {dummy: null},
         tasks: {dummy: null},
         tags: {dummy: null},
-        info: {dummy: null},
+        info: {
+          dummy: null,
+          hidedViews: [
+            'Tomorrow',
+            'Pomodoro',
+            'Statistics',
+            'Calendar',
+          ],
+        },
       })
 
       return b.commit()

@@ -84,7 +84,7 @@ export default {
       },
       direction: 'vertical',
       delay: this.isDesktop ? 0 : 150,
-      animation: 80,
+      animation: 200,
       handle: '.item-handle',
 
 

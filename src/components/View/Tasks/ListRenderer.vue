@@ -8,7 +8,7 @@
           left: (isDesktop ? width : 0) + 'px',
         }"
       >
-        <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
+        <Icon :icon='(icon === "logged-lists" ? "faded-logged-lists" : icon)' color='var(--sidebar-color)' width="150px"/>
       </div>
     </transition>
     <div
@@ -151,7 +151,7 @@ import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import HeadingsRenderer from './HeadingsRenderer.vue' 
 
-import { serverTimestamp, uid } from '@/utils/firestore'
+import { uid } from '@/utils/firestore'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -165,8 +165,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
-  'disableFloatingButton', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width',
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
@@ -424,7 +424,7 @@ export default {
 
         forceFallback: true,
         fallbackOnBody: true,
-        animation: 80,
+        animation: 200,
         delay: this.isDesktop ? 5 : 100,
         handle: '.item-handle',
         
@@ -441,7 +441,7 @@ export default {
           put: (j,o,item) => {
             const d = item.dataset
             const type = d.type
-            if (type === 'headingbutton' || type === 'add-task-floatbutton') return !this.disableFloatingButton
+            if (type === 'headingbutton' || type === 'add-task-floatbutton') return !this.disableRootActions
             if (type === 'sidebar-element') return true
             if (!this.onSortableAdd) return false
             if (type === 'Task' && this.comp === "Task") return true
@@ -547,7 +547,7 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
-            this.onSortableAdd(evt, ids, type, this.lazyItems.map(el => el.id))
+            this.onSortableAdd(evt, ids, type, this.lazyItems.filter(el => el).map(el => el.id))
             this.sourceVueInstance = null
           } else {  
             const i = evt.newIndex
@@ -693,8 +693,7 @@ export default {
         let i = 0
         const length = items.length
 
-        const multiplier = this.isDesktop ? 1.5 : 5
-        const timeout = length * multiplier
+        const timeout = this.isDesktop ? 25 : length * 5
         
         const add = item => {
           this.lazyItems.push(item)
@@ -720,7 +719,7 @@ export default {
         const length = headinsgWithItems.length
         let timeout = this.isDesktop ? 80 : 230
 
-        if (length < 5 || this.viewName === 'Upcoming') timeout = 175
+        if (length < 5) timeout = 175
         
         const add = (head) => {
           this.lazyHeadings.push(head)
@@ -836,7 +835,7 @@ export default {
           ...t,
           id: newItemRef.id,
           userId: uid(),
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
         }
 
@@ -889,7 +888,7 @@ export default {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
         if (!isTyping && !this.isOnControl) {
-          if (!this.disableFloatingButton) {
+          if (!this.disableRootActions) {
             if (key === 'a')
               this.addEditComp(this.lazyItems.length)
             else if (key === 'A')
@@ -951,7 +950,7 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     showAddItemButton() {
-      return this.isDesktop && !this.hasEdit && !this.moving && !this.disableFloatingButton && !this.disableSortableMount
+      return this.isDesktop && !this.hasEdit && !this.moving && !this.disableRootActions && !this.disableSortableMount
     },
     allItemsIds() {
       if (!this.isRoot)

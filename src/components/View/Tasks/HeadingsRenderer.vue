@@ -50,7 +50,8 @@
           :rootChanging='isChangingViewName'
           :headingFilterFunction='h.filterFunction'
           :headingFallbackItem='h.fallbackItem'
-          :allowCalendarStr='h.calendarStr'
+          :disableCalendarStr='h.disableCalendarStr'
+          :disableDeadlineStr='h.disableDeadlineStr'
           :allowLogStr='h.logStr'
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
@@ -132,7 +133,7 @@ export default {
             disabled: !this.updateHeadingIds,
             group: 'headings',
             delay: this.isDesktop ? 5 : 150,
-            animation: 80,
+            animation: 200,
             handle: '.handle',
       
             onUpdate: () => {

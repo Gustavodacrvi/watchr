@@ -50,7 +50,7 @@ import ItemEdit from './ItemEdit.vue'
 
 import Sortable from 'sortablejs'
 
-import { serverTimestamp, uid } from '@/utils/firestore'
+import { uid } from '@/utils/firestore'
 
 import mom from 'moment'
 
@@ -82,7 +82,7 @@ export default {
     this.sortable = new Sortable(this.draggableRoot, {
       sort: this.enableSort,
       disabled: this.disabled,
-      animation: 80,
+      animation: 200,
       direction: 'vertical',
       group: {name: 'sidebar',
         pull: (e) => {
@@ -170,7 +170,7 @@ export default {
           name,
           id,
           userId: uid(),
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
         }
 

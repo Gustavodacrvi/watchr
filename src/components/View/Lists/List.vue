@@ -60,7 +60,7 @@
           opacity='0'
         />
         <div class="cont">
-          <div class="icon-wrapper"
+          <div class="icon-wrapper" :class="{fade: !onHover}"
             @click.stop="desktopComplete"
             @contextmenu.stop.prevent='desktopCancel'
             
@@ -211,7 +211,6 @@ export default {
     click() {
       if (this.isDesktop && !this.isSelecting) {
         this.isEditing = true
-        this.focus()
         window.addEventListener('pointerdown', this.hide)
       }
     },
@@ -312,13 +311,15 @@ export default {
       return this.isListSomeday(this.item)
     },
     calendarStr() {
+      if (this.disableCalendarStr)
+        return null
       const res = this.getListCalendarStr(this.item, this.userInfo)
       if (res === 'Someday') return null
       return res
     },
     deadlineStr() {
       const list = this.item
-      if (!list.deadline) return null
+      if (!list.deadline || this.disableDeadlineStr) return null
       return this.getListDeadlineStr(list, tod.format('Y-M-D'))
     },
     listTasks() {
@@ -334,6 +335,10 @@ export default {
   watch: {
     list() {
       this.getListOptions()
+    },
+    isEditing() {
+      if (this.isEditing)
+        this.focus()
     },
   },
 }
@@ -455,7 +460,7 @@ export default {
 }
 
 .fade {
-  opacity: .6;
+  opacity: .3;
 }
 
 .deadline {

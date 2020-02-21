@@ -61,7 +61,7 @@ export default {
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
     'selectEverythingToggle', 'getCalendarOrderDate',
-    'width', 'disableFloatingButton',
+    'width', 'disableRootActions',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
@@ -281,6 +281,7 @@ export default {
     }),
     ...mapGetters({
       lists: 'list/lists',
+      logLists: 'list/logLists',
       folders: 'folder/folders',
       tags: 'tag/tags',
       storeTasks: 'task/tasks',
@@ -318,14 +319,14 @@ export default {
       const headings = this.headings
       if (!headings) return []
       const mainTasks = this.mainTasks
-      
+
       return headings.map(head => {
         
         const nonFiltered = !head.directFiltering ?
           head.sort(this.tempoOrder[head.id] || head.order || [],
             (!head.log ? mainTasks : this.logTasks).filter(task => head.filter(task))
           )
-          : head.sort(this.tempoOrder[head.id] || head.order || [], (!head.listType ? this.storeTasks : this.lists).filter(item => head.filter(item)))
+          : head.sort(this.tempoOrder[head.id] || head.order || [], (!head.listType ? this.storeTasks : (!head.log ? this.lists : this.logLists)).filter(item => head.filter(item)))
 
         if (head.react)
           for (const p of head.react) nonFiltered[p]

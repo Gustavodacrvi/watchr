@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { filterColl, filterRef, setInfo, fd, taskRef, serverTimestamp, addTask } from '../utils/firestore'
+import { filterColl, filterRef, setInfo, fd, taskRef } from '../utils/firestore'
 import mom from 'moment'
 
 const uid = () => {
@@ -51,7 +51,7 @@ export default {
   actions: {
     addFilter(c, {name, index, ids}) {
       const obj = {
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         name,
         userId: uid(),
@@ -75,7 +75,7 @@ export default {
     addTaskByIndex({rootState}, {ids, index, task, filterId, newTaskRef}) {
       const batch = fire.batch()
       setTask(batch, {
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,

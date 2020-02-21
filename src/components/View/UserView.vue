@@ -31,7 +31,7 @@
         :width='!sidebarHided ? width : 0'
         :sidebarHided='sidebarHided'
       
-        :isSmart="isSmart"
+        :isSmart="isSmartList"
         :viewType='viewType'
         :viewName='viewName'
         @sidebar='toggleSidebar'
@@ -134,25 +134,7 @@ export default {
   },
   computed: {
     ...mapState(['viewName', 'viewType']),
-    ...mapGetters(['platform', 'isDesktop']),
-    isSmart() {
-      if (this.viewType === 'search') return true
-      if (this.viewType !== 'list') return false
-      switch (this.viewName) {
-        case 'Today': return true
-        case 'Later lists': return true
-        case 'Calendar': return true
-        case 'Pomodoro': return true
-        case 'Statistics': return true
-        case 'Upcoming': return true
-        case 'Anytime': return true
-        case 'Someday': return true
-        case 'Tomorrow': return true
-        case 'Logbook': return true
-        case 'Inbox': return true
-      }
-      return false
-    },
+    ...mapGetters(['platform', 'isSmartList', 'isDesktop']),
     getNavWidth() {
       return !this.sidebarHided ? this.navWidth : '0px'
     },

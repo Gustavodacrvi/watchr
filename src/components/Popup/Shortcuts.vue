@@ -85,7 +85,6 @@
       </div>
 
       <h3 class="pc">Edit items</h3>
-
       <div class="line">
         <span>Add "High priority" to selection</span>
         <span class="tag">Alt + H</span>
@@ -105,6 +104,10 @@
       <div class="line">
         <span>Add selection to logbook</span>
         <span class="tag">Alt + Shift + L</span>
+      </div>
+      <div class="line">
+        <span>Assign user to selection</span>
+        <span class="tag">Alt + A</span>
       </div>
       <div class="line">
         <span>Add selection to group</span>
@@ -170,6 +173,10 @@
       </div>
 
       <h3 class="pc">View</h3>
+      <div class="line">
+        <span>Go to selecte list</span>
+        <span class="tag">Shift + ArrowRight</span>
+      </div>
       <div class="line">
         <span>Hide/show completed items view</span>
         <span class="tag">Alt + C</span>

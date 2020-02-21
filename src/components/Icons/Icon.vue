@@ -64,6 +64,8 @@ import boxClose from '@/assets/icons/box-close.svg'
 import boxCheckFilled from '@/assets/icons/box-check-filled.svg'
 import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
 import circleClose from '@/assets/icons/circle-close.svg'
+import loggedLists from '@/assets/icons/logged-lists.svg'
+import fadedLoggedLists from '@/assets/icons/faded-logged-lists.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 import paperPlane from '@/assets/icons/paper-plane.svg'
 import laterLists from '@/assets/icons/later-lists.svg'
@@ -80,6 +82,8 @@ const icons = {
   pomo, pie, check, group, message, crown,
   comment, logbook,
   "later-lists": laterLists,
+  "logged-lists": loggedLists,
+  "faded-logged-lists": fadedLoggedLists,
   "paper-plane": paperPlane,
   "box-close": boxClose,
   "circle-close": circleClose,

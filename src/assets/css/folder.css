@@ -45,6 +45,7 @@
   align-items: center;
   margin-left: 3px;
   width: 40px;
+  flex-shrink: 0;
   height: 100%;
 }
 
@@ -92,4 +93,8 @@
   right: 6px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.sortable-ghost .header {
+  display: none;
 }

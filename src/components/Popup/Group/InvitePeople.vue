@@ -38,7 +38,7 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 
 import utils from "@/utils"
-import { inviteRef, serverTimestamp, uid, setInfo } from "@/utils/firestore"
+import { inviteRef, uid, setInfo } from "@/utils/firestore"
 
 export const db = firebase.firestore()
 
@@ -134,7 +134,7 @@ export default {
         b.set(ref, {
           userId: this.user.uid,
           id: ref.id,
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
   
           groupName: this.group.name,

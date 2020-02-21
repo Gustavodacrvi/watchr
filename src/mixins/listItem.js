@@ -6,7 +6,7 @@ import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 export default {
-  props: ['multiSelectOptions', 'comp', 'isSelecting', 'viewName', 'viewNameValue', 'waitForAnotherItemComplete', 'movingItem'],
+  props: ['multiSelectOptions', 'comp', 'isSelecting', 'viewName', 'viewNameValue', 'waitForAnotherItemComplete', 'movingItem', 'disableCalendarStr', 'disableDeadlineStr'],
   data() {
     return {
       startX: 0,
@@ -122,12 +122,13 @@ export default {
 
       switch (key) {
         case 'Enter': {
-          if (!isTyping && !this.isEditingComp && !this.iconDrop)
+          if (!isTyping && !this.isEditingComp && !this.iconDrop) {
             if (!this.isOnControl && !this.justSaved)
-              this.isEditing = true
+            this.isEditing = true
             else if (this.isOnControl) {
               toggleSelect()
             }
+          }
           break
         }
       }

@@ -23,7 +23,7 @@
       >
         <div class="icon-wrapper" @click="clickIcon">
           <Icon class="main-icon"
-            :class="{cursor: icon === 'tasks'}"
+            :class="{cursor: icon === 'tasks', fadeIconColor}"
             :style="iconStyle"
             :icon="icon"
             :progress='progress'
@@ -273,7 +273,10 @@ export default {
     iconStyle() {
       if (this.isSmart)
         return `color: ${this.iconColor}`
-      return `color: ${this.isActive ? this.iconColor : 'var(--fade)'};`
+      return `color: ${this.isActive ? this.iconColor : ''}`
+    },
+    fadeIconColor() {
+      return !this.isSmart && !this.isActive
     },
     isActive() {
       if ((this.hover && this.isDesktop) || (this.isTouching && !this.isDesktop)) return true
@@ -384,6 +387,10 @@ export default {
 
 .mobile .link-wrapper {
   height: 42px;
+}
+
+.fadeIconColor {
+  opacity: .25;
 }
 
 .SidebarElement {

@@ -1,87 +1,114 @@
 <template>
   <div class="CalendarPicker">
     <div key="calendar" class="view calendar">
-      <div class="fast-options">
-        <Icon
-          class="cursor icon-box"
-          width="24px"
-          icon="star"
-          ref='tod'
-          :box='true'
-          :active='selectionPos === 0 && isDesktop'
-          @click="today"
-        />
-        <Icon
-          class="cursor icon-box"
-          width="24px"
-          icon="sun"
-          ref='tom'
-          :box='true'
-          :active='selectionPos === 1 && isDesktop'
-          @click="tomorrow"
-        />
-        <Icon v-if="allowSomeday"
-          class="cursor icon-box"
-          width="24px"
-          ref='som'
-          icon="archive"
-          :box='true'
-          :active='selectionPos === 2 && isDesktop'
-          @click="someday"
-        />
-        <Icon v-if="allowBloqued"
-          class="cursor icon-box"
-          ref='bloq'
-          width="24px"
-          icon="bloqued"
-          :box='true'
-          :active='selectionPos === 3 && isDesktop'
-          @click="noDate"
-        />
-        <Icon v-if="allowRepeat"
-          class="cursor icon-box"
-          ref='rep'
-          width="24px"
-          icon="repeat"
-          :box='true'
-          :active='selectionPos === 4 && isDesktop'
-          @click="$emit('repeat')"
-        />
+      <div class="input-wrapper">
+        <input
+          :value="smart"
+          class="input"
+          autocomplete="off"
+          type="text"
+          ref='input'
+          @input="v => smart = v.target.value"
+          @keydown="keydownInput"
+        >
       </div>
-      <div v-if="!noTime" class="opt cursor remove-highlight rb" @click='$emit("get-time", selectedMoment.format("Y-M-D"))'>
-        <span class="msg">Time: {{ getTime }}</span>
-        <CircleBubble
-          innerColor='rgba(87,160,222,.1)'
-          outerColor='var(--primary)'
-        />
-      </div>
-      <div class="cont">
-        <div class="header">
-          <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
-          <div class="icons">
-            <Icon class="arrow-right icon cursor primary-hover" icon="arrow" width="18px" @click="previousMonth"/>
-            <Icon class="icon cursor primary-hover" icon="tiny-circle" width="14px" @click="resetDate" style='transform: translateY(0px)'/>
-            <Icon class="primary-hover arrow-left icon cursor" icon="arrow" width="18px" @click="nextMonth"/>
+      <div v-if="!calendar">
+        <div class="fast-options">
+          <Icon
+            class="cursor icon-box"
+            width="24px"
+            icon="star"
+            ref='tod'
+            title='Today'
+            :box='true'
+            :active='selectionPos === 1 && isDesktop'
+            @click="today"
+          />
+          <Icon
+            class="cursor icon-box"
+            width="24px"
+            icon="sun"
+            ref='tom'
+            title='Tomorrow'
+            :box='true'
+            :active='selectionPos === 2 && isDesktop'
+            @click="tomorrow"
+          />
+          <Icon v-if="allowSomeday"
+            class="cursor icon-box"
+            width="24px"
+            ref='som'
+            icon="archive"
+            title='Someday'
+            :box='true'
+            :active='selectionPos === 3 && isDesktop'
+            @click="someday"
+          />
+          <Icon v-if="allowBloqued"
+            class="cursor icon-box"
+            ref='bloq'
+            width="24px"
+            icon="bloqued"
+            title='No date'
+            :box='true'
+            :active='selectionPos === 4 && isDesktop'
+            @click="noDate"
+          />
+          <Icon v-if="allowRepeat"
+            class="cursor icon-box"
+            ref='rep'
+            width="24px"
+            icon="repeat"
+            title='Recurring dates'
+            :box='true'
+            :active='selectionPos === 5 && isDesktop'
+            @click="$emit('repeat')"
+          />
+        </div>
+        <div v-if="!noTime" class="opt cursor time-option remove-highlight rb" @click='$emit("get-time", selectedMoment.format("Y-M-D"))'>
+          <span class="msg">Time: {{ getTime }}</span>
+          <CircleBubble
+            innerColor='rgba(87,160,222,.1)'
+            outerColor='var(--primary)'
+          />
+        </div>
+        <div class="cont">
+          <div class="header">
+            <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
+            <div class="icons">
+              <Icon class="arrow-right icon cursor primary-hover" icon="arrow" width="18px" @click="previousMonth"/>
+              <Icon class="icon cursor primary-hover" icon="tiny-circle" width="14px" @click="resetDate" style='transform: translateY(0px)'/>
+              <Icon class="primary-hover arrow-left icon cursor" icon="arrow" width="18px" @click="nextMonth"/>
+            </div>
+          </div>
+          <div class="weeks">
+            <span class="week">S</span>
+            <span class="week">M</span>
+            <span class="week">T</span>
+            <span class="week">W</span>
+            <span class="week">T</span>
+            <span class="week">F</span>
+            <span class="week">S</span>
+          </div>
+          <div class="dates">
+            <span v-for='i in firstWeekDayRange()' :key='i + 100' class="dark-date"></span>
+            <span v-for="i in monthDays()" :key="i" class="day cursor rb"
+              :class="{active: isSelectedDate(i)}"
+              @click="selectDate(i)"
+            >
+              <span class="number">{{ i }}</span>
+            </span>
           </div>
         </div>
-        <div class="weeks">
-          <span class="week">S</span>
-          <span class="week">M</span>
-          <span class="week">T</span>
-          <span class="week">W</span>
-          <span class="week">T</span>
-          <span class="week">F</span>
-          <span class="week">S</span>
-        </div>
-        <div class="dates">
-          <span v-for='i in firstWeekDayRange()' :key='i + 100' class="dark-date"></span>
-          <span v-for="i in monthDays()" :key="i" class="day cursor rb"
-            :class="{active: isSelectedDate(i)}"
-            @click="selectDate(i)"
-          >
-            <span class="number">{{ i }}</span>
-          </span>
-        </div>
+      </div>
+      <div v-else class="calendar-str">
+        <Icon class="calendar-icon"
+          icon='calendar'
+          color='var(--green)'
+        />
+        <span class="calendar-name">
+          {{calendarStr}}
+        </span>
       </div>
     </div>
   </div>
@@ -109,7 +136,9 @@ export default {
       originalMoment: this.initalDate ? mom(this.initalDate, 'Y-M-D') : mom(),
       selectedMoment: this.initalDate ? mom(this.initalDate, 'Y-M-D') : mom(),
       time: null,
-      calendarObj: null,
+      calendar: null,
+
+      smart: '',
 
       selectionPos: 0,
     }
@@ -120,6 +149,9 @@ export default {
   },
   mounted() {
     window.addEventListener('keydown', this.keydown)
+
+    if (this.isDesktop)
+      this.focusName()
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.keydown)
@@ -137,9 +169,9 @@ export default {
       return this.repeat && !this.onlyDates
     },
     calendarStr() {
-      if (this.calendarObj)
-        return utils.parseCalendarObjectToString(this.calendarObj, this.userInfo)
-      return null
+      if (!this.calendar)
+        return null
+      return utils.parseCalendarObjectToString(this.calendar, this.userInfo)
     },
     getTime() {
       if (this.time) {
@@ -153,8 +185,9 @@ export default {
       const c = ref => () => this.$refs[ref].click()
 
       const obj = {
-        0: c('tod'),
-        1: c('tom'),
+        0: () => this.focusName(),
+        1: c('tod'),
+        2: c('tom'),
       }
 
       const getLength = () => Object.keys(obj).length
@@ -175,6 +208,13 @@ export default {
     },
   },
   methods: {
+    keydownInput({key}) {
+      if (key === "Enter")
+        this.$emit('select', this.calendar)
+    },
+    focusName() {
+      this.$refs.input.focus()
+    },
     keydown(evt) {
       const { key } = evt
       const p = () => {
@@ -336,6 +376,31 @@ export default {
       return this.visualMoment.clone().date(day).isSame(this.selectedMoment, 'day')
     },
   },
+  watch: {
+    selectionPos() {
+      if (this.selectionPos === 0)
+        this.focusName()
+      else
+        this.$refs.input.blur()
+    },
+    calendar() {
+      setTimeout(() => this.$emit('calc'), 0)
+    },
+    smart() {
+      const n = this.smart
+
+      if (!n) {
+        this.calendar = null
+        return;
+      }
+
+      const res = utils.calendarObjNaturalCalendarInput(' ' + n, this.userInfo.disablePmFormat)
+      if (res && res.calendar)
+        this.calendar = res.calendar
+      else
+        this.calendar = null
+    },
+  },
 }
 
 </script>
@@ -384,6 +449,11 @@ export default {
   width: 225px !important;
 }
 
+.input-wrapper {
+  margin: 0 28px;
+  margin-bottom: 4px;
+}
+
 .time-selector {
   margin: 40px 0;
 }
@@ -395,6 +465,16 @@ export default {
 .date {
   font-size: 1.5em;
   transform: translateX(-2px);
+}
+
+.time-option {
+  position: relative;
+  z-index: 2;
+}
+
+.fast-options {
+  position: relative;
+  z-index: 3;
 }
 
 .select-time {
@@ -419,6 +499,22 @@ export default {
   padding: 8px;
   outline: none;
   border-bottom: 1px solid var(--fade);
+}
+
+.calendar-str {
+  margin: 0 28px;
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.calendar-icon {
+  transform: translateY(2px);
+}
+
+.calendar-name {
+  font-size: 1.1em;
+  margin-left: 6px;
 }
 
 .bottom {

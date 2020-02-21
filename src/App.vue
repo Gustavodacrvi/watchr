@@ -103,7 +103,7 @@ export default {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
 
-      if (!isTyping)
+      if (!isTyping && !this.isOnShift)
         switch (key) {
           case 'ArrowLeft': {
             if (this.historyPos > 1) {
@@ -191,7 +191,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos']),
+    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift']),
     ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate', 'platform']),
     isReady() {
       return this.$store.state.googleCalendarReady

@@ -39,6 +39,7 @@ export default {
   computed: {
     ...mapGetters({
       platform: 'platform',
+      isSmartList: 'isSmartList',
       lists: 'list/lists',
     }),
     ...mapState({
@@ -53,21 +54,6 @@ export default {
       if (!this.isEditing) return 'Add list'
       return 'Edit list'
     },
-    isSmartList() {
-      const lists = [
-        'Today',
-        'Later lists',
-        'Pomodoro',
-        'Statistics',
-        'Someday',
-        'Anytime',
-        'Calendar',
-        'Upcoming',
-        'Tomorrow',
-        'Inbox'
-      ]
-      return lists.includes(this.name)
-    }
   },
   methods: {
     addList() {

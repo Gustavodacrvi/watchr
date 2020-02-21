@@ -1,7 +1,7 @@
 
 @font-face {
   font-family: "Work Sans";
-  src: url("../WorkSans-Regular.otf");
+  src: url("../WorkSans-Medium.otf");
 }
 
 html {
@@ -60,6 +60,7 @@ body {
 
 body, input, button, textarea {
   font-family: var(--font);
+  font-weight: 525;
   color: var(--txt);
 }
 

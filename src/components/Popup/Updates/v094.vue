@@ -51,6 +51,10 @@
       <span>Add deadline to selection</span>
       <span class="tag">Alt + D</span>
     </div>
+    <div class="line">
+      <span>Assign user to selection</span>
+      <span class="tag">Alt + A</span>
+    </div>
 
     <br>
     <h3>Bug fixes</h3>

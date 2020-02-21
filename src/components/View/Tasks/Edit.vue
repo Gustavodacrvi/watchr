@@ -23,7 +23,7 @@
         />
         <DropInput ref='task-notes'
           class="notes hide"
-          :msg='isDesktop ? "Shift + Enter to save" : ""'
+          :msg='dropInput'
           :class="{'no-back': !popup, show}"
           v-model="task.notes"
           :enterOnShift='true'
@@ -413,7 +413,7 @@ export default {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
 
-      if (this.isCursorInChecklist) {
+      if (this.isCursorInChecklist && !isTyping) {
         switch (key) {
           case "Delete": {
             this.removeSubtask(this.activeChecklistId)
@@ -475,18 +475,22 @@ export default {
         }
       })
 
-      if (!this.iconDrop && this.options.length === 0) {
+      const isNotEditingOrIsNotOnNotes = (!this.isEditingNotes || this.cursorPos !== 1)
+
+      const allowNav = isNotEditingOrIsNotOnNotes || this.isOnShift
+
+      if (!this.iconDrop && this.options.length === 0 && allowNav) {
         if (key === "ArrowUp") {
           p()
   
-          if (this.isOnShift)
+          if (this.isOnShift && isNotEditingOrIsNotOnNotes)
             this.cursorPos = 0
           else        
             this.incrementPos(-1)
         } else if (key === "ArrowDown") {
           p()
   
-          if (this.isOnShift)
+          if (this.isOnShift && isNotEditingOrIsNotOnNotes)
             this.cursorPos = this.lastKeyboardActionIndex
           else        
             this.incrementPos(1)
@@ -784,6 +788,14 @@ export default {
       groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
     }),
+    dropInput() {
+      if (!this.isDesktop)
+        return ''
+      return this.isEditingNotes ? "Shift + Arrows keys to move, Shift + Enter to save" : "Shift + Enter to save"
+    },
+    isEditingNotes() {
+      return this.task.notes.length > 0
+    },
     getCompareDate() {
       if (!this.defaultTask || !this.defaultTask.calendar)
         return null

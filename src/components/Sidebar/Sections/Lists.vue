@@ -126,7 +126,7 @@ export default {
       }},
       delay: this.isDesktop ? 5 : 150,
       filter: '.ignore-item',
-      animation: 80,
+      animation: 200,
       handle: '.handle-folder',
 
       onUpdate: (evt) => {
@@ -227,11 +227,16 @@ export default {
       return arr.length > 0 ? arr : undefined
     },
     mapString(list) {
-      if (list.deadline)
+      if (list.deadline && !list.calendar)
         return {
           name: this.getListDeadlineDaysLeftStr(list.deadline, TOD_STR)
 ,
           color: 'var(--red)'
+        }
+      else if (list.calendar)
+        return {
+          name: utils.parseCalendarObjectToString(list.calendar, this.userInfo),
+          color: 'var(--txt)',
         }
       
       return null
@@ -241,6 +246,8 @@ export default {
     ...mapState({
       movingTask: state => state.movingTask,
       user: state => state.user,
+
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       tasks: 'task/tasks',

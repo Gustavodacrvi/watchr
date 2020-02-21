@@ -39,7 +39,7 @@ import utilsTask from "@/utils/task"
 
 import { mapState, mapGetters } from 'vuex'
 
-import { listRef, serverTimestamp } from '@/utils/firestore'
+import { listRef } from '@/utils/firestore'
 
 import HandlerMixin from "@/mixins/handlerMixin"
 
@@ -67,7 +67,7 @@ export default {
           ...obj.item,
 
           smartViewsOrders: {},
-          createdFire: serverTimestamp(),
+          createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
           headings: [],
           headingsOrder: [],

@@ -160,64 +160,7 @@ export default {
     SearchButton: SearchButtonVue,
   },
   data() {
-    const links = [
-          {
-            name: 'Today',
-            icon: 'star',
-            iconColor: 'var(--yellow)',
-          },
-          {
-            name: 'Tomorrow',
-            id: 'Tomorrow',
-            icon: 'sun',
-            iconColor: 'var(--orange)',
-          },
-          {
-            name: 'Inbox',
-            icon: 'inbox',
-            disableAction: true,
-            iconColor: 'var(--primary)',
-          },
-          {
-            name: 'Upcoming',
-            icon: 'calendar',
-            disableAction: true,
-            iconColor: 'var(--green)'
-          },
-          {
-            name: 'Anytime',
-            icon: 'layer-group',
-            disableAction: true,
-            iconColor: 'var(--dark-blue)',
-          },
-          {
-            name: 'Someday',
-            icon: 'archive',
-            iconColor: 'var(--brown)'
-          },
-          {
-            name: 'Pomodoro',
-            icon: 'pomo',
-            disableAction: true,
-            iconColor: 'var(--dark-red)',
-          },
-          {
-            name: 'Calendar',
-            icon: 'calendar-star',
-            disableAction: true,
-            iconColor: 'var(--purple)'
-          },
-          {
-            name: 'Logbook',
-            icon: 'logbook',
-            iconColor: 'var(--olive)'
-          },
-          {
-            name: 'Statistics',
-            icon: 'pie',
-            iconColor: 'var(--primary)'
-          },
-        ]
+    const links = this.$store.getters.sidebarElements
 
     links.forEach(link => {
       link.callback = () => this.$router.push(`/user?list=${link.name}`)
@@ -521,10 +464,12 @@ export default {
       return []
     },
     linksOrder() {
+      console.log(
+      )
       if (this.userInfo && this.userInfo.links) {
         return this.userInfo.links
       }
-      return ['Today', 'Tomorrow', 'Inbox', 'Upcoming', 'Anytime', 'Someday', 'Pomodoro', 'Calendar', 'Logbook']
+      return this.$store.getters.sidebarElements.map(el => el.name)
     },
     getLinksOrdered() {
       return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.nonHidedLinks)

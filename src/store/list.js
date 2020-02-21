@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from "@/utils/task"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
-import { listRef, setInfo, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists, setGroup } from '../utils/firestore'
+import { listRef, setInfo, uid, listColl, taskRef, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists, setGroup } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment'
@@ -22,8 +22,22 @@ export default {
   },
   getters: {
     lists(state) {
-      const keys = Object.keys(state.lists).filter(k => state.lists[k])
-      const groupKeys = Object.keys(state.groupLists).filter(k => state.groupLists[k])
+      const keys = Object.keys(state.lists).filter(
+        k => state.lists[k] && !state.lists[k].logbook
+      )
+      const groupKeys = Object.keys(state.groupLists).filter(
+        k => state.groupLists[k] && !state.groupLists[k].logbook
+      )
+
+      return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
+    },
+    allLists(state) {
+      const keys = Object.keys(state.lists).filter(
+        k => state.lists[k]
+      )
+      const groupKeys = Object.keys(state.groupLists).filter(
+        k => state.groupLists[k]
+      )
       
       return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
@@ -32,9 +46,28 @@ export default {
         return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, d.lists)
       return []
     },
+    logLists(state) {
+      const keys = Object.keys(state.lists).filter(
+        k => state.lists[k] && state.lists[k].logbook
+      )
+      const groupKeys = Object.keys(state.groupLists).filter(
+        k => state.groupLists[k] && state.groupLists[k].logbook
+      )
+      
+      return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
+    },
     ...MemoizeGetters(null, {
       getTasks({}, tasks, id) {
         return tasks.filter(el => el.list === id)
+      },
+      isRecurringList: {
+        getter({}, list) {
+          const c = list.calendar
+          return c && c.type !== 'someday' && c.type !== 'specific'
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
       },
       isListCompleted: {
         getter({}, list, moment) {
@@ -159,7 +192,8 @@ export default {
         getter({getters}, list, date, l) {
           if (!list.deadline)
             return null
-          return utils.getHumanReadableDate(list.deadline, l) + ' ' + getters.getListDeadlineDaysLeftStr(list.deadline, date)
+          const readable = utils.getHumanReadableDate(list.deadline, l)
+          return (readable === 'Today' ? '' : readable) + ' ' + getters.getListDeadlineDaysLeftStr(list.deadline, date)
         },
         cache(args) {
           return JSON.stringify({
@@ -176,6 +210,11 @@ export default {
             return 'Ends today'
           else if (diff === 1)
             return `1 day left`
+          else if (diff < 0) {
+            if (Math.abs(diff) === 1)
+              return '1 day ago'
+            return `${Math.abs(diff)} days ago`
+          }
           return `${diff} days left`
         },
         cache(args) {
@@ -342,7 +381,7 @@ export default {
       getListsById({getters}, ids) {
         const arr = []
         for (const id of ids) {
-          const list = getters.lists.find(el => el.id === id)
+          let list = getters.allLists.find(el => el.id === id)
           if (list) arr.push(list)
         }
         return arr
@@ -451,7 +490,7 @@ export default {
           setTask(b, {
             ...t, id: null, list: newListRef.id,
             group,
-            createdFire: serverTimestamp(),
+            createdFire: new Date(),
             created: mom().format('Y-M-D HH:mm ss'),
           }, rootState, ref.id, writes)
           arr.push({
@@ -484,7 +523,7 @@ export default {
         name,
         group,
         folder: list.folder || null,
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         deadline: list.deadline || null,
         tags: list.tags || [],
@@ -530,6 +569,38 @@ export default {
 
       cacheBatchedItems(b, writes)
 
+      b.commit()
+    },
+    unlogLists({rootState}, lists) {
+      const b = fire.batch()
+
+      const writes = []
+
+      batchSetLists(b, {
+        logbook: false,
+        logFire: fd().delete(),
+        logDate: fd().delete(),
+        fullLogDate: fd().delete(),
+      }, lists, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+      
+      b.commit()
+    },
+    logLists({rootState}, lists) {
+      const b = fire.batch()
+
+      const writes = []
+
+      batchSetLists(b, {
+        logbook: true,
+        logFire: new Date(),
+        logDate: mom().format('Y-M-D'),
+        fullLogDate: mom().format('Y-M-D HH:mm ss'),
+      }, lists, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+      
       b.commit()
     },
     addListInGroupByIndex({rootState}, {ids, item, newItemRef}) {
@@ -582,7 +653,7 @@ export default {
         name, folder,
         smartViewsOrders: {},
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
@@ -613,10 +684,10 @@ export default {
           if (c.times) c.times--
           if (c.times === 0) c.times = null
         }
-        
+
         const tod = mom()
-        setList(b, {
-          completedFire: serverTimestamp(),
+        const obj = {
+          completedFire: new Date(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
           fullCheckDate: tod.format('Y-M-D HH:mm ss'),
@@ -626,7 +697,21 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, l.id, rootState, writes)
+        }
+
+        const isNotRecurringList = !c || (c.type == 'someday' || c.type === 'specific')
+
+        if (!rootState.userInfo.manuallyLogTasks && isNotRecurringList) {
+          obj = {
+            ...obj,
+            logbook: true,
+            logFire: new Date(),
+            logDate: mom().format('Y-M-D'),
+            fullLogDate: mom().format('Y-M-D HH:mm ss'),
+          }
+        }
+        
+        setList(b, obj, l.id, rootState, writes)
       }
 
       cacheBatchedItems(b, writes)
@@ -717,7 +802,7 @@ export default {
         name: oldHeading.name,
         notes: oldHeading.notes || null,
         headings: [],
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         headingsOrder: [],
         tasks: taskIds,
@@ -811,7 +896,7 @@ export default {
       
       await setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -832,7 +917,7 @@ export default {
       
       await setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -856,7 +941,7 @@ export default {
       
       await setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -878,7 +963,7 @@ export default {
         name: '',
         smartViewsOrders: {},
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
@@ -901,7 +986,7 @@ export default {
       
       setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -923,7 +1008,7 @@ export default {
       
       setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
@@ -945,7 +1030,7 @@ export default {
       const writes = []
       
       setTask(b, {
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
@@ -1245,7 +1330,7 @@ export default {
         name: '',
         smartViewsOrders: {},
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
@@ -1333,7 +1418,7 @@ export default {
       task.heading = headingId
       setTask(b, {
         userId: uid(),
-        createdFire: serverTimestamp(),
+        createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, rootState, newTaskRef.id, writes)
