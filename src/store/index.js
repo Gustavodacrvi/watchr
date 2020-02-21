@@ -189,6 +189,7 @@ const store = new Vuex.Store({
         'Calendar',
         'Recurring',
         'Upcoming',
+        'Logged lists',
         'Deadlines',
         'Logbook',
         'Tomorrow',
@@ -258,6 +259,11 @@ const store = new Vuex.Store({
         {
           name: 'Logbook',
           icon: 'logbook',
+          iconColor: 'var(--purple)'
+        },
+        {
+          name: 'Logged lists',
+          icon: 'logged-lists',
           iconColor: 'var(--purple)'
         },
         {

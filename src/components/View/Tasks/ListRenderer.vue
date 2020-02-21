@@ -8,7 +8,7 @@
           left: (isDesktop ? width : 0) + 'px',
         }"
       >
-        <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
+        <Icon :icon='(icon === "logged-lists" ? "faded-logged-lists" : icon)' color='var(--sidebar-color)' width="150px"/>
       </div>
     </transition>
     <div

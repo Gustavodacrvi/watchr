@@ -652,6 +652,7 @@ export default {
       return [
         'Upcoming',
         'Logbook',
+        'Logged lists',
         'Recurring',
         'Deadlines',
         'Later lists',
@@ -663,6 +664,7 @@ export default {
         'Deadlines',
         'Recurring',
         'Upcoming',
+        'Logged lists',
         'Later lists',
       ].includes(this.viewName)
     },

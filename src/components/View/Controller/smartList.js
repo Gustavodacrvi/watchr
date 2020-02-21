@@ -134,6 +134,7 @@ export default {
         case 'Later lists': return () => false
         case 'Calendar': return task => this.isTaskShowingOnDate(task, this.calendarDate)
         case 'Upcoming': return task => task.calendar
+        case 'Logged lists': return t => false
         case 'Inbox': return this.isTaskInbox
         case 'Deadlines': return task => task.deadline
         case 'Recurring': return this.isRecurringTask
