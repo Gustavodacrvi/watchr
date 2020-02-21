@@ -466,6 +466,10 @@ export default {
                   dispatch('list/uncompleteLists', completed)
                 break
               }
+              case 'logbook': {
+                dispatch('list/logLists', fallbackItems)
+                break
+              }
               case 'save': {
                 if (item.tags) {
                   dispatch('list/saveListsById', {
@@ -1166,9 +1170,10 @@ export default {
       }
 
       const logItems = () => {
-        if (this.shortcutsType === "Task") {
+        if (this.shortcutsType === "Task")
           this.$store.dispatch('task/logTasks', ids)
-        }
+        else
+          this.$store.dispatch('list/logLists', ids)
       }
       
       if (ids.length === 0) {
@@ -1411,6 +1416,11 @@ export default {
           ]
         else
           opt = [
+            {
+              name: 'Log lists',
+              icon: 'faded-logged-lists',
+              callback: () => logItems()
+            },
             {
               name: 'Move to folder',
               icon: 'folder',

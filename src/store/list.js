@@ -22,8 +22,22 @@ export default {
   },
   getters: {
     lists(state) {
-      const keys = Object.keys(state.lists).filter(k => state.lists[k])
-      const groupKeys = Object.keys(state.groupLists).filter(k => state.groupLists[k])
+      const keys = Object.keys(state.lists).filter(
+        k => state.lists[k] && !state.lists[k].logbook
+      )
+      const groupKeys = Object.keys(state.groupLists).filter(
+        k => state.groupLists[k] && !state.groupLists[k].logbook
+      )
+
+      return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
+    },
+    allLists(state) {
+      const keys = Object.keys(state.lists).filter(
+        k => state.lists[k]
+      )
+      const groupKeys = Object.keys(state.groupLists).filter(
+        k => state.groupLists[k]
+      )
       
       return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
@@ -31,6 +45,16 @@ export default {
       if (userInfo)
         return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, d.lists)
       return []
+    },
+    logLists(state) {
+      const keys = Object.keys(state.lists).filter(
+        k => state.lists[k] && state.lists[k].logbook
+      )
+      const groupKeys = Object.keys(state.groupLists).filter(
+        k => state.groupLists[k] && state.groupLists[k].logbook
+      )
+      
+      return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
     ...MemoizeGetters(null, {
       getTasks({}, tasks, id) {
@@ -547,6 +571,22 @@ export default {
 
       b.commit()
     },
+    logLists({rootState}, lists) {
+      const b = fire.batch()
+
+      const writes = []
+
+      batchSetLists(b, {
+        logbook: true,
+        logFire: new Date(),
+        logDate: mom().format('Y-M-D'),
+        fullLogDate: mom().format('Y-M-D HH:mm ss'),
+      }, lists, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+      
+      b.commit()
+    },
     addListInGroupByIndex({rootState}, {ids, item, newItemRef}) {
       const b = fire.batch()
 
@@ -628,9 +668,9 @@ export default {
           if (c.times) c.times--
           if (c.times === 0) c.times = null
         }
-        
+
         const tod = mom()
-        setList(b, {
+        const obj = {
           completedFire: new Date(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
@@ -641,7 +681,21 @@ export default {
           cancelDate: null,
           fullCancelDate: null,
           calendar,
-        }, l.id, rootState, writes)
+        }
+
+        const isNotRecurringList = !c || (c.type == 'someday' || c.type === 'specific')
+
+        if (!rootState.userInfo.manuallyLogTasks && isNotRecurringList) {
+          obj = {
+            ...obj,
+            logbook: true,
+            logFire: new Date(),
+            logDate: mom().format('Y-M-D'),
+            fullLogDate: mom().format('Y-M-D HH:mm ss'),
+          }
+        }
+        
+        setList(b, obj, l.id, rootState, writes)
       }
 
       cacheBatchedItems(b, writes)

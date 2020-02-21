@@ -113,6 +113,11 @@ export default {
     
     const nonInListOptions = [
       {
+        name: 'Log lists',
+        icon: 'faded-logged-lists',
+        callback: () => dispatch('list/logLists', [listId])
+      },
+      {
         type: 'optionsList',
         name: 'Deadline',
         options: [
