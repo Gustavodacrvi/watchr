@@ -676,7 +676,15 @@ const store = new Vuex.Store({
         stats: {dummy: null},
         tasks: {dummy: null},
         tags: {dummy: null},
-        info: {dummy: null},
+        info: {
+          dummy: null,
+          hidedViews: [
+            'Tomorrow',
+            'Pomodoro',
+            'Statistics',
+            'Calendar',
+          ],
+        },
       }, {merge: true})
       
       return b.commit()
@@ -696,7 +704,15 @@ const store = new Vuex.Store({
         stats: {dummy: null},
         tasks: {dummy: null},
         tags: {dummy: null},
-        info: {dummy: null},
+        info: {
+          dummy: null,
+          hidedViews: [
+            'Tomorrow',
+            'Pomodoro',
+            'Statistics',
+            'Calendar',
+          ],
+        },
       })
 
       return b.commit()
