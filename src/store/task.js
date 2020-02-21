@@ -83,7 +83,7 @@ export default {
         editDate: mom().format('Y-M-D'),
         begins: mom().format('Y-M-D'),
   
-        specific: moment.format('Y-M-D'),
+        specific: (moment.format) ? moment.format('Y-M-D') : moment,
       }
       return obj
     },
@@ -376,6 +376,11 @@ export default {
               return 'Ends today'
             else if (diff === 1)
               return `1 day left`
+            else if (diff < 0) {
+              if (Math.abs(diff) === 1)
+                return '1 day ago'
+              return `${Math.abs(diff)} days ago`
+            }
             return `${diff} days left`
           }
           
@@ -411,6 +416,7 @@ export default {
                 completed: t.completed,
                 calendar: t.calendar,
                 list: t.list,
+                d: t.deadline,
                 group: t.group,
                 folder: t.folder,
                 tags: t.tags,
@@ -477,6 +483,15 @@ export default {
         getter({}, task) {
           if (!task.calendar || task.calendar.type !== 'specific') return false
           return mom().add(1, 'y').startOf('year').isBefore(mom(task.calendar.specific, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
+      isRecurringTask: {
+        getter({}, task) {
+          const c = task.calendar
+          return c && c.type !== 'someday' && c.type !== 'specific'
         },
         cache(args) {
           return JSON.stringify(args[0].calendar)
@@ -859,11 +874,12 @@ export default {
           'completed',
           'list',
           'folder',
+          'deadline',
           'group',
           'tags',
           'completeDate',
         ],
-        getter({state, getters}, viewName) {
+        getter({getters}, viewName) {
           const ts = getters.tasks.filter(
             task => getters.isTaskInView(task, viewName)
           )

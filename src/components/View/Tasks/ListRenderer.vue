@@ -424,7 +424,7 @@ export default {
 
         forceFallback: true,
         fallbackOnBody: true,
-        animation: 80,
+        animation: 200,
         delay: this.isDesktop ? 5 : 100,
         handle: '.item-handle',
         

@@ -133,7 +133,7 @@ export default {
             disabled: !this.updateHeadingIds,
             group: 'headings',
             delay: this.isDesktop ? 5 : 150,
-            animation: 80,
+            animation: 200,
             handle: '.handle',
       
             onUpdate: () => {

@@ -36,6 +36,15 @@ export default {
       getTasks({}, tasks, id) {
         return tasks.filter(el => el.list === id)
       },
+      isRecurringList: {
+        getter({}, list) {
+          const c = list.calendar
+          return c && c.type !== 'someday' && c.type !== 'specific'
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
       isListCompleted: {
         getter({}, list, moment) {
           const c = list.calendar
@@ -177,6 +186,11 @@ export default {
             return 'Ends today'
           else if (diff === 1)
             return `1 day left`
+          else if (diff < 0) {
+            if (Math.abs(diff) === 1)
+              return '1 day ago'
+            return `${Math.abs(diff)} days ago`
+          }
           return `${diff} days left`
         },
         cache(args) {

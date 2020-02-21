@@ -108,7 +108,7 @@ export default {
       const c = this.calendarOrders
       return (c[date] && c[date].tasks) || []
     },
-    getWholeYearCalendarHeadings(o = {}, periodic = false) {
+    getWholeYearCalendarHeadings(o = {}) {
       const arr = []
       const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks)
       const TOD_STR = mom().format('Y-M-D')
@@ -156,19 +156,13 @@ export default {
 
         ...(o['Upcoming years'] || {}),
       })
-      // periodic tasks
-      if (periodic)
-        arr.push({
-          disableSortableMount: true,
-          name: 'Periodic tasks',
-          sort,
-          filter: task => task.calendar && task.calendar.type !== 'specific' && task.calendar.type !== 'someday',
-          id: 'periodic tasks'
-        })
       return arr
     },
     getCalendarOrderTypeHeadings(date, o = {}) {
       const dispatch = this.$store.dispatch
+
+      const calObj = this.getSpecificDayCalendarObj
+      
       return {
         ...o,
         name: o.name ? o.name : date,
@@ -232,6 +226,7 @@ export default {
       isListLastDeadlineDay: 'list/isListLastDeadlineDay',
       isListBeginDay: 'list/isListBeginDay',
       getEndsTodayTasks: 'task/getEndsTodayTasks',
+      isRecurringTask: 'task/isRecurringTask',
       wasTaskLoggedLastWeek: 'task/wasTaskLoggedLastWeek',
       getOverdueTasks: 'task/getOverdueTasks',
       wasTaskLoggedInMonth: 'task/wasTaskLoggedInMonth',
@@ -250,6 +245,7 @@ export default {
       isTaskDeadlineThisMonth: 'task/isTaskDeadlineThisMonth',
       isTaskDeadlineInOneYear: 'task/isTaskDeadlineInOneYear',
       isTaskCompleted: 'task/isTaskCompleted',
+      isRecurringList: 'list/isRecurringList',
       isTaskInView: 'task/isTaskInView',
       isListInView: 'list/isListInView',
       doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
@@ -656,6 +652,7 @@ export default {
       return [
         'Upcoming',
         'Logbook',
+        'Recurring',
         'Deadlines',
         'Later lists',
       ].includes(this.viewName)
@@ -664,8 +661,9 @@ export default {
       return [
         'Logbook',
         'Deadlines',
+        'Recurring',
         'Upcoming',
-        'Later lists'
+        'Later lists',
       ].includes(this.viewName)
     },
     calendarOrders() {
@@ -686,6 +684,15 @@ export default {
       const arr = []
       const tod = mom()
       const dispatch = this.$store.dispatch
+
+      arr.push({
+        name: 'Overdue',
+        id: 'Overdue',
+        disableSortableMount: true,
+
+        sort: this.sortArray,
+        filter: task => this.isTaskInView(task, 'Overdue'),
+      })
 
       for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
@@ -726,6 +733,27 @@ export default {
           },
         }, false)
       )
+    },
+    recurringHeadings() {
+      return [{
+        name: 'Recurring lists',
+        id: 'Recurring lists',
+        icon: 'tasks',
+
+        disableSortableMount: true,        
+
+        listType: true,
+        disableDeadlineStr: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+
+        sort: this.sortArray,
+        order: [],
+        filter: this.isRecurringList,
+      }]
     },
     upcomingHeadings() {
       const arr = []

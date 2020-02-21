@@ -82,7 +82,7 @@ export default {
     this.sortable = new Sortable(this.draggableRoot, {
       sort: this.enableSort,
       disabled: this.disabled,
-      animation: 80,
+      animation: 200,
       direction: 'vertical',
       group: {name: 'sidebar',
         pull: (e) => {

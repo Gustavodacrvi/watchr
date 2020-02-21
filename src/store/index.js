@@ -187,6 +187,7 @@ const store = new Vuex.Store({
         'Someday',
         'Anytime',
         'Calendar',
+        'Recurring',
         'Upcoming',
         'Deadlines',
         'Logbook',
@@ -220,6 +221,12 @@ const store = new Vuex.Store({
           iconColor: 'var(--green)'
         },
         {
+          name: "Recurring",
+          disableAction: true,
+          icon: 'repeat',
+          iconColor: 'var(--txt)',
+        },
+        {
           name: 'Anytime',
           disableAction: true,
           icon: 'layer-group',
@@ -251,7 +258,7 @@ const store = new Vuex.Store({
         {
           name: 'Logbook',
           icon: 'logbook',
-          iconColor: 'var(--olive)'
+          iconColor: 'var(--purple)'
         },
         {
           name: 'Statistics',

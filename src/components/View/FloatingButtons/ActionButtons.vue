@@ -39,7 +39,7 @@ export default {
     this.sortable = new Sortable(this.$el, {
       group: {name: ['action-buttons', 'sidebar'], pull: 'clone', put: false},
       handle: '.floating-button-handle',
-      animation: 80,
+      animation: 200,
 
       fallbackClass: "sortable-fallback",
       forceFallback: true,

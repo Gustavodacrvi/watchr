@@ -136,6 +136,7 @@ export default {
         case 'Upcoming': return task => task.calendar
         case 'Inbox': return this.isTaskInbox
         case 'Deadlines': return task => task.deadline
+        case 'Recurring': return this.isRecurringTask
         case 'Logbook': return task => this.isTaskInView(task, 'Logbook')
       }
       if (this.viewType === 'search')
@@ -144,13 +145,15 @@ export default {
         if (n === 'Today' && this.hasOverdueTasks)
            return task => this.isTaskInView(task, 'Overdue') ||
                          this.isTaskInView(task, 'Today')
-        return task => this.isTaskInView(task, n)
+        return task => this.isTaskInView(task, 'Today')
       }
       return task => this.isTaskInView(task, 'Logbook')
     },
     rootFilter() {
       const n = this.viewName
       if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
+        return () => true
+      if (n === 'Recurring' || n === 'Inbox')
         return () => true
       if (this.viewType === 'search')
         return () => true
@@ -195,6 +198,7 @@ export default {
       const heads = this.getListHeadingsByView
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadings
+        case 'Recurring': return this.recurringHeadings
         case 'Today': {
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return heads

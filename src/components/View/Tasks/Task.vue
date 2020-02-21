@@ -463,6 +463,7 @@ export default {
       isTaskCanceled: 'task/isTaskCanceled',
       getTaskDeadlineStr: 'task/getTaskDeadlineStr',
       isTaskInView: 'task/isTaskInView',
+      isRecurringTask: 'task/isRecurringTask',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
@@ -637,8 +638,7 @@ export default {
       return arr
     },
     isRepeatingTask() {
-      const c = this.item.calendar
-      return c && c.type !== 'specific' && c.type !== 'someday'
+      return this.isRecurringTask(this.item)
     },
     completedItem() {
       return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
