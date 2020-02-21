@@ -113,9 +113,9 @@ export default {
     
     const nonInListOptions = [
       {
-        name: 'Log lists',
+        name: list.logbook ? 'Remove from logbook' : 'Log lists',
         icon: 'faded-logged-lists',
-        callback: () => dispatch('list/logLists', [listId])
+        callback: () => dispatch(list.logbook ? 'list/unlogLists' : 'list/logLists', [listId])
       },
       {
         type: 'optionsList',

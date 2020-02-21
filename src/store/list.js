@@ -381,7 +381,7 @@ export default {
       getListsById({getters}, ids) {
         const arr = []
         for (const id of ids) {
-          const list = getters.lists.find(el => el.id === id)
+          let list = getters.allLists.find(el => el.id === id)
           if (list) arr.push(list)
         }
         return arr
@@ -569,6 +569,22 @@ export default {
 
       cacheBatchedItems(b, writes)
 
+      b.commit()
+    },
+    unlogLists({rootState}, lists) {
+      const b = fire.batch()
+
+      const writes = []
+
+      batchSetLists(b, {
+        logbook: false,
+        logFire: fd().delete(),
+        logDate: fd().delete(),
+        fullLogDate: fd().delete(),
+      }, lists, rootState, writes)
+
+      cacheBatchedItems(b, writes)
+      
       b.commit()
     },
     logLists({rootState}, lists) {

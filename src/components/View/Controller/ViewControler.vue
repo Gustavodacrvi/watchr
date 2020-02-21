@@ -967,6 +967,141 @@ export default {
       
       return arr
     },
+    logbookLists() {
+      const arr = []
+      const tod = mom()
+      const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate')
+      const dispatch = this.$store.dispatch
+      
+      const options = lists => [
+            {
+              name: 'Remove from logbook',
+              icon: 'faded-logged-lists',
+              callback: () => dispatch('list/unlogLists', lists.map(el => el.id)),
+            },
+            {
+              name: 'Delete lists',
+              icon: 'trash',
+              callback: () => dispatch('list/deleteMultipleListsByIds', lists.map(t => t.id)),
+            },
+          ]
+
+      for (let i = 0; i < 7;i++) {
+        const date = tod.format('Y-M-D')
+        
+        const dispatch = this.$store.dispatch
+
+        let name = date
+        if (i === 0)
+          name = 'Today'
+        else if (i === 1)
+          name = 'Yesterday'
+        
+        arr.push({
+          dateType: true,
+          disableSortableMount: true,
+          name,
+          log: true,
+
+          listType: true,
+          disableDeadlineStr: true,
+          directFiltering: true,
+
+          comp: 'List',
+          editComp: 'ListEdit',
+          itemPlaceholder: 'List name...',
+
+          sort, 
+          options,
+          filter: t => t.logDate === date,
+          id: date,
+        })
+        tod.subtract(1, 'd')
+      }
+
+      arr.push({
+        name: 'Last week',
+        disableSortableMount: true,
+        dateType: true,
+        logStr: true,
+        log: true,
+        sort,
+        listType: true,
+        disableDeadlineStr: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+        options,
+        filter: t => this.wasTaskLoggedLastWeek(t),
+        id: 'last week',
+      })
+
+      const now = mom()
+      const m = now.month()
+      arr.push({
+        name: 'This month',
+        disableSortableMount: true,
+        dateType: true,
+        logStr: true,
+        log: true,
+        listType: true,
+        disableDeadlineStr: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+        sort,
+        options,
+        filter: t => this.wasTaskLoggedInMonth(t, m),
+        id: 'this month',
+      })
+      now.subtract(1, 'month')
+
+      for (let month = now.month();month > -1;month--) {
+        arr.push({
+          name: now.format('MMMM'),
+          id: month,
+          showHeading: true,
+          disableSortableMount: true,
+          logStr: true,
+          log: true,
+          listType: true,
+          disableDeadlineStr: true,
+          directFiltering: true,
+
+          comp: 'List',
+          editComp: 'ListEdit',
+          itemPlaceholder: 'List name...',
+          sort,
+          options,
+          filter: t => this.wasTaskLoggedInMonth(t, month),
+        })
+        
+        now.subtract(1, 'month')
+      }
+      arr.push({
+        name: 'Old stuff',
+        id: 'old',
+        showHeading: true,
+        disableSortableMount: true,
+        logStr: true,
+        listType: true,
+        disableDeadlineStr: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+        log: true,
+        sort,
+        options,
+        filter: this.isOldTask
+      })
+      return arr
+    },
     todayHeadingsOptions() {
       const dispatch = this.$store.dispatch
       const saveTasksDay = (ids, mom) => {

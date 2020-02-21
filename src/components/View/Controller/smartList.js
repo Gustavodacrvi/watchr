@@ -205,20 +205,13 @@ export default {
           return heads
         }
         case 'Tomorrow': return heads
-        case 'Someday': {
-          return heads
-        }
+        case 'Someday': return heads
         case 'Deadlines': return this.deadlinesViewHeadings
         case 'Later lists': return this.laterListsHeadings
-        case 'Anytime': {
-          return heads
-        }
-        case 'Calendar': {
-          return heads
-        }
-        case 'Logbook': {
-          return this.logbookHeadings
-        }
+        case 'Anytime': return heads
+        case 'Calendar': return heads
+        case 'Logbook': return this.logbookHeadings
+        case 'Logged lists': return this.logbookLists
       }
       return []
     },
