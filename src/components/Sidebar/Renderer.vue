@@ -40,10 +40,10 @@
         />
       </template>
     </transition-group>
-    <div v-if="!isSmart && !isSubElement && !moving"
+    <div v-if="!isSmart && !isSubElement && !moving && !hasEdit"
       class="add-msg-wrapper"
     >
-      <span class="add-msg">{{ addMsg }}</span>
+      <span class="add-msg" @click.stop="addEdit(items.length)">{{ addMsg }}</span>
     </div>
   </div>
 </template>

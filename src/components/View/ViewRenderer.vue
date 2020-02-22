@@ -589,7 +589,6 @@ export default {
       this.pagination = newPage
     },
     selectTag(name) {
-      console.log(name)
       const inc = this.inclusiveTags
       const exc = this.exclusiveTags
       if (!inc.includes(name) && !exc.includes(name)) {
