@@ -75,7 +75,9 @@ export default {
   data() {
     return {
       scheduleObject: null,
-      tempoOrder: {},
+      tempoOrder: {
+        root: [],
+      },
       tempoTimeout: null,
     }
   },
@@ -112,7 +114,13 @@ export default {
         task: obj.item,
         newTaskRef: obj.newItemRef,
       }
-      this.fixPosition(newObj, this.rootNonFilteredIds, () => this.$parent.$emit('add-task', newObj))
+      this.fixPosition(newObj, this.rootNonFilteredIds, () => {
+        this.tempoOrder.root = newObj.ids.slice()
+        if (this.tempoTimeout)
+          clearTimeout(this.tempoTimeout)
+        this.tempoTimeout = setTimeout(() => this.tempoOrder.root = [], 400)
+        this.$parent.$emit('add-task', newObj)
+      })
     },
     updateIds(ids) {
       this.$parent.$emit('update-ids', utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
@@ -469,7 +477,8 @@ export default {
       }
     },
     sortTasksFunction() {
-      const order = this.tasksOrder
+      const t = this.tempoOrder
+      const order = (t.root && t.root.length > 0) ? t.root : this.tasksOrder
       return tasks => this.checkMissingIdsAndSortArr(order || [], tasks)
     },
 

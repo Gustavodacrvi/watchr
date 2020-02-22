@@ -37,7 +37,7 @@ export const fire = firebase.firestore()
 export const auth = firebase.auth()
 export const sto = firebase.storage()
 
-fire.enablePersistence()
+fire.enablePersistence({ synchronizeTabs: true })
 
 import task from './task'
 import tag from './tag'
