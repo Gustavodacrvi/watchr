@@ -22,6 +22,7 @@
       @dragenter='dragenter'
       @dragover='dragover'
       @drop='drop'
+      @dragleave.stop
     >
       <template v-for="item of getItems">
         <div v-if='item.cameFromAnotherTab' :key="item.cameFromAnotherTab + 'fdskçalsdf'"
@@ -274,7 +275,7 @@ export default {
         const listLength = this.sliceItems.length
         const thresold = 1
         const itemHeight = this.itemHeight
-        const mousePos = evt.clientY - getOffsetTop(draggableRoot)
+        const mousePos = evt.pageY - getOffsetTop(draggableRoot)
         
         if (mousePos < (itemHeight + thresold))
           this.cameFromAnotherTabIndex = 0
@@ -296,11 +297,19 @@ export default {
         if (!res) return;
         const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
         if (!obj) return;
-        if (!obj.ids || !Array.isArray(obj.ids) || obj.viewName || obj.viewType) return;
-
-        
+        if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
         evt.preventDefault()
-        console.log(obj)
+        
+        const items = this.getTasksById(obj.ids)
+        const finalIds = this.lazyItems.map(el => el.id)
+        finalIds.splice(this.cameFromAnotherTabIndex, 0, ...obj.ids)
+
+        this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
+
+        items.forEach(el => this.$store.dispatch('task/saveTask', this.fallbackItem(el, true)))
+        
+        if (this.onSortableAdd)
+          this.onSortableAdd(obj.ids, finalIds)
       }
       this.cameFromAnotherTab = false
     },
@@ -589,7 +598,7 @@ export default {
           if ((type === 'Task' || type === 'List') && this.comp === 'List') {
             const finalIds = this.lazyItems.map(el => el.id)
             finalIds.splice(indicies[0], 0, ...ids)
-            this.onSortableAdd(items, ids, indicies, finalIds)
+            this.onSortableAdd(ids, finalIds)
           } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
@@ -613,7 +622,7 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
-            this.onSortableAdd(evt, ids, type, this.lazyItems.filter(el => el).map(el => el.id))
+            this.onSortableAdd(ids, this.lazyItems.filter(el => el).map(el => el.id))
             this.sourceVueInstance = null
           } else {  
             const i = evt.newIndex
@@ -708,7 +717,7 @@ export default {
         },
         setData: (dataTransfer, el) => {
           dataTransfer.setData('text/plain', JSON.stringify({
-            ids: (this.selected.length > 0) ? this.selected : el.dataset.id,
+            ids: (this.selected.length > 0) ? this.selected : [el.dataset.id],
             viewName: this.viewName,
             viewType: this.viewType,
           }))
@@ -1024,6 +1033,7 @@ export default {
       platform: 'platform',
       isDesktop: 'isDesktop',
       getTaskBodyDistance: 'task/getTaskBodyDistance',
+      getTasksById: 'task/getTasksById',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),

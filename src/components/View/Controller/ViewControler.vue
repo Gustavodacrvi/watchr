@@ -185,7 +185,7 @@ export default {
             ...obj, date,
           })
         },
-        onSortableAdd: o.onSortableAdd ? o.onSortableAdd : (evt, taskIds, type, ids) => {
+        onSortableAdd: o.onSortableAdd ? o.onSortableAdd : (taskIds, ids) => {
           dispatch('task/saveTasksById', {
             ids: taskIds,
             task: {calendar: calObj(date)},
@@ -415,7 +415,7 @@ export default {
                   date: currentDate,
                 })
             },
-            onSortableAdd: (evt, taskIds, type, ids) => {
+            onSortableAdd: (taskIds, ids) => {
               if (isSmartOrderViewType)
                 this.$store.dispatch('list/moveTasksToList', {
                   taskIds, ids, listId: list.id, smartView: viewName,
@@ -518,7 +518,7 @@ export default {
                   date: currentDate,
                 })
             },
-            onSortableAdd: (evt, taskIds, type, ids) => {
+            onSortableAdd: (taskIds, ids) => {
               if (isSmartOrderViewType)
                 this.$store.dispatch('folder/moveTasksToFolder', {
                   taskIds, ids, folderId: folder.id, smartView: viewName,
@@ -621,7 +621,7 @@ export default {
                   date: currentDate,
                 })
             },
-            onSortableAdd: (evt, taskIds, type, ids) => {
+            onSortableAdd: (taskIds, ids) => {
               if (isSmartOrderViewType)
                 this.$store.dispatch('group/moveTasksToGroup', {
                   taskIds, ids, groupId: group.id, viewName,
@@ -710,7 +710,7 @@ export default {
                 task.deadline = date
               return task
             },
-            onSortableAdd: (evt, taskIds, type, ids) => {
+            onSortableAdd: (taskIds, ids) => {
               dispatch('task/saveTasksById', {
                 ids: taskIds,
                 tasks: {deadline: date},
@@ -849,7 +849,7 @@ export default {
                 date,
               })
             },
-            onSortableAdd: (evt, itemsIds, type, ids) => {
+            onSortableAdd: (itemsIds, ids) => {
               this.$store.dispatch('list/saveListsById', {
                 ids: itemsIds,
                 list: {calendar: {

@@ -89,7 +89,7 @@ export default {
       if (this.isFixedHeadingsView)
         return null
       
-      return (evt, taskIds, type, ids) => {
+      return (taskIds, ids) => {
         if (this.isSmartOrderViewType)
           this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
             taskIds, view: n, ids,

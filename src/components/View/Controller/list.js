@@ -88,7 +88,7 @@ export default {
       }
     },
     onSortableAdd() {
-      return (evt, taskIds, type, ids) => {
+      return (taskIds, ids) => {
         if (this.viewList) {
           this.$store.dispatch('list/removeTasksFromHeading', {
             taskIds, ids, listId: this.viewList.id,
@@ -190,7 +190,7 @@ export default {
                 ...obj, headingId: h.id, listId: viewList.id,
               })
             },
-            onSortableAdd: (evt, taskIds, type, ids) => {
+            onSortableAdd: (taskIds, ids) => {
               this.$store.dispatch('list/moveTasksBetweenHeadings', {
                 taskIds, ids, headingId: h.id, listId: viewList.id,
               })

@@ -81,10 +81,12 @@ export default {
     this.updateViewType(true)
   },
   mounted() {
+    const commit = () => this.$store.commit('cameFromAnotherTabDragStart', null)
+    
     this.$el.addEventListener('dragenter', evt => evt.preventDefault())
     this.$el.addEventListener('dragover', evt => evt.preventDefault())
-    this.$el.addEventListener('drop', () => this.$store.commit('cameFromAnotherTabDragStart', null)
-)
+    this.$el.addEventListener('drop', commit)
+    this.$el.addEventListener('dragleave', commit)
   },
   methods: {
     toggleScroll() {
