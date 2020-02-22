@@ -17,7 +17,7 @@
       ref='item-renderer-root'
 
       data-name='item-renderer'
-      :name='isElementFromAnotherTabHovering ? "cameFromAnotherTab" : ""'
+      tag='div'
 
       @dragenter='dragenter'
       @dragover='dragover'
@@ -208,7 +208,7 @@ export default {
       editMoveType: 'add',
       headingsItemsIds: [],
       cameFromAnotherTab: false,
-      cameFromAnotherTabIndex: 0,
+      cameFromAnotherTabIndex: null,
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -274,14 +274,16 @@ export default {
         const listLength = this.sliceItems.length
         const thresold = 1
         const itemHeight = this.itemHeight
-        const mousePos = evt.screenY - getOffsetTop(draggableRoot)
-        if (mousePos < ((itemHeight * 2) - thresold))
+        const mousePos = evt.clientY - getOffsetTop(draggableRoot)
+        
+        if (mousePos < (itemHeight + thresold))
           this.cameFromAnotherTabIndex = 0
-        else if ((((listLength - 1) * itemHeight) + thresold) < mousePos) {
+        else if ((((listLength - 2) * itemHeight) - thresold) < mousePos) {
           this.cameFromAnotherTabIndex = listLength
         } else {
-          const pos = Math.floor(mousePos / itemHeight)
-        }
+          }
+        const pos = Math.floor(mousePos / itemHeight)
+        this.cameFromAnotherTabIndex = pos === -1 ? 0 : pos
         
         
       } else {
@@ -1213,10 +1215,6 @@ export default {
 
 <style scoped>
 
-.cameFromAnotherTab-enter-active, .cameFromAnotherTab-leave-active {
-  transition: transform .2s;
-}
-
 .illustration {
   position: fixed;
   height: 100%;
@@ -1229,8 +1227,9 @@ export default {
 }
 
 .cameFromAnotherTab-ghost {
-  height: 35px;
+  height: 38px;
   background-color: var(--sidebar-color);
+  transition: transform .2s;
 }
 
 .mobile .illustration {
