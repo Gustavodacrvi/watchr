@@ -15,6 +15,7 @@
       inputPlaceholder='List name...'
       :mapString='mapString'
       :onSortableAdd="rootAdd"
+      addMsg='Add list'
 
       alreadyExistMessage="This list already exists."
       :existingItems='sortedLists'
@@ -57,6 +58,7 @@
             :enableSort="true"
             :list="f.list"
             :active="active"
+            :addMsg='f.comp === "Folder" ? "Add folder list" : "Add group list"'
             :viewType="viewType"
             :mapProgress='getListProgress'
             :mapNumbers="tasks => tasks"
@@ -124,7 +126,7 @@ export default {
         if (type === 'Task') return true
         return false
       }},
-      delay: this.isDesktop ? 5 : 150,
+      delay: this.isDesktop ? 25 : 150,
       filter: '.ignore-item',
       animation: 200,
       handle: '.handle-folder',
@@ -354,7 +356,7 @@ export default {
 <style scoped>
 
 .hasRootLists {
-  margin-top: 28px;
+  margin-top: 35px;
 }
 
 .folders-root {

@@ -40,6 +40,11 @@
         />
       </template>
     </transition-group>
+    <div v-if="!isSmart && !isSubElement && !moving"
+      class="add-msg-wrapper"
+    >
+      <span class="add-msg">{{ addMsg }}</span>
+    </div>
   </div>
 </template>
 
@@ -61,7 +66,7 @@ export default {
     SidebarElement: SidebarElementVue,
     ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem', 'isSubElement', 'existingItems', 'alreadyExistMessage'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem', 'isSubElement', 'existingItems', 'alreadyExistMessage', 'addMsg'],
   data() {
     return {
       sortable: null,
@@ -103,7 +108,7 @@ export default {
           if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
-      delay: this.isDesktop ? 5 : 150,
+      delay: this.isDesktop ? 25 : 150,
       forceFallback: true,
       fallbackOnBody: true,
       handle: '.item-handle',
@@ -111,7 +116,7 @@ export default {
       onUpdate: evt => {
         setTimeout(() => {
           this.$emit('update', this.getIds())
-        }, 10)
+        })
       },
       onStart: () => {
         this.$store.commit('moving', true)
@@ -180,13 +185,11 @@ export default {
 
         this.items.splice(index, 0, item)
 
-        setTimeout(() => {
-          this.$emit('add', {
-            item,
-            newItemRef,
-            ids: this.getIds(),
-          })
-        }, 10)
+        this.$emit('add', {
+          item,
+          newItemRef,
+          ids: this.getIdsFromItems(),
+        })
       }
     },
 
@@ -272,6 +275,9 @@ export default {
       if (this.iconColor) return this.iconColor
       return el.iconColor
     },
+    getIdsFromItems() {
+      return this.items.filter(el => !el.isEdit).map(el => el.id)
+    },
     getIds() {
       const childNodes = this.draggableRoot.childNodes
       const ids = []
@@ -316,7 +322,7 @@ export default {
             items.splice(itemIndex + 1, 0, {isEdit: true})
           }
         }
-        this.items = items
+        this.items = items.slice()
       }, 250)
     },
   }
@@ -343,6 +349,32 @@ export default {
 .Renderer {
   position: relative;
   pointer-events: all;
+}
+
+.add-msg-wrapper {
+  position: absolute;
+  height: 35px;
+  width: 100%;
+}
+
+.add-msg {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 8px;
+  height: 0;
+  opacity: 0;
+  background-color: transparent;
+  overflow: visible;
+  transition-duration: .2s;
+}
+
+.add-msg-wrapper:hover .add-msg {
+  opacity: 1;
+  cursor: pointer;
+  height: 35px;
+  background-color: var(--dark);
 }
 
 </style>

@@ -67,7 +67,7 @@
                 </div>
                 <div class="line section-line"></div>
               </div>
-              <div v-else style="margin-top: 28px"></div>
+              <div v-else style="margin-top: 35px"></div>
               <div class="comp-wrapper">
                 <transition name="sect-trans"
                   @leave="leave"

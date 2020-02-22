@@ -31,7 +31,12 @@
       icon="circle-check-dash"
       width="22px"
     />
-    <Icon v-else-if="!props.co && props.se && !props.so" class="tra-icon cursor remove-highlight" key="6"
+    <Icon v-else-if="!props.co && props.ac && props.se && !props.so" class="tra-icon cursor remove-highlight" key="6"
+      icon="circle-filled"
+      color='var(--primary)'
+      width="22px"
+    />
+    <Icon v-else-if="!props.co && !props.ac && props.se && !props.so" class="tra-icon cursor remove-highlight" key="68"
       icon="circle"
       width="22px"
     />
@@ -53,7 +58,7 @@
 <script>
 
 export default {
-  props: ['co', 'so', 'ca', 're', 'se', 'progress'],
+  props: ['co', 'so', 'ca', 're', 'se', 'ac','progress'],
 }
 
 </script>

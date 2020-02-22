@@ -425,7 +425,7 @@ export default {
         forceFallback: true,
         fallbackOnBody: true,
         animation: 200,
-        delay: this.isDesktop ? 5 : 100,
+        delay: this.isDesktop ? 25 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -1114,11 +1114,6 @@ export default {
       if (this.sortable && this.isDesktop) {
         setTimeout(() => {
           this.sortable.options.multiDrag = this.enableSelect
-          if (this.isDesktop) {
-            if (this.enableSelect)
-              this.sortable.options.delay = 50
-            else this.sortable.options.delay = 0
-          }
         })
       }
     },

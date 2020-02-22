@@ -91,6 +91,7 @@
                   :color='circleColor'
                   :re='isRepeatingTask'
                   :se='isSelecting'
+                  :ac='isItemSelected'
                   :ca='canceled'
                   :so='isSomeday'
                 />
@@ -1091,6 +1092,7 @@ export default {
   background-color: rgba(53, 73, 90, 0.6) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
   transition-duration: .8s;
+  cursor: grab;
 }
 
 .isItemSelected.isItemMainSelection .cont-wrapper,
