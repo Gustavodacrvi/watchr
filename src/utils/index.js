@@ -580,7 +580,7 @@ export default {
     
     return false
   },
-  saveByShortcut(vm, isEditing, key, preventDefault, save) {
+  saveByShortcut(vm, isEditing, key, preventDefault, save, specificMessage = []) {
     const p = preventDefault
     const {isOnControl, isOnShift, isOnAlt} = vm
 
@@ -652,7 +652,15 @@ export default {
           iconDrop({
             comp: 'CalendarPicker',
             repeat: true,
-            content: {repeat: true,callback: calendar => save('save', {calendar})},
+            content: {
+              repeat: true,
+              callback: calendar => {
+                if (specificMessage.includes('CalendarPicker'))
+                  save('CalendarPicker', calendar)
+                else
+                  save('save', {calendar})
+              }
+            }
           })
           break
         }

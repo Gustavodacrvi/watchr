@@ -288,7 +288,6 @@ export default {
             return false
           if (onlySpecific && task.calendar.type !== 'specific') return false
 
-          
           return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific)
         },
         cache(args) {
@@ -400,6 +399,8 @@ export default {
             case 'Today': return getters.isTaskShowingOnDate(task, TODAY_DATE)
             case 'Someday': return getters.isTaskSomeday(task)
             case 'Overdue': return getters.isTaskOverdue(task)
+            case 'Deadlines': return task.deadline
+            case 'Recurring': return getters.isRecurringTask(task)
             case 'Anytime': return getters.isTaskAnytime(task)
             case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
             case 'Logbook': return getters.isTaskInLogbookView(task)
@@ -470,6 +471,22 @@ export default {
                 cal: t.calendar,
                 deadline: t.deadline,
                 complete: t.completeDate,
+                ca: t.canceled,
+              }
+              break
+            }
+            case 'Deadlines': {
+              obj = {
+                d: t.deadline,
+                c: t.completed,
+                ca: t.canceled,
+              }
+              break
+            }
+            case 'Recurring': {
+              obj = {
+                cal: t.calendar,
+                c: t.completed,
                 ca: t.canceled,
               }
               break

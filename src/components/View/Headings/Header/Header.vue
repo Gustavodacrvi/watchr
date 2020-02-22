@@ -14,9 +14,9 @@ export default {
         class: {'Header': true},
       },
       [
-        createElement(HeaderBar, {props: context.props}),
-        createElement(Info, {props: context.props}),
-        createElement(FilterTags, {props: context.props}),
+        createElement(HeaderBar, {...context.data, props: context.props}),
+        createElement(Info, {...context.data, props: context.props}),
+        createElement(FilterTags, {...context.data, props: context.props}),
       ],
     )
   },

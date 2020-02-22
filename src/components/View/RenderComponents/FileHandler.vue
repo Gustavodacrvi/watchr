@@ -35,7 +35,7 @@ export default {
     FileDragDrop,
     File, AuthButton,
   },
-  props: ['storageFolder', 'id', 'fileToggle'],
+  props: ['storageFolder', 'id'],
   data() {
     return {
       saving: false,
@@ -62,14 +62,6 @@ export default {
           type: 'error',
         })
       })
-    },
-  },
-  watch: {
-    fileToggle() {
-      if (this.fileToggle) {
-        this.addFile(this.fileToggle)
-        this.$emit('empty-toggle')
-      }
     },
   },
 }

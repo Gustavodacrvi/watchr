@@ -118,7 +118,7 @@ export default {
           tag.subList = getTags(tag.id, tag.order || [])
         }
         if (!parentId) return tags
-        return this.checkMissingIdsAndSortArr(order, this.tags.map(el => ({...el, subList: null})))
+        return this.checkMissingIdsAndSortArr(order, tags.map(el => ({...el, subList: null})))
       }
 
       return getTags()

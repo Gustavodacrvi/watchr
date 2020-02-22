@@ -6,16 +6,16 @@
         :selected='isTagSelected(t.name)'
         :extraIcon='getTagExclusiveIcon(t.name)'
         icon="tag"
-        @click="$parent.$emit('tag', t.name)"
+        @click="emit('tag', t.name)"
       />
     </div>
     <div class="tags" :class="{margins: priorities.length > 0}">
       <Tag class="tag" v-for="p in priorities" :key="p"
-        value="p"
+        :value="p"
         :selected='isPrioritySelected(p)'
         :extraIcon='getPriorityExclusiveIcon(p)'
         icon="priority"
-        @click="$parent.$emit('priority', p)"
+        @click="emit('priority', p)"
       />
     </div>
     <div class="tags" :class="{margins: lists.length > 0}">
@@ -24,7 +24,7 @@
         :selected='inclusiveList === l.name || exclusiveLists.includes(l.name)'
         :extraIcon="getListExclusiveIcon(l.name)"
         icon="tasks"
-        @click="$parent.$emit('list', l.name)"
+        @click="emit('list', l.name)"
       />
     </div>
     <div class="tags" :class="{margins: folders.length > 0}">
@@ -33,7 +33,7 @@
         :selected='inclusiveFolder === l.name || exclusiveFolders.includes(l.name)'
         :extraIcon="getFolderExclusiveIcon(l.name)"
         icon="folder"
-        @click="$parent.$emit('folder', l.name)"
+        @click="emit('folder', l.name)"
       />
     </div>
   </div>
@@ -49,6 +49,10 @@ export default {
   },
   props: ['exclusiveTags', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'tags', 'priorities', 'lists', 'folders'],
   methods: {
+    emit(evt, name) {
+      this.$emit(evt, name)
+    },
+    
     isTagSelected(name) {
       return this.inclusiveTags.includes(name) || this.exclusiveTags.includes(name)
     },

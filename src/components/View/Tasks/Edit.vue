@@ -222,7 +222,7 @@
                 :box='true'
                 ref='file'
                 :file='true'
-                @add='addFile'
+                @add='onDrop'
                 title='Add files'
               />
               <IconDrop
@@ -446,6 +446,15 @@ export default {
 
       utils.saveByShortcut(this, true, key, p, (type, task) => {
         switch (type) {
+          case 'CalendarPicker': {
+            this.fromIconDrop = task !== null
+            if (task !== null)
+              this.toReplace = null
+            
+            this.task.calendar = task
+            this.fromDefaultTask = false
+            break
+          }
           case 'save': {
             if (task.tags && task.tags.length > 0) {
               this.task = {
@@ -473,7 +482,7 @@ export default {
             }
           }
         }
-      })
+      }, ['CalendarPicker'])
 
       const isNotEditingOrIsNotOnNotes = (!this.isEditingNotes || this.cursorPos !== 1)
 

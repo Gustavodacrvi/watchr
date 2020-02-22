@@ -26,6 +26,7 @@
       <input v-show="false"
         ref='file'
         type='file'
+        :multiple='true'
         @click.stop
         @change='handleFile'
       >
@@ -76,8 +77,16 @@ export default {
     },
     handleFile() {
       const inp = this.fileInput
-      if (inp.files.length > 0)
-        this.$emit('add', inp.files)
+      if (inp.files.length > 15) {
+        this.$store.commit('pushToast', {
+          name: "You can't have more than 15 files.",
+          seconds: 5,
+          type: 'error',
+        })
+      } else {
+        if (inp.files.length > 0)
+          this.$emit('add', inp.files)
+      }
       inp.value = ''
     },
     click() {

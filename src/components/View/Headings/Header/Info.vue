@@ -47,11 +47,10 @@
       @save='headerInfo.notes.save'
     />
     <FileHandler v-if='hasFileHandler'
+      ref='file-handler'
       :defaultFiles='headerInfo.files.names'
       :storageFolder='headerInfo.files.storageFolder'
       :id='headerInfo.files.id'
-      :fileToggle='fileToggle'
-      @empty-toggle='emptyToggle'
       @save='headerInfo.files.save'
     />
   </div>
@@ -73,18 +72,10 @@ export default {
     HeaderInfo, Tag, Notes,
     FileHandler,
   },
-  data() {
-    return {
-      fileToggle: null,
-    }
-  },
   props: ['headerInfo'],
   methods: {
-    emptyToggle() {
-      this.fileToggle = null
-    },
-    getHeaderInfoFile(file) {
-      this.fileToggle = file
+    getHeaderInfoFile(files) {
+      this.$refs['file-handler'].onDrop(files)
     },
     
     enter(el, done) {

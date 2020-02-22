@@ -15,7 +15,9 @@
       <span class="icon-wrapper">
         <Icon icon='file' style="opacity: .6;"/>
       </span>
-      <span class="name">{{ name }}</span>
+      <span class="name-wrapper">
+        <span class="name">{{ name }}</span>
+      </span>
       <transition name="fade-t">
         <div v-if="hover || !isDesktop" class="info">
           <Icon
@@ -107,6 +109,16 @@ export default {
   margin-right: 6px;
   margin-left: 8px;
   transform: translateY(1px);
+}
+
+.name-wrapper {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: absolute;
+  padding-left: 34px;
+  padding-right: 8px;
+  max-width: 100%;
 }
 
 .name {

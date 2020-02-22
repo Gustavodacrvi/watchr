@@ -802,7 +802,8 @@ export default {
     },
     nextCalEvent() {
       const {t,c} = this.getTask
-      if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
+      if (!c || c.type === 'someday' || c.type === 'specific')
+        return null
       const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
 
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'))
@@ -966,6 +967,7 @@ export default {
   color: var(--primary);
   font-size: .9em;
   overflow: hidden;
+  transform: translateY(-2.5px);
   opacity: .4;
 }
 

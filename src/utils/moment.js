@@ -170,6 +170,8 @@ export default {
         return mom(c.begins, 'Y-M-D')
       if (c.type === 'daily') {
         return lastComplete.add(c.daily, 'd')
+      } else if (c.type === 'after completion') {
+        return lastComplete.add(c.afterCompletion, 'd')
       } else if (c.type === 'weekly') {
         while (true) {
           const week = this.nextWeekDay(lastComplete, c.weekly.days)

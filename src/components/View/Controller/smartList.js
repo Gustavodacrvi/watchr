@@ -130,39 +130,32 @@ export default {
     },
     mainFilter() {
       const n = this.viewName
+      if (this.viewType === 'search')
+        return task => this.doesTaskIncludeText(task, n)
+      if (n === 'Today' && this.hasOverdueTasks)
+        return task => this.isTaskInView(task, 'Overdue') ||
+                        this.isTaskInView(task, 'Today')
       switch (n) {
         case 'Later lists': return () => false
         case 'Calendar': return task => this.isTaskShowingOnDate(task, this.calendarDate)
         case 'Upcoming': return task => task.calendar
         case 'Logged lists': return t => false
-        case 'Inbox': return this.isTaskInbox
-        case 'Deadlines': return task => task.deadline
-        case 'Recurring': return this.isRecurringTask
-        case 'Logbook': return task => this.isTaskInView(task, 'Logbook')
       }
-      if (this.viewType === 'search')
-        return task => this.doesTaskIncludeText(task, n)
-      if (this.isSmart) {
-        if (n === 'Today' && this.hasOverdueTasks)
-           return task => this.isTaskInView(task, 'Overdue') ||
-                         this.isTaskInView(task, 'Today')
-        return task => this.isTaskInView(task, 'Today')
-      }
-      return task => this.isTaskInView(task, 'Logbook')
+      return task => this.isTaskInView(task, n)
     },
     rootFilter() {
       const n = this.viewName
+      if (this.viewType === 'search')
+        return () => true
       if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
         return () => true
       if (n === 'Recurring' || n === 'Inbox')
-        return () => true
-      if (this.viewType === 'search')
         return () => true
       if (n === 'Calendar')
         return task => !task.list && !task.folder && !task.group
       if (n === 'Today' && this.hasOverdueTasks)
         return () => false
-      if (this.isSmart && this.notHeadingHeaderView)
+      if (n === 'Today' || n === 'Anytime' || n === 'Someday')
         return task => !task.list && !task.folder && !task.group
       return () => false
     },
