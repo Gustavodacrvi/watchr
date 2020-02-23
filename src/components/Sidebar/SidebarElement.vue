@@ -43,8 +43,8 @@
             />
           </template>
           <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
-          <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
-          <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
+          <span v-if="importantNumber" :style='{color: iconColor}' class="inf inf-num important">{{ importantNumber }}</span>
+          <span v-if="totalNumber" class="inf inf-num total">{{ totalNumber }}</span>
           <AssigneeProfilePhoto v-if="group && assigneeProfile"
             class="assigned"
             :assigned='assigned'
@@ -323,6 +323,11 @@ export default {
   width: 40px;
   flex-shrink: 0;
   position: relative;
+}
+
+.inf-num {
+  font-size: 1.05em;
+  margin-right: 8px;
 }
 
 .name-wrapper {

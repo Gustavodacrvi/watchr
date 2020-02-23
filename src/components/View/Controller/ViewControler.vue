@@ -17,6 +17,7 @@
     :notes='getViewNotes'
     :progress='getPieProgress'
     :headings='headings'
+    :fromAnotherTabSortableAdd='fromAnotherTabSortableAdd'
     :headingsOrder='headingsOrder'
     :showAllHeadingsItems='showAllHeadingsItems'
     :rootFallbackItem='rootFallbackItem'

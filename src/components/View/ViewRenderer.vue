@@ -137,7 +137,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'getCalendarOrderDate', 'viewItem',
+  'getCalendarOrderDate', 'viewItem', 'fromAnotherTabSortableAdd',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],

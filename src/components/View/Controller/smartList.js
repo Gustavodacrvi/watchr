@@ -22,7 +22,14 @@ export default {
       }
     },
     rootFallbackItem() {
-      return task => task
+      return (task, force) => {
+        if (force) {
+          task.heading = null
+          task.list = null
+          task.group = null
+        }
+        return task
+      }
     },
     mainFallbackItem() {
       return (task, force) => {
@@ -77,12 +84,11 @@ export default {
         }
       }
     },
-    removeRepeat() {},
-    removeDeadline() {},
-    removeHeaderTag() {},
-    removeDeferDate() {},
-    saveNotes() {},
-    addHeading() {},
+    fromAnotherTabSortableAdd() {
+      return (finalIds, items) => {
+        console.log(finalIds, items.map(el => el.id))
+      }
+    },
     onSortableAdd() {
       const n = this.viewName
 

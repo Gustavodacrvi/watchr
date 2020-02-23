@@ -179,6 +179,7 @@ export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
+  'fromAnotherTabSortableAdd',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
@@ -300,16 +301,18 @@ export default {
         if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
         evt.preventDefault()
         
-        const items = this.getTasksById(obj.ids)
-        const finalIds = this.lazyItems.map(el => el.id)
-        finalIds.splice(this.cameFromAnotherTabIndex, 0, ...obj.ids)
+        if (this.fromAnotherTabSortableAdd) {
+          localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
+          const items = this.getTasksById(obj.ids).map(el => this.fallbackItem(el, true))
+          const finalIds = this.lazyItems.map(el => el.id)
+          finalIds.splice(this.cameFromAnotherTabIndex, 0, ...obj.ids)
 
-        this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
+          console.log(this.cameFromAnotherTabIndex, finalIds)
+  
+          this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
 
-        items.forEach(el => this.$store.dispatch('task/saveTask', this.fallbackItem(el, true)))
-        
-        if (this.onSortableAdd)
-          this.onSortableAdd(obj.ids, finalIds)
+          this.fromAnotherTabSortableAdd(finalIds, items)
+        }
       }
       this.cameFromAnotherTab = false
     },
@@ -689,6 +692,19 @@ export default {
           }
         },
         onEnd: evt => {
+          const dropedIds = localStorage.getItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP')
+          if (dropedIds) {
+            const obj = JSON.parse(dropedIds)
+            if (obj.ids && Array.isArray(obj.ids)) {
+              obj.ids.forEach(id => {
+                const i = this.lazyItems.findIndex(el => el.id)
+                if (i > -1)
+                  this.lazyItems.splice(i, 1)
+              })
+              localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', '')
+            }
+          }
+          
           this.$store.commit('moving', false)
           
           if (this.isDesktop)
