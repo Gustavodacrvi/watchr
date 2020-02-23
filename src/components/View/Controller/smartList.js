@@ -147,7 +147,7 @@ export default {
       const n = this.viewName
       if (this.viewType === 'search')
         return () => true
-      if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
+      if ((this.isCalendarOrderViewType || this.isSmartOrderViewType) && this.ungroupTasksInHeadings)
         return () => true
       if (n === 'Recurring' || n === 'Inbox')
         return () => true
@@ -155,7 +155,7 @@ export default {
         return task => !task.list && !task.folder && !task.group
       if (n === 'Today' && this.hasOverdueTasks)
         return () => false
-      if (n === 'Today' || n === 'Tomorrow' || n === 'Anytime' || n === 'Someday')
+      if (this.isCalendarOrderViewType || this.isSmartOrderViewType)
         return task => !task.list && !task.folder && !task.group
       return () => false
     },
