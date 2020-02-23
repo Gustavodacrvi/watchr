@@ -159,8 +159,8 @@ export default {
         smartViewsOrders: views,
       }, listId, rootState, writes)
     },
-    tagOrder(b, writes, {finalIds, tagId, rootState}) {
-      setTag(b, {tasks: finalIds}, tagId, rootState, writes)
+    Tag(b, writes, {finalIds, tagId, rootState}) {
+      setTag(b, {tasks: finalIds, subList: null}, tagId, rootState, writes)
     },
     saveListOrder(b, writes, {finalIds, listId, rootState}) {
       setList(b, {tasks: finalIds}, listId, rootState, writes)

@@ -1001,29 +1001,6 @@ export default {
 
       b.commit()
     },
-    addTaskByIndexSmart({rootState}, {ids, index, task, list, newTaskRef}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      setTask(b, {
-        userId: uid(),
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-      const obj = {[list]: {}}
-      // list === viewName, e.g: Today, Tomorrow
-      obj[list].tasks = ids
-
-      setInfo(b, {
-        viewOrders: obj,
-      }, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     addTaskByIndex({rootState}, {ids, index, task, listId, newTaskRef}) {
       const b = fire.batch()
 

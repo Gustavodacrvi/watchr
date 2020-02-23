@@ -3,6 +3,8 @@ import utilsTag from '@/utils/tag'
 import utils from '@/utils/'
 import mom from 'moment'
 
+import functionFallbacks from '@/utils/functionFallbacks.js'
+
 export default {
   computed: {
     addTask() {
@@ -15,15 +17,18 @@ export default {
       }
     },
     rootFallbackItem() {
-      return task => task
+      return t => t
+    },
+    fallbackFunctionData() {
+      return () => ({
+        tagId: this.viewTag.id,
+      })
     },
     mainFallbackItem() {
-      return (task, force) => {
-        task.tags = []
-        if (force || (task.tags.length === 0 || !task.tags.includes(this.viewTag.id)))
-          task.tags.push(this.viewTag.id)
-        return task
-      }
+      return (t, f) => functionFallbacks.viewFallbacks.Tag(t, f, this.viewTag.id)
+    },
+    updateIds() {
+      return functionFallbacks.updateOrderFunctions.Tag
     },
     
     saveHeaderName() {
@@ -32,16 +37,6 @@ export default {
           this.$router.push('/user?tag='+name)
           this.$store.dispatch('tag/saveTag', {
             name, id: this.viewTag.id
-          })
-        }
-      }
-    },
-    updateIds() {
-      return ids => {
-        if (this.viewTag) {
-          this.$store.dispatch('tag/saveTag', {
-            tasks: ids,
-            id: this.viewTag.id,
           })
         }
       }
