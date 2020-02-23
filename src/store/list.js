@@ -1001,24 +1001,6 @@ export default {
 
       b.commit()
     },
-    addTaskByIndex({rootState}, {ids, index, task, listId, newTaskRef}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      setTask(b, {
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        userId: uid(),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-
-      setList(b, {tasks: ids}, listId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
 
     uncompleteHeadingTasks({getters, rootState}, {headingId, listId, savedTasks}) {
       const list = getters.getListsById([listId])[0]

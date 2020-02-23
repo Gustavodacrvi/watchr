@@ -41,11 +41,11 @@
               <SidebarRenderer v-if="showFavorites"
                 :enableSort='true'
                 :disabled='false'
+                :isSmart='true'
                 :disableSelection='true'
                 :list='getFavoritesRenderList'
                 :active='value'
                 :viewType='viewType'
-                :isSmart='false'
 
                 :mapNumbers='mapFavorites'
                 :mapProgress='mapProgress'

@@ -7,15 +7,6 @@ import functionFallbacks from '@/utils/functionFallbacks.js'
 
 export default {
   computed: {
-    addTask() {
-      return obj => {
-        if (this.viewTag) {
-          this.$store.dispatch('tag/addTaskByIndex', {
-            ...obj, tagId: this.viewTag.id,
-          })
-        }
-      }
-    },
     rootFallbackItem() {
       return t => t
     },

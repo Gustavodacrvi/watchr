@@ -63,9 +63,17 @@ export default {
         t.tags = [tagId]
       return t
     },
-    List(t, force = false, listId) {
-      if (force || !isAlreadyOnAnotherList(t))
+    List(t, force = false, {listId, groupId, listTagIds}) {
+      if (force || !isAlreadyOnAnotherList(t)) {
         t.list = listId
+        t.group = groupId || null
+
+        if (t.tags)
+          t.tags = [...t.tags, ...listTagIds]
+        else
+          t.tags = listTagIds
+        
+      }
       return t
     },
     Folder(t, force = false, folderId) {
@@ -99,12 +107,9 @@ export default {
       }
       return t
     },
-    listRoot(t, force = false, {listId, groupId}) {
-      if (force || !isAlreadyOnAnotherList(t)) {
+    listRoot(t, force = false) {
+      if (force) {
         t.heading = null
-        t.list = listId
-        t.group = groupId || null
-        t.folder = null
       }
       return t
     },
@@ -162,7 +167,7 @@ export default {
     Tag(b, writes, {finalIds, tagId, rootState}) {
       setTag(b, {tasks: finalIds, subList: null}, tagId, rootState, writes)
     },
-    saveListOrder(b, writes, {finalIds, listId, rootState}) {
+    List(b, writes, {finalIds, listId, rootState}) {
       setList(b, {tasks: finalIds}, listId, rootState, writes)
     },
     saveFolderOrder(b, writes, {finalIds, folderId, rootState}) {

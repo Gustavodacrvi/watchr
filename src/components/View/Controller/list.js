@@ -7,51 +7,33 @@ import mom from 'moment'
 
 const TOD_DATE = mom().format('Y-M-D')
 
+import functionFallbacks from '@/utils/functionFallbacks.js'
+
 export default {
   computed: {
-    addTask() {
-      return obj => {
-        if (this.viewList) {
-          this.$store.dispatch('list/addTaskByIndex', {
-            ...obj, listId: this.viewList.id,
-          })
-        }
-      }
-    },
     rootFallbackItem() {
-      return (task, force) => {
-        if (force || !task.heading) {
-          task.heading = null
-        }
-        return task
-      }
+      return functionFallbacks.viewPositionFallbacks.listRoot
+    },
+    fallbackFunctionData() {
+      return () => ({
+        listId: this.viewList.id,
+        groupId: this.viewList.group,
+      })
     },
     mainFallbackItem() {
-      return (task, force) => {
-        const list = this.viewList
-        if (force || (!task.group && !task.list)) {
-          task.group = list.group || null
-          task.list = list.id || null
-        }
-
-        if (force || (!task.list && !task.folder && !task.group))
-          task.list = list.id
-        
-        task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
-        return task
-      }
+      return (t, f) => functionFallbacks.viewFallbacks.List(t, f, {
+        listId: this.viewList.id,
+        groupId: this.viewList.group,
+        listTagIds: this.listgetListTags.map(el => el.id),
+      })
     },
-    
+    rootFilter() {
+      return this.isTaskInListRoot
+    },
     updateIds() {
-      return ids => {
-        if (this.viewList) {
-          this.$store.dispatch('list/saveList', {
-            tasks: ids,
-            id: this.viewList.id,
-          })
-        }
-      }
+      return functionFallbacks.updateOrderFunctions.List
     },
+
     saveHeaderName() {
       return name => {
         if (this.viewList) {
@@ -135,9 +117,6 @@ export default {
         return task => this.isTaskInList(task, list.id)
       }
       return () => false
-    },
-    rootFilter() {
-      return this.isTaskInListRoot
     },
     headings() {
       const arr = []
