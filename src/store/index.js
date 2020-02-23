@@ -596,6 +596,7 @@ const store = new Vuex.Store({
           .where(`users.${userId}`, '==', true)
           .onSnapshot(snap => {
             const isFromHere = snap.metadata.hasPendingWrites
+            
             if (!isFromHere) {
               const changes = snap.docChanges()
               

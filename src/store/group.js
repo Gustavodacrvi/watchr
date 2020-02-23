@@ -277,23 +277,6 @@ export default {
 
       b.commit()
     },
-    async addTaskByIndex({rootState}, {ids, index, task, groupId, newTaskRef}) {
-      
-      const b = fire.batch()
-
-      const writes = []
-
-      await setTask(b, {
-        userId: uid(),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-      ids.splice(index, 0, newTaskRef.id)
-      setGroup(b, {order: ids}, groupId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     delete({rootState}, groupId) {
       const b = fire.batch()
 

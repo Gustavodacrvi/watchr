@@ -1,38 +1,25 @@
 
 import utilsGroup from '@/utils/group'
 
+import functionFallbacks from '@/utils/functionFallbacks.js'
+
 export default {
   computed: {
-    addTask() {
-      return obj => {
-        if (this.viewGroup) {
-          this.$store.dispatch('group/addTaskByIndex', {
-            ...obj, groupId: this.viewGroup.id,
-          })
-        }
-      }
-    },
     rootFallbackItem() {
-      return task => task
+      return t => t
     },
     mainFallbackItem() {
-      return (task, force) => {
-        if (force || (!task.list && !task.group && !task.heading))
-          task.group = this.viewGroup.id
-        return task
-      }
+      return (t, f) => functionFallbacks.viewFallbacks.Group(t, f, this.viewGroup.id)
     },
-    
     updateIds() {
-      return ids => {
-        if (this.viewGroup) {
-          this.$store.dispatch('group/saveGroup', {
-            order: ids,
-            id: this.viewGroup.id,
-          })
-        }
-      }
+      return functionFallbacks.updateOrderFunctions.Group
     },
+    fallbackFunctionData() {
+      return () => ({
+        groupId: this.viewGroup.id,
+      })
+    },
+
     saveHeaderName() {
       return name => {
         if (this.viewGroup) {

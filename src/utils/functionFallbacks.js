@@ -86,8 +86,12 @@ export default {
       return t
     },
     Group(t, force = false, groupId) {
-      if (force || !isAlreadyOnAnotherList(t))
+      if (force || !isAlreadyOnAnotherList(t)) {
+        t.folder = null
+        t.list = null
+        t.heading = null
         t.group = groupId
+      }
       return t
     },
     ListGroup(t, force = false, {groupId, listId}) {
@@ -168,7 +172,7 @@ export default {
     Folder(b, writes, {finalIds, folderId, rootState}) {
       setFolder(b, {tasks: finalIds}, folderId, rootState, writes)
     },
-    saveGroupOrder(b, writes, {finalIds, groupId, rootState}) {
+    Group(b, writes, {finalIds, groupId, rootState}) {
       setGroup(b, {order: finalIds}, groupId, rootState, writes)
     },
   },

@@ -3,7 +3,6 @@ import utilsFolder from '@/utils/folder'
 
 import functionFallbacks from '@/utils/functionFallbacks.js'
 
-
 export default {
   computed: {
     rootFallbackItem() {
