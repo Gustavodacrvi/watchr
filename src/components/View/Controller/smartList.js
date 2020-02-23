@@ -155,7 +155,7 @@ export default {
         return task => !task.list && !task.folder && !task.group
       if (n === 'Today' && this.hasOverdueTasks)
         return () => false
-      if (n === 'Today' || n === 'Anytime' || n === 'Someday')
+      if (n === 'Today' || n === 'Tomorrow' || n === 'Anytime' || n === 'Someday')
         return task => !task.list && !task.folder && !task.group
       return () => false
     },
