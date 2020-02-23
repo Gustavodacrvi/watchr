@@ -7,20 +7,6 @@ import functionFallbacks from '@/utils/functionFallbacks.js'
 
 export default {
   computed: {
-    addTask() {
-      return obj => {
-        if (this.isSmartOrderViewType) {
-          this.$store.dispatch('list/addTaskByIndexSmart', {
-            ...obj, list: this.viewName,
-          })
-        } else {
-          this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
-            ...obj, date: this.getCalendarOrderDate,
-            ids: utilsTask.concatArraysRemovingOldEls(this.getCurrentScheduleTasksOrder, obj.ids),
-          })
-        }
-      }
-    },
     fallbackFunctionData() {
       return () => ({
         calendarDate: this.getCalendarOrderDate,

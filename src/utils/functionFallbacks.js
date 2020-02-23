@@ -140,10 +140,10 @@ export default {
 
       setInfo(b, {calendarOrders}, writes)
     },
-    smartOrder(b, writes, {viewName}) {
+    smartOrder(b, writes, {viewName, finalIds}) {
       const obj = {}
       obj[viewName] = {}
-      obj[viewName].tasks = ids
+      obj[viewName].tasks = finalIds
       
       setInfo(b, {
         viewOrders: obj,
