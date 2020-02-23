@@ -206,22 +206,6 @@ export default {
 
       b.commit()
     },
-    async addTaskByIndex({rootState}, {ids, index, task, folderId, newTaskRef}) {
-      const b = fire.batch()
-
-      const writes = []
-
-      await setTask(b, {
-        userId: uid(),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-      ids.splice(index, 0, newTaskRef.id)
-      setFolder(b, {tasks: ids}, folderId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     deleteFolderById({getters, rootState}, {id, lists, tasks}) {
       const b = fire.batch()
 

@@ -77,8 +77,12 @@ export default {
       return t
     },
     Folder(t, force = false, folderId) {
-      if (force || !isAlreadyOnAnotherList(t))
+      if (force || !isAlreadyOnAnotherList(t)) {
         t.folder = folderId
+        t.group = null
+        t.list = null
+        t.heading = null
+      }
       return t
     },
     Group(t, force = false, groupId) {
@@ -119,16 +123,7 @@ export default {
       }
       return t
     },
-    folderRoot(t, force = false, folderId) {
-      if (force || !isAlreadyOnAnotherList(t)) {
-        t.folder = folderId
-        t.group = null
-        t.list = null
-        t.heading = null
-      }
-      return t
-    },
-    folderRoot(t, force = false, groupId) {
+    groupRoot(t, force = false, groupId) {
       if (force || !isAlreadyOnAnotherList(t)) {
         t.group = groupId
         t.folder = null
@@ -170,8 +165,8 @@ export default {
     List(b, writes, {finalIds, listId, rootState}) {
       setList(b, {tasks: finalIds}, listId, rootState, writes)
     },
-    saveFolderOrder(b, writes, {finalIds, folderId, rootState}) {
-      setFolder(b, {order: finalIds}, folderId, rootState, writes)
+    Folder(b, writes, {finalIds, folderId, rootState}) {
+      setFolder(b, {tasks: finalIds}, folderId, rootState, writes)
     },
     saveGroupOrder(b, writes, {finalIds, groupId, rootState}) {
       setGroup(b, {order: finalIds}, groupId, rootState, writes)

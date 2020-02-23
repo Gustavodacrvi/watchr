@@ -1,38 +1,26 @@
 
 import utilsFolder from '@/utils/folder'
 
+import functionFallbacks from '@/utils/functionFallbacks.js'
+
+
 export default {
   computed: {
-    addTask() {
-      return obj => {
-        if (this.viewFolder) {
-          this.$store.dispatch('folder/addTaskByIndex', {
-            ...obj, folderId: this.viewFolder.id,
-          })
-        }
-      }
-    },
     rootFallbackItem() {
-      return task => task
+      return t => t
     },
     mainFallbackItem() {
-      return (task, force) => {
-        if (force || (!task.list && !task.folder && !task.group && !task.heading))
-          task.folder = this.viewFolder.id
-        return task
-      }
+      return (t, f) => functionFallbacks.viewFallbacks.Folder(t, f, this.viewFolder.id)
     },
-    
+    fallbackFunctionData() {
+      return () => ({
+        folderId: this.viewFolder.id,
+      })
+    },
     updateIds() {
-      return ids => {
-        if (this.viewFolder) {
-          this.$store.dispatch('folder/saveFolder', {
-            tasks: ids,
-            id: this.viewFolder.id,
-          })
-        }
-      }
+      return functionFallbacks.updateOrderFunctions.Folder
     },
+
     saveHeaderName() {
       return name => {
         if (this.viewFolder) {
