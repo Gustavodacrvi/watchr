@@ -218,7 +218,7 @@ export default {
       if (n === 'Statistics') return 'Statistics'
     },
     disableRootActions() {
-      return this.disableRootActionsSmartView
+      return this.isFixedHeadingsView
     },
     savedSchedule() {
       const n = this.viewName

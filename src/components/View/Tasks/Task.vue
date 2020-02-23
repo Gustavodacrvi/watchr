@@ -392,7 +392,7 @@ export default {
             done()
           })
           setTimeout(() => {
-            s.transitionDuration = '0s'
+            s.transitionDuration = '.2s'
             s.height = 'auto'
             s.minHeight = this.itemHeight + 'px'
           }, 300)
@@ -1091,7 +1091,6 @@ export default {
 .isItemSelected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
-  transition-duration: .8s;
   cursor: grab;
 }
 

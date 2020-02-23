@@ -295,7 +295,7 @@ export default {
       },
       getListHeadingsById: {
         react: [
-          'headings'
+          'headings',
         ],
         getter({getters}, id) {
           return getters.lists.find(el => el.id === id).headings
@@ -1180,25 +1180,6 @@ export default {
 
       b.commit()
     },
-    moveTasksBetweenHeadings({getters, rootState}, {ids, listId, taskIds, headingId}) {
-      const list = getters.getListsById([listId])[0]
-      const b = fire.batch()
-
-      const writes = []
-      
-      batchSetTasks(b, {
-        heading: headingId,
-      }, taskIds, rootState, writes)
-
-      const heads = list.headings.slice()
-      const i = heads.findIndex(el => el.id === headingId)
-      heads[i].tasks = ids
-      setList(b, {headings: heads}, listId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     removeTasksFromHeading({rootState}, {listId, taskIds, ids}) {
       const b = fire.batch()
 
@@ -1232,17 +1213,6 @@ export default {
 
       cacheBatchedItems(b, writes)
       
-      b.commit()
-    },
-    updateHeadingsTaskIds({getters, rootState}, {listId, headingId, ids}) {
-      const list = getters.getListsById([listId])[0]
-      const heads = list.headings.slice()
-      const i = heads.findIndex(el => el.id === headingId)
-      heads[i].tasks = ids
-      const b = fire.batch()
-      
-      setList(b, {headings: heads}, listId, rootState)
-
       b.commit()
     },
     updateListHeadings({rootState}, {ids, listId}) {
@@ -1364,32 +1334,6 @@ export default {
       const b = fire.batch()
 
       setInfo(b, {calendarOrders})
-
-      b.commit()
-    },
-    addTaskHeading({getters, rootState}, {headingId, ids, listId, task, index, newTaskRef}) {
-      const list = getters.getListsById([listId])[0]
-      const b = fire.batch()
-
-      const writes = []
-      
-      task.list = listId
-      task.heading = headingId
-      setTask(b, {
-        userId: uid(),
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-      const heads = list.headings.slice()
-      const i = heads.findIndex(el => el.id === headingId)
-      ids.splice(index, 0, newTaskRef.id)
-      heads[i].tasks = ids
-      setList(b, {
-        headings: heads,
-      }, listId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
 
       b.commit()
     },

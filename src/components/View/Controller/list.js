@@ -147,33 +147,18 @@ export default {
             options: tasks => {
               return utilsList.listHeadingOptions(viewList, h, this.$store, tasks, this.l)
             },
-            fallbackItem: (task, force) => {
-              if (force || (!task.heading && !task.folder && task.list === viewList.id))
-                task.heading = h.id
-              task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
-              return task
-            },
+            fallbackFunctionData: () => ({
+              listId: viewList.id,
+              headingId: h.id,
+            }),
+            fallbackItem: functionFallbacks.viewPositionFallbacks.listHeading,
+            updateViewIds: functionFallbacks.updateOrderFunctions.listHeading,
 
             saveNotes: notes => {
               this.$store.dispatch('list/saveHeadingNotes', {
                 listId: viewList.id, notes, heading: h.id,
               })
             },
-            updateIds: ids => {
-              this.$store.dispatch('list/updateHeadingsTaskIds', {
-                headingId: h.id, listId: viewList.id, ids,
-              })
-            },
-            onAddItem: obj => {
-              this.$store.dispatch('list/addTaskHeading', {
-                ...obj, headingId: h.id, listId: viewList.id,
-              })
-            },
-            onSortableAdd: (taskIds, ids) => {
-              this.$store.dispatch('list/moveTasksBetweenHeadings', {
-                taskIds, ids, headingId: h.id, listId: viewList.id,
-              })
-            }
           })
         }
       }

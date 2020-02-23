@@ -121,9 +121,9 @@ export default {
       }
       return t
     },
-    listHeading(t, force = false, headingId) {
+    listHeading(t, force = false, {id}) {
       if (force || (!t.heading)) {
-        t.heading = headingId
+        t.heading = id
       }
       return t
     },
@@ -168,6 +168,14 @@ export default {
     },
     List(b, writes, {finalIds, listId, rootState}) {
       setList(b, {tasks: finalIds}, listId, rootState, writes)
+    },
+    listHeading(b, writes, {listId, finalIds, headingId, rootGetters, rootState}) {
+      const list = rootGetters['list/getListsById']([listId])[0]
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.id === headingId)
+      heads[i].tasks = finalIds
+      
+      setList(b, {headings: heads}, listId, rootState, writes)
     },
     Folder(b, writes, {finalIds, folderId, rootState}) {
       setFolder(b, {tasks: finalIds}, folderId, rootState, writes)

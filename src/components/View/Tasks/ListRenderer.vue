@@ -303,10 +303,10 @@ export default {
         
         localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
         const items = this.getTasksById(obj.ids).map(el => this.fallbackItem(el, true))
-        const finalIds = this.lazyItems.map(el => el.id)
-        finalIds.splice(this.cameFromAnotherTabIndex, 0, ...obj.ids)
+        
 
         this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
+        const finalIds = this.lazyItems.map(el => el.id)
 
         this.addToList(finalIds, obj.ids)
       }
@@ -321,7 +321,7 @@ export default {
 
         items.forEach(el => setTask(b, this.fallbackItem(el, true), this.$store.state, el.id, writes))
 
-        this.$emit('update', {finalIds, b, writes})
+        this.$emit('update', {finalIds, b, writes, itemsIds})
       } else {
         this.onSortableAdd(finalIds, itemsIds)
       }
@@ -542,7 +542,7 @@ export default {
         onUpdate: (evt) => {
           setTimeout(() => {
             this.$emit('update', {finalIds: this.getIds(true)})
-          })
+          }, 10)
         },
         onSelect: evt => {
           const id = evt.item.dataset.id
@@ -611,7 +611,7 @@ export default {
           if ((type === 'Task' || type === 'List') && this.comp === 'List') {
             const finalIds = this.lazyItems.map(el => el.id)
             finalIds.splice(indicies[0], 0, ...ids)
-            this.addToList(ids, finalIds)
+            this.addToList(finalIds, ids)
           } else if (type === 'Task' && this.addToList && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
@@ -635,7 +635,7 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
-            this.addToList(ids, this.lazyItems.filter(el => el).map(el => el.id))
+            this.addToList(this.lazyItems.filter(el => el).map(el => el.id), ids)
             this.sourceVueInstance = null
           } else {  
             const i = evt.newIndex
@@ -934,7 +934,7 @@ export default {
       if (this.isRoot && this.rootFallbackItem)
         t = this.rootFallbackItem(t, force)
       else if (this.headingFallbackItem)
-        t = this.headingFallbackItem(t, force)
+        t = this.headingFallbackItem(t, force, this.header)
 
       return t
     },

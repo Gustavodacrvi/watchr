@@ -91,23 +91,39 @@ export default {
     })
   },
   getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
-    const removedIncludedIds = nonFiltered.slice().filter(id => !filtered.includes(id))
+    
+    const removed = nonFiltered.filter(id => !filtered.includes(id))
+    let firstNewIdIndex = null
+    let j = 0
+    const newIds = filtered.filter(id => {
+      if (!nonFiltered.includes(id)) {
+        if (firstNewIdIndex === null)
+          firstNewIdIndex = j
+        return true
+      }
+      j++
+    })
     
     let missing = []
     let i = 0
     for (const id of nonFiltered) {
-      if (!removedIncludedIds.includes(id))
+      if (!removed.includes(id))
         missing.push(i)
 
       i++
     }
     i = 0
     for (const id of filtered) {
-      removedIncludedIds.splice(missing[i], 0, id)
-      i++
+      if (!newIds.includes(id)) {
+        removed.splice(missing[i], 0, id)
+        i++
+      }
     }
 
-    return removedIncludedIds
+    if (newIds.length > 0)
+      removed.splice(firstNewIdIndex, 0, ...newIds)
+
+    return removed
   },
   getUpdatedCalendarOrders(ids, date, rootState, property = 'tasks') {
     const calendarOrders = { [date]: { [property]: ids } }

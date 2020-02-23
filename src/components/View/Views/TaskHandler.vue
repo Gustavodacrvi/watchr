@@ -379,12 +379,21 @@ export default {
 
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
-        let updateIds = ids =>
-            head.updateIds(
-              utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids,
-                nonFiltered.map(el => el.id),
-              )
-            )
+        let updateIds = ({finalIds, b = fire.batch(), writes = []}) => {
+          head.updateViewIds(
+            b,
+            writes,
+            {
+              finalIds: utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, nonFiltered.map(el => el.id)),
+              ...this.getUpdateIdsInfo(),
+              ...head.fallbackFunctionData(),
+            }
+          )
+
+          cacheBatchedItems(b, writes)
+
+          b.commit()
+        }
         
         const unshiftSortingOptions = options => {
           const opt = [
@@ -444,7 +453,7 @@ export default {
           return [...opt, ...options]
         }
         
-        if (!head.updateIds)
+        if (!head.updateViewIds)
           updateIds = undefined
 
         return {
@@ -470,13 +479,24 @@ export default {
               [head.listType ? 'list' : 'task']: obj.item,
               [head.listType ? 'newListRef' : 'newTaskRef']: obj.newItemRef,
             }
-            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => {
-              head.order = newObj.ids.slice()
-              this.tempoOrder[head.id] = head.order.slice()
-              if (this.tempoTimeout)
-                clearTimeout(this.tempoTimeout)
-              this.tempoTimeout = setTimeout(() => this.tempoOrder = {}, 400)
-              head.onAddItem(newObj)
+            this.fixPosition(newObj, nonFiltered.map(el => el.id), async () => {
+
+              const b = fire.batch()
+              const writes = []
+
+              head.updateViewIds(b, writes, {
+                finalIds: newObj.ids,
+                ...this.getUpdateIdsInfo(),
+                ...head.fallbackFunctionData(),
+              })
+
+              await this.$store.dispatch('task/addViewTask', {
+                b, ...newObj, writes,
+              })
+
+              cacheBatchedItems(b, writes)
+              
+              b.commit()
             })
           },
           progress: head.progress ? head.progress() : undefined,
