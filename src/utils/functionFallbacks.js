@@ -1,6 +1,12 @@
 
 import mom from 'moment'
 
+
+import utilsTask from './utilsTask'
+import { fire, setInfo, setTag, setList, setGroup, setFolder } from './index'
+
+const getBatch = fire.batch()
+
 const isAlreadyOnAnotherList = t => t.list || t.folder || t.group
 
 export default {
@@ -127,6 +133,45 @@ export default {
         t.heading = null
       }
       return t
+    },
+  },
+  updateOrderFunctions: {
+    calendarOrder(b, writes, {finalIds, calendarDate, rootState}) {
+
+      const calendarOrders = utilsTask.getUpdatedCalendarOrders(finalIds, calendarDate, rootState)
+
+      setInfo(b, {calendarOrders}, writes)
+    },
+    smartOrder(b, writes, {viewName}) {
+      const obj = {}
+      obj[viewName] = {}
+      obj[viewName].tasks = ids
+      
+      setInfo(b, {
+        viewOrders: obj,
+      }, writes)
+    },
+    smartViewHeadingsListTasksOrder(b, writes, {rootState, viewName, rootGetters}) {
+      const list = rootGetters['list/getListsById']([listId])[0]
+      let views = list.smartViewsOrders
+      if (!views) views = {}
+      views[viewName] = ids
+      
+      setList(b, {
+        smartViewsOrders: views,
+      }, listId, rootState, writes)
+    },
+    tagOrder(b, writes, {finalIds, tagId, rootState}) {
+      setTag(b, {tasks: finalIds}, tagId, rootState, writes)
+    },
+    saveListOrder(b, writes, {finalIds, listId, rootState}) {
+      setList(b, {tasks: finalIds}, listId, rootState, writes)
+    },
+    saveFolderOrder(b, writes, {finalIds, folderId, rootState}) {
+      setFolder(b, {order: finalIds}, folderId, rootState, writes)
+    },
+    saveGroupOrder(b, writes, {finalIds, groupId, rootState}) {
+      setGroup(b, {order: finalIds}, groupId, rootState, writes)
     },
   },
 }
