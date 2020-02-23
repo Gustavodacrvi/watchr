@@ -2,10 +2,8 @@
 import mom from 'moment'
 
 
-import utilsTask from './utilsTask'
-import { fire, setInfo, setTag, setList, setGroup, setFolder } from './index'
-
-const getBatch = fire.batch()
+import utilsTask from './task'
+import { setInfo, setTag, setList, setGroup, setFolder } from './firestore'
 
 const isAlreadyOnAnotherList = t => t.list || t.folder || t.group
 
@@ -23,7 +21,7 @@ export default {
       return t
     },
     calendarOrder(t, force = false, specific) {
-      if (!t.calendar || force) {
+      if (force || !t.calendar) {
         const m = mom().format('Y-M-D')
         t.calendar = {
           type: 'specific',
@@ -136,7 +134,7 @@ export default {
     },
   },
   updateOrderFunctions: {
-    calendarOrder(b, writes, {finalIds, calendarDate, rootState}) {
+    calendarOrder(b, writes, {finalIds, calendarDate, rootState, task}) {
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(finalIds, calendarDate, rootState)
 

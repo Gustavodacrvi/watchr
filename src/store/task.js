@@ -912,17 +912,25 @@ export default {
     }, true),
   },
   actions: {
-    addTask({rootState}, obj) {
+    addViewTask({rootState}, {b, writes, task}) {
+      return setTask(b, {
+        ...task,
+        userId: uid(),
+        createdFire: new Date(),
+        created: mom().format('Y-M-D HH:mm ss'),
+      }, rootState, task.id, writes)
+    },
+    async addTask({rootState}, obj) {
       const b = fire.batch()
 
-      setTask(b, {
+      await setTask(b, {
         userId: uid(),
         createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, rootState, obj.id).then(() => {
-        b.commit()
-      })
+      }, rootState, obj.id)
+
+      b.commit()
     },
     addMultipleTasks({rootState}, tasks) {
       const b = fire.batch()

@@ -3,7 +3,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 import mom from 'moment'
 
-import { pipeBooleanFilters } from '@/utils/memo'
+import functionFallbacks from '@/utils/functionFallbacks.js'
 
 export default {
   computed: {
@@ -21,18 +21,26 @@ export default {
         }
       }
     },
+    fallbackFunctionData() {
+      return () => ({
+        calendarDate: this.getCalendarOrderDate,
+      })
+    },
     rootFallbackItem() {
-      return (task, force) => {
-        if (force) {
-          task.heading = null
-          task.list = null
-          task.group = null
-        }
-        return task
-      }
+      if (this.viewName === 'Recurring')
+        return null
+
+      return functionFallbacks.viewPositionFallbacks.pureSmartViewRoot
     },
     mainFallbackItem() {
-      return (task, force) => {
+      const fs = functionFallbacks.viewFallbacks
+      if (this.isCalendarOrderViewType)
+        return (t, f) => fs.calendarOrder(t, f, this.getCalendarOrderDate)
+      if (this.viewName === 'Deadlines')
+        return fs.deadlineOrder
+      return fs[this.viewName]
+      
+/*       return (task, force) => {
         if (this.viewName === 'Calendar') {
           const date = this.calendarDate
     
@@ -55,10 +63,15 @@ export default {
         if (task.calendar === undefined)
           task.calendar = null
         return task
-      }
+      } */
     },
     
     updateIds() {
+      const fs = functionFallbacks.updateOrderFunctions
+      if (this.isCalendarOrderViewType)
+        return fs.calendarOrder
+      return fs.smartOrder
+      
       return ids => {
         if (this.isSmartOrderViewType) {
           this.$store.dispatch('list/updateViewOrder', {
@@ -82,11 +95,6 @@ export default {
             schedule, date: this.getCalendarOrderDate,
           })
         }
-      }
-    },
-    fromAnotherTabSortableAdd() {
-      return (finalIds, items) => {
-        console.log(finalIds, items.map(el => el.id))
       }
     },
     onSortableAdd() {

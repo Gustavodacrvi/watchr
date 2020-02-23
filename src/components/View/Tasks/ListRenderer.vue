@@ -162,7 +162,8 @@ import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import HeadingsRenderer from './HeadingsRenderer.vue' 
 
-import { uid } from '@/utils/firestore'
+import { fire } from '@/store/'
+import { uid, setTask } from '@/utils/firestore'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -176,10 +177,9 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
+  props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
-  'fromAnotherTabSortableAdd',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
@@ -257,7 +257,7 @@ export default {
         evt.preventDefault()
     },
     dragover(evt) {
-      this.cameFromAnotherTab = !this.moving
+      this.cameFromAnotherTab = !this.moving && this.allowSortableAdd
       if (this.cameFromAnotherTab) {
         const draggableRoot = this.draggableRoot
         this.$store.commit('cameFromAnotherTabDragStart', draggableRoot)
@@ -301,20 +301,30 @@ export default {
         if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
         evt.preventDefault()
         
-        if (this.fromAnotherTabSortableAdd) {
-          localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
-          const items = this.getTasksById(obj.ids).map(el => this.fallbackItem(el, true))
-          const finalIds = this.lazyItems.map(el => el.id)
-          finalIds.splice(this.cameFromAnotherTabIndex, 0, ...obj.ids)
+        localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
+        const items = this.getTasksById(obj.ids).map(el => this.fallbackItem(el, true))
+        const finalIds = this.lazyItems.map(el => el.id)
+        finalIds.splice(this.cameFromAnotherTabIndex, 0, ...obj.ids)
 
-          console.log(this.cameFromAnotherTabIndex, finalIds)
-  
-          this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
+        this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
 
-          this.fromAnotherTabSortableAdd(finalIds, items)
-        }
+        this.addToList(finalIds, obj.ids)
       }
       this.cameFromAnotherTab = false
+    },
+    addToList(finalIds, itemsIds) {
+      if (!this.onSortableAdd) {
+        const b = fire.batch()
+        const writes = []
+
+        const items = this.getTasksById(itemsIds)
+
+        items.forEach(el => setTask(b, this.fallbackItem(el, true), this.$store.state, el.id, writes))
+
+        this.$emit('update', {finalIds, b, writes})
+      } else {
+        this.onSortableAdd(finalIds, itemsIds)
+      }
     },
     
     waitForAnotherTaskCompleteAnimation(hideTaskFunc) {
@@ -521,7 +531,7 @@ export default {
             const type = d.type
             if (type === 'headingbutton' || type === 'add-task-floatbutton') return !this.disableRootActions
             if (type === 'sidebar-element') return true
-            if (!this.onSortableAdd) return false
+            if (!this.allowSortableAdd) return false
             if (type === 'Task' && this.comp === "Task") return true
             if (type === 'List' && this.comp === 'List') return true
             if (type === 'subtask') return true
@@ -531,7 +541,7 @@ export default {
 
         onUpdate: (evt) => {
           setTimeout(() => {
-            this.$emit('update', this.getIds(true))
+            this.$emit('update', {finalIds: this.getIds(true)})
           })
         },
         onSelect: evt => {
@@ -601,8 +611,8 @@ export default {
           if ((type === 'Task' || type === 'List') && this.comp === 'List') {
             const finalIds = this.lazyItems.map(el => el.id)
             finalIds.splice(indicies[0], 0, ...ids)
-            this.onSortableAdd(ids, finalIds)
-          } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
+            this.addToList(ids, finalIds)
+          } else if (type === 'Task' && this.addToList && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
 
@@ -625,7 +635,7 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
-            this.onSortableAdd(ids, this.lazyItems.filter(el => el).map(el => el.id))
+            this.addToList(ids, this.lazyItems.filter(el => el).map(el => el.id))
             this.sourceVueInstance = null
           } else {  
             const i = evt.newIndex
@@ -692,18 +702,27 @@ export default {
           }
         },
         onEnd: evt => {
-          const dropedIds = localStorage.getItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP')
-          if (dropedIds) {
-            const obj = JSON.parse(dropedIds)
-            if (obj.ids && Array.isArray(obj.ids)) {
-              obj.ids.forEach(id => {
-                const i = this.lazyItems.findIndex(el => el.id)
-                if (i > -1)
-                  this.lazyItems.splice(i, 1)
-              })
-              localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', '')
+          setTimeout(() => {
+            const dropedIds = localStorage.getItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP')
+            if (dropedIds) {
+              const obj = JSON.parse(dropedIds)
+              if (obj.ids && Array.isArray(obj.ids)) {
+                obj.ids.forEach(id => {
+                  const i = this.lazyItems.findIndex(el => el.id)
+  
+                  let shouldRender
+                  if (this.isRoot)
+                    shouldRender = this.rootFilterFunction(this.lazyItems[i])
+                  else
+                    shouldRender = this.headingFilterFunction(this.lazyItems[i])
+                  
+                  if (i > -1 && !shouldRender)
+                    this.lazyItems.splice(i, 1)
+                })
+                localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', '')
+              }
             }
-          }
+          })
           
           this.$store.commit('moving', false)
           
@@ -954,7 +973,7 @@ export default {
           newId: t.id,
           index, newItemRef,
           header: this.header,
-        })
+        }, shouldRender)
       }
     },
     getListRendererPosition() {
@@ -1053,6 +1072,13 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    allowSortableAdd() {
+      return this.mainFallbackItem && (
+        this.isRoot ?
+        this.rootFallbackItem :
+        this.headingFallbackItem
+      )
+    },
     showAddItemButton() {
       return this.isDesktop && !this.hasEdit && !this.moving && !this.disableRootActions && !this.disableSortableMount
     },

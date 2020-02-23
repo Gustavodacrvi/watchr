@@ -97,15 +97,15 @@ export default {
         }
       })
     },
-    updateListIds(ids) {
+    updateListIds({finalIds}) {
       this.updateIds(
-        utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.nonFilteredIds)
+        utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, this.nonFilteredIds)
       )
     },
     rootFilterFunction(list) {
       return true
     },
-    onSortableAdd(o, ids, indicies, order) {
+    onSortableAdd(order, ids) {
       this.$store.dispatch('task/convertTasksToListByIndex', {
         tasks: this.storeTasks.filter(el => ids.includes(el.id)),
         folder: this.folderId || null,
