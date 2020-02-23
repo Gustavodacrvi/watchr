@@ -60,6 +60,7 @@ export default {
     setInterval(() => {
       this.timeBeforeMouseMove++
     }, 1000)
+
     if (this.isDesktop) {
       window.addEventListener('keydown', this.keydown)
       window.addEventListener('keyup', this.keyup)
@@ -78,6 +79,14 @@ export default {
     window.addEventListener('visibilitychange', () => unToggle())
 
     this.updateViewType(true)
+  },
+  mounted() {
+    const commit = () => this.$store.commit('cameFromAnotherTabDragStart', null)
+    
+    this.$el.addEventListener('dragenter', evt => evt.preventDefault())
+    this.$el.addEventListener('dragover', evt => evt.preventDefault())
+    this.$el.addEventListener('drop', commit)
+    this.$el.addEventListener('dragleave', commit)
   },
   methods: {
     toggleScroll() {

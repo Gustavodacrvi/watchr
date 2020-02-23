@@ -61,7 +61,7 @@ export default {
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
     'selectEverythingToggle', 'getCalendarOrderDate',
-    'width', 'disableRootActions',
+    'width', 'disableRootActions', 'fromAnotherTabSortableAdd',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',

@@ -108,6 +108,7 @@ const store = new Vuex.Store({
       links: [],
     },
     firstFireLoad: false,
+    cameFromAnotherTabHTMLElement: null,
     selectedItems: [],
     fireBaseFirstLoaded: false,
     authState: false,
@@ -355,6 +356,11 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    cameFromAnotherTabDragStart(state, element) {
+      if (element === null && state.cameFromAnotherTabHTMLElement === null)
+        return;
+      state.cameFromAnotherTabHTMLElement = element
+    },
     moving(state, moving) {
       state.moving = moving
     },

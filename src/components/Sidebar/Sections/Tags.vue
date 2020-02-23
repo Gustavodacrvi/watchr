@@ -13,6 +13,7 @@
       :onSortableAdd="onSortableAdd"
 
       alreadyExistMessage="This tag already exists."
+      addMsg='Add tag'
       :existingItems='tags'
 
       inputPlaceholder='Tag name...'

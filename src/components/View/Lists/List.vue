@@ -71,6 +71,7 @@
               :co='completed'
               :se='isSelecting'
               :ca='canceled'
+              :ac='isItemSelected'
               :so='isSomeday'
               :progress='getListProgress'
             />

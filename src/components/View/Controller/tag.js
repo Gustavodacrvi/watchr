@@ -46,15 +46,10 @@ export default {
         }
       }
     },
-    removeRepeat() {},
-    removeDeadline() {},
     removeHeaderTag() {},
     saveSchedule() {
       return info => localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
     },
-    removeDeferDate() {},
-    addHeading() {},
-    onSortableAdd() {},
     
     
     icon() {return 'tag'},

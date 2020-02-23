@@ -17,9 +17,20 @@
       ref='item-renderer-root'
 
       data-name='item-renderer'
+      tag='div'
+
+      @dragenter='dragenter'
+      @dragover='dragover'
+      @drop='drop'
+      @dragleave.stop
     >
       <template v-for="item of getItems">
-        <component v-if="!item.isEdit" :is='comp' :key="item.id" 
+        <div v-if='item.cameFromAnotherTab' :key="item.cameFromAnotherTab + 'fdskçalsdf'"
+          class='cameFromAnotherTab-ghost rb'
+        >
+
+        </div>
+        <component v-else-if="!item.isEdit" :is='comp' :key="item.id" 
           v-bind="$props"
 
           :itemHeight='itemHeight'
@@ -74,16 +85,16 @@
         />
       </template>
       <transition name="fade-t">
-        <div v-if="computedShowSomedayButton" @click="$emit('allow-someday')">
+        <div v-if="computedShowSomedayButton && !isElementFromAnotherTabHovering" @click="$emit('allow-someday')">
           <ButtonVue type="no-padding" value="Show someday items..."/>
         </div>
       </transition>
-      <ButtonVue v-if="showMoreItemsButton"
+      <ButtonVue v-if="showMoreItemsButton && !isElementFromAnotherTabHovering"
         type="no-padding"
         :value='showMoreItemsMessage'
         @click="showingMoreItems = true"
       />
-      <div v-if="showAddItemButton && !moving"
+      <div v-if="showAddItemButton && !moving && !isElementFromAnotherTabHovering"
         class="add-item-wrapper"
       >
         <div
@@ -93,7 +104,7 @@
           Add item
         </div>
       </div>
-      <div v-if="isDesktop && viewType === 'list' && !moving && !isSmart"
+      <div v-if="isDesktop && !isElementFromAnotherTabHovering && viewType === 'list' && !moving && !isSmart"
         class="heading-add"
         @click.stop="addHeadingsEdit(lazyItems.length)"
       >
@@ -168,6 +179,7 @@ export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
+  'fromAnotherTabSortableAdd',
    'disableFallback', 'isLast', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
@@ -197,6 +209,8 @@ export default {
       lastButtonElement: null,
       editMoveType: 'add',
       headingsItemsIds: [],
+      cameFromAnotherTab: false,
+      cameFromAnotherTabIndex: null,
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -229,6 +243,7 @@ export default {
   },
   beforeDestroy() {
     this.destroySortables()
+
     window.removeEventListener('click', this.windowClick)
     window.removeEventListener('touchmove', this.mousemove)
     if (this.isDesktop) {
@@ -237,6 +252,71 @@ export default {
     }
   },
   methods: {
+    dragenter(evt) {
+      if (!this.moving)
+        evt.preventDefault()
+    },
+    dragover(evt) {
+      this.cameFromAnotherTab = !this.moving
+      if (this.cameFromAnotherTab) {
+        const draggableRoot = this.draggableRoot
+        this.$store.commit('cameFromAnotherTabDragStart', draggableRoot)
+        evt.preventDefault()
+
+        const getOffsetTop = elem =>{
+          let offsetTop = 0
+          do {
+            if (!isNaN(elem.offsetTop)) {
+              offsetTop += elem.offsetTop
+            }
+          } while(elem = elem.offsetParent)
+          return offsetTop
+        }
+
+        const listLength = this.sliceItems.length
+        const thresold = 1
+        const itemHeight = this.itemHeight
+        const mousePos = evt.pageY - getOffsetTop(draggableRoot)
+        
+        if (mousePos < (itemHeight + thresold))
+          this.cameFromAnotherTabIndex = 0
+        else if ((((listLength - 2) * itemHeight) - thresold) < mousePos) {
+          this.cameFromAnotherTabIndex = listLength
+        } else {
+          }
+        const pos = Math.floor(mousePos / itemHeight)
+        this.cameFromAnotherTabIndex = pos === -1 ? 0 : pos
+        
+        
+      } else {
+        this.cameFromAnotherTab = false
+      }
+    },
+    drop(evt) {
+      if (this.cameFromAnotherTab) {
+        const res = evt.dataTransfer.getData('text/plain')
+        if (!res) return;
+        const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
+        if (!obj) return;
+        if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
+        evt.preventDefault()
+        
+        if (this.fromAnotherTabSortableAdd) {
+          localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
+          const items = this.getTasksById(obj.ids).map(el => this.fallbackItem(el, true))
+          const finalIds = this.lazyItems.map(el => el.id)
+          finalIds.splice(this.cameFromAnotherTabIndex, 0, ...obj.ids)
+
+          console.log(this.cameFromAnotherTabIndex, finalIds)
+  
+          this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
+
+          this.fromAnotherTabSortableAdd(finalIds, items)
+        }
+      }
+      this.cameFromAnotherTab = false
+    },
+    
     waitForAnotherTaskCompleteAnimation(hideTaskFunc) {
       this.completeAnimationStack.push(hideTaskFunc)
 
@@ -422,10 +502,8 @@ export default {
         multiDrag: this.enableSelect || !this.isDesktop,
         direction: 'vertical',
 
-        forceFallback: true,
-        fallbackOnBody: true,
         animation: 200,
-        delay: this.isDesktop ? 5 : 100,
+        delay: this.isDesktop ? 25 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -523,7 +601,7 @@ export default {
           if ((type === 'Task' || type === 'List') && this.comp === 'List') {
             const finalIds = this.lazyItems.map(el => el.id)
             finalIds.splice(indicies[0], 0, ...ids)
-            this.onSortableAdd(items, ids, indicies, finalIds)
+            this.onSortableAdd(ids, finalIds)
           } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
@@ -547,7 +625,7 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
-            this.onSortableAdd(evt, ids, type, this.lazyItems.filter(el => el).map(el => el.id))
+            this.onSortableAdd(ids, this.lazyItems.filter(el => el).map(el => el.id))
             this.sourceVueInstance = null
           } else {  
             const i = evt.newIndex
@@ -614,6 +692,19 @@ export default {
           }
         },
         onEnd: evt => {
+          const dropedIds = localStorage.getItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP')
+          if (dropedIds) {
+            const obj = JSON.parse(dropedIds)
+            if (obj.ids && Array.isArray(obj.ids)) {
+              obj.ids.forEach(id => {
+                const i = this.lazyItems.findIndex(el => el.id)
+                if (i > -1)
+                  this.lazyItems.splice(i, 1)
+              })
+              localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', '')
+            }
+          }
+          
           this.$store.commit('moving', false)
           
           if (this.isDesktop)
@@ -639,6 +730,13 @@ export default {
             this.movingItem = false
             this.$store.commit('movingTask', false)
           }
+        },
+        setData: (dataTransfer, el) => {
+          dataTransfer.setData('text/plain', JSON.stringify({
+            ids: (this.selected.length > 0) ? this.selected : [el.dataset.id],
+            viewName: this.viewName,
+            viewType: this.viewType,
+          }))
         },
         onStart: evt => {
           this.$store.commit('moving', true)
@@ -683,8 +781,12 @@ export default {
           }
         },
       }
-      if (this.isDesktop)
+      if (this.isDesktop) {
         obj['multiDragKey'] = 'CTRL'
+      } else {
+        obj.forceFallback = true
+        obj.fallbackOnBody = true
+      }
       this.sortable = new Sortable(this.draggableRoot, obj)
     },
     slowlyAddItems(items) {
@@ -693,7 +795,7 @@ export default {
         let i = 0
         const length = items.length
 
-        const timeout = this.isDesktop ? 25 : length * 5
+        const timeout = this.isDesktop ? 15 : length * 5
         
         const add = item => {
           this.lazyItems.push(item)
@@ -931,6 +1033,7 @@ export default {
   },
   computed: {
     ...mapState({
+      cameFromAnotherTabHTMLElement: state => state.cameFromAnotherTabHTMLElement,
       selected: state => state.selectedItems,
       isOnControl: state => state.isOnControl,
       selectedType: state => state.selectedType,
@@ -946,6 +1049,7 @@ export default {
       platform: 'platform',
       isDesktop: 'isDesktop',
       getTaskBodyDistance: 'task/getTaskBodyDistance',
+      getTasksById: 'task/getTasksById',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
@@ -963,8 +1067,18 @@ export default {
     isChangingViewName() {
       return this.changingViewName || this.rootChanging
     },
+    isElementFromAnotherTabHovering() {
+      return this.cameFromAnotherTab && this.cameFromAnotherTabHTMLElement === this.draggableRoot
+    },
     getItems() {
-      return this.sliceItems.filter(el => el)
+      const items = this.sliceItems.filter(el => el)
+      if (!this.isElementFromAnotherTabHovering)
+        return items
+
+      items.splice(this.cameFromAnotherTabIndex, 0, {
+        cameFromAnotherTab: true,
+      })
+      return items
     },
     sliceItems() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyItems
@@ -1012,7 +1126,7 @@ export default {
     enableSelect() {
       if (this.disableSelect) return false
       return this.openCalendar || !this.isDesktop ||
-      (this.pressingSelectKeys)
+      (this.pressingSelectKeys || this.isSelecting)
     },
     isSelecting() {
       if (this.selected.length > 0 || this.openCalendar) return true
@@ -1025,7 +1139,7 @@ export default {
       return false
     },
     draggableRoot() {
-      return this.$el.getElementsByClassName('item-renderer-root')[0]
+      return this.$refs['item-renderer-root']
     },
     showIllustration() {
       const getHeadings = this.getHeadings
@@ -1114,11 +1228,6 @@ export default {
       if (this.sortable && this.isDesktop) {
         setTimeout(() => {
           this.sortable.options.multiDrag = this.enableSelect
-          if (this.isDesktop) {
-            if (this.enableSelect)
-              this.sortable.options.delay = 50
-            else this.sortable.options.delay = 0
-          }
         })
       }
     },
@@ -1141,6 +1250,12 @@ export default {
   justify-content: center;
   align-items: center;
   transition-duration: .15s;
+}
+
+.cameFromAnotherTab-ghost {
+  height: 38px;
+  background-color: var(--sidebar-color);
+  transition: transform .2s;
 }
 
 .mobile .illustration {

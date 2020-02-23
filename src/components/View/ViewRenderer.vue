@@ -137,7 +137,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'getCalendarOrderDate', 'viewItem',
+  'getCalendarOrderDate', 'viewItem', 'fromAnotherTabSortableAdd',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
@@ -589,7 +589,6 @@ export default {
       this.pagination = newPage
     },
     selectTag(name) {
-      console.log(name)
       const inc = this.inclusiveTags
       const exc = this.exclusiveTags
       if (!inc.includes(name) && !exc.includes(name)) {
