@@ -385,7 +385,7 @@ export default {
             clearTimeout(this.tempoTimeout)
           this.tempoTimeout = setTimeout(() => {
             this.tempoOrder[head.id] = null
-          }, 400)
+          }, 600)
         }
 
         let updateIds = ({finalIds, b = fire.batch(), writes = []}) => {

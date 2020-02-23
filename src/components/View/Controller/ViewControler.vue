@@ -693,17 +693,8 @@ export default {
             disableDeadlineStr: true,
             
             filter: task => task.deadline === date,
-            fallbackItem: task => {
-              if (!task.deadline)
-                task.deadline = date
-              return task
-            },
-            onSortableAdd: (taskIds, ids) => {
-              dispatch('task/saveTasksById', {
-                ids: taskIds,
-                tasks: {deadline: date},
-              })
-            },
+            fallbackItem: (t, f) => functionFallbacks.viewFallbacks.deadlineOrder(t, f, date),
+            updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
           })
         )
       }
