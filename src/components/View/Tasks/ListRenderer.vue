@@ -927,10 +927,14 @@ export default {
       this.$store.commit('clearSelected')
     },
     fallbackItem(item, force) {
-      let t = this.mainFallbackItem(item, force)
-      if (this.isRoot)
+      let t = item
+
+      if (this.mainFallbackItem)
+        t = this.mainFallbackItem(item, force)
+      if (this.isRoot && this.rootFallbackItem)
         t = this.rootFallbackItem(t, force)
-      else t = this.headingFallbackItem(t, force)
+      else if (this.headingFallbackItem)
+        t = this.headingFallbackItem(t, force)
 
       return t
     },

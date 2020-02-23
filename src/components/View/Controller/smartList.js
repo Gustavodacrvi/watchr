@@ -25,31 +25,6 @@ export default {
       if (this.viewName === 'Deadlines')
         return fs.deadlineOrder
       return fs[this.viewName]
-      
-/*       return (task, force) => {
-        if (this.viewName === 'Calendar') {
-          const date = this.calendarDate
-    
-          if (force || !task.calendar)
-            task.calendar = {
-              type: 'specific',
-              begins: date,
-              editDate: date,
-              specific: date,
-            }
-        } else {
-          let calendar = null
-  
-          if (force || !task.calendar) {
-            calendar = this.getCalObjectByView(this.viewName, task.calendar)
-            task.calendar = calendar
-          }
-        }
-  
-        if (task.calendar === undefined)
-          task.calendar = null
-        return task
-      } */
     },
     
     updateIds() {
