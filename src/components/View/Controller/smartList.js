@@ -24,6 +24,9 @@ export default {
         return (t, f) => fs.calendarOrder(t, f, this.getCalendarOrderDate)
       if (this.viewName === 'Deadlines')
         return fs.deadlineOrder
+      if (this.viewName === 'Upcoming')
+        return t => t
+      
       return fs[this.viewName]
     },
     

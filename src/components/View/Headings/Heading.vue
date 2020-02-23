@@ -355,7 +355,7 @@ export default {
       return this.hasProgress || this.icon
     },
     getHeadingColor() {
-      return this.color ? this.color : 'var(--txt)'
+      return this.color ? this.color : 'var(--primary)'
     },
   },
   watch: {
@@ -475,6 +475,7 @@ export default {
 .input {
   font-size: 1.17em;
   outline: none;
+  color: var(--primary);
   font-weight: bold;
   padding-left: 6px;
 }

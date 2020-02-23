@@ -138,7 +138,7 @@ export default {
     },
   },
   updateOrderFunctions: {
-    calendarOrder(b, writes, {finalIds, calendarDate, rootState, task}) {
+    calendarOrder(b, writes, {finalIds, calendarDate, rootState}) {
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(finalIds, calendarDate, rootState)
 

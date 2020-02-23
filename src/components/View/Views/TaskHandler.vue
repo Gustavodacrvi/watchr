@@ -379,18 +379,31 @@ export default {
 
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
+        const saveTempo = final => {
+          this.tempoOrder[head.id] = final.slice()
+          if (this.tempoTimeout)
+            clearTimeout(this.tempoTimeout)
+          this.tempoTimeout = setTimeout(() => {
+            this.tempoOrder[head.id] = null
+          }, 400)
+        }
+
         let updateIds = ({finalIds, b = fire.batch(), writes = []}) => {
+          const final = utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, nonFiltered.map(el => el.id))
+          
           head.updateViewIds(
             b,
             writes,
             {
-              finalIds: utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, nonFiltered.map(el => el.id)),
+              finalIds: final,
               ...this.getUpdateIdsInfo(),
               ...head.fallbackFunctionData(),
             }
           )
 
           cacheBatchedItems(b, writes)
+
+          saveTempo(final)
 
           b.commit()
         }
@@ -495,6 +508,8 @@ export default {
               })
 
               cacheBatchedItems(b, writes)
+
+              saveTempo(newObj.ids)
               
               b.commit()
             })

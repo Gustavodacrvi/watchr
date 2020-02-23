@@ -67,6 +67,8 @@ import utilsList from '@/utils/list'
 import folderUtils from '@/utils/folder'
 import utils from '@/utils/'
 
+import functionFallbacks from '@/utils/functionFallbacks.js'
+
 import { pipeBooleanFilters } from '@/utils/memo'
 
 import mom from 'moment'
@@ -175,25 +177,11 @@ export default {
         order: o.order ? o.order : this.getCalendarOrderByDate(date),
 
         filter: o.filter ? o.filter : task => this.isTaskShowingOnDate(task, date, true),
-        fallbackItem: o.fallbackItem ? o.fallbackItem : task => {
-          if (!task.calendar)
-            task.calendar = calObj(date)
-          return task
-        },
-        onAddItem: o.onAddItem ? o.onAddItem : obj => {
-          dispatch('list/addTaskByIndexCalendarOrder', {
-            ...obj, date,
-          })
-        },
-        onSortableAdd: o.onSortableAdd ? o.onSortableAdd : (taskIds, ids) => {
-          dispatch('task/saveTasksById', {
-            ids: taskIds,
-            task: {calendar: calObj(date)},
-          })
-        },
-        updateIds: o.updateIds ? o.updateIds : ids => {
-          dispatch('task/saveCalendarOrder', {ids, date})
-        }
+        fallbackFunctionData: o.fallbackFunctionData ? o.fallbackFunctionData : () => ({
+          calendarDate: date,
+        }),
+        fallbackItem: o.fallbackItem ? o.fallbackItem : (t, f) => functionFallbacks.viewFallbacks.calendarOrder(t, f, date),
+        updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
       }
     },
   },

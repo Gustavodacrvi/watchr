@@ -934,26 +934,6 @@ export default {
 
       b.commit()
     },
-    async addTaskByIndexCalendarOrder({rootState}, {ids, index, task, date, newTaskRef}) {
-      const b = fire.batch()
-      
-      const writes = []
-      
-      await setTask(b, {
-        userId: uid(),
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-    
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-
-      setInfo(b, {calendarOrders}, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     addListByIndexCalendarOrder({rootState}, {ids, list, date, newListRef}) {
       const b = fire.batch()
 
