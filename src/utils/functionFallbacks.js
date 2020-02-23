@@ -1,25 +1,25 @@
 
 import mom from 'moment'
 
-const isAlreadyOnAnotherList = t => t.list || task.folder || task.group
+const isAlreadyOnAnotherList = t => t.list || t.folder || t.group
 
 export default {
   viewFallbacks: {
-    Inbox(task, force = false) {
+    Inbox(t, force = false) {
       if (force) {
-        task.group = null
-        task.deadline = null
-        task.calendar = null
-        task.list = null
-        task.folder = null
-        task.tags = []
+        t.group = null
+        t.deadline = null
+        t.calendar = null
+        t.list = null
+        t.folder = null
+        t.tags = []
       }
-      return task
+      return t
     },
-    calendarOrder(task, force = false, specific) {
-      if (!task.calendar || force) {
+    calendarOrder(t, force = false, specific) {
+      if (!t.calendar || force) {
         const m = mom().format('Y-M-D')
-        task.calendar = {
+        t.calendar = {
           type: 'specific',
           editDate: m,
           begins: m,
@@ -27,104 +27,106 @@ export default {
           specific,
         }
       }
-      return task
+      return t
     },
-    deadlineOrder(task, force = false, deadline) {
-      if (!task.deadline || force) {
-        task.deadline = deadline
+    deadlineOrder(t, force = false, deadline) {
+      if (force || !t.deadline) {
+        t.deadline = deadline
       }
-      return task
+      return t
     },
-    Someday(task, force = false) {
-      if (!task.calendar || force) {
-        task.calendar = {type: 'someday'}
+    Someday(t, force = false) {
+      if (force || !t.calendar) {
+        const m = mom().format('Y-M-D')
+        t.calendar = {
+          type: 'someday',
+          editDate: m,
+          begins: m,
+        }
       }
-      return task
+      return t
     },
-    Anytime(task, force = false) {
-      if (!task.calendar || force) {
-        task.calendar = null
+    Anytime(t, force = false) {
+      if (force) {
+        t.calendar = null
       }
-      return task
+      return t
     },
-    Tag(task, force = false, tagId) {
-      if (task.tags)
-        task.tags = [...task.tags, tagId]
+    Tag(t, force = false, tagId) {
+      if (t.tags)
+        t.tags = [...t.tags, tagId]
       else
-        task.tags = [tagId]
-      return task
+        t.tags = [tagId]
+      return t
     },
-    List(task, force = false, listId) {
-      if (force || !isAlreadyOnAnotherList(task))
-        task.list = listId
-      return task
+    List(t, force = false, listId) {
+      if (force || !isAlreadyOnAnotherList(t))
+        t.list = listId
+      return t
     },
-    Folder(task, force = false, folderId) {
-      if (force || !isAlreadyOnAnotherList(task))
-        task.folder = folderId
-      return task
+    Folder(t, force = false, folderId) {
+      if (force || !isAlreadyOnAnotherList(t))
+        t.folder = folderId
+      return t
     },
-    Group(task, force = false, groupId) {
-      if (force || !isAlreadyOnAnotherList(task))
-        task.group = groupId
-      return task
+    Group(t, force = false, groupId) {
+      if (force || !isAlreadyOnAnotherList(t))
+        t.group = groupId
+      return t
     },
-    ListGroup(task, force = false, {groupId, listId}) {
-      if (force || (!task.group && !task.list)) {
-        task.group = groupId || null
-        task.list = listId || null
+    ListGroup(t, force = false, {groupId, listId}) {
+      if (force || (!t.group && !t.list)) {
+        t.group = groupId || null
+        t.list = listId || null
       }
       
-      if (force || !isAlreadyOnAnotherList(task))
-        task.list = listId
+      if (force || !isAlreadyOnAnotherList(t))
+        t.list = listId
       
-      return task
+      return t
     },
   },
   viewPositionFallbacks: {
-    pureSmartViewRoot(task, force = false) {
+    pureSmartViewRoot(t, force = false) {
       if (force) {
-        task.group = null
-        task.folder = null
-        task.list = null
+        t.group = null
+        t.folder = null
+        t.list = null
       }
-      return task
+      return t
     },
-    listRoot(task, force = false, {listId, groupId}) {
-      if (force || !isAlreadyOnAnotherList(task)) {
-        task.heading = null
-        task.list = listId
-        task.group = groupId || null
-        task.folder = null
+    listRoot(t, force = false, {listId, groupId}) {
+      if (force || !isAlreadyOnAnotherList(t)) {
+        t.heading = null
+        t.list = listId
+        t.group = groupId || null
+        t.folder = null
       }
-      return task
+      return t
     },
-    listHeading(task, force = false, {listId, groupId, headingId}) {
-      if (force || !isAlreadyOnAnotherList(task)) {
-        task.list = listId
-        task.group = groupId
-        task.heading = headingId
-        task.folder = null
+    listHeading(t, force = false, headingId) {
+      if (force || (!t.heading)) {
+        t.heading = headingId
       }
-      return task
+      return t
     },
-    folderRoot(task, force = false, {folderId}) {
-      if (force || !isAlreadyOnAnotherList(task)) {
-        task.folder = folderId
-        task.group = null
-        task.list = null
-        task.heading = null
+    folderRoot(t, force = false, folderId) {
+      if (force || !isAlreadyOnAnotherList(t)) {
+        t.folder = folderId
+        t.group = null
+        t.list = null
+        t.heading = null
       }
-      return task
+      return t
     },
-    folderRoot(task, force = false, {groupId}) {
-      if (force || !isAlreadyOnAnotherList(task)) {
-        task.group = groupId
-        task.folder = null
-        task.list = null
-        task.heading = null
+    folderRoot(t, force = false, groupId) {
+      if (force || !isAlreadyOnAnotherList(t)) {
+        t.group = groupId
+        t.folder = null
+        t.list = null
+        t.heading = null
       }
-      return task
+      return t
     },
   },
 }
