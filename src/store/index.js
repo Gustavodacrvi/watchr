@@ -103,6 +103,8 @@ const store = new Vuex.Store({
       links: [],
       
       calendarOrders: null,
+      getGmailInbox: false,
+      markEmailsAsRead: false,
       
       disablePmFormat: false,
       

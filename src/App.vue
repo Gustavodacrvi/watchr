@@ -201,8 +201,8 @@ export default {
       }
     },
     async getGmailInbox() {
-      if (typeof gapi !== 'undefined' && gapi.client && gapi.client.gmail) {
-        console.warn('Getting emails')
+      console.log(this.userInfo.getGmailInbox)
+      if (this.userInfo.getGmailInbox && typeof gapi !== 'undefined' && gapi.client && gapi.client.gmail) {
         const res = await gapi.client.gmail.users.threads.list({
           userId: 'me',
           maxResults: 30,
@@ -216,21 +216,22 @@ export default {
         let threads = await Promise.all(res.result.threads.map(({id}) => gapi.client.gmail.users.threads.get({
           id, userId: 'me',
         })))
-        threads = threads.filter(el => this.$store.getters['task/allTasks'].some(t => t.id !== el.result.id))
+        threads = threads.filter(el => !this.$store.getters['task/allTasks'].some(t => t.id === el.result.id))
 
-        this.$store.dispatch('task/addTasksFromGmailThreads', threads)
-
-        this.$store.commit('pushToast', {
-          name: `Added ${threads.length} inbox tasks from Gmail's inbox and marked as read. `,
-          type: 'success',
-          seconds: 5,
-        })
-
+        if (threads.length) {
+          this.$store.dispatch('task/addTasksFromGmailThreads', threads)
+  
+          this.$store.commit('pushToast', {
+            name: `Added ${threads.length} inbox tasks from Gmail's inbox and marked as read. `,
+            type: 'success',
+            seconds: 5,
+          })
+        }
       }
     },
   },
   computed: {
-    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift']),
+    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift', 'userInfo']),
     ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate', 'platform']),
     isReady() {
       return this.$store.state.googleCalendarReady

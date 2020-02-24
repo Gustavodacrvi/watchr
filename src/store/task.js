@@ -938,9 +938,6 @@ export default {
 
         const getHeaderValue = name => (m.payload.headers.find(el => el.name === name) || {value: ''}).value
 
-
-        console.log(m)
-
         dispatch('addViewTask', {
           b, writes,
           task: {
@@ -949,17 +946,18 @@ export default {
             name: `{#DE5757 ${getHeaderValue("From").split(" ")[0]}}, ${getHeaderValue("Subject")} [https://mail.google.com/mail?authuser=${rootState.user.email}#all/${m.id} Direct link], {#888888 ${mom.unix(m.internalDate / 1000).format("LLL")}}`,
             notes: `Snippet: ${m.snippet}`,
             priority: '',
-            taskDuration: '',
+            taskDuration: null,
             deadline: '',
-            folder: '',
-            group: '',
-            list: '',
+            folder: null,
+            group: null,
+            list: null,
             calendar: null,
             heading: null,
             headingId: null,
             tags: [],
             checklist: [],
             order: [],
+            files: [],
           }
         })
       })
