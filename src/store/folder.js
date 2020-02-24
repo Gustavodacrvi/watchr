@@ -185,17 +185,5 @@ export default {
 
       b.commit()
     },
-    saveSmartViewHeadingTasksOrder({getters, rootState}, {ids, folderId, smartView}) {
-      const folder = getters.getFoldersById([folderId])[0]
-      let views = folder.smartViewsOrders
-      if (!views) views = {}
-      views[smartView] = ids
-
-      const batch = fire.batch()
-
-      setFolder(batch, {smartViewsOrders: views}, folderId, rootState)
-
-      batch.commit()
-    },
   },
 }

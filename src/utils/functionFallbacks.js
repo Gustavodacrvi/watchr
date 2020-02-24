@@ -163,6 +163,14 @@ export default {
         smartViewsOrders: views,
       }, listId, rootState, writes)
     },
+    smartViewFolders(b, writes, {finalIds, rootState, viewName, rootGetters}) {
+      const folder = rootGetters['folder/getFoldersById']([folderId])[0]
+      let views = folder.smartViewsOrders
+      if (!views) views = {}
+      views[viewName] = finalIds
+
+      setFolder(b, {smartViewsOrders: views}, folderId, rootState, writes)
+    },
     Tag(b, writes, {finalIds, tagId, rootState}) {
       setTag(b, {tasks: finalIds, subList: null}, tagId, rootState, writes)
     },

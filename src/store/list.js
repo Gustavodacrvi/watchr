@@ -1044,7 +1044,7 @@ export default {
 
       b.commit()
     },
-    saveListsSmartViewOrderListIds(c, {ids, viewName}) {
+    saveListsSmartViewOrderListIds(cZ, {ids, viewName}) {
       const b = fire.batch()
 
       setInfo(b, {

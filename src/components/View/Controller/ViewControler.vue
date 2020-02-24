@@ -407,17 +407,9 @@ export default {
             viewTasksOrder = utilsTask.concatArraysRemovingOldEls(viewTasksOrder, tasksOrder)
           else viewTasksOrder = tasksOrder.slice()
           
-          const saveOrder = ids => {
-            if (isSmartOrderViewType)
-              this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
-                ids, folderId: folder.id, smartView: viewName,
-              })
-            else
-              this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
-                date: currentDate,
-              })
-          }
+          const saveOrder = isSmartOrderViewType ?
+            functionFallbacks.updateOrderFunctions.smartViewFolders
+             : functionFallbacks.updateOrderFunctions.calendarOrder
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
@@ -450,12 +442,12 @@ export default {
                 })
               }
             ],
-            updateIds: saveOrder,
-            fallbackItem: (task, force) => {
-              if (force || (!task.list && !task.folder && !task.group))
-                task.folder = folder.id
-              return task
-            },
+            fallbackFunctionData: () => ({
+              calendarDate: currentDate,
+              viewName,
+            }),
+            updateViewIds: saveOrder,
+            fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Folder(t, f, folder.id),
 
 /*
 
