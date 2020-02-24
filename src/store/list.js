@@ -686,7 +686,7 @@ export default {
         }
 
         const tod = mom()
-        const obj = {
+        let obj = {
           completedFire: new Date(),
           completeDate: tod.format('Y-M-D'),
           checkDate: tod.format('Y-M-D'),
