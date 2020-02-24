@@ -63,7 +63,7 @@ export default {
         t.tags = [tagId]
       return t
     },
-    List(t, force = false, {listId, groupId, listTagIds}) {
+    List(t, force = false, {listId, groupId, listTagIds = []}) {
       if (force || !isAlreadyOnAnotherList(t)) {
         t.list = listId
         t.group = groupId || null
@@ -153,11 +153,11 @@ export default {
         viewOrders: obj,
       }, writes)
     },
-    smartViewHeadingsListTasksOrder(b, writes, {rootState, viewName, rootGetters}) {
+    smartViewLists(b, writes, {finalIds, rootState, viewName, rootGetters}) {
       const list = rootGetters['list/getListsById']([listId])[0]
       let views = list.smartViewsOrders
       if (!views) views = {}
-      views[viewName] = ids
+      views[viewName] = finalIds
       
       setList(b, {
         smartViewsOrders: views,

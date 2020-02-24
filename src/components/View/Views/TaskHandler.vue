@@ -497,6 +497,8 @@ export default {
               const b = fire.batch()
               const writes = []
 
+              saveTempo(newObj.ids)
+
               head.updateViewIds(b, writes, {
                 finalIds: newObj.ids,
                 ...this.getUpdateIdsInfo(),
@@ -508,8 +510,6 @@ export default {
               })
 
               cacheBatchedItems(b, writes)
-
-              saveTempo(newObj.ids)
               
               b.commit()
             })

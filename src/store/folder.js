@@ -161,51 +161,6 @@ export default {
 
       b.commit()
     },
-    moveTasksToFolder({getters, rootState}, {ids, taskIds, folderId, smartView}) {
-      const fold = getters.getFoldersById([folderId])[0]
-      const b = fire.batch()
-
-      let views = fold.smartViewsOrders
-      if (!views) views = {}
-      views[smartView] = ids
-
-      const writes = []
-
-      batchSetTasks(b, {
-        list: null,
-        folder: folderId,
-        group: null,
-        heading: null,
-      }, taskIds, rootState, writes)
-
-      setFolder(b, {
-        smartViewsOrders: views,
-      }, folderId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-    moveTasksToFolderCalendarOrder({rootState}, {ids, taskIds, date, folderId}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      batchSetTasks(b, {
-        folder: folderId,
-        list: null,
-        group: null,
-        heading: null,
-      }, taskIds, rootState, writes)
-
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-      
-      setInfo(b, {calendarOrders}, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     deleteFolderById({getters, rootState}, {id, lists, tasks}) {
       const b = fire.batch()
 

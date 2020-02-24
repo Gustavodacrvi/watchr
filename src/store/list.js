@@ -889,99 +889,6 @@ export default {
 
     // TASKS
     
-    async addTaskByIndexSmartViewFolder({rootState}, {ids, index, task, folderId, viewName, newTaskRef}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      await setTask(b, {
-        userId: uid(),
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-    
-      const views = {}
-      views[viewName] = ids
-
-      setFolder(b, {smartViewsOrders: views}, folderId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-    async addTaskByIndexSmartViewGroup({rootState}, {ids, index, task, groupId, viewName, newTaskRef}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      await setTask(b, {
-        userId: uid(),
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-    
-      setGroup(b, {
-        smartViewsOrders: {
-          [viewName]: {
-            [uid()]: ids
-          },
-        },
-      }, groupId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-    addListByIndexCalendarOrder({rootState}, {ids, list, date, newListRef}) {
-      const b = fire.batch()
-
-      const writes = []
-
-      setList(b, {
-        name: '',
-        smartViewsOrders: {},
-        userId: uid(),
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        headings: [],
-        headingsOrder: [],
-        tasks: [],
-        ...list,
-      }, newListRef.id, rootState, writes)
-
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-
-      setInfo(b, {calendarOrders}, writes)
-
-      cacheBatchedItems(b, writes)
-      
-      b.commit()
-    },
-    addTaskByIndexSmartViewList({rootState}, {ids, index, task, listId, viewName, newTaskRef}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      setTask(b, {
-        userId: uid(),
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-      const views = {}
-      views[viewName] = ids
-
-      setList(b, {
-        smartViewsOrders: views,
-      }, listId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-
     uncompleteHeadingTasks({getters, rootState}, {headingId, listId, savedTasks}) {
       const list = getters.getListsById([listId])[0]
       const b = fire.batch()
@@ -1038,71 +945,6 @@ export default {
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
 
       setInfo(b, {calendarOrders}, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-    moveTasksToListCalendarOrder({rootState, getters}, {ids, taskIds, date, listId}) {
-      const b = fire.batch()
-      const list = getters.getListsById([listId])[0]
-
-      let obj
-      if (list.group)
-        obj = {
-          list: listId,
-          group: list.group,
-          folder: null,
-          heading: null,
-        }
-      else
-        obj = {
-          list: listId,
-          group: null,
-          folder: null,
-          heading: null,
-        }
-
-      batchSetTasks(b, obj, taskIds, rootState, writes)
-
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-      
-      setInfo(b, {calendarOrders}, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-    moveTasksToList({getters, rootState}, {ids, taskIds, listId, smartView}) {
-      const list = getters.getListsById([listId])[0]
-      const b = fire.batch()
-      let views = list.smartViewsOrders
-      if (!views) views = {}
-      views[smartView] = ids
-
-      const writes = []
-
-      let obj
-      if (list.group)
-        obj = {
-          list: listId,
-          group: list.group,
-          folder: null,
-          heading: null,
-        }
-      else
-        obj = {
-          list: listId,
-          group: null,
-          folder: null,
-          heading: null,
-        }
-      
-      batchSetTasks(b, obj, taskIds, rootState, writes)
-
-      setList(b, {
-        smartViewsOrders: views,
-      }, listId, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -1199,19 +1041,6 @@ export default {
       const b = fire.batch()
       
       setList(batch, {headingsOrder: ids}, listId, rootState)
-
-      b.commit()
-    },
-    saveSmartViewHeadingTasksOrder({getters, rootState}, {ids, listId, smartView}) {
-      const list = getters.getListsById([listId])[0]
-      let views = list.smartViewsOrders
-      if (!views) views = {}
-      views[smartView] = ids
-      const b = fire.batch()
-      
-      setList(b, {
-        smartViewsOrders: views,
-      }, listId, rootState)
 
       b.commit()
     },

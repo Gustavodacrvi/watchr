@@ -233,50 +233,6 @@ export default {
 
       b.commit()
     },
-    moveTasksToGroup({rootState}, {ids, taskIds, groupId, viewName}) {
-      const b = fire.batch()
-
-      const writes = []
-
-      batchSetTasks(b, {
-        list: null,
-        group: groupId,
-        folder: null,
-        heading: null,
-      }, taskIds, rootState, writes)
-
-      setGroup(b, {
-        smartViewsOrders: {
-          [viewName]: {
-            [uid()]: ids,
-          },
-        },
-      }, groupId, rootState)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-    moveTasksToGroupCalendarOrder({rootState}, {ids, taskIds, date, groupId}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      batchSetTasks(b, {
-        group: groupId,
-        list: null,
-        folder: null,
-        heading: null,
-      }, taskIds, rootState, writes)
-
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-      
-      setInfo(b, {calendarOrders}, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     delete({rootState}, groupId) {
       const b = fire.batch()
 
