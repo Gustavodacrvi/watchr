@@ -61,6 +61,7 @@ body {
 body, input, button, textarea {
   font-family: var(--font);
   font-weight: 525;
+  caret-color: var(--primary);
   color: var(--txt);
 }
 

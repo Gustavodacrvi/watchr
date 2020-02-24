@@ -17,7 +17,6 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
-import 'firebase/performance'
 
 firebase.initializeApp({
   apiKey: process.env.VUE_APP_API_KEY,
@@ -32,7 +31,6 @@ firebase.initializeApp({
 
 let snapshotsListeners = []
 
-const per = firebase.performance()
 export const fire = firebase.firestore()
 export const auth = firebase.auth()
 export const sto = firebase.storage()
@@ -63,6 +61,12 @@ if (lastVersion === null) {
 }
 
 
+let allowCalendar = true
+
+const cal = localStorage.getItem('allowCalendar')
+if (cal)
+  allowCalendar = cal === 'true'
+
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter, folder,
@@ -70,6 +74,7 @@ const store = new Vuex.Store({
   },
   state: {
     lastVersion,
+    allowCalendar,
     version,
     popup: {
       comp: '',
@@ -356,6 +361,10 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleCalendar(state, allowCalendar) {
+      state.allowCalendar = allowCalendar
+      localStorage.setItem('allowCalendar', allowCalendar)
+    },
     cameFromAnotherTabDragStart(state, element) {
       if (element === null && state.cameFromAnotherTabHTMLElement === null)
         return;

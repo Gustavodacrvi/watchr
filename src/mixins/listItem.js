@@ -123,9 +123,10 @@ export default {
       switch (key) {
         case 'Enter': {
           if (!isTyping && !this.isEditingComp && !this.iconDrop) {
-            if (!this.isOnControl && !this.justSaved)
+            const select = (this.isOnControl || this.isSelecting)
+            if (!select && !this.justSaved)
             this.isEditing = true
-            else if (this.isOnControl) {
+            else if (select) {
               toggleSelect()
             }
           }

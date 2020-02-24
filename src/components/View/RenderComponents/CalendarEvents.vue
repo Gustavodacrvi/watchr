@@ -3,7 +3,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div v-if="getCalendars.length > 0" class="CalendarEvents">
+    <div v-if="getCalendars.length > 0 && allowCalendar" class="CalendarEvents">
       <transition-group
         @enter='itemEnter'
         @leave='itemLeave'
@@ -193,7 +193,7 @@ export default {
   },
   // colorId
   computed: {
-    ...mapState(['userInfo', 'calendarList']),
+    ...mapState(['userInfo', 'calendarList', 'allowCalendar']),
     getHeight() {
       return (this.getCalendars.reduce((tot, cal) => {
         return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'

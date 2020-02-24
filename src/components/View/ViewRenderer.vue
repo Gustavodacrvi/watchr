@@ -752,6 +752,8 @@ export default {
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
 
+      allowCalendar: state => state.allowCalendar,
+
       currentTickSound: state => state.pomo.currentTickSound,
       availableSounds: state => state.pomo.availableSounds,
     }),
@@ -806,6 +808,9 @@ export default {
         shortRest: '05:00',
         longRest: '15:00',
       }
+    },
+    showCalendarExtraIcon() {
+      return this.allowCalendar && (this.getCalendarOrderDate || this.viewName === 'Upcoming')
     },
     shortcutsType() {
       if (this.selectedItems.length > 0)
@@ -940,6 +945,11 @@ export default {
         arr.push({
           icon: 'archive',
           callback: () => this.showSomeday = false,
+        })
+      if (this.showCalendarExtraIcon)
+        arr.push({
+          icon: 'calendar',
+          callback: () => this.$store.commit('toggleCalendar', false)
         })
       return arr
     },
@@ -1237,8 +1247,8 @@ export default {
             ],
           },
           {
-            name: 'Open calendar',
-            icon: 'calendar',
+            name: 'Open scheduler',
+            icon: 'calendar-star',
             callback: () => {
               if (this.helperComponent !== 'LongCalendarPicker')
                 this.helperComponent = 'LongCalendarPicker'
@@ -1269,6 +1279,12 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
+        if (!this.allowCalendar && (this.getCalendarOrderDate || this.viewName === 'Upcoming'))
+          opt.push({
+            name: 'Show Google Calendar',
+            icon: 'calendar',
+            callback: () => this.$store.commit('toggleCalendar', true)
+          })
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',
