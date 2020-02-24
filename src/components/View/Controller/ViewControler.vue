@@ -373,6 +373,7 @@ export default {
             fallbackFunctionData: () => ({
               calendarDate: currentDate,
               viewName,
+              listId: list.id,
             }),
             updateViewIds: saveOrder,
             fallbackItem: (t, f) => functionFallbacks.viewFallbacks.List(t, f, {listId: list.id, group: list.group, list: list.tags}),
@@ -445,19 +446,10 @@ export default {
             fallbackFunctionData: () => ({
               calendarDate: currentDate,
               viewName,
+              folderId: folder.id,
             }),
             updateViewIds: saveOrder,
             fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Folder(t, f, folder.id),
-
-/*
-
-          fallbackFunctionData: o.fallbackFunctionData ? o.fallbackFunctionData : () => ({
-          calendarDate: date,
-        }),
-        updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
-
-*/
-            
           })
         } else if (viewHeading.smartViewControllerType === 'group') {
           const group = viewHeading
@@ -489,17 +481,9 @@ export default {
             viewTasksOrder = utilsTask.concatArraysRemovingOldEls(viewTasksOrder, tasksOrder)
           else viewTasksOrder = tasksOrder.slice()
           
-          const saveOrder = ids => {
-            if (isSmartOrderViewType)
-              this.$store.dispatch('group/saveSmartViewHeadingTasksOrder', {
-                ids, groupId: group.id, viewName,
-              })
-            else
-              this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
-                date: currentDate,
-              })
-          }
+          const saveOrder = isSmartOrderViewType ?
+            functionFallbacks.updateOrderFunctions.smartViewGroups
+             : functionFallbacks.updateOrderFunctions.calendarOrder
 
           const filterFunction = task => this.isTaskInGroup(task, group.id)
 
@@ -532,12 +516,13 @@ export default {
                 })
               }
             ],
-            updateIds: saveOrder,
-            fallbackItem: (task, force) => {
-              if (force || (!task.list && !task.folder && !task.group))
-                task.group = group.id
-              return task
-            },
+            fallbackFunctionData: () => ({
+              calendarDate: currentDate,
+              viewName,
+              groupId: group.id,
+            }),
+            updateViewIds: saveOrder,
+            fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Group(t, f, group.id),
           })
         }
       }

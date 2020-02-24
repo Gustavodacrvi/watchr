@@ -249,18 +249,5 @@ export default {
 
       b.commit()
     },
-    saveSmartViewHeadingTasksOrder({rootState}, {ids, groupId, viewName}) {
-      const b = fire.batch()
-
-      setGroup(b, {
-        smartViewsOrders: {
-          [viewName]: {
-            [uid()]: ids,
-          },
-        }
-      }, groupId, rootState)
-
-      b.commit()
-    },
   },
 }

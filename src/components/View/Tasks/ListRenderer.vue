@@ -300,15 +300,18 @@ export default {
         if (!obj) return;
         if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
         evt.preventDefault()
+        let items = this.getTasksById(obj.ids)
+        const alreadyHasItem = this.lazyItems.some(el => items.some(i => i.id  === el.id))
         
-        localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
-        const items = this.getTasksById(obj.ids).map(el => this.fallbackItem(el, true))
-        
+        if (!alreadyHasItem) {
+          localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
+          items = items.map(el => this.fallbackItem(el, true))
 
-        this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
-        const finalIds = this.lazyItems.map(el => el.id)
-
-        this.addToList(finalIds, obj.ids)
+          this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
+          const finalIds = this.lazyItems.map(el => el.id)
+  
+          this.addToList(finalIds, obj.ids)
+        }
       }
       this.cameFromAnotherTab = false
     },

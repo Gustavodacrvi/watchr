@@ -3,7 +3,7 @@ import mom from 'moment'
 
 
 import utilsTask from './task'
-import { setInfo, setTag, setList, setGroup, setFolder } from './firestore'
+import { setInfo, setTag, setList, setGroup, setFolder, uid } from './firestore'
 
 const isAlreadyOnAnotherList = t => t.list || t.folder || t.group
 
@@ -67,6 +67,8 @@ export default {
       if (force || !isAlreadyOnAnotherList(t)) {
         t.list = listId
         t.group = groupId || null
+        t.folder = null
+        t.heading = null
 
         if (t.tags)
           t.tags = [...t.tags, ...listTagIds]
@@ -153,7 +155,7 @@ export default {
         viewOrders: obj,
       }, writes)
     },
-    smartViewLists(b, writes, {finalIds, rootState, viewName, rootGetters}) {
+    smartViewLists(b, writes, {finalIds, rootState, viewName, rootGetters, listId}) {
       const list = rootGetters['list/getListsById']([listId])[0]
       let views = list.smartViewsOrders
       if (!views) views = {}
@@ -163,13 +165,22 @@ export default {
         smartViewsOrders: views,
       }, listId, rootState, writes)
     },
-    smartViewFolders(b, writes, {finalIds, rootState, viewName, rootGetters}) {
+    smartViewFolders(b, writes, {finalIds, rootState, viewName, rootGetters, folderId}) {
       const folder = rootGetters['folder/getFoldersById']([folderId])[0]
       let views = folder.smartViewsOrders
       if (!views) views = {}
       views[viewName] = finalIds
 
       setFolder(b, {smartViewsOrders: views}, folderId, rootState, writes)
+    },
+    smartViewGroups(b, writes, {finalIds, rootState, viewName, groupId}) {
+      setGroup(b, {
+        smartViewsOrders: {
+          [viewName]: {
+            [uid()]: finalIds,
+          },
+        }
+      }, groupId, rootState, writes)
     },
     Tag(b, writes, {finalIds, tagId, rootState}) {
       setTag(b, {tasks: finalIds, subList: null}, tagId, rootState, writes)
