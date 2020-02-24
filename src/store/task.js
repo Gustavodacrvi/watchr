@@ -108,7 +108,7 @@ export default {
           else if (c.ends.times === null)
             return false
         }
-        if (c.begins && begins.isAfter(tod, 'day'))
+        if (c.begins && !tod.isSameOrAfter(begins, 'day'))
           return false
         
         if (c.type === 'after completion') {
@@ -385,7 +385,7 @@ export default {
           
           if (!task.deadline)
             return null
-          const readable = utils.getHumanReadableDate(task.deadline, l)
+          const readable = utils.getHumanReadableDate(task.deadline)
           return (readable === 'Today' ? '' : readable) + ' ' + getDaysLeft(task.deadline, date)
         },
         cache(args) {
@@ -847,7 +847,7 @@ export default {
           'list',
           'assigned',
         ],
-        getter({getters}, groupId, list) {
+        getter({getters}, groupId, list, date) {
           const userId = uid()
           return getters.tasks.filter(t => 
               !getters.isTaskCompleted(t) &&
@@ -900,11 +900,19 @@ export default {
           const ts = getters.tasks.filter(
             task => getters.isTaskInView(task, viewName)
           )
-  
+
+          const getDate = () => {
+            switch (viewName) {
+              case 'Today': return TODAY_DATE
+              case 'Tomorrow': return TOM_DATE
+            }
+          }
+
           return {
             total: ts.length,
             notCompleted: ts.filter(
-              task => !getters.isTaskInView(task, "Logbook")
+              task => !getters.isTaskCompleted(task, getDate()) &&
+              !getters.isTaskCanceled(task)
             ).length,
           }
         },
@@ -919,6 +927,45 @@ export default {
         createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
       }, rootState, task.id, writes)
+    },
+    addTasksFromGmailThreads({rootState, dispatch,}, threads) {
+      const writes = []
+      const b = fire.batch()
+
+      threads.forEach(({result}) => {
+        const r = result
+        const m = r.messages[r.messages.length - 1]
+
+        const getHeaderValue = name => (m.payload.headers.find(el => el.name === name) || {value: ''}).value
+
+        dispatch('addViewTask', {
+          b, writes,
+          task: {
+            id: r.id,
+
+            name: `{#DE5757 ${getHeaderValue("From").split(" ")[0]}}, ${getHeaderValue("Subject")} [https://mail.google.com/mail?authuser=${rootState.user.email}#all/${m.id} Direct link], {#888888 ${mom.unix(m.internalDate / 1000).format("LLL")}}`,
+            notes: `Snippet: ${m.snippet}`,
+            priority: '',
+            taskDuration: null,
+            deadline: '',
+            folder: null,
+            group: null,
+            list: null,
+            calendar: null,
+            heading: null,
+            headingId: null,
+            tags: [],
+            checklist: [],
+            order: [],
+            files: [],
+          }
+        })
+      })
+
+
+      cacheBatchedItems(b, writes)
+
+      return b.commit()
     },
     async addTask({rootState}, obj) {
       const b = fire.batch()
@@ -1162,11 +1209,8 @@ export default {
         let c
         let calendar = c = t.calendar
         if (c && c.type !== 'someday') {
-          if (c.type === 'after completion') {
-            c.lastCompleteDate = mom().format('Y-M-D')
-          }
-          else if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
-            const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c, true)
+          if (c.type === 'daily' || c.type === 'after completion' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+            const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
             c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
           }
 

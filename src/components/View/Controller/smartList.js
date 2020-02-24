@@ -140,6 +140,8 @@ export default {
     configFilterOptions() {
       if (this.viewName === 'Logbook')
         return pipe => pipe !== 'pipeCanceled' && pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
+      if (this.viewName === 'Recurring')
+        return pipe => pipe !== 'pipeCompleted'
       return null
     },
     tasksOrder() {

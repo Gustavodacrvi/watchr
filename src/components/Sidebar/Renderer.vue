@@ -1,6 +1,7 @@
 <template>
   <div class="Renderer" :class="[{folder, movingTask}]">
     <transition-group class="sidebar-renderer sidebar-renderer-root"
+      ref='sidebar-renderer-root'
       @enter='enter'
       @leave='leave'
       tag="div"
@@ -109,8 +110,6 @@ export default {
           if (type === 'add-task-floatbutton') return true
         }},
       delay: this.isDesktop ? 25 : 150,
-      forceFallback: true,
-      fallbackOnBody: true,
       handle: '.item-handle',
 
       onUpdate: evt => {
@@ -299,7 +298,7 @@ export default {
       return this.items.filter(el => !el.isEdit)
     },
     draggableRoot() {
-      return this.$el.getElementsByClassName('sidebar-renderer-root')[0]
+      return this.$refs['sidebar-renderer-root'].$el
     },
     apply() {
       return this.$store.state.apply.bool
@@ -336,10 +335,10 @@ export default {
   height: 0 !important;
 }
 
-.movingTask .link-inner-wrapper:hover, .movingTask .header:hover {
-  transform: scale(1.03, 1.05);
+.movingTask .dragover, .movingTask .dragover {
+  transform: scale(1.03, 1.05) !important;
   background-color: var(--light-gray) !important;
-  cursor: move;
+  cursor: move !important;
 }
 
 </style>

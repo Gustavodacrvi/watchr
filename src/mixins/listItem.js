@@ -123,9 +123,10 @@ export default {
       switch (key) {
         case 'Enter': {
           if (!isTyping && !this.isEditingComp && !this.iconDrop) {
-            if (!this.isOnControl && !this.justSaved)
+            const select = (this.isOnControl || this.isSelecting)
+            if (!select && !this.justSaved)
             this.isEditing = true
-            else if (this.isOnControl) {
+            else if (select) {
               toggleSelect()
             }
           }
@@ -325,7 +326,7 @@ export default {
       } else {
         this.completeAnimation = !this.completed
         this.completed = !this.completed
-        if (this.completed)
+        if (this.completed || (this.viewName !== 'Today' && this.comp === "Task"))
           this.dispatchCompleteItem()
         else this.dispatchUncompleteItem()
       }
@@ -351,6 +352,9 @@ export default {
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
+
+      toggleTaskCompletion: state => state.toggleTaskCompletion,
+      toggleListCompletion: state => state.toggleListCompletion,
 
       savedGroups: state => state.group.groups,
       userInfo: state => state.userInfo,
@@ -384,6 +388,14 @@ export default {
   watch: {
     isItemMainSelection() {
       this.bindMainSelection()
+    },
+    toggleTaskCompletion() {
+      if (this.comp === 'Task' && this.toggleTaskCompletion.includes(this.item.id))
+        this.completeItem()
+    },
+    toggleListCompletion() {
+      if (this.comp !== 'Task' && this.toggleListCompletion.includes(this.item.id))
+        this.completeItem()
     },
     completedItem() {
       this.completed = this.completedItem

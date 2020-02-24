@@ -499,6 +499,7 @@ export default {
     },
     mountSortables() {
       let cancel = true
+      let lastEventTime = false
       let cancelTimeout = null
 
       let moveType = null
@@ -523,6 +524,7 @@ export default {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
+            
             if (e.el.dataset.name === 'sidebar-renderer') return true
             if (e.el.dataset.name === 'folders-root') return true
             if (d.type === 'Task' && this.comp === "Task") return true
@@ -662,6 +664,9 @@ export default {
             }
             vue.sourceVueInstance = this
           } else if (t.to !== this.draggableRoot) {
+
+            if ((new Date() - lastEventTime) < 50)
+              return false;
             
             const evt = t
             const taskIds = this.selected
@@ -682,10 +687,10 @@ export default {
                   target = target.closest(`.${specialClass}`)
   
                 if (containsInfo(target)) {
-                  divs.push(target)
+                  divs.unshift(target)
                   
                   const d = divs[0].dataset
-                  
+
                   cancel = false
                   
                   moveType = d.type
@@ -700,6 +705,8 @@ export default {
             if (cancelTimeout)
               clearTimeout(cancelTimeout)
             cancelTimeout = setTimeout(() => cancel = true, 70)
+
+            lastEventTime = new Date()
             
             return false
           }

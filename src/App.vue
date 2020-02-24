@@ -87,6 +87,8 @@ export default {
     this.$el.addEventListener('dragover', evt => evt.preventDefault())
     this.$el.addEventListener('drop', commit)
     this.$el.addEventListener('dragleave', commit)
+
+    setInterval(this.getGmailInbox, 300000)
   },
   methods: {
     toggleScroll() {
@@ -198,12 +200,50 @@ export default {
         })
       }
     },
+    async getGmailInbox() {
+      if (this.userInfo.getGmailInbox && typeof gapi !== 'undefined' && gapi.client && gapi.client.gmail) {
+        const res = await gapi.client.gmail.users.threads.list({
+          userId: 'me',
+          maxResults: 30,
+          format: 'full',
+          labelIds: [
+            'INBOX',
+            'UNREAD',
+          ]
+        })
+
+        let threads = await Promise.all(res.result.threads.map(({id}) => gapi.client.gmail.users.threads.get({
+          id, userId: 'me',
+        })))
+        threads = threads.filter(el => !this.$store.getters['task/allTasks'].some(t => t.id === el.result.id))
+
+        if (threads.length) {
+          this.$store.dispatch('task/addTasksFromGmailThreads', threads)
+
+          if (this.userInfo.markEmailsAsRead)
+            await Promise.all(threads.map(t => gapi.client.gmail.users.threads.modify({
+              id: t.result.id,
+              userId: 'me',
+              removeLabelIds: ["UNREAD"],
+            })))
+  
+          this.$store.commit('pushToast', {
+            name: `Added ${threads.length} inbox tasks from Gmail's inbox${this.userInfo.markEmailsAsRead ? ' and marked them as read.' : '.'}`,
+            type: 'success',
+            seconds: 5,
+          })
+        }
+      }
+    },
   },
   computed: {
-    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift']),
+    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift', 'userInfo']),
     ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate', 'platform']),
     isReady() {
       return this.$store.state.googleCalendarReady
+    },
+    isGmailReady() {
+      return this.$store.state.gmailReady
     },
     route() {
       if (this.$route.matched[0]) {
@@ -260,6 +300,9 @@ export default {
     },
     isReady() {
       this.getCalendarEvents()
+    },
+    isGmailReady() {
+      this.getGmailInbox()
     },
   }
 }

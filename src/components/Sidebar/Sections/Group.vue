@@ -3,7 +3,7 @@
   <div class="Folder AppbarElement" :class="platform">
     <div class="header rb handle-folder AppbarElement-link DRAG-AND-DROP-EL"
       ref='header'
-      :class="{isActive}"
+      :class="{isActive, dragover}"
       @click="go"
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
@@ -15,6 +15,9 @@
       data-type='group'
       :data-id='id'
       data-color='var(--txt)'
+
+      @dragover='dragover = true'
+      @dragleave='dragover = false'
     >
       <span class="icon-wrapper">
         <Icon class="icon" :class="{headerHover}" icon="group"/>

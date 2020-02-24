@@ -464,8 +464,6 @@ export default {
       return []
     },
     linksOrder() {
-      console.log(
-      )
       if (this.userInfo && this.userInfo.links) {
         return this.userInfo.links
       }

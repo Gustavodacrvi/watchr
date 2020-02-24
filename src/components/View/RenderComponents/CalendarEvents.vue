@@ -3,7 +3,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div v-if="getCalendars.length > 0" class="CalendarEvents">
+    <div v-if="getCalendars.length > 0 && allowCalendar" class="CalendarEvents">
       <transition-group
         @enter='itemEnter'
         @leave='itemLeave'
@@ -190,10 +190,15 @@ export default {
         }
       }
     },
+    toggleEvents() {
+      if (this.date && this.date !== this.date && this.allowCalendar)
+        this.getEvents()
+      else this.events = []
+    },
   },
   // colorId
   computed: {
-    ...mapState(['userInfo', 'calendarList']),
+    ...mapState(['userInfo', 'calendarList', 'allowCalendar']),
     getHeight() {
       return (this.getCalendars.reduce((tot, cal) => {
         return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'
@@ -219,9 +224,10 @@ export default {
   },
   watch: {
     date() {
-      if (this.date && this.date !== this.date)
-        this.getEvents()
-      else this.events = []
+      this.toggleEvents()
+    },
+    allowCalendar() {
+      this.toggleEvents()
     },
     calendarList() {
       this.getEvents()

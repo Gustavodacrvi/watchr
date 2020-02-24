@@ -21,6 +21,7 @@ export default {
       startX: 0,
       startY: 0,
       initialScroll: 0,
+      dragover: false,
       timeout: null,
     }
   },

@@ -59,14 +59,25 @@
                 </div>
               </span>
             </div>
+            <h4 class="title">Google Gmail</h4>
+            <CheckboxApp class="rb"
+              name='Convert Gmail inbox messages to inbox tasks.'
+              :value='getGmailInbox'
+              @input="getGmailInbox = !getGmailInbox"
+            />
+            <CheckboxApp class="rb"
+              name='Mark converted messages as read.'
+              :value='markEmailsAsRead'
+              @input="markEmailsAsRead = !markEmailsAsRead"
+            />
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
-              name='Use 1:00pm format'
+              name='Use 1:00pm format.'
               :value='pmFormat'
               @input="togglepmFormat"
             />
             <CheckboxApp class="rb"
-              name='Manually log tasks'
+              name='Manually log tasks.'
               :value='manuallyLogTasks'
               @input="manuallyLogTasks = !manuallyLogTasks"
             />
@@ -77,17 +88,17 @@
             />
             <h3 class="title">View</h3>
             <CheckboxApp class="rb"
-              name='Always open tag filters'
+              name='Always open tag filters.'
               :value='tagFilters'
               @input="toggleTagFilters"
             />
             <CheckboxApp class="rb"
-              name='Always open list filters'
+              name='Always open list filters.'
               :value='listFilters'
               @input="toggleListFilters"
             />
             <CheckboxApp class="rb"
-              name='Always open folder filters'
+              name='Always open folder filters.'
               :value='folderFilters'
               @input="toggleFolderFilters"
             />
@@ -166,6 +177,8 @@ export default {
       changedSection: false,
       forceUpdate: false,
       manuallyLogTasks: false,
+      getGmailInbox: false,
+      markEmailsAsRead: false,
 
       folderFilters: false,
       tagFilters: false,
@@ -242,6 +255,8 @@ export default {
         hidedViews: this.hidedSmartViews || null,
         ungroupTasksInHeadings: this.ungroupTasksInHeadings || null,
         manuallyLogTasks: this.manuallyLogTasks || null,
+        markEmailsAsRead: this.markEmailsAsRead || null,
+        getGmailInbox: this.getGmailInbox || null,
       })
       this.changedSection = false
       this.forceUpdate = !this.forceUpdate
@@ -249,6 +264,8 @@ export default {
     update() {
       this.ungroupTasksInHeadings = this.userInfo.ungroupTasksInHeadings
       this.manuallyLogTasks = this.userInfo.manuallyLogTasks
+      this.markEmailsAsRead = this.userInfo.markEmailsAsRead
+      this.getGmailInbox = this.userInfo.getGmailInbox
       this.pmFormat = this.getPmFormat
       this.goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter') === 'true'
       this.tagFilters = localStorage.getItem('tagFilters') === 'true'
@@ -272,6 +289,10 @@ export default {
       if (this.folderFilters !== (localStorage.getItem('folderFilters') === 'true')) return true
       if (this.listFilters !== (localStorage.getItem('listFilters') === 'true')) return true
       if (this.ungroupTasksInHeadings !== this.userInfo.ungroupTasksInHeadings)
+        return true
+      if (this.getGmailInbox !== this.userInfo.getGmailInbox)
+        return true
+      if (this.markEmailsAsRead !== this.userInfo.markEmailsAsRead)
         return true
       if (this.manuallyLogTasks !== this.userInfo.manuallyLogTasks)
         return true

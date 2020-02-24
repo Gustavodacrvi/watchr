@@ -593,9 +593,8 @@ export default {
       return task => !this.isTaskSomeday(task)
     },
     pipeCompleted() {
-      const TOD_STR = mom().format('Y-M-D')
       if (this.showCompleted) return () => true
-      return task => !this.isTaskCompleted(task, TOD_STR, this.itemCompletionCompareDate)
+      return task => !this.isTaskCompleted(task, this.getCalendarOrderDate, this.itemCompletionCompareDate)
     },
     pipeCanceled() {
       if (this.showCompleted) return () => true

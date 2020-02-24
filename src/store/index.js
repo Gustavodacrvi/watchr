@@ -5,9 +5,9 @@ import router from './../router'
 import Memoize from './memoFunctionGetters'
 import utilsTask from '../utils/task'
 
-import moment from 'moment'
+import mom from 'moment'
 
-const TOD_STR = moment().format('Y-M-D')
+const TOD_STR = mom().format('Y-M-D')
 
 Vue.use(Vuex)
 
@@ -17,7 +17,6 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
-import 'firebase/performance'
 
 firebase.initializeApp({
   apiKey: process.env.VUE_APP_API_KEY,
@@ -32,7 +31,6 @@ firebase.initializeApp({
 
 let snapshotsListeners = []
 
-const per = firebase.performance()
 export const fire = firebase.firestore()
 export const auth = firebase.auth()
 export const sto = firebase.storage()
@@ -63,6 +61,12 @@ if (lastVersion === null) {
 }
 
 
+let allowCalendar = true
+
+const cal = localStorage.getItem('allowCalendar')
+if (cal)
+  allowCalendar = cal === 'true'
+
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter, folder,
@@ -70,6 +74,7 @@ const store = new Vuex.Store({
   },
   state: {
     lastVersion,
+    allowCalendar,
     version,
     popup: {
       comp: '',
@@ -98,6 +103,8 @@ const store = new Vuex.Store({
       links: [],
       
       calendarOrders: null,
+      getGmailInbox: false,
+      markEmailsAsRead: false,
       
       disablePmFormat: false,
       
@@ -115,6 +122,8 @@ const store = new Vuex.Store({
     fileURL: null,
     firstFireLoad: false,
     toasts: [],
+    toggleTaskCompletion: [],
+    toggleListCompletion: [],
     windowWidth: 0,
     isScrolling: false,
     allowNavHide: true,
@@ -133,6 +142,7 @@ const store = new Vuex.Store({
     historyPos: 0,
 
     googleCalendarReady: false,
+    gmailReady: false,
     calendarList: [],
 
     isFirstSnapshot: true,
@@ -356,6 +366,16 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleTaskCompletion(state, toggleTaskCompletion) {
+      state.toggleTaskCompletion = toggleTaskCompletion || []
+    },
+    toggleListCompletion(state, toggleListCompletion) {
+      state.toggleListCompletion = toggleListCompletion || []
+    },
+    toggleCalendar(state, allowCalendar) {
+      state.allowCalendar = allowCalendar
+      localStorage.setItem('allowCalendar', allowCalendar)
+    },
     cameFromAnotherTabDragStart(state, element) {
       if (element === null && state.cameFromAnotherTabHTMLElement === null)
         return;
@@ -378,6 +398,9 @@ const store = new Vuex.Store({
     },
     googleCalendarReady(state) {
       state.googleCalendarReady = true
+    },
+    gmailReady(state) {
+      state.gmailReady = true
     },
     movingTask(state, bool) {
       state.movingTask = bool
@@ -797,13 +820,18 @@ if (typeof gapi !== "undefined")
     gapi.client.init({
       apiKey: process.env.VUE_APP_API_KEY,
       clientId: process.env.VUE_APP_CLIENT_ID,
-      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-      scope: "https://www.googleapis.com/auth/calendar.readonly",
+      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest", 'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
+      scope: "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly",
     })
-    
+
     gapi.client.load('calendar', 'v3', () => {
       setTimeout(() => {
         store.commit('googleCalendarReady')
+      }, 1500)
+    })
+    gapi.client.load('gmail', 'v3', () => {
+      setTimeout(() => {
+        store.commit('gmailReady')
       }, 1500)
     })
   })
