@@ -3,7 +3,7 @@
     <h3>Upcoming Update</h3>
     <br>
 
-    <li>Get gmail inbox.</li>
+    <li>Get gmail inbox messages and convert them to tasks, marking them as read.</li>
     <br>
     <li>Show recent views on the quick find popup.</li>
     <br>

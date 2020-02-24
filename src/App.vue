@@ -201,7 +201,6 @@ export default {
       }
     },
     async getGmailInbox() {
-      console.log(this.userInfo.getGmailInbox)
       if (this.userInfo.getGmailInbox && typeof gapi !== 'undefined' && gapi.client && gapi.client.gmail) {
         const res = await gapi.client.gmail.users.threads.list({
           userId: 'me',
@@ -220,9 +219,16 @@ export default {
 
         if (threads.length) {
           this.$store.dispatch('task/addTasksFromGmailThreads', threads)
+
+          if (this.userInfo.markEmailsAsRead)
+            await Promise.all(threads.map(t => gapi.client.gmail.users.threads.modify({
+              id: t.result.id,
+              userId: 'me',
+              removeLabelIds: ["UNREAD"],
+            })))
   
           this.$store.commit('pushToast', {
-            name: `Added ${threads.length} inbox tasks from Gmail's inbox and marked as read. `,
+            name: `Added ${threads.length} inbox tasks from Gmail's inbox${this.userInfo.markEmailsAsRead ? ' and marked them as read.' : '.'}`,
             type: 'success',
             seconds: 5,
           })

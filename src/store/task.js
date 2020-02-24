@@ -965,7 +965,7 @@ export default {
 
       cacheBatchedItems(b, writes)
 
-      // return b.commit()
+      return b.commit()
     },
     async addTask({rootState}, obj) {
       const b = fire.batch()
