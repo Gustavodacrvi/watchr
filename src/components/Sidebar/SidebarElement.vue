@@ -12,7 +12,7 @@
     >
       <div
         class="link-inner-wrapper rb item-handle remove-highlight"
-        :class="{notSmartActive: !isSmart && isActive, 'ignore-item': ignore, onHover: hover, isActive}"
+        :class="{notSmartActive: !isSmart && isActive, 'ignore-item': ignore, onHover: hover, isActive, dragover}"
 
         @mouseenter="hover = true"
         @mouseleave="hover = false"
@@ -20,6 +20,9 @@
         @touchstart.passive='touchStart'
         @touchmove.passive='touchmove'
         @touchend.passive='touchEnd'
+
+        @dragover='dragover = true'
+        @dragleave='dragover = false'
       >
         <div class="icon-wrapper" @click="clickIcon">
           <Icon class="main-icon"
@@ -118,6 +121,7 @@ export default {
   },
   data() {
     return {
+      dragover: false,
       hover: false,
       isTouching: false,
       fail: false,
@@ -296,6 +300,7 @@ export default {
 }
 
 </script>
+
 
 <style scoped>
 
