@@ -120,6 +120,8 @@ const store = new Vuex.Store({
     fileURL: null,
     firstFireLoad: false,
     toasts: [],
+    toggleTaskCompletion: [],
+    toggleListCompletion: [],
     windowWidth: 0,
     isScrolling: false,
     allowNavHide: true,
@@ -361,6 +363,12 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleTaskCompletion(state, toggleTaskCompletion) {
+      state.toggleTaskCompletion = toggleTaskCompletion || []
+    },
+    toggleListCompletion(state, toggleListCompletion) {
+      state.toggleListCompletion = toggleListCompletion || []
+    },
     toggleCalendar(state, allowCalendar) {
       state.allowCalendar = allowCalendar
       localStorage.setItem('allowCalendar', allowCalendar)

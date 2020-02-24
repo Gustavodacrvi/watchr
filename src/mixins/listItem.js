@@ -353,6 +353,9 @@ export default {
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
 
+      toggleTaskCompletion: state => state.toggleTaskCompletion,
+      toggleListCompletion: state => state.toggleListCompletion,
+
       savedGroups: state => state.group.groups,
       userInfo: state => state.userInfo,
       user: state => state.user,
@@ -385,6 +388,14 @@ export default {
   watch: {
     isItemMainSelection() {
       this.bindMainSelection()
+    },
+    toggleTaskCompletion() {
+      if (this.comp === 'Task' && this.toggleTaskCompletion.includes(this.item.id))
+        this.completeItem()
+    },
+    toggleListCompletion() {
+      if (this.comp !== 'Task' && this.toggleListCompletion.includes(this.item.id))
+        this.completeItem()
     },
     completedItem() {
       this.completed = this.completedItem

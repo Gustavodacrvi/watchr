@@ -758,6 +758,16 @@ export default {
         completed: false,
       }, ids, rootState)
 
+      if (!rootState.userInfo.manuallyLogTasks) {
+        obj = {
+          ...obj,
+          logbook: true,
+          logFire: new Date(),
+          logDate: mom().format('Y-M-D'),
+          fullLogDate: mom().format('Y-M-D HH:mm ss'),
+        }
+      }
+
       b.commit()
     },
     async uncancelLists({rootState}, ids) {

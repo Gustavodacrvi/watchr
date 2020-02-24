@@ -425,13 +425,7 @@ export default {
                   break
                 }
                 case 'toggleCompletion': {
-                  const tasks = this.getTasksById(fallbackItems)
-                  const completed = tasks.filter(t => t.completed)
-                  const uncompleted = tasks.filter(t => !t.completed)
-                  if (uncompleted.length > 0)
-                    dispatch('task/completeTasks', uncompleted)
-                  if (completed.length > 0)
-                    dispatch('task/uncompleteTasks', completed)
+                  this.$store.commit('toggleTaskCompletion', fallbackItems)
                   break
                 }
                 case 'toggleCancel': {
@@ -458,13 +452,7 @@ export default {
                 break
               }
               case 'toggleCompletion': {
-                const lists = this.getListsById(fallbackItems)
-                const completed = lists.filter(l => l.completed)
-                const uncompleted = lists.filter(t => !t.completed)
-                if (uncompleted.length > 0)
-                  dispatch('list/completeLists', uncompleted)
-                if (completed.length > 0)
-                  dispatch('list/uncompleteLists', completed)
+                this.$store.commit('toggleListCompletion', fallbackItems)
                 break
               }
               case 'logbook': {
