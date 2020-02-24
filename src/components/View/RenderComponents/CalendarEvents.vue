@@ -190,6 +190,11 @@ export default {
         }
       }
     },
+    toggleEvents() {
+      if (this.date && this.date !== this.date && this.allowCalendar)
+        this.getEvents()
+      else this.events = []
+    },
   },
   // colorId
   computed: {
@@ -219,9 +224,10 @@ export default {
   },
   watch: {
     date() {
-      if (this.date && this.date !== this.date)
-        this.getEvents()
-      else this.events = []
+      this.toggleEvents()
+    },
+    allowCalendar() {
+      this.toggleEvents()
     },
     calendarList() {
       this.getEvents()

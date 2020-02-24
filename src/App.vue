@@ -198,12 +198,43 @@ export default {
         })
       }
     },
+    async getGmailInbox() {
+      if (typeof gapi !== 'undefined' && gapi.client && gapi.client.gmail) {
+        const res = await gapi.client.gmail.users.threads.list({
+          userId: 'me',
+          labelIds: [
+            'INBOX',
+            'UNREAD',
+          ]
+        })
+
+        /* 0: {id: "CATEGORY_PERSONAL", name: "CATEGORY_PERSONAL", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+1: {id: "CATEGORY_SOCIAL", name: "CATEGORY_SOCIAL", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+2: {id: "IMPORTANT", name: "IMPORTANT", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+3: {id: "CATEGORY_UPDATES", name: "CATEGORY_UPDATES", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+4: {id: "CATEGORY_FORUMS", name: "CATEGORY_FORUMS", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+5: {id: "CHAT", name: "CHAT", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+6: {id: "SENT", name: "SENT", type: "system"}
+7: {id: "INBOX", name: "INBOX", type: "system"}
+8: {id: "TRASH", name: "TRASH", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+9: {id: "CATEGORY_PROMOTIONS", name: "CATEGORY_PROMOTIONS", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+10: {id: "DRAFT", name: "DRAFT", type: "system"}
+11: {id: "SPAM", name: "SPAM", messageListVisibility: "hide", labelListVisibility: "labelHide", type: "system"}
+12: {id: "STARRED", name: "STARRED", type: "system"}
+13: {id: "UNREAD", name: "UNREAD", type: "system"} */
+
+        console.log(res)
+      }
+    },
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift']),
     ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate', 'platform']),
     isReady() {
       return this.$store.state.googleCalendarReady
+    },
+    isGmailReady() {
+      return this.$store.state.gmailReady
     },
     route() {
       if (this.$route.matched[0]) {
@@ -260,6 +291,9 @@ export default {
     },
     isReady() {
       this.getCalendarEvents()
+    },
+    isGmailReady() {
+      this.getGmailInbox()
     },
   }
 }

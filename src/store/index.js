@@ -140,6 +140,7 @@ const store = new Vuex.Store({
     historyPos: 0,
 
     googleCalendarReady: false,
+    gmailReady: false,
     calendarList: [],
 
     isFirstSnapshot: true,
@@ -395,6 +396,9 @@ const store = new Vuex.Store({
     },
     googleCalendarReady(state) {
       state.googleCalendarReady = true
+    },
+    gmailReady(state) {
+      state.gmailReady = true
     },
     movingTask(state, bool) {
       state.movingTask = bool
@@ -814,13 +818,18 @@ if (typeof gapi !== "undefined")
     gapi.client.init({
       apiKey: process.env.VUE_APP_API_KEY,
       clientId: process.env.VUE_APP_CLIENT_ID,
-      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-      scope: "https://www.googleapis.com/auth/calendar.readonly",
+      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest", 'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
+      scope: "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.modify",
     })
     
     gapi.client.load('calendar', 'v3', () => {
       setTimeout(() => {
         store.commit('googleCalendarReady')
+      }, 1500)
+    })
+    gapi.client.load('gmail', 'v3', () => {
+      setTimeout(() => {
+        store.commit('gmailReady')
       }, 1500)
     })
   })
