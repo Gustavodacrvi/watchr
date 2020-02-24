@@ -325,7 +325,7 @@ export default {
       } else {
         this.completeAnimation = !this.completed
         this.completed = !this.completed
-        if (this.completed)
+        if (this.completed || (this.viewName !== 'Today' && this.comp === "Task"))
           this.dispatchCompleteItem()
         else this.dispatchUncompleteItem()
       }

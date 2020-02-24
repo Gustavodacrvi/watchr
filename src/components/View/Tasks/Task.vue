@@ -116,12 +116,12 @@
                     >
                       <span v-if="logStr" class="check-date" ref='check-name'>{{ logStr }}</span>
                     </transition>
-                    
-                    <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
-                    <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+
+                    <Icon v-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+                    <Icon v-else-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                     <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                     <span v-else-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
-                    <span v-else-if="calendarStr && !isToday && !isTomorrow" class="txt-str cb rb">{{ calendarStr }}</span>
+                    <span v-else-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb">{{ calendarStr }}</span>
 
                     <span v-html="parsedName" ref='parsed-name'></span>
                     <Icon v-if="haveChecklist"
@@ -141,16 +141,16 @@
                     </span>
                     <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
                     <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="14px"/>
-                    <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
+                    <span v-if="nextCalEvent" class="tag dark rb">{{ nextCalEvent }}</span>
                   </span>
                 </div>
               </div>
               <span class="info" ref='info'>
-                <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
-                <span v-if="groupStr" class="tag cb rb">{{ groupStr }}</span>
-                <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-                <span v-if="headingName && showHeadingName" class="tag cb rb">{{ headingName }}</span>
-                <span v-if="taskDuration && !schedule" class="tag cb rb">{{ taskDuration }}</span>
+                <span v-if="folderStr" class="tag dark rb">{{ folderStr }}</span>
+                <span v-if="groupStr" class="tag dark rb">{{ groupStr }}</span>
+                <span v-if="listStr" class="tag dark rb">{{ listStr }}</span>
+                <span v-if="headingName && showHeadingName" class="tag dark rb">{{ headingName }}</span>
+                <span v-if="taskDuration && !schedule" class="tag dark rb">{{ taskDuration }}</span>
               </span>
             </div>
           </div>
@@ -193,6 +193,8 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 const tod = mom()
+
+const TOD_DATE = tod.format('Y-M-D')
 
 import ListItemMixin from "@/mixins/listItem"
 
@@ -447,8 +449,8 @@ export default {
         calendar: {
           type: 'specific',
           time: null,
-          editDate: mom().format('Y-M-D'),
-          begins: mom().format('Y-M-D'),
+          editDate: TOD_DATE,
+          begins: TOD_DATE,
 
           specific: date,
         },
@@ -642,7 +644,7 @@ export default {
       return this.isRecurringTask(this.item)
     },
     completedItem() {
-      return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
+      return this.isTaskCompleted(this.item, TOD_DATE, this.itemCompletionCompareDate)
     },
     canceledItem() {
       return this.isTaskCanceled(this.item)
@@ -805,7 +807,7 @@ export default {
       const {t,c} = this.getTask
       if (!c || c.type === 'someday' || c.type === 'specific')
         return null
-      const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
+      const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c, true)
 
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'))
       if (!date || date === this.viewName) return null
@@ -924,6 +926,11 @@ export default {
 
 .show {
   opacity: 1;
+}
+
+.dark {
+  padding: 6px;
+  background-color: var(--sidebar-color);
 }
 
 .subtasks {

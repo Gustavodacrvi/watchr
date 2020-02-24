@@ -40,28 +40,18 @@
       color='var(--txt)'
       width="22px"
     />
-    <Icon v-else-if="!props.co && props.se && !props.ac && !props.so" class="tra-icon cursor remove-highlight" key="68"
+    <Icon v-else-if="props.se && !props.ac && !props.so" class="tra-icon cursor remove-highlight" key="68"
       icon="circle"
       :color='props.color'
       width="22px"
     />
-    <Icon v-else-if="!props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="7"
+    <Icon v-else-if="props.se && props.so" class="tra-icon cursor remove-highlight" key="7"
       icon="circle-dash"
       :color='props.color'
       width="20px"
     />
     <Icon v-else-if="props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="8"
       icon="box-check"
-      :color='props.color'
-      width="20px"
-    />
-    <Icon v-else-if="props.co && props.se && !props.so" class="tra-icon cursor remove-highlight" key="9"
-      icon="circle-check"
-      :color='props.color'
-      width="20px"
-    />
-    <Icon v-else-if="props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="10"
-      icon="circle-check-dash"
       :color='props.color'
       width="20px"
     />

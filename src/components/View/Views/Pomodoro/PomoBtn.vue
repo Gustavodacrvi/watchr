@@ -1,7 +1,7 @@
 <template>
   <div class="PomoBtn">
     <button class="btn cursor remove-highlight" :class="{running, rest}" @click="click">
-      btnMsg
+      {{ btnMsg }}
       <CircleBubble
         innerColor='var(--txt)'
         outerColor='white'

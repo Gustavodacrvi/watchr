@@ -5,9 +5,9 @@ import router from './../router'
 import Memoize from './memoFunctionGetters'
 import utilsTask from '../utils/task'
 
-import moment from 'moment'
+import mom from 'moment'
 
-const TOD_STR = moment().format('Y-M-D')
+const TOD_STR = mom().format('Y-M-D')
 
 Vue.use(Vuex)
 
