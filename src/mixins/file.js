@@ -32,13 +32,16 @@ export default {
     },
     onDrop(files) {
       for (const f of files)
-        this.addFile(f)
+        if (f instanceof File)
+          this.addFile(f)
     },
     addFile(file) {
-      if (!this.files.includes(file.name))
-        this.files.push(file.name)
-      if (!this.addedFiles.find(el => el.name === file.name))
-        this.addedFiles.push(file)
+      if (file instanceof File) {
+        if (!this.files.includes(file.name))
+          this.files.push(file.name)
+        if (!this.addedFiles.find(el => el.name === file.name))
+          this.addedFiles.push(file)
+      }
     },
     deleteFile(fileName) {
       const i = this.files.findIndex(el => el === fileName)

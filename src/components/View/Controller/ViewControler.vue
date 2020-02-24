@@ -17,7 +17,6 @@
     :notes='getViewNotes'
     :progress='getPieProgress'
     :headings='headings'
-    :fromAnotherTabSortableAdd='fromAnotherTabSortableAdd'
     :headingsOrder='headingsOrder'
     :showAllHeadingsItems='showAllHeadingsItems'
     :rootFallbackItem='rootFallbackItem'
@@ -30,7 +29,6 @@
     :disableRootActions='disableRootActions'
     :rootFilter='rootFilter'
     :tasksOrder='tasksOrder'
-    :onSortableAdd='onSortableAdd'
     :viewNameValue='viewNameValue'
     :headerInfo='headerInfo'
     :saveHeaderContent='saveHeaderContent'
@@ -46,11 +44,12 @@
     :extraListView='extraListView'
     :removeHeaderTag='removeHeaderTag'
     :saveHeaderName='saveHeaderName'
+    :fallbackFunctionData='fallbackFunctionData'
+    :updateViewIds='updateIds'
 
     @save-schedule='saveSchedule'
     @add-task='addTask'
     @add-heading='addHeading'
-    @update-ids='updateIds'
     @sidebar='sidebar'
     
     @slide='slide'
@@ -67,6 +66,8 @@ import utilsTask from '@/utils/task'
 import utilsList from '@/utils/list'
 import folderUtils from '@/utils/folder'
 import utils from '@/utils/'
+
+import functionFallbacks from '@/utils/functionFallbacks.js'
 
 import { pipeBooleanFilters } from '@/utils/memo'
 
@@ -176,25 +177,11 @@ export default {
         order: o.order ? o.order : this.getCalendarOrderByDate(date),
 
         filter: o.filter ? o.filter : task => this.isTaskShowingOnDate(task, date, true),
-        fallbackItem: o.fallbackItem ? o.fallbackItem : task => {
-          if (!task.calendar)
-            task.calendar = calObj(date)
-          return task
-        },
-        onAddItem: o.onAddItem ? o.onAddItem : obj => {
-          dispatch('list/addTaskByIndexCalendarOrder', {
-            ...obj, date,
-          })
-        },
-        onSortableAdd: o.onSortableAdd ? o.onSortableAdd : (taskIds, ids) => {
-          dispatch('task/saveTasksById', {
-            ids: taskIds,
-            task: {calendar: calObj(date)},
-          })
-        },
-        updateIds: o.updateIds ? o.updateIds : ids => {
-          dispatch('task/saveCalendarOrder', {ids, date})
-        }
+        fallbackFunctionData: o.fallbackFunctionData ? o.fallbackFunctionData : () => ({
+          calendarDate: date,
+        }),
+        fallbackItem: o.fallbackItem ? o.fallbackItem : (t, f) => functionFallbacks.viewFallbacks.calendarOrder(t, f, date),
+        updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
       }
     },
   },
@@ -347,18 +334,9 @@ export default {
             viewTasksOrder = utilsTask.concatArraysRemovingOldEls(viewTasksOrder, tasksOrder)
           else viewTasksOrder = tasksOrder.slice()
           
-          const saveOrder = ids => {
-            if (isSmartOrderViewType) {
-              this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
-                ids, listId: list.id, smartView: viewName,
-              })
-            } else {
-              this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
-                date: currentDate,
-              })
-            }
-          }
+          const saveOrder = isSmartOrderViewType ?
+            functionFallbacks.updateOrderFunctions.smartViewLists
+             : functionFallbacks.updateOrderFunctions.calendarOrder
 
           const filterFunction = task => this.isTaskInList(task, list.id)
 
@@ -392,41 +370,13 @@ export default {
                 })
               }
             ],
-            updateIds: saveOrder,
-            fallbackItem: (task, force) => {
-              if (force || (!task.group && !task.list)) {
-                task.group = list.group || null
-                task.list = list.id || null
-              }
-              
-              if (force || (!task.list && !task.folder && !task.group))
-                task.list = list.id
-              
-              return task
-            },
-            onAddItem: obj => {
-              if (isSmartOrderViewType)
-                this.$store.dispatch('list/addTaskByIndexSmartViewList', {
-                  ...obj, listId: list.id, viewName: viewName,
-                })
-              else
-                this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
-                  ...obj,
-                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, obj.ids),
-                  date: currentDate,
-                })
-            },
-            onSortableAdd: (taskIds, ids) => {
-              if (isSmartOrderViewType)
-                this.$store.dispatch('list/moveTasksToList', {
-                  taskIds, ids, listId: list.id, smartView: viewName,
-                })
-              else
-                this.$store.dispatch('list/moveTasksToListCalendarOrder', {
-                  taskIds, ids, date: currentDate, listId: list.id,
-                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids)
-                })
-            }
+            fallbackFunctionData: () => ({
+              calendarDate: currentDate,
+              viewName,
+              listId: list.id,
+            }),
+            updateViewIds: saveOrder,
+            fallbackItem: (t, f) => functionFallbacks.viewFallbacks.List(t, f, {listId: list.id, group: list.group, list: list.tags}),
           })
         } else if (viewHeading.smartViewControllerType === 'folder') {
           const folder = viewHeading
@@ -458,17 +408,9 @@ export default {
             viewTasksOrder = utilsTask.concatArraysRemovingOldEls(viewTasksOrder, tasksOrder)
           else viewTasksOrder = tasksOrder.slice()
           
-          const saveOrder = ids => {
-            if (isSmartOrderViewType)
-              this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
-                ids, folderId: folder.id, smartView: viewName,
-              })
-            else
-              this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
-                date: currentDate,
-              })
-          }
+          const saveOrder = isSmartOrderViewType ?
+            functionFallbacks.updateOrderFunctions.smartViewFolders
+             : functionFallbacks.updateOrderFunctions.calendarOrder
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
@@ -501,35 +443,13 @@ export default {
                 })
               }
             ],
-            updateIds: saveOrder,
-            fallbackItem: (task, force) => {
-              if (force || (!task.list && !task.folder && !task.group))
-                task.folder = folder.id
-              return task
-            },
-            onAddItem: obj => {
-              if (isSmartOrderViewType)
-                this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
-                  ...obj, folderId: folder.id, viewName: viewName,
-                })
-              else
-                this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
-                  ...obj,
-                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, obj.ids),
-                  date: currentDate,
-                })
-            },
-            onSortableAdd: (taskIds, ids) => {
-              if (isSmartOrderViewType)
-                this.$store.dispatch('folder/moveTasksToFolder', {
-                  taskIds, ids, folderId: folder.id, smartView: viewName,
-                })
-              else
-                this.$store.dispatch('folder/moveTasksToFolderCalendarOrder', {
-                  taskIds, ids, date: currentDate, folderId: folder.id,
-                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
-                })
-            }
+            fallbackFunctionData: () => ({
+              calendarDate: currentDate,
+              viewName,
+              folderId: folder.id,
+            }),
+            updateViewIds: saveOrder,
+            fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Folder(t, f, folder.id),
           })
         } else if (viewHeading.smartViewControllerType === 'group') {
           const group = viewHeading
@@ -561,17 +481,9 @@ export default {
             viewTasksOrder = utilsTask.concatArraysRemovingOldEls(viewTasksOrder, tasksOrder)
           else viewTasksOrder = tasksOrder.slice()
           
-          const saveOrder = ids => {
-            if (isSmartOrderViewType)
-              this.$store.dispatch('group/saveSmartViewHeadingTasksOrder', {
-                ids, groupId: group.id, viewName,
-              })
-            else
-              this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids),
-                date: currentDate,
-              })
-          }
+          const saveOrder = isSmartOrderViewType ?
+            functionFallbacks.updateOrderFunctions.smartViewGroups
+             : functionFallbacks.updateOrderFunctions.calendarOrder
 
           const filterFunction = task => this.isTaskInGroup(task, group.id)
 
@@ -604,35 +516,13 @@ export default {
                 })
               }
             ],
-            updateIds: saveOrder,
-            fallbackItem: (task, force) => {
-              if (force || (!task.list && !task.folder && !task.group))
-                task.group = group.id
-              return task
-            },
-            onAddItem: obj => {
-              if (isSmartOrderViewType)
-                this.$store.dispatch('list/addTaskByIndexSmartViewGroup', {
-                  ...obj, groupId: group.id, viewName,
-                })
-              else
-                this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
-                  ...obj,
-                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, obj.ids),
-                  date: currentDate,
-                })
-            },
-            onSortableAdd: (taskIds, ids) => {
-              if (isSmartOrderViewType)
-                this.$store.dispatch('group/moveTasksToGroup', {
-                  taskIds, ids, groupId: group.id, viewName,
-                })
-              else
-                this.$store.dispatch('group/moveTasksToGroupCalendarOrder', {
-                  taskIds, ids, date: currentDate, groupId: group.id,
-                  ids: utilsTask.concatArraysRemovingOldEls(viewTasksOrder, ids)
-                })
-            }
+            fallbackFunctionData: () => ({
+              calendarDate: currentDate,
+              viewName,
+              groupId: group.id,
+            }),
+            updateViewIds: saveOrder,
+            fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Group(t, f, group.id),
           })
         }
       }
@@ -706,17 +596,8 @@ export default {
             disableDeadlineStr: true,
             
             filter: task => task.deadline === date,
-            fallbackItem: task => {
-              if (!task.deadline)
-                task.deadline = date
-              return task
-            },
-            onSortableAdd: (taskIds, ids) => {
-              dispatch('task/saveTasksById', {
-                ids: taskIds,
-                tasks: {deadline: date},
-              })
-            },
+            fallbackItem: (t, f) => functionFallbacks.viewFallbacks.deadlineOrder(t, f, date),
+            updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
           })
         )
       }

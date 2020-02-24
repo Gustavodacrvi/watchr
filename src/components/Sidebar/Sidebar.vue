@@ -41,11 +41,11 @@
               <SidebarRenderer v-if="showFavorites"
                 :enableSort='true'
                 :disabled='false'
+                :isSmart='true'
                 :disableSelection='true'
                 :list='getFavoritesRenderList'
                 :active='value'
                 :viewType='viewType'
-                :isSmart='false'
 
                 :mapNumbers='mapFavorites'
                 :mapProgress='mapProgress'
@@ -318,7 +318,7 @@ export default {
           notCompleted: 0,
         }
       const obj = this.getNumberOfTasksByView(viewName)
-      if (viewName !== 'Today')
+      if (viewName !== 'Today' && viewName !== 'Deadlines')
         return {total: obj.total}
       return obj
     },

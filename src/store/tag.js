@@ -156,26 +156,6 @@ export default {
 
       b.commit()
     },
-    async addTaskByIndex({commit, rootState}, {ids, index, task, tagId, newTaskRef}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      await setTask(b, {
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        userId: uid(),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-
-      ids.splice(index, 0, newTaskRef.id)
-
-      setTag(b, {tasks: ids}, tagId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     deleteTag({rootState}, {id, tasks}) {
       const b = fire.batch()
       const ts = tasks.filter(t => t.tags && t.tags.includes(id))

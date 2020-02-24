@@ -7,51 +7,33 @@ import mom from 'moment'
 
 const TOD_DATE = mom().format('Y-M-D')
 
+import functionFallbacks from '@/utils/functionFallbacks.js'
+
 export default {
   computed: {
-    addTask() {
-      return obj => {
-        if (this.viewList) {
-          this.$store.dispatch('list/addTaskByIndex', {
-            ...obj, listId: this.viewList.id,
-          })
-        }
-      }
-    },
     rootFallbackItem() {
-      return (task, force) => {
-        if (force || !task.heading) {
-          task.heading = null
-        }
-        return task
-      }
+      return functionFallbacks.viewPositionFallbacks.listRoot
+    },
+    fallbackFunctionData() {
+      return () => ({
+        listId: this.viewList.id,
+        groupId: this.viewList.group,
+      })
     },
     mainFallbackItem() {
-      return (task, force) => {
-        const list = this.viewList
-        if (force || (!task.group && !task.list)) {
-          task.group = list.group || null
-          task.list = list.id || null
-        }
-
-        if (force || (!task.list && !task.folder && !task.group))
-          task.list = list.id
-        
-        task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
-        return task
-      }
+      return (t, f) => functionFallbacks.viewFallbacks.List(t, f, {
+        listId: this.viewList.id,
+        groupId: this.viewList.group,
+        listTagIds: this.listgetListTags.map(el => el.id),
+      })
     },
-    
+    rootFilter() {
+      return this.isTaskInListRoot
+    },
     updateIds() {
-      return ids => {
-        if (this.viewList) {
-          this.$store.dispatch('list/saveList', {
-            tasks: ids,
-            id: this.viewList.id,
-          })
-        }
-      }
+      return functionFallbacks.updateOrderFunctions.List
     },
+
     saveHeaderName() {
       return name => {
         if (this.viewList) {
@@ -136,9 +118,6 @@ export default {
       }
       return () => false
     },
-    rootFilter() {
-      return this.isTaskInListRoot
-    },
     headings() {
       const arr = []
       const viewList = this.viewList
@@ -168,33 +147,18 @@ export default {
             options: tasks => {
               return utilsList.listHeadingOptions(viewList, h, this.$store, tasks, this.l)
             },
-            fallbackItem: (task, force) => {
-              if (force || (!task.heading && !task.folder && task.list === viewList.id))
-                task.heading = h.id
-              task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
-              return task
-            },
+            fallbackFunctionData: () => ({
+              listId: viewList.id,
+              headingId: h.id,
+            }),
+            fallbackItem: functionFallbacks.viewPositionFallbacks.listHeading,
+            updateViewIds: functionFallbacks.updateOrderFunctions.listHeading,
 
             saveNotes: notes => {
               this.$store.dispatch('list/saveHeadingNotes', {
                 listId: viewList.id, notes, heading: h.id,
               })
             },
-            updateIds: ids => {
-              this.$store.dispatch('list/updateHeadingsTaskIds', {
-                headingId: h.id, listId: viewList.id, ids,
-              })
-            },
-            onAddItem: obj => {
-              this.$store.dispatch('list/addTaskHeading', {
-                ...obj, headingId: h.id, listId: viewList.id,
-              })
-            },
-            onSortableAdd: (taskIds, ids) => {
-              this.$store.dispatch('list/moveTasksBetweenHeadings', {
-                taskIds, ids, headingId: h.id, listId: viewList.id,
-              })
-            }
           })
         }
       }

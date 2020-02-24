@@ -48,7 +48,9 @@ import utils from '@/utils'
 
 import mom from 'moment'
 
-import { taskRef, listRef } from '@/utils/firestore'
+import { fire } from '@/store/'
+
+import { taskRef, listRef, cacheBatchedItems } from '@/utils/firestore'
 
 import HandlerMixin from "@/mixins/handlerMixin"
 
@@ -60,10 +62,10 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
-    'selectEverythingToggle', 'getCalendarOrderDate',
-    'width', 'disableRootActions', 'fromAnotherTabSortableAdd',
+    'selectEverythingToggle', 'getCalendarOrderDate', 'updateViewIds',
+    'width', 'disableRootActions', 'fallbackFunctionData',
 
-    'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
+    'headingEditOptions', 'taskIconDropOptions',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
     'itemCompletionCompareDate', 'rootFallbackItem', 'autoSchedule',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
@@ -75,14 +77,14 @@ export default {
   data() {
     return {
       scheduleObject: null,
-      tempoOrder: {
-        root: [],
-      },
+      tempoOrder: {},
+      order: [],
       tempoTimeout: null,
     }
   },
   created() {
     this.updateSchedule()
+    this.order = this.tasksOrder
   },
   methods: {
     onAddExistingItem(index, lazyItems, fallbackItem, callback) {
@@ -108,22 +110,58 @@ export default {
       this.$emit('allow-someday')
     },
 
-    addTask(obj) {
+    addTask(obj, shouldRender) {
       const newObj = {
         ...obj,
         task: obj.item,
         newTaskRef: obj.newItemRef,
       }
-      this.fixPosition(newObj, this.rootNonFilteredIds, () => {
-        this.tempoOrder.root = newObj.ids.slice()
-        if (this.tempoTimeout)
-          clearTimeout(this.tempoTimeout)
-        this.tempoTimeout = setTimeout(() => this.tempoOrder.root = [], 400)
-        this.$parent.$emit('add-task', newObj)
+      this.fixPosition(newObj, this.rootNonFilteredIds, async () => {
+        this.order = newObj.ids.slice()
+
+        const b = fire.batch()
+        const writes = []
+
+        this.updateViewIds(b, writes, {
+          finalIds: newObj.ids,
+          ...this.getUpdateIdsInfo()
+        })
+
+        await this.$store.dispatch('task/addViewTask', {
+          b, ...newObj, writes,
+        })
+
+        cacheBatchedItems(b, writes)
+        
+        b.commit()
       })
     },
-    updateIds(ids) {
-      this.$parent.$emit('update-ids', utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
+    updateIds({finalIds, b = fire.batch(), writes = []}) {
+      this.order = finalIds.slice()
+      
+      this.updateViewIds(
+        b,
+        writes,
+        {
+          finalIds: utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, this.rootNonFilteredIds),
+          ...this.getUpdateIdsInfo()
+        }
+      )
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    getUpdateIdsInfo() {
+      return {
+        viewName: this.viewName,
+        viewType: this.viewType,
+
+        rootState: this.$store.state,
+        rootGetters: this.$store.getters,
+
+        ...this.fallbackFunctionData(),
+      }
     },
     addHeading(obj) {
       this.$parent.$emit('add-heading', {...obj})
@@ -341,12 +379,34 @@ export default {
 
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
-        let updateIds = ids =>
-            head.updateIds(
-              utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids,
-                nonFiltered.map(el => el.id),
-              )
-            )
+        const saveTempo = final => {
+          this.tempoOrder[head.id] = final.slice()
+          if (this.tempoTimeout)
+            clearTimeout(this.tempoTimeout)
+          this.tempoTimeout = setTimeout(() => {
+            this.tempoOrder[head.id] = null
+          }, 600)
+        }
+
+        let updateIds = ({finalIds, b = fire.batch(), writes = []}) => {
+          const final = utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, nonFiltered.map(el => el.id))
+          
+          head.updateViewIds(
+            b,
+            writes,
+            {
+              finalIds: final,
+              ...this.getUpdateIdsInfo(),
+              ...head.fallbackFunctionData(),
+            }
+          )
+
+          cacheBatchedItems(b, writes)
+
+          saveTempo(final)
+
+          b.commit()
+        }
         
         const unshiftSortingOptions = options => {
           const opt = [
@@ -406,7 +466,7 @@ export default {
           return [...opt, ...options]
         }
         
-        if (!head.updateIds)
+        if (!head.updateViewIds)
           updateIds = undefined
 
         return {
@@ -432,13 +492,26 @@ export default {
               [head.listType ? 'list' : 'task']: obj.item,
               [head.listType ? 'newListRef' : 'newTaskRef']: obj.newItemRef,
             }
-            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => {
-              head.order = newObj.ids.slice()
-              this.tempoOrder[head.id] = head.order.slice()
-              if (this.tempoTimeout)
-                clearTimeout(this.tempoTimeout)
-              this.tempoTimeout = setTimeout(() => this.tempoOrder = {}, 400)
-              head.onAddItem(newObj)
+            this.fixPosition(newObj, nonFiltered.map(el => el.id), async () => {
+
+              const b = fire.batch()
+              const writes = []
+
+              saveTempo(newObj.ids)
+
+              head.updateViewIds(b, writes, {
+                finalIds: newObj.ids,
+                ...this.getUpdateIdsInfo(),
+                ...head.fallbackFunctionData(),
+              })
+
+              await this.$store.dispatch('task/addViewTask', {
+                b, ...newObj, writes,
+              })
+
+              cacheBatchedItems(b, writes)
+              
+              b.commit()
             })
           },
           progress: head.progress ? head.progress() : undefined,
@@ -477,8 +550,7 @@ export default {
       }
     },
     sortTasksFunction() {
-      const t = this.tempoOrder
-      const order = (t.root && t.root.length > 0) ? t.root : this.tasksOrder
+      const order = this.order
       return tasks => this.checkMissingIdsAndSortArr(order || [], tasks)
     },
 
@@ -570,6 +642,9 @@ export default {
     },
     rootNonFiltered() {
       this.$emit('root-non-filtered', this.rootNonFiltered)
+    },
+    tasksOrder() {
+      this.order = this.tasksOrder.slice()
     },
     autoSchedule: {
       handler() {

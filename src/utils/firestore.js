@@ -394,7 +394,7 @@ export const setTag = (batch, tag, id, rootState, writes) => {
   const allTag = rootState.tag.tags
   const tagStore = allTag[ref.id]
   if (tagStore)
-    utils.findChangesBetweenObjs(tagStore, obj)
+    utils.findChangesBetweenObjs({tagStore, subList: null}, obj)
   else
     rootState.tag.tags = {
       ...allTag,

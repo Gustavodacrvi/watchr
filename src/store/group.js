@@ -233,67 +233,6 @@ export default {
 
       b.commit()
     },
-    moveTasksToGroup({rootState}, {ids, taskIds, groupId, viewName}) {
-      const b = fire.batch()
-
-      const writes = []
-
-      batchSetTasks(b, {
-        list: null,
-        group: groupId,
-        folder: null,
-        heading: null,
-      }, taskIds, rootState, writes)
-
-      setGroup(b, {
-        smartViewsOrders: {
-          [viewName]: {
-            [uid()]: ids,
-          },
-        },
-      }, groupId, rootState)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-    moveTasksToGroupCalendarOrder({rootState}, {ids, taskIds, date, groupId}) {
-      const b = fire.batch()
-
-      const writes = []
-      
-      batchSetTasks(b, {
-        group: groupId,
-        list: null,
-        folder: null,
-        heading: null,
-      }, taskIds, rootState, writes)
-
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-      
-      setInfo(b, {calendarOrders}, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
-    async addTaskByIndex({rootState}, {ids, index, task, groupId, newTaskRef}) {
-      
-      const b = fire.batch()
-
-      const writes = []
-
-      await setTask(b, {
-        userId: uid(),
-        ...task,
-      }, rootState, newTaskRef.id, writes)
-      ids.splice(index, 0, newTaskRef.id)
-      setGroup(b, {order: ids}, groupId, rootState, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     delete({rootState}, groupId) {
       const b = fire.batch()
 
@@ -307,19 +246,6 @@ export default {
       setGroup(b, {
         listsOrder: ids,
       }, id, rootState)
-
-      b.commit()
-    },
-    saveSmartViewHeadingTasksOrder({rootState}, {ids, groupId, viewName}) {
-      const b = fire.batch()
-
-      setGroup(b, {
-        smartViewsOrders: {
-          [viewName]: {
-            [uid()]: ids,
-          },
-        }
-      }, groupId, rootState)
 
       b.commit()
     },
