@@ -819,9 +819,9 @@ if (typeof gapi !== "undefined")
       apiKey: process.env.VUE_APP_API_KEY,
       clientId: process.env.VUE_APP_CLIENT_ID,
       discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest", 'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
-      scope: "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.modify",
+      scope: "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly",
     })
-    
+
     gapi.client.load('calendar', 'v3', () => {
       setTimeout(() => {
         store.commit('googleCalendarReady')

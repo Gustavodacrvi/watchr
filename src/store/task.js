@@ -385,7 +385,7 @@ export default {
           
           if (!task.deadline)
             return null
-          const readable = utils.getHumanReadableDate(task.deadline, l)
+          const readable = utils.getHumanReadableDate(task.deadline)
           return (readable === 'Today' ? '' : readable) + ' ' + getDaysLeft(task.deadline, date)
         },
         cache(args) {
@@ -927,6 +927,47 @@ export default {
         createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
       }, rootState, task.id, writes)
+    },
+    addTasksFromGmailThreads({rootState, dispatch,}, threads) {
+      const writes = []
+      const b = fire.batch()
+
+      threads.forEach(({result}) => {
+        const r = result
+        const m = r.messages[r.messages.length - 1]
+
+        const getHeaderValue = name => (m.payload.headers.find(el => el.name === name) || {value: ''}).value
+
+
+        console.log(m)
+
+        dispatch('addViewTask', {
+          b, writes,
+          task: {
+            id: r.id,
+
+            name: `{#DE5757 ${getHeaderValue("From").split(" ")[0]}}, ${getHeaderValue("Subject")} [https://mail.google.com/mail?authuser=${rootState.user.email}#all/${m.id} Direct link], {#888888 ${mom.unix(m.internalDate / 1000).format("LLL")}}`,
+            notes: `Snippet: ${m.snippet}`,
+            priority: '',
+            taskDuration: '',
+            deadline: '',
+            folder: '',
+            group: '',
+            list: '',
+            calendar: null,
+            heading: null,
+            headingId: null,
+            tags: [],
+            checklist: [],
+            order: [],
+          }
+        })
+      })
+
+
+      cacheBatchedItems(b, writes)
+
+      // return b.commit()
     },
     async addTask({rootState}, obj) {
       const b = fire.batch()

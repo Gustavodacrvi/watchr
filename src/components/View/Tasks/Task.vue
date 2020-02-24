@@ -1027,8 +1027,6 @@ export default {
 .task-name {
   margin: 0 4px;
   position: relative;
-  display: flex;
-  align-items: center;
 }
 
 .icon {
@@ -1045,8 +1043,6 @@ export default {
   max-width: 100%;
   position: absolute;
   white-space: nowrap;
-  display: flex;
-  align-items: center;
   overflow: hidden;
   text-overflow: ellipsis;
 }

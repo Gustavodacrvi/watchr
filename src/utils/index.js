@@ -260,7 +260,7 @@ export default {
           .replace(/\[(https?:\/\/[^\]\s]+)(?: ([^\]]*))?\]/g, "<a class='parsed-link' target='_blank' onclick='event.stopPropagation()' href='$1'>$2</a>")
           .replace(/__(.*?)__/g, "<b>$1</b>")
           .replace(/\*(.*?)\*/g, "<i>$1</i>")
-          .replace(/\{(.*?)(?: ([^\]]*))?\}/g, "<span style='color: $1'>$2</span>")
+          .replace(/\{(.*?)(?: ([^\}]*))?\}/g, "<span style='color: $1'>$2</span>")
   },
   asyncComp(comp, allowComp = true) {
     return () => ({
