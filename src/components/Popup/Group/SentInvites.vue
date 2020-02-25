@@ -1,5 +1,5 @@
 <template>
-  <div class="addFolder popup cb shadow rb" :class="platform">
+  <div class="addFolder popup cb shadow rb" :class="layout">
     <div class="tac title">
       <h3 class="pc">Invited users</h3>
     </div>
@@ -20,7 +20,7 @@ export default {
     InvitedUsers,
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
   },
 }
 

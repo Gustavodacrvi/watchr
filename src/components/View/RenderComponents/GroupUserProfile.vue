@@ -5,7 +5,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="GroupUserProfile rb" :class="platform">
+    <div class="GroupUserProfile rb" :class="layout">
       <div class="wrapper">
         <ProfilePhoto class="photo"
           :photoURL='photoURL'
@@ -95,7 +95,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     parsedCreated() {
       if (!this.created)
         return null

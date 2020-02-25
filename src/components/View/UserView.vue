@@ -1,15 +1,15 @@
 
 <template>
-  <div class="UserView" :class="[{sidebarHided}, platform]"
+  <div class="UserView" :class="[{sidebarHided}, layout]"
     @pointerup='pointerup'
     @pointermove='handlePointermove'
   >
-    <div v-if="isDesktop"
+    <div v-if="isDesktopBreakPoint"
       class="nav-shadow"
       :class="{pressingHandle}"
       :style="{width: navWidth, maxWidth: navWidth, flexBasis: navWidth}"
     ></div>
-    <div v-if="isDesktop"
+    <div v-if="isDesktopBreakPoint"
       class="nav"
       :class="{pressingHandle}"
       :style="[navObj, {width: getNavWidth}]"
@@ -26,7 +26,7 @@
         @handle-pointerdown='pointerdown'
       />
     </div>
-    <div class="cont" :class="[platform, {pressingHandle}]">
+    <div class="cont" :class="[layout, {pressingHandle}]">
       <ViewControler
         :width='!sidebarHided ? width : 0'
         :sidebarHided='sidebarHided'
@@ -72,7 +72,7 @@ export default {
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
 
-    if (this.isDesktop)
+    if (this.isDesktopBreakPoint)
       this.interval = setInterval(() => {
         this.getNavTopPosition()
       }, 500)
@@ -134,7 +134,7 @@ export default {
   },
   computed: {
     ...mapState(['viewName', 'viewType']),
-    ...mapGetters(['platform', 'isSmartList', 'isDesktop']),
+    ...mapGetters(['layout', 'isSmartList', 'isDesktopBreakPoint']),
     getNavWidth() {
       return !this.sidebarHided ? this.navWidth : '0px'
     },

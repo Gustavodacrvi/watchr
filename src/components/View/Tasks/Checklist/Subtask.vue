@@ -108,9 +108,9 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
     showDeleteIcon() {
-      return !this.isDesktop || this.hover
+      return !this.isDesktopBreakPoint || this.hover
     },
     isTaskCompleted() {
       if (!this.compareDate)

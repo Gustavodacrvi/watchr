@@ -2,7 +2,7 @@
   <div class="Heading"
     :name='header.name'
     :id='header.id'
-    :class="platform"
+    :class="layout"
   >
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
@@ -67,16 +67,6 @@
           @input="v => edit = v.target.value"
           @keydown="keydown"
         >
-
-<!--         <EditHeading
-          :heading='true'
-          :name='name'
-          placeholder='Heading name...'
-          :errorToast='headingEditOptions.errorToast'
-          :names='headingEditOptions.excludeNames'
-          @save='save'
-          @cancel='toggleEditing'
-        /> -->
       </div>
     </transition>
   </div>
@@ -207,7 +197,7 @@ export default {
     },
     
     bindOptions() {
-      if (this.isDesktop) {
+      if (this.isDesktopBreakPoint) {
         const header = this.$el.getElementsByClassName('header-wrapper')[0]
         if (header)
           utils.bindOptionsToEventListener(header, this.options, this)
@@ -243,7 +233,7 @@ export default {
       }
     },
     click(evt) {
-      if (this.isDesktop && !this.doingTransition) {
+      if (this.isDesktopBreakPoint && !this.doingTransition) {
         this.showing = !this.showing
         this.left = evt.offsetX + 'px'
         this.top = evt.offsetY + 'px'
@@ -314,7 +304,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'layout']),
     bigName() {
       const m = this.getMom
 
@@ -337,16 +327,10 @@ export default {
       return ((this.length * this.itemHeight) + 4) + 'px'
     },
     itemHeight() {
-      return this.isDesktop ? 38 : 50
+      return this.isDesktopDevice ? 38 : 50
     },
     renderCont() {
       return this.defer(2) && this.showing
-    },
-    showIconDrop() {
-      const isDesktop = this.$store.getters.isDesktop
-      if (isDesktop && this.onHover) return true
-      else if (!isDesktop) return true
-      return false
     },
     hasProgress() {
       return this.progress !== null && this.progress !== undefined

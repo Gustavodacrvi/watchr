@@ -1,5 +1,5 @@
 <template>
-  <div class="AddTask popup cb shadow rb" :class="platform">
+  <div class="AddTask popup cb shadow rb" :class="layout">
     <TaskEdit
       placeholder="Task name..."
       notesPlaceholder="Notes..."
@@ -33,7 +33,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop'])
+    ...mapGetters(['layout', 'isDesktopBreakPoint'])
   }
 }
 

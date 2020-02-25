@@ -1,5 +1,5 @@
 <template>
-  <div class="ActButton floating-button-handle" :class="platform">
+  <div class="ActButton floating-button-handle" :class="layout">
     <div class="act-button-wrapper" :style='styles'>
       <div class="heading cont side action-heading">
         <div class="floating-btn-msg task-act no-pointer">
@@ -37,9 +37,9 @@ import { mapGetters } from 'vuex'
 export default {
   props: ['icon', 'color' ,'txt'],
   computed: {
-    ...mapGetters(['platform', 'isDesktop']),
+    ...mapGetters(['layout', 'isDesktopBreakPoint']),
     styles() {
-      const height = (this.isDesktop ? 40 : 50) + 'px'
+      const height = (this.isDesktopBreakPoint ? 40 : 50) + 'px'
       return {
         height,
       }

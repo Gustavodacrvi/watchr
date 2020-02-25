@@ -83,7 +83,7 @@ export default {
         }
       },
       direction: 'vertical',
-      delay: this.isDesktop ? 0 : 150,
+      delay: this.isDesktopBreakPoint ? 0 : 150,
       animation: 200,
       handle: '.item-handle',
 

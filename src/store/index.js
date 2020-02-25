@@ -273,6 +273,11 @@ const store = new Vuex.Store({
           iconColor: 'var(--purple)'
         },
         {
+          name: 'Later lists',
+          icon: 'later-lists',
+          iconColor: 'var(--txt)'
+        },
+        {
           name: 'Logged lists',
           icon: 'logged-lists',
           iconColor: 'var(--purple)'
@@ -307,12 +312,17 @@ const store = new Vuex.Store({
         return state.selectedItems
       else return state.mainSelection ? [state.mainSelection] : null
     },
-    isDesktop(state) {
+    isDesktopBreakPoint(state) {
       return state.windowWidth >= MINIMUM_DESKTOP_SCREEN_WIDTH
     },
-    platform(s, getters) {
-      if (getters.isDesktop) return 'desktop'
-      return 'mobile'
+    isDesktopDevice() {
+      return window.screen.width >= MINIMUM_DESKTOP_SCREEN_WIDTH
+    },
+    layout(s, getters) {
+      return getters.isDesktopBreakPoint ? 'desktop' : 'mobile'
+    },
+    deviceLayout(s, getters) {
+      return getters.isDesktopDevice ? 'desktop' : 'mobile'
     },
     getInitialSmartView(state) {
       const goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter')
@@ -527,12 +537,12 @@ const store = new Vuex.Store({
     },
     pushPopup({state, getters}, popup) {
       state.popup = popup
-      if (!getters.isDesktop)
+      if (!getters.isDesktopBreakPoint)
         router.push('/popup')
     },
     closePopup({state, getters}, persistOnTheSameView) {
       state.popup = {comp: '', payload: null, naked: false}
-      if (!getters.isDesktop && !persistOnTheSameView)
+      if (!getters.isDesktopBreakPoint && !persistOnTheSameView)
         router.go(-1)
     },
     updateProfilePic(c, photoURL) {
@@ -711,6 +721,7 @@ const store = new Vuex.Store({
           hidedViews: [
             'Tomorrow',
             'Pomodoro',
+            'Later lists',
             'Statistics',
             'Calendar',
           ],
@@ -739,6 +750,7 @@ const store = new Vuex.Store({
           hidedViews: [
             'Tomorrow',
             'Pomodoro',
+            'Later lists',
             'Statistics',
             'Calendar',
           ],

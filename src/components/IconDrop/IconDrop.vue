@@ -34,7 +34,7 @@
           <component v-if="showingCont"
             :is='getComp'
             :content='compContent'
-            :allowKeyboard='center && isDesktop'
+            :allowKeyboard='center && isDesktopBreakPoint'
             @close='closeIconDrop'
             @calc='calcStyles'
             @update='update'
@@ -157,7 +157,7 @@ export default {
       this.toggleIconDrop()
     },
     toggleIconDrop() {
-      if (!this.center && this.isDesktop) {
+      if (!this.center && this.isDesktopBreakPoint) {
         this.showingCont = true
         this.showing = !this.showing
       }
@@ -184,7 +184,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
     getComp() {
       if (this.opt && this.opt.comp) return this.opt.comp
       return 'ListIcons'

@@ -1,6 +1,6 @@
 <template>
-  <div class="NavBar" :class="platform" @click="calculateLineOffset">
-    <Desktop v-if="isDesktop" :route="route" :dropLinks="dropLinks"/>
+  <div class="NavBar" :class="layout" @click="calculateLineOffset">
+    <Desktop v-if="isDesktopBreakPoint" :route="route" :dropLinks="dropLinks"/>
     <Mobile v-else :route="route" :dropLinks="dropLinks" @open-menu='$emit("open-menu")'/>
   </div>
 </template>
@@ -60,7 +60,7 @@ export default {
   },
   computed: {
     ...mapState(['user']),
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters(['isDesktopBreakPoint', 'layout']),
     dropLinks() {
       if (!this.user)
         return [

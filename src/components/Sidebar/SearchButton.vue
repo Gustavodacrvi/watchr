@@ -3,7 +3,7 @@
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
     @click="$emit('click')"
-    :class="platform"
+    :class="layout"
   >
     <div>
       <Icon class="search" icon="search" width="16px"/>
@@ -24,7 +24,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
   }
 }
 

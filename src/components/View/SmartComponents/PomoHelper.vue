@@ -56,7 +56,7 @@ export default {
       current: state => state.pomo.current,
     }),
     ...mapGetters({
-      platform: 'platform',
+      layout: 'layout',
       color: 'pomo/getPomoColor',
       shadow: 'pomo/getPomoShadow',
       currentValue: 'pomo/currentValue',

@@ -1,5 +1,5 @@
 <template>
-  <div class="Toast" :class="$store.getters.platform">
+  <div class="Toast" :class="$store.getters.layout">
     <transition name="trans">
       <div v-if="toast"
         class="toast cb rb shadow"

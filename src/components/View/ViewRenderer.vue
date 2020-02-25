@@ -1,8 +1,8 @@
 
 <template>
-  <div class="ViewRenderer" :class="platform">
+  <div class="ViewRenderer" :class="layout">
     <div class='view-wrapper'>
-      <SlimModeNav v-if='isDesktop'
+      <SlimModeNav v-if='isDesktopBreakPoint'
         :render='sidebarHided'
         :viewNameValue='viewNameValue'
       />
@@ -61,6 +61,7 @@
       <transition name="fade-t">
         <component v-if="defer(2)" :is='getViewComp' class='view-renderer-move'
           v-bind="$props"
+          ref='taskHandler'
 
           :updateHeadingIds='updateHeadingIds'
           :showHeadingFloatingButton='showHeadingFloatingButton'
@@ -116,6 +117,10 @@ import CalendarEvents from './RenderComponents/CalendarEvents.vue'
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
 import { mapGetters, mapState, mapActions, mapMutations } from 'vuex'
+
+import { fire } from '@/store/'
+
+import { cacheBatchedItems } from '@/utils/firestore'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/index.js'
@@ -655,7 +660,18 @@ export default {
       this.rootNonFiltered = rootNonFiltered
     },
     updateIds(ids) {
-      this.$emit('update-ids', ids)
+      const b = fire.batch()
+      
+      const writes = []
+      
+      this.updateViewIds(b, writes, {
+        finalIds: ids,
+        ...this.$refs.taskHandler.getUpdateIdsInfo(),
+      })
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
     },
     sortByName() {
       const tasks = this.rootNonFiltered.slice()
@@ -746,8 +762,8 @@ export default {
       availableSounds: state => state.pomo.availableSounds,
     }),
     ...mapGetters({
-      platform: 'platform',
-      isDesktop: 'isDesktop',
+      layout: 'layout',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
       lists: 'list/sortedLists',
       tasks: 'task/tasks',
       folders: 'folder/sortedFolders',

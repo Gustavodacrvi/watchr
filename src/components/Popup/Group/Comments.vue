@@ -1,7 +1,7 @@
 <template>
   <div
     class="Comments popup cb shadow rb"
-    :class="platform"
+    :class="layout"
   >
     <div class="wrapper">
       <div class="messages">
@@ -172,7 +172,7 @@ export default {
       isOnShift: state => state.isOnShift,
     }),
     ...mapGetters({
-      platform: 'platform',
+      layout: 'layout',
       getGroupsById: 'group/getGroupsById',
       nonReadCommentsById: 'group/nonReadCommentsById',
 

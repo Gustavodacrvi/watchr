@@ -87,7 +87,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop'])
+    ...mapGetters(['layout', 'isDesktopBreakPoint'])
   },
 }
 

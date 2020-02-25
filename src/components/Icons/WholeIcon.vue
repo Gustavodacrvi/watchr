@@ -96,7 +96,7 @@ export default {
   computed: {
     ...mapGetters(['isDesktop']),
     getProgress() {
-      return 19 * this.progress / 100
+      return 18.5 * this.progress / 100
     },
     fileInput() {
       return this.$refs['file']

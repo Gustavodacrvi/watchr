@@ -2,6 +2,8 @@
 import { fire, auth } from './index'
 import fb from 'firebase/app'
 
+import Vue from 'vue'
+
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
@@ -40,7 +42,9 @@ export default {
         k => state.groupTasks[k] && state.groupTasks[k].logbook
       )
       
-      return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
+      return Object.freeze(
+        keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
+      )
     },
     tasks(state) {
       const keys = Object.keys(state.tasks).filter(
@@ -1333,8 +1337,10 @@ export default {
       const b = fire.batch()
 
       await batchSetTasks(b, {
-        tags: tagIds,
-      }, ids, rootState)
+        tags: fd().arrayUnion(...tagIds),
+      }, ids, rootState, undefined, task => {
+        Vue.set(task, 'tags', task.tags ? [...task.tags, ...tagIds] : tagIds)
+      })
 
       b.commit()
     },

@@ -1,5 +1,5 @@
 <template>
-  <div class="Signup popup cb shadow rb scroll" :class="platform">
+  <div class="Signup popup cb shadow rb scroll" :class="layout">
     <div class="tac title">
       <h3 class="pc">Create an Account</h3>
     </div>
@@ -42,7 +42,7 @@
         value='Create account'
         @click="createAccount"
       />
-      <div v-if="!isDesktop" style="height: 400px"></div>
+      <div v-if="!isDesktopBreakPoint" style="height: 400px"></div>
     </div>
   </div>
 </template>
@@ -171,7 +171,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
     isUpgrading() {
       return this.payload
     },
@@ -186,7 +186,7 @@ export default {
     notEqual() {
       return this.password !== this.conPassword
     },
-    ...mapGetters(['platform'])
+    ...mapGetters(['layout'])
   },
 }
 

@@ -5,7 +5,7 @@
     @enter='taskEnter'
     @leave='taskLeave'
   >
-    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isItemMainSelection}, platform]"
+    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isItemMainSelection}, deviceLayout, isLogbookTask]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
     >
@@ -15,7 +15,7 @@
           @change-time='changeTime'
         />
       </transition>
-      <CommentCounter v-if="item.group && isDesktop && !isEditing"
+      <CommentCounter v-if="item.group && isDesktopBreakPoint && !isEditing"
         ref="comment-counter"
         :hover='onHover'
         :number='nonReadComments'
@@ -26,7 +26,7 @@
         @comment="commentsPopup"
         @mouseenter.native='onHover = true'
       />
-      <div v-if="doneTransition && !isEditing && !isDesktop"
+      <div v-if="doneTransition && !isEditing && !isDesktopDevice"
         class="back rb"
         ref='back'
         :style="{height: (itemHeight - 5) + 'px'}"
@@ -65,11 +65,11 @@
         >
           <div v-if="!isEditing" key="notediting"
             class="cont-wrapper-wrapper rb task-cont-wrapper"
-            :class="platform"
+            :class="layout"
             @click="click"
             :style='{height: itemHeight + "px"}'
           >
-            <CircleBubble v-if="!isDesktop"
+            <CircleBubble v-if="!isDesktopDevice"
               innerColor='var(--light-gray)'
               outerColor='var(--fade)'
               opacity='0'
@@ -123,14 +123,16 @@
                     <span v-else-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
                     <span v-else-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb">{{ calendarStr }}</span>
 
-                    <span v-html="parsedName" ref='parsed-name'></span>
+                    <div class="parsed-wrapper">
+                      <span v-html="parsedName" ref='parsed-name'></span>
+                    </div>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
                     icon="pie"
                     color="var(--fade)"
                     width="12px"
                     :progress='checklistPieProgress'/>
-                    <span v-if="!isDesktop && nonReadComments" class="comment-icon">
+                    <span v-if="!isDesktopBreakPoint && nonReadComments" class="comment-icon">
                       <Icon
                         icon='comment'
                         width="14px"
@@ -372,7 +374,7 @@ export default {
           this.doneTransition = true
           done()
         }, 300)
-        if (!(this.changingViewName && !this.isDesktop)) {
+        if (!(this.changingViewName && !this.isDesktopDevice)) {
           s.transitionDuration = '0s'
           s.opacity = 0
           s.height = 0
@@ -408,7 +410,7 @@ export default {
       })
     },
     click() {
-      if (this.isDesktop && !this.isSelecting)
+      if (this.isDesktopDevice && !this.isSelecting && !this.isLogbookTask)
         this.isEditing = true
     },
     saveTaskContent(obj) {
@@ -459,8 +461,10 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isDesktop: 'isDesktop',
-      platform: 'platform',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
+      isDesktopDevice: 'isDesktopDevice',
+      layout: 'layout',
+      deviceLayout: 'deviceLayout',
       fallbackSelected: 'fallbackSelected',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskCanceled: 'task/isTaskCanceled',
@@ -743,7 +747,7 @@ export default {
       return this.isTaskInView(this.item, 'Tomorrow')
     },
     showIconDrop() {
-      return this.isDesktop && this.onHover
+      return this.isDesktopBreakPoint && this.onHover
     },
     taskList() {
       return this.savedLists.find(el => el.id === this.item.list)
@@ -787,6 +791,9 @@ export default {
       const str = utils.parseCalendarObjectToString(c, this.userInfo)
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
+    },
+    isLogbookTask() {
+      return this.item.logDate
     },
     logStr() {
       if (!this.allowLogStr || !this.item.logDate) return null
@@ -1027,6 +1034,16 @@ export default {
 .task-name {
   margin: 0 4px;
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
+.parsed-wrapper {
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .icon {
@@ -1043,8 +1060,8 @@ export default {
   max-width: 100%;
   position: absolute;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .check-drop {
@@ -1115,6 +1132,10 @@ export default {
 
 .mobile.sortable-ghost .cont-wrapper {
   height: 50px;
+}
+
+.isLogbookTask {
+  opacity: .6 !important;
 }
 
 .back {

@@ -1,5 +1,5 @@
 <template>
-  <div class="AddList popup cb shadow rb" :class="platform">
+  <div class="AddList popup cb shadow rb" :class="layout">
     <DropInput
       back-color='var(--card)'
       :disable-auto-select='true'
@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      platform: 'platform',
+      layout: 'layout',
       isSmartList: 'isSmartList',
       lists: 'list/lists',
     }),

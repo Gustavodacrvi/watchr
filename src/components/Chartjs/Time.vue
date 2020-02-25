@@ -1,5 +1,5 @@
 <template>
-  <canvas id="Graph" width="100%" :height="isDesktop ? '30px' : '50px'"></canvas>
+  <canvas id="Graph" width="100%" :height="isDesktopBreakPoint ? '30px' : '50px'"></canvas>
 </template>
 
 <script>
@@ -63,7 +63,7 @@ export default {
         },
         plugins: {
           datalabels: {
-            display: this.isDesktop,
+            display: this.isDesktopBreakPoint,
             formatter: v => v === '0.0' || v === 0 ? '' : v,
             clamp: true,
             color: '#fff',
@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     ...mapState(['userInfo']),
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
     gradient() {
       const gradient = this.$el.getContext('2d').createLinearGradient(0, 0, 0, 400)
 

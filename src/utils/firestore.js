@@ -49,7 +49,7 @@ export const inviteRef = (groupId, id) => {
   if (id) return g.doc(id)
   return g.doc()
 }
-export const setTask = (batch, task, rootState, id, writes) => {
+export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
   return new Promise((solve, reject) => {
     const save = () => {
 
@@ -143,9 +143,10 @@ export const setTask = (batch, task, rootState, id, writes) => {
       if (getGroupId(true)) {
 
         const saveGroupTasks = rootState.task.groupTasks
-        if (savedGroupTask)
+        if (onTaskSave) onTaskSave(savedGroupTask)
+        else if (savedGroupTask)
           utils.findChangesBetweenObjs(savedGroupTask, getObj())
-        else
+        else if (!onTaskSave)
           rootState.task.groupTasks = {
             ...saveGroupTasks,
             [id]: getObj(),
@@ -196,7 +197,8 @@ export const setTask = (batch, task, rootState, id, writes) => {
       } else {
 
         const savedPersonalTasks = rootState.task.tasks
-        if (savedIndividualTask)
+        if (onTaskSave) onTaskSave(savedIndividualTask)
+        else if (savedIndividualTask)
           utils.findChangesBetweenObjs(savedIndividualTask, getObj())
         else
           rootState.task.tasks = {
@@ -217,10 +219,12 @@ export const setTask = (batch, task, rootState, id, writes) => {
 
         } else if (savedGroupTask) { // Move shared task to personal.
 
-          const saveGroupTasks = rootState.task.groupTasks
-          rootState.task.groupTasks = {
-            ...saveGroupTasks,
-            [id]: undefined,
+          if (!onlySaveFirestore) {
+            const saveGroupTasks = rootState.task.groupTasks
+            rootState.task.groupTasks = {
+              ...saveGroupTasks,
+              [id]: undefined,
+            }
           }
 
           deleteGroupTask()
@@ -353,14 +357,14 @@ export const cacheBatchedItems = (batch, writes) => {
     })
   }
 }
-export const batchSetTasks = (batch, task, ids, rootState, rootWrites) => {
+export const batchSetTasks = (batch, task, ids, rootState, rootWrites, onTaskSave) => {
   return new Promise(async solve => {
     const promises = []
   
     const writes = rootWrites || []
     ids.forEach(id => {
       promises.push(
-        setTask(batch, task, rootState, id, writes)
+        setTask(batch, task, rootState, id, writes, onTaskSave)
       )
     })
     

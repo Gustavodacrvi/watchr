@@ -5,11 +5,11 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="List" :class="[platform, {completed: completed || canceled, isItemMainSelection, isItemSelected}]"
+    <div class="List" :class="[layout, {completed: completed || canceled, isItemMainSelection, isItemSelected}]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
     >
-      <CommentCounter v-if="item.group && isDesktop && !isEditing"
+      <CommentCounter v-if="item.group && isDesktopBreakPoint && !isEditing"
         :hover='onHover'
         :number='nonReadComments'
         :isOwner='isGroupOwner'
@@ -19,7 +19,7 @@
         @comment="commentsPopup"
         @mouseenter.native='onHover = true'
       />
-      <div v-if="doneTransition && !isEditing && !isDesktop"
+      <div v-if="doneTransition && !isEditing && !isDesktopBreakPoint"
         class="back rb"
         ref='back'
         :style="{height: (itemHeight - 5) + 'px'}"
@@ -54,7 +54,7 @@
 
         @click.stop="click"
       >
-        <CircleBubble v-if="!isDesktop"
+        <CircleBubble v-if="!isDesktopBreakPoint"
           innerColor='var(--light-gray)'
           outerColor='var(--fade)'
           opacity='0'
@@ -186,7 +186,7 @@ export default {
         this.doneTransition = false
         const s = cont.style
 
-        if (!(this.changingViewName && !this.isDesktop)) {
+        if (!(this.changingViewName && !this.isDesktopBreakPoint)) {
           s.transitionDuration = '0s'
           s.opacity = 0
           s.height = 0
@@ -210,7 +210,7 @@ export default {
       setTimeout(() => this.$refs.input.focus())
     },
     click() {
-      if (this.isDesktop && !this.isSelecting) {
+      if (this.isDesktopBreakPoint && !this.isSelecting) {
         this.isEditing = true
         window.addEventListener('pointerdown', this.hide)
       }
@@ -274,8 +274,8 @@ export default {
   computed: {
     ...mapGetters({
       tasks: 'task/tasks',
-      platform: 'platform',
-      isDesktop: 'isDesktop',
+      layout: 'layout',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
       getListTasks: 'list/getTasks',
 
       isListCompleted: 'list/isListCompleted',

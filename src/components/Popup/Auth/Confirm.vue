@@ -1,5 +1,5 @@
 <template>
-  <div class="Signin popup cb shadow rb scroll" :class="platform">
+  <div class="Signin popup cb shadow rb scroll" :class="layout">
     <div class="tac title">
       <h3 class="pc">Are you sure?</h3>
     </div>
@@ -44,7 +44,7 @@ export default {
   },
   computed: {
     ...mapState(['popup']),
-    ...mapGetters(['platform', 'isDesktop']),
+    ...mapGetters(['layout', 'isDesktopBreakPoint']),
     atLeastOneEmpty() {
       const { eMail, password } = this
       return eMail === '' || password === ''

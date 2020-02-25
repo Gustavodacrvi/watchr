@@ -5,7 +5,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="LongCalendarPicker" :class="[platform, {helper}]"
+    <div class="LongCalendarPicker" :class="[layout, {helper}]"
       @scroll.prevent
       @whell.prevent
       @touchmove.stop.prevent='touchmove'
@@ -88,7 +88,7 @@
         <span class="title">{{ title }}</span>
       </div>
 
-      <div v-if="isDesktop"
+      <div v-if="isDesktopBreakPoint"
         class="btn shadow right-btn cursor"
         @click="swipeRight"
       >
@@ -102,7 +102,7 @@
           opacity='0'
         />
       </div>
-      <div v-if="isDesktop"
+      <div v-if="isDesktopBreakPoint"
         class="btn shadow left-btn cursor"
         @click="swipeLeft"
       >
@@ -294,7 +294,7 @@ export default {
       })
     },
     desktopSelect(date) {
-      if (this.isDesktop) this.select(date)
+      if (this.isDesktopBreakPoint) this.select(date)
     },
     mobileSelect(date) {
       if (!this.moved) this.select(date)
@@ -397,8 +397,8 @@ export default {
     }),
     ...mapGetters({
       tasks: 'task/tasks',
-      isDesktop: 'isDesktop',
-      platform: 'platform',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
+      layout: 'layout',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
     }),
     title() {

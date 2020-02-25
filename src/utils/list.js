@@ -231,7 +231,7 @@ export default {
         },
       },
     ]
-    if (getters.isDesktop)
+    if (getters.isDesktopBreakPointDevice)
       moreOptions.push({
         name: "Export as template",
         icon: 'export',

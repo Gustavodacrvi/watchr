@@ -1,5 +1,5 @@
 <template>
-  <div class="Shortcuts popup cb shadow rb scroll-thin" :class="platform">
+  <div class="Shortcuts popup cb shadow rb scroll-thin" :class="layout">
     <div class="tac title">
       <h2 class="pc">Shortcuts</h2>
     </div>
@@ -203,7 +203,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
   },
 }
 

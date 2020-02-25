@@ -1,5 +1,5 @@
 <template>
-  <div class="addFolder popup cb shadow rb" :class="platform">
+  <div class="addFolder popup cb shadow rb" :class="layout">
     <div class="tac title">
       <h3 v-if="group" class="pc">{{ group.name }}</h3>
     </div>
@@ -170,7 +170,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      platform: 'platform',
+      layout: 'layout',
 
       getSentInvitesByGroupId: 'invites/getSentInvitesByGroupId',
     }),

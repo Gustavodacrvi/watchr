@@ -7,7 +7,7 @@
         @enter='enter'
         @leave='leave'
       >
-      <HeadingVue v-for="(h, i) in getHeadings" :key="h.id"
+      <HeadingVue v-for="(h, i) in headings" :key="h.id"
         :header='h'
 
         v-bind="h"
@@ -132,7 +132,7 @@ export default {
           this.sortable = new Sortable(el, {
             disabled: !this.updateHeadingIds,
             group: 'headings',
-            delay: this.isDesktop ? 25 : 150,
+            delay: this.isDesktopBreakPoint ? 25 : 150,
             animation: 200,
             handle: '.handle',
       
@@ -179,7 +179,7 @@ export default {
     },
 
     enter(el, done) {
-      if (!this.isDesktop)
+      if (!this.isDesktopBreakPoint)
         done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
@@ -201,7 +201,7 @@ export default {
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = this.isDesktop ? '65px': '4px'
+          w.marginTop = this.isDesktopBreakPoint ? '65px': '4px'
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
@@ -214,7 +214,7 @@ export default {
       })
     },
     leave(el, done) {
-      if (this.isChangingViewName || !this.isDesktop)
+      if (this.isChangingViewName || !this.isDesktopBreakPoint)
         done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
@@ -242,22 +242,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
-    getHeadings() {
-      const heads = this.headings
-
-      heads.forEach(h => {
-        if (this.showAllHeadingsItems)
-          h.length = h.items.length
-        else {
-          h.length = 4
-          if (h.items.length < 3)
-            h.length = h.items.length
-        }
-      })
-
-      return heads
-    },
+    ...mapGetters(['isDesktopBreakPoint']),
     emptyHeadings() {
       return []
     },
