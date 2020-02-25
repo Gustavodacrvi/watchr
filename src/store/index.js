@@ -60,6 +60,27 @@ if (lastVersion === null) {
   localStorage.setItem('watchr_version', version)
 }
 
+const getDefaultInfo = () => ({
+  lists: {dummy: null},
+  folders: {dummy: null},
+  stats: {dummy: null},
+  tasks: {dummy: null},
+  tags: {dummy: null},
+  info: {
+    dummy: null,
+    info: {
+      hidedViews: [
+        'Tomorrow',
+        'Pomodoro',
+        'Later lists',
+        'Recurring',
+        'Statistics',
+        'Calendar',
+      ],
+    }
+  },
+})
+
 
 let allowCalendar = true
 
@@ -711,24 +732,33 @@ const store = new Vuex.Store({
       b.set(ref.collection('cache').doc('cache'), {
         userId: user.uid,
         id: 'cache',
-        lists: {dummy: null},
-        folders: {dummy: null},
-        stats: {dummy: null},
-        tasks: {dummy: null},
-        tags: {dummy: null},
-        info: {
-          dummy: null,
-          hidedViews: [
-            'Tomorrow',
-            'Pomodoro',
-            'Later lists',
-            'Statistics',
-            'Calendar',
-          ],
-        },
+        ...getDefaultInfo()
       }, {merge: true})
       
       return b.commit()
+    },
+    async anonymousSignIn({dispatch, commit}) {
+      try {
+        await auth.signInAnonymously()
+        await dispatch('createAnonymousUser', auth.currentUser.uid)
+        
+        dispatch('closePopup')
+        router.push('/user')
+        
+        commit('pushToast', {
+          name: 'You have successfully signed in as a guest.',
+          seconds: 3,
+          type: 'success',
+        })
+      } catch (err) {
+        auth.currentUser.delete()
+        
+        commit('pushToast', {
+          name: err.message,
+          seconds: 3,
+          type: 'error',
+        })
+      }
     },
     createAnonymousUser(c, userId) {
       const b = fire.batch()
@@ -739,22 +769,8 @@ const store = new Vuex.Store({
       }, {merge: true})
       b.set(ref.collection('cache').doc('cache'), {
         id: 'cache',
-        userId: userId,
-        lists: {dummy: null},
-        folders: {dummy: null},
-        stats: {dummy: null},
-        tasks: {dummy: null},
-        tags: {dummy: null},
-        info: {
-          dummy: null,
-          hidedViews: [
-            'Tomorrow',
-            'Pomodoro',
-            'Later lists',
-            'Statistics',
-            'Calendar',
-          ],
-        },
+        userId,
+        ...getDefaultInfo()
       })
 
       return b.commit()

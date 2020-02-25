@@ -270,14 +270,14 @@ export default {
       const sortedFoldersAndGroups = this.sortedFoldersAndGroups
       sortedFoldersAndGroups.forEach(fold => {
         if (!fold.isGroup) {
-          fold.list = this.filterSidebarLists(
-            this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders})
+          fold.list = this.filterSidebarLists(fold.order,
+            this.getListsByFolderId({id: fold.id, order: fold.order, lists: this.listsWithFolders})
           )
 
           fold.comp = "Folder"
         } else {
           fold.comp = "Group"
-          fold.list = this.filterSidebarLists(
+          fold.list = this.filterSidebarLists(fold.listsOrder,
             this.getListsByGroupId({
               id: fold.id,
               lists: this.getLists,
@@ -325,7 +325,7 @@ export default {
       return arr
     },
     filteredLists() {
-      return this.filterSidebarLists(this.getLists)
+      return this.filterSidebarLists([], this.getLists)
     },
     getLists() {
       const lists = this.sortedLists.map(el => ({...el}))

@@ -401,7 +401,7 @@ export default {
           'group',
           'assigned',
         ],
-        getter({getters}, lists) {
+        getter({getters}, order, lists) {
           return lists.filter(l =>
               !getters.isListCompleted(l) &&
               !getters.isListCanceled(l) &&
@@ -411,7 +411,8 @@ export default {
         },
         cache(args) {
           return JSON.stringify({
-            c: args[0].map(el => ({
+            o: args[0],
+            c: args[1].map(el => ({
               c: el.completed,
               ca: el.canceled,
               f: el.folder,

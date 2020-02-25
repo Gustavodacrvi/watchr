@@ -17,8 +17,10 @@
         :options="dropLinks"
         @handle-toggle='v => isLinksIconDropOpen = v'
       />
-      <VersionApp style="position: relative;z-index: 1"/>
-      <ButtonApp v-if="user && user.isAnonymous" class="no-back" value="Sign in" @click="upgradeUser"/>
+      <VersionApp
+        style="position: relative;z-index: 1;flex-basis: 65px;flex-shrink: 0"
+      />
+      <ButtonApp v-if="user && user.isAnonymous" class="no-back btn" value="Sign in" @click="upgradeUser" style='padding: 6px;margin-right: 6px'/>
     </div>
   </div>
 </template>
@@ -128,6 +130,7 @@ export default {
   flex-direction: row-reverse;
   position: absolute;
   right: 34px;
+  width: 225px;
   top: 50%;
   transform: translateY(-50%);
 }

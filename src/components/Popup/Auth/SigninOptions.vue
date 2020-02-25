@@ -66,24 +66,7 @@ export default {
       }))
     },
     guest() {
-      const auth = firebase.auth()
-      auth.signInAnonymously().then(() => {
-        this.$store.commit('pushToast', {
-          name: 'You have successfully signed in as a guest.',
-          seconds: 3,
-          type: 'success',
-        })
-        this.$store.dispatch('createAnonymousUser', auth.currentUser.uid).then(el => {
-          this.$store.dispatch('closePopup')
-          this.$router.push('/user')
-        }).catch(err => {
-          auth.currentUser.delete()
-        })
-      }).catch(err => this.$store.commit('pushToast', {
-        name: err.message,
-        seconds: 3,
-        type: 'error',
-      }))
+      this.$store.dispatch('anonymousSignIn')
     },
   },
   computed: {

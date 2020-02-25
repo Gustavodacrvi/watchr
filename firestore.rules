@@ -4,7 +4,7 @@ service cloud.firestore {
     match /users/{userId} {
     	allow create: if isSignedIn() && isValidUserDoc(userId);
       allow read: if isVerified();
-      allow delete, update: if isOwnerAndVerified();
+      allow delete, update: if isOwner();
       allow update: if isValidUserDoc(userId);
       
       match /tasks/{task} {
@@ -12,7 +12,7 @@ service cloud.firestore {
           isSignedInAndVerified() &&
           isValidDoc(task) &&
           isValidTask();
-        allow read, delete, update: if isOwnerAndVerified();
+        allow read, delete, update: if isOwner();
         allow update: if
           didntChangeConstant() &&
           isValidDoc(task) &&
@@ -20,37 +20,37 @@ service cloud.firestore {
       }
       match /info/{info} {
         allow create: if isSignedInAndVerified() && isInfoValid(info);
-        allow read, update: if isOwnerAndVerified();
+        allow read, update: if isOwner();
         allow update: if didntChangeConstant();
       }
       match /cache/{cache} {
         allow create: if isSignedIn() && isValidDoc(cache);
-        allow update, read: if isOwnerAndVerified();
+        allow update, read: if isOwner();
         allow update: if didntChangeConstant();
       }
       match /tags/{tag} {
         allow create: if isSignedInAndVerified() && isValidTag(tag);
-        allow read, update, delete: if isOwnerAndVerified();
+        allow read, update, delete: if isOwner();
         allow update: if didntChangeConstant() && isValidTag(tag);
       }
       match /filters/{tag} {
         allow create: if isSignedInAndVerified() && isValidDoc(tag);
-        allow read, update, delete: if isOwnerAndVerified();
+        allow read, update, delete: if isOwner();
         allow update: if didntChangeConstant();
       }
       match /lists/{list} {
         allow create: if isSignedInAndVerified() && isValidDoc(list) && isValidList();
-        allow update, read, delete: if isOwnerAndVerified();
+        allow update, read, delete: if isOwner();
         allow update: if didntChangeConstant() && isValidDoc(list) && isValidList();
       }
       match /stats/{info} {
         allow create: if isSignedInAndVerified() && isValidDoc(info);
-        allow update, read, delete: if isOwnerAndVerified();
+        allow update, read, delete: if isOwner();
         allow update: if didntChangeConstant();
       }
       match /folders/{fold} {
         allow create: if isSignedInAndVerified() && isValidFolder(fold);
-        allow update, read, delete: if isOwnerAndVerified();
+        allow update, read, delete: if isOwner();
         allow update: if didntChangeConstant() && isValidFolder(fold);
       }
 
@@ -78,7 +78,11 @@ service cloud.firestore {
         return
           incomingData().userId == bracketId &&
           incomingData().userId == request.auth.uid &&
-          ((incomingData().photoURL is string) || (incomingData().photoURL == null)) &&
+          (
+            (incomingData().photoURL is string) ||
+            (incomingData().photoURL == null) ||
+            !('photoURL' in incomingData())
+          ) &&
           (incomingData().size() > 1 && incomingData().size() < 6) &&
           (
             (
@@ -374,9 +378,6 @@ service cloud.firestore {
     }
     function isSignedInAndVerified() {
       return isSignedIn() && isVerified()
-    }
-    function isOwnerAndVerified() {
-      return isOwner() && isVerified()
     }
     function incomingData() {
       return request.resource.data
