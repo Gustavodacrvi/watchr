@@ -1,5 +1,5 @@
 <template>
-  <div class="Signin popup cb shadow rb scroll-thin" :class="platform">
+  <div class="Signin popup cb shadow rb scroll-thin" :class="layout">
     <div class="tac title">
       <h3 class="pc">Sign in</h3>
     </div>
@@ -24,7 +24,7 @@
         value='Sign in'
         @click="signIn"
       />
-      <div v-if="!isDesktop" style="height: 400px"></div>
+      <div v-if="!isDesktopBreakPoint" style="height: 400px"></div>
     </div>
   </div>
 </template>
@@ -88,7 +88,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop']),
+    ...mapGetters(['layout', 'isDesktopBreakPoint']),
     atLeastOneEmpty() {
       const { eMail, password } = this
       return eMail === '' || password === ''

@@ -1,12 +1,12 @@
 <template>
   <div class="Sidebar-wrapper"
-    :class="[platform, {'scroll-thin': isDesktop, 'slim-sidebar': slimMode}]"
+    :class="[layout, {'scroll-thin': isDesktopBreakPoint, 'slim-sidebar': slimMode}]"
 
     @mouseenter="sidebarHover = true"
     @mouseleave="sidebarHover = false"
   >
     <div class="margin-wrapper" :class="{'scroll-thin': slimMode}">
-      <div v-if="isDesktop && !removeBacklayer"
+      <div v-if="isDesktopBreakPoint && !removeBacklayer"
         class="back-layer"
         :class="{showing, pressingHandle}"
         :style="{width}"
@@ -14,9 +14,9 @@
       <div class="inner-wrapper">
         <div>
           <transition name="bar-trans">
-          <div v-if="!isDesktop || showing" class="sidebar-content">
+          <div v-if="!isDesktopBreakPoint || showing" class="sidebar-content">
             <transition name="search-t">
-              <SearchButton v-if="isDesktop && !disableSearch"
+              <SearchButton v-if="isDesktopBreakPoint && !disableSearch"
                 @click="$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})"
                 @mouseenter="showSearch"
                 @mouseleave="hideSearch"
@@ -41,7 +41,8 @@
               <SidebarRenderer v-if="showFavorites"
                 :enableSort='true'
                 :disabled='false'
-                :isSmart='true'
+                :disableItemAdd='true'
+                :isSmart='false'
                 :disableSelection='true'
                 :list='getFavoritesRenderList'
                 :active='value'
@@ -89,8 +90,8 @@
             </div>
           </transition>
         </div>
-        <div v-if="isDesktop" style="height: 35px;"></div>
-        <div v-if="!removeFooter" class="footer" :class="[platform, {showing}]" :style="{width}">
+        <div v-if="isDesktopBreakPoint" style="height: 35px;"></div>
+        <div v-if="!removeFooter" class="footer" :class="[layout, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop" v-if="showIconDropdown">
               <Icon v-for="i in sideIcons" :key='i.icon'
@@ -112,12 +113,12 @@
               </transition>
             </div>
             <div></div>
-            <Icon v-if="isDesktop" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="toggleSidebar"/>
+            <Icon v-if="isDesktopBreakPoint" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="toggleSidebar"/>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="isDesktop && !sidebarHided && !removeHandle"
+    <div v-if="isDesktopBreakPoint && !sidebarHided && !removeHandle"
       class="sidebar-handle passive"
       :class="{sidebarHover}"
       :style="sidebarHandle"
@@ -355,9 +356,9 @@ export default {
     ...mapGetters({
       tags: 'tag/tags',
       tasks: 'task/tasks',
-      platform: 'platform',
+      layout: 'layout',
       isStandAlone: 'isStandAlone',
-      isDesktop: 'isDesktop',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
@@ -703,8 +704,7 @@ export default {
   left: 0;
   top: 0;
   height: 100%;
-  border-top-right-radius: 50px;
-  border-bottom-right-radius: 50px;
+  box-shadow: 0 -3px 4px rgba(5,5,5, .1);
   transition-duration: .3s;
 }
 

@@ -140,9 +140,9 @@ export default {
     },
   },
   updateOrderFunctions: {
-    calendarOrder(b, writes, {finalIds, calendarDate, rootState}) {
-
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(finalIds, calendarDate, rootState)
+    calendarOrder(b, writes, {finalIds, calendarDate, rootState, scheduleOrder}) {
+      
+      const calendarOrders = utilsTask.getUpdatedCalendarOrders(utilsTask.concatArraysRemovingOldEls(scheduleOrder, finalIds), calendarDate, rootState)
 
       setInfo(b, {calendarOrders}, writes)
     },

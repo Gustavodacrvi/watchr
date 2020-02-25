@@ -1,5 +1,5 @@
 <template>
-  <div class="Support" :class="platform">
+  <div class="Support" :class="layout">
     <div class="search-wrapper">
       <div class="search">
         <InputApp
@@ -107,7 +107,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     tag() {
       return this.$route.params.tag
     },

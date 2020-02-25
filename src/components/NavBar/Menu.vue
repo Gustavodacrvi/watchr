@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     ...mapState(['user']),
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
   }
 }
 

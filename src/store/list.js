@@ -432,7 +432,7 @@ export default {
           const list = getters.lists.find(el => el.id === listId)
           let ord = (list.tasks && list.tasks.slice()) || []
           
-          let headsOrder = list.headingsOrder.slice() || []
+          let headsOrder = list.headingsOrder.slice()
     
           const heads = rootGetters.checkMissingIdsAndSortArr(headsOrder, list.headings)
           
@@ -471,6 +471,18 @@ export default {
   },
   actions: {
     // ADD
+    addViewList({rootState}, {b, writes, list}) {
+      return setList(b, {
+        ...list,
+        smartViewsOrders: {},
+        headings: [],
+        headingsOrder: [],
+        tasks: [],
+        userId: uid(),
+        createdFire: new Date(),
+        created: mom().format('Y-M-D HH:mm ss'),
+      }, list.id, rootState, writes)
+    },
 
     duplicateList({rootState}, {list, rootTasks, headingTasks}) {
       const b = fire.batch()
@@ -506,7 +518,7 @@ export default {
       createTasks(newHeadingTasks, headingTasks)
 
       const headings = list.headings.slice()
-      const headingsOrder = list.headingsOrder.slice()
+      const headingsOrder = (list.headingsOrder || []).slice()
 
       for (const h of headings) {
         const newIds = []
@@ -1054,51 +1066,6 @@ export default {
 
       b.commit()
     },
-    saveListsSmartViewOrderListIds(cZ, {ids, viewName}) {
-      const b = fire.batch()
-
-      setInfo(b, {
-        viewOrders: {
-          [viewName]: {
-            lists: ids
-          },
-        },
-      })
-
-      b.commit()
-    },
-    addListByIndexSmartViewOrderListIds({rootState}, {list, newItemRef, ids, viewName}) {
-      const b = fire.batch()
-      
-      const writes = []
-
-      setList(b, {
-        folder: null,
-        group: null,
-        name: '',
-        smartViewsOrders: {},
-        userId: uid(),
-        createdFire: new Date(),
-        created: mom().format('Y-M-D HH:mm ss'),
-        headings: [],
-        headingsOrder: [],
-        tasks: [],
-        userId: uid(),
-        ...list,
-      }, newItemRef.id, rootState, writes)
-      
-      setInfo(b, {
-        viewOrders: {
-          [viewName]: {
-            lists: ids
-          },
-        },
-      }, writes)
-
-      cacheBatchedItems(b, writes)
-
-      b.commit()
-    },
     duplicateHeading({getters, rootState}, {headingId, name, listId, tasks}) {
       const list = getters.getListsById([listId])[0]
       const b = fire.batch()
@@ -1123,7 +1090,7 @@ export default {
         tasks: newTaskIds,
         id: newId,
       })
-      const order = list.headingsOrder.slice()
+      const order = (list.headingsOrder || []).slice()
       const i = order.findIndex(n => n === headingId)
       order.splice(i, 0, newId)
 

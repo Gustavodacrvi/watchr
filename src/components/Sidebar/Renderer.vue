@@ -41,7 +41,7 @@
         />
       </template>
     </transition-group>
-    <div v-if="!isSmart && !isSubElement && !moving && !hasEdit"
+    <div v-if="!isSmart && !disableItemAdd && !isSubElement && !moving && !hasEdit"
       class="add-msg-wrapper"
     >
       <span class="add-msg" @click.stop="addEdit(items.length)">{{ addMsg }}</span>
@@ -67,7 +67,7 @@ export default {
     SidebarElement: SidebarElementVue,
     ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'fallbackItem', 'isSubElement', 'existingItems', 'alreadyExistMessage', 'addMsg'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'disableItemAdd', 'fallbackItem', 'isSubElement', 'existingItems', 'alreadyExistMessage', 'addMsg'],
   data() {
     return {
       sortable: null,
@@ -92,7 +92,7 @@ export default {
       direction: 'vertical',
       group: {name: 'sidebar',
         pull: (e) => {
-          if (this.isSmart) return false
+          if (this.isSmart || this.disableItemAdd) return false
 
           const name = e.el.dataset.name
           if (!this.enableSort && name === 'sidebar-renderer') return false
@@ -109,7 +109,7 @@ export default {
           if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
-      delay: this.isDesktop ? 25 : 150,
+      delay: this.isDesktopDevice ? 25 : 150,
       handle: '.item-handle',
 
       onUpdate: evt => {
@@ -247,7 +247,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
         s.opacity = 1
-        s.height = (this.isDesktop ? 35 : 42) + 'px'
+        s.height = (this.isDesktopDevice ? 35 : 42) + 'px'
         setTimeout(() => {
           s.height = 'auto'
         }, 220)
@@ -258,7 +258,7 @@ export default {
       
       s.transition = 'none'
       s.opacity = 1
-      s.height = (this.isDesktop ? 35 : 42) + 'px'
+      s.height = (this.isDesktopDevice ? 35 : 42) + 'px'
       requestAnimationFrame(() => {
         s.transition = 'height .15s, opacity .15s'
         s.opacity = 0
@@ -293,7 +293,7 @@ export default {
       movingTask: state => state.movingTask,
       moving: state => state.moving,
     }),
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice']),
     nonEditGetItems() {
       return this.items.filter(el => !el.isEdit)
     },

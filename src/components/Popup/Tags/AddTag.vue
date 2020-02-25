@@ -1,5 +1,5 @@
 <template>
-  <div class="AddTag popup cb shadow rb" :class="platform">
+  <div class="AddTag popup cb shadow rb" :class="layout">
     <DropInput
       back-color='var(--card)'
       placeholder="Tag name..."
@@ -39,7 +39,7 @@ export default {
   computed: {
     ...mapGetters({
       tags: 'tag/tags',
-      platform: 'platform',
+      layout: 'layout',
     }),
     ...mapState({
       popup: state => state.popup,

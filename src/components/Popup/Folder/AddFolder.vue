@@ -1,5 +1,5 @@
 <template>
-  <div class="addFolder popup cb shadow rb" :class="platform">
+  <div class="addFolder popup cb shadow rb" :class="layout">
     <DropInput
       back-color='var(--card)'
       placeholder="Folder name..."
@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      platform: 'platform',
+      layout: 'layout',
       folders: 'folder/folders',
     }),
     ...mapState({

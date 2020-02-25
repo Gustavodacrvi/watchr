@@ -14,8 +14,8 @@
         @blur="blur"
         @keydown="keydown"
       />
-      <span v-if="isDesktop && editing" class="save-msg">Press Shift + Enter to save</span>
-      <AuthButton v-else-if="!isDesktop && editing"
+      <span v-if="isDesktopBreakPoint && editing" class="save-msg">Press Shift + Enter to save</span>
+      <AuthButton v-else-if="!isDesktopBreakPoint && editing"
         type='card'
         value='Save notes'
         @click="save"
@@ -103,6 +103,7 @@ export default {
 
       s.transitionDuration = '.25s'
       s.height = 0
+      s.minHeight = 0
       s.opacity = 0
       s.marginTop = 0
 
@@ -111,7 +112,7 @@ export default {
   },
   computed: {
     ...mapState(['isOnShift']),
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
   },
   watch: {
     notes() {
@@ -131,7 +132,7 @@ export default {
   position: relative;
   min-height: 25px;
   transition-duration: .2s;
-  margin-top: 10px
+  margin-top: 10px;
 }
 
 .heading {

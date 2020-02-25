@@ -199,7 +199,7 @@ export default {
       logTasks: 'task/logTasks',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       tasks: 'task/tasks',
-      isDesktop: 'isDesktop',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getGroupTaskOrderById: 'group/getGroupTaskOrderById',
@@ -371,6 +371,7 @@ export default {
               }
             ],
             fallbackFunctionData: () => ({
+              scheduleOrder: viewTasksOrder,
               calendarDate: currentDate,
               viewName,
               listId: list.id,
@@ -445,6 +446,7 @@ export default {
             ],
             fallbackFunctionData: () => ({
               calendarDate: currentDate,
+              scheduleOrder: viewTasksOrder,
               viewName,
               folderId: folder.id,
             }),
@@ -518,6 +520,7 @@ export default {
             ],
             fallbackFunctionData: () => ({
               calendarDate: currentDate,
+              scheduleOrder: viewTasksOrder,
               viewName,
               groupId: group.id,
             }),
@@ -680,13 +683,6 @@ export default {
 
         for (const date of dates) {
           const itemsOrder = (calendar[date] && calendar[date].tasks) || []
-
-          const updateIds = ids => {
-            this.$store.dispatch('task/saveCalendarOrder', {
-              ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
-              date,
-            })  
-          }
           
           const filter = pipeBooleanFilters(
             list => this.isLaterList(list, date),
@@ -712,7 +708,11 @@ export default {
             options: lists => [],
             filter,
 
-            updateIds,
+            fallbackFunctionData: () => ({
+              calendarDate: date,
+              scheduleOrder: itemsOrder,
+            }),
+            updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
             fallbackItem: (list, force) => {
               if (force || !list.calendar) {
                 list.calendar = {
@@ -724,24 +724,6 @@ export default {
               }
               return list
             },
-            onAddItem: obj => {
-              this.$store.dispatch('list/addListByIndexCalendarOrder', {
-                ...obj,
-                ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
-                date,
-              })
-            },
-            onSortableAdd: (itemsIds, ids) => {
-              this.$store.dispatch('list/saveListsById', {
-                ids: itemsIds,
-                list: {calendar: {
-                  type: 'specific',
-                  editDate: mom().format('Y-M-D'),
-                  begins: mom().format('Y-M-D'),
-                  specific: date,
-                }},
-              })
-            }
           })
         }
 
@@ -1110,13 +1092,16 @@ export default {
               }
             })
           }],
-          updateIds: saveOrder,
           fallbackItem: (list, force) => {
             if (force || !list.deadline)
               list.deadline = mom().format('Y-M-D')
             return list
           },
-          onAddItem: onListAddItem
+          fallbackFunctionData: () => ({
+            calendarDate: date,
+            scheduleOrder: itemsOrder,
+          }),
+          updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
         })
       }
       if (this.hasBeginsTodayLists) {
@@ -1154,7 +1139,6 @@ export default {
               }
             })
           }],
-          updateIds: saveOrder,
           fallbackItem: (list, force) => {
             if (force || !list.calendar) {
               list.calendar = {
@@ -1167,7 +1151,11 @@ export default {
             }
             return list
           },
-          onAddItem: onListAddItem
+          fallbackFunctionData: () => ({
+            calendarDate: date,
+            scheduleOrder: itemsOrder,
+          }),
+          updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
         })
       }
       if (this.hasEndsTodayTasks) {
@@ -1204,19 +1192,16 @@ export default {
               }
             })
           }],
-          updateIds: saveOrder,
           fallbackItem: (task, force) => {
             if (force || !task.deadline)
               task.deadline = mom().format('Y-M-D')
             return task
           },
-          onAddItem: obj => {
-            this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
-              ...obj,
-              ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
-              date,
-            })
-          }
+          fallbackFunctionData: () => ({
+            calendarDate: date,
+            scheduleOrder: itemsOrder,
+          }),
+          updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
         })
       }
       
@@ -1257,19 +1242,14 @@ export default {
         order: itemsOrder,
         filter: filterFunction,
         options: lists => [],
-        updateIds: ids => {
-          dispatch('list/saveListsSmartViewOrderListIds', {
-            ids, viewName,
-          })
-        },
         fallbackItem: (list, force) => {
           return list
         },
-        onAddItem: obj => {
-          dispatch('list/addListByIndexSmartViewOrderListIds', {
-            ...obj, viewName: viewName,
-          })
-        }
+        fallbackFunctionData: () => ({
+          calendarDate: date,
+          scheduleOrder: itemsOrder,
+        }),
+        updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
       })
 
       return arr

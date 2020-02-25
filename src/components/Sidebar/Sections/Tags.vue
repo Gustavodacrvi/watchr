@@ -76,7 +76,7 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getSubTagsByParentId: 'tag/getSubTagsByParentId',
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
-      isDesktop: 'isDesktop',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
       sortedRootTags: 'tag/sortedRootTags',
     }),
     getTags() {

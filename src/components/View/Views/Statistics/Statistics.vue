@@ -1,5 +1,5 @@
 <template>
-  <div class="Statistics" :class="platform">
+  <div class="Statistics" :class="layout">
     <h3 class="title">Pomodoro</h3>
     <div class="wrapper">
       <Card class="card"
@@ -34,7 +34,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
   }
 }
 

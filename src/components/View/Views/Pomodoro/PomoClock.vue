@@ -1,5 +1,5 @@
 <template>
-  <div class="PomoClock" :class="platform">
+  <div class="PomoClock" :class="layout">
     <div class="wrapper">
       <svg viewBox='0 0 100 100' width='250px' height='250px' class="svg drop-black">
         <circle ref='circle' class="back-pie" stroke-width="2px" cx="50%" cy="50%" r="40"/>
@@ -25,7 +25,7 @@ export default {
       current: state => state.pomo.current,
     }),
     ...mapGetters({
-      platform: 'platform',
+      layout: 'layout',
       color: 'pomo/getPomoColor',
       shadow: 'pomo/getPomoShadow',
       currentValue: 'pomo/currentValue',

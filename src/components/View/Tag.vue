@@ -5,7 +5,7 @@
   >
     <div class="wrapper" @click="$emit('click')">
       <div class="Tag cursor"
-        :class="[{selected, disabled}, platform]"
+        :class="[{selected, disabled}, layout]"
         :style="{border: selectedBorder}"
         @mouseenter="hover = true"
         @mouseleave="hover = false"
@@ -105,7 +105,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     tagColor() {
       return !this.hover ? this.color : ''
     },

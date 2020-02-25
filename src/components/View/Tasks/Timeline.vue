@@ -1,5 +1,5 @@
 <template>
-  <div class="Timeline" :class="platform" @click.stop>
+  <div class="Timeline" :class="layout" @click.stop>
     <div class="wrapper cursor">
       <div class="hour">
         <span class="h">{{ startHour }}</span>
@@ -35,7 +35,7 @@ export default {
     ...mapState({
       userInfo: state => state.userInfo,
     }),
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     options() {
       return [
         {

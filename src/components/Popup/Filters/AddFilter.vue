@@ -1,5 +1,5 @@
 <template>
-  <div class="AddFilter popup cb shadow rb" :class="platform">
+  <div class="AddFilter popup cb shadow rb" :class="layout">
     <DropInput
       back-color='var(--card)'
       placeholder="Filter name..."
@@ -85,7 +85,7 @@ export default {
     if (this.isEditing) this.name = this.payload.name
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     ...mapState({
       filters: state => state.filter.filters,
       popup: state => state.popup,

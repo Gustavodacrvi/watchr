@@ -106,7 +106,7 @@ export default {
     },
     leave(el, done) {
       const s = el.style
-      s.transitionDuration = '.15s'
+      s.transitionDuration = '.25s'
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'

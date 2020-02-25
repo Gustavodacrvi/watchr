@@ -1,7 +1,7 @@
 <template>
   <div class="Popup scroll-thin" :class="{fillSpace}">
     <div class="popup-wrapper">
-      <Icon v-if="!isDesktop && popup && popup.comp !== 'Update' && fillSpace" class="icon cursor primary-hover" icon="arrow" @click="closeMobilePopup"/>
+      <Icon v-if="!isDesktopBreakPoint && popup && popup.comp !== 'Update' && fillSpace" class="icon cursor primary-hover" icon="arrow" @click="closeMobilePopup"/>
       <component class="component"
         :is="popup.comp"
         :class="{isStandAlone, fillSpace}"
@@ -61,9 +61,9 @@ export default {
   },
   computed: {
     ...mapState(['popup']),
-    ...mapGetters(['isPopupOpened', 'platform', 'isDesktop', 'isStandAlone']),
+    ...mapGetters(['isPopupOpened', 'layout', 'isDesktopBreakPoint', 'isStandAlone']),
     fillSpace() {
-      return !this.isDesktop && !this.popup.naked
+      return !this.isDesktopBreakPoint && !this.popup.naked
     },
   }
 }

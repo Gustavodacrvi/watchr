@@ -1,5 +1,5 @@
 <template>
-  <div class="RepeatPicker" :class="platform">
+  <div class="RepeatPicker" :class="layout">
     <span>Repeat:   </span>
     <AuthOptions class='special-options' style="z-index: 3"
       :options='data.repeatOptions'
@@ -405,7 +405,7 @@ export default {
     ...mapState({
       userInfo: state => state.userInfo,
     }),
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     getDays() {
       return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     },

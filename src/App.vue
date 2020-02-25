@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="[{hidePassive}, platform]">
+  <div id="app" :class="[{hidePassive}, layout]">
     <transition name="fade-t">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
@@ -7,7 +7,7 @@
       <FileReader v-if="fileURL"/>
     </transition>
     <Toast/>
-    <Menu class="menu" :class='{slideMenu: isMenuOpened && !isDesktop}'/>
+    <Menu class="menu" :class='{slideMenu: isMenuOpened && !isDesktopBreakPoint}'/>
     <transition name="fade-t">
       <MobileIcondrop v-if="isIconDropOpened"/>
     </transition>
@@ -19,7 +19,7 @@
         />
       </transition>
       <transition name="fade-t" appear mode="out-in">
-          <router-view class="router-view" :class="{'non-hided': !hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
+          <router-view class="router-view" :class="{'non-hided': !hideNavbar && isDesktopBreakPoint}" :hideNavbar='hideNavbar'
         />
       </transition>
     </div>
@@ -61,7 +61,7 @@ export default {
       this.timeBeforeMouseMove++
     }, 1000)
 
-    if (this.isDesktop) {
+    if (this.isDesktopDevice) {
       window.addEventListener('keydown', this.keydown)
       window.addEventListener('keyup', this.keyup)
       window.addEventListener('mousemove', this.getMousePos)
@@ -211,6 +211,9 @@ export default {
             'UNREAD',
           ]
         })
+        
+        if (!res.result.threads)
+          return;
 
         let threads = await Promise.all(res.result.threads.map(({id}) => gapi.client.gmail.users.threads.get({
           id, userId: 'me',
@@ -238,7 +241,7 @@ export default {
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift', 'userInfo']),
-    ...mapGetters(['isDesktop', 'getInitialSmartView', 'needsUpdate', 'platform']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'getInitialSmartView', 'needsUpdate', 'layout']),
     isReady() {
       return this.$store.state.googleCalendarReady
     },
@@ -259,9 +262,9 @@ export default {
     hideNavbar() {
       const isAnonymous = this.user && this.user.isAnonymous
       if (!this.user || isAnonymous) return false
-      if (!this.route || (!this.isDesktop && this.appRoute)) return true
+      if (!this.route || (!this.isDesktopBreakPoint && this.appRoute)) return true
       const isNotOnUser = this.$route.path !== '/user'
-      if (!this.user || this.needsUpdate || !this.isDesktop || isAnonymous || isNotOnUser) return false
+      if (!this.user || this.needsUpdate || !this.isDesktopBreakPoint || isAnonymous || isNotOnUser) return false
       return this.hided
     },
     isMenuOpened() {
@@ -274,7 +277,7 @@ export default {
       return this.$route.fullPath
     },
     hidePassive() {
-      return this.timeBeforeMouseMove > 4 && this.isDesktop
+      return this.timeBeforeMouseMove > 4 && this.isDesktopBreakPoint
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null
@@ -294,7 +297,7 @@ export default {
       
       if (to && !isGoingToPopup && this.$store.getters.isPopupOpened)
         this.closePopup(true)
-      this.updateViewType(this.isDesktop || notGoingToAnyOfTheTwo)
+      this.updateViewType(this.isDesktopBreakPoint || notGoingToAnyOfTheTwo)
 
       this.lastRouteCameFromMenu = from.path === '/menu'
     },

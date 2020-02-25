@@ -1,5 +1,5 @@
 <template>
-  <div class="Confirm" :class="platform">
+  <div class="Confirm" :class="layout">
     <p class="msg">{{ content.msg }}</p>
     <AuthButton v-if="content.callback"
       value='Continue'
@@ -28,7 +28,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform'])
+    ...mapGetters(['layout'])
   },
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="RecentData popup scroll-thin cb shadow rb" :class="platform">
+  <div class="RecentData popup scroll-thin cb shadow rb" :class="layout">
     <div class="tac title">
       <h3 class="pc">Recent Data</h3>
     </div>
@@ -294,7 +294,7 @@ export default {
     ...mapState({
       stats: state => state.pomo.stats,
     }),
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     firstTime() {
       return !this.stats
     },

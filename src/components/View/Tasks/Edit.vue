@@ -4,7 +4,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, platform]" :style="editStyle">
+    <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, layout]" :style="editStyle">
       <div class="fix-back" @click="remove"></div>
       <div class="edit-wrapper">
         <DropInput ref="task-name" class="name-input"
@@ -586,7 +586,7 @@ export default {
         const t = this.$refs['task-name'].$el.style
 
         t.transitionDuration = 0
-        const y = this.isDesktop ? -2 : 4
+        const y = this.isDesktopBreakPoint ? -2 : 4
         t.transform = `translate(27px, ${y}px)`
         requestAnimationFrame(() => {
           t.transitionDuration = '.25s'
@@ -621,7 +621,7 @@ export default {
 
         t.transitionDuration = 0
         t.opacity = 0
-        const y = this.isDesktop ? -2 : 4
+        const y = this.isDesktopBreakPoint ? -2 : 4
         t.transform = `translate(0px, ${y}px)`
         requestAnimationFrame(() => {
           t.transitionDuration = '.25s'
@@ -787,8 +787,8 @@ export default {
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
-      isDesktop: 'isDesktop',
-      platform: 'platform',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
+      layout: 'layout',
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
       getFoldersById: 'folder/getFoldersById',
@@ -798,7 +798,7 @@ export default {
       tags: 'tag/sortedTagsByName',
     }),
     dropInput() {
-      if (!this.isDesktop)
+      if (!this.isDesktopBreakPoint)
         return ''
       return this.isEditingNotes ? "Shift + Arrows keys to move, Shift + Enter to save" : "Shift + Enter to save"
     },

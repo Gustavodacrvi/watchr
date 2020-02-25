@@ -505,9 +505,14 @@ export default {
                 ...head.fallbackFunctionData(),
               })
 
-              await this.$store.dispatch('task/addViewTask', {
-                b, ...newObj, writes,
-              })
+              if (!head.listType)
+                await this.$store.dispatch('task/addViewTask', {
+                  b, ...newObj, writes,
+                })
+              else
+                await this.$store.dispatch('list/addViewList', {
+                  b, ...newObj, writes,
+                })
 
               cacheBatchedItems(b, writes)
               

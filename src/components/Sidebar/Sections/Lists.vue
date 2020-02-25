@@ -126,7 +126,7 @@ export default {
         if (type === 'Task') return true
         return false
       }},
-      delay: this.isDesktop ? 25 : 150,
+      delay: this.isDesktopBreakPoint ? 25 : 150,
       filter: '.ignore-item',
       animation: 200,
       handle: '.handle-folder',
@@ -169,7 +169,7 @@ export default {
       requestAnimationFrame(() => {
         h.transitionDuration = '.15s'
         s.transitionDuration = '.15s'
-        h.height = (this.isDesktop ? 35 : 42) + 'px'
+        h.height = (this.isDesktopBreakPoint ? 35 : 42) + 'px'
         s.opacity = '1'
       })
     },
@@ -253,7 +253,7 @@ export default {
     }),
     ...mapGetters({
       tasks: 'task/tasks',
-      isDesktop: 'isDesktop',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
       isTaskInList: 'task/isTaskInList',
       sortedFoldersAndGroups: 'folder/sortedFoldersAndGroups',
       isTaskCompleted: 'task/isTaskCompleted',

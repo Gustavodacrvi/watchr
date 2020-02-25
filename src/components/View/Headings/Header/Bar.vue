@@ -1,7 +1,7 @@
 <template>
   <div
     class="header"
-    :class="platform"
+    :class="layout"
     @click="click"
   >
     <Icon class="icon"
@@ -9,11 +9,11 @@
       :color="getIconColor"
       :progress='progress'
       :shadow='true'
-      :width="isDesktop ? '40px' : '30px'"
+      :width="isDesktopBreakPoint ? '40px' : '30px'"
       @click="openMenu"
-      :style="{filter: `drop-shadow(0 0 ${isDesktop ? 20 : 10}px ${getIconColor})`}"
+      :style="{filter: `drop-shadow(0 0 ${isDesktopBreakPoint ? 20 : 10}px ${getIconColor})`}"
     />
-    <HeaderSearch v-if="!isDesktop"/>
+    <HeaderSearch v-if="!isDesktopBreakPoint"/>
     <span v-if="!editing || !isEditable"
       class="name"
       @click.stop="editing = true"
@@ -85,7 +85,7 @@ export default {
       this.editing = false
     },
     openMenu() {
-      if (!this.isDesktop)
+      if (!this.isDesktopBreakPoint)
         this.$router.push('/menu')
     },
     lineEnter(el) {
@@ -124,9 +124,9 @@ export default {
   },
   computed: {
     ...mapState(['selectedItems']),
-    ...mapGetters(['platform', 'isDesktop', 'getIcon', 'getIconColor']),
+    ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor']),
     isEditable() {
-      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktop
+      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktopBreakPoint
     },
   },
   watch: {

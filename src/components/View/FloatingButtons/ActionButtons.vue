@@ -1,5 +1,5 @@
 <template>
-  <div class="ActionButtons passive" :class="[platform, {moving}]" @click="click">
+  <div class="ActionButtons passive" :class="[layout, {moving}]" @click="click">
     <span></span>
     <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
       icon='plus'
@@ -71,7 +71,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop'])
+    ...mapGetters(['layout', 'isDesktopBreakPoint'])
   },
   watch: {
     moving() {

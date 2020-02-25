@@ -1,11 +1,11 @@
 <template>
-  <div class="ListRenderer floating-btn-container" :class='[platform, `${comp}-ListRenderer`, {isHeading: !isRoot}]' @click='click'>
+  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot}]' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration"
         class="illustration"
         :style="{
           width: `calc(100% - ${width}px)`,
-          left: (isDesktop ? width : 0) + 'px',
+          left: (isDesktopBreakPoint ? width : 0) + 'px',
         }"
       >
         <Icon :icon='(icon === "logged-lists" ? "faded-logged-lists" : icon)' color='var(--sidebar-color)' width="150px"/>
@@ -13,7 +13,7 @@
     </transition>
     <div
       class="front item-renderer-root"
-      :class="{inflate, dontHaveItems: lazyItems.length === 0, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
+      :class="{inflate, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
 
       data-name='item-renderer'
@@ -84,34 +84,36 @@
           @cancel='removeEdit'
         />
       </template>
-      <transition name="fade-t">
-        <div v-if="computedShowSomedayButton && !isElementFromAnotherTabHovering" @click="$emit('allow-someday')">
-          <ButtonVue type="no-padding" value="Show someday items..."/>
-        </div>
-      </transition>
-      <ButtonVue v-if="showMoreItemsButton && !isElementFromAnotherTabHovering"
-        type="no-padding"
-        :value='showMoreItemsMessage'
-        @click="showingMoreItems = true"
-      />
-      <div v-if="showAddItemButton && !moving && !isElementFromAnotherTabHovering"
-        class="add-item-wrapper"
-      >
-        <div
-          class="add-item rb"
-          @click.stop="addEditComp(nonEditGetItems.length)"
+      <div v-if="!moving && !hasEdit">
+        <transition name="fade-t">
+          <div v-if="computedShowSomedayButton && !isElementFromAnotherTabHovering" @click="$emit('allow-someday')">
+            <ButtonVue type="no-padding" value="Show someday items..."/>
+          </div>
+        </transition>
+        <ButtonVue v-if="showMoreItemsButton && !isElementFromAnotherTabHovering"
+          type="no-padding"
+          :value='showMoreItemsMessage'
+          @click="showingMoreItems = true"
+        />
+        <div v-if="showAddItemButton && !isElementFromAnotherTabHovering"
+          class="add-item-wrapper"
         >
-          Add item
+          <div
+            class="add-item rb"
+            @click.stop="addEditComp(nonEditGetItems.length)"
+          >
+            Add item
+          </div>
         </div>
-      </div>
-      <div v-if="isDesktop && !isElementFromAnotherTabHovering && viewType === 'list' && !moving && !isSmart"
-        class="heading-add"
-        @click.stop="addHeadingsEdit(lazyItems.length)"
-      >
-        <span class="heading-add-line"></span>
-        <span class="heading-add-message">
-          Add heading
-        </span>
+        <div v-if="isDesktopDevice && !isElementFromAnotherTabHovering && viewType === 'list' && !isSmart"
+          class="heading-add"
+          @click.stop="addHeadingsEdit(lazyItems.length)"
+        >
+          <span class="heading-add-line"></span>
+          <span class="heading-add-message">
+            Add heading
+          </span>
+        </div>
       </div>
     </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
@@ -234,7 +236,7 @@ export default {
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
     window.addEventListener('touchmove', this.mousemove)
-    if (this.isDesktop) {
+    if (this.isDesktopDevice) {
       window.addEventListener('keydown', this.keydown)
       window.addEventListener('mousemove', this.mousemove)
     }
@@ -246,7 +248,7 @@ export default {
 
     window.removeEventListener('click', this.windowClick)
     window.removeEventListener('touchmove', this.mousemove)
-    if (this.isDesktop) {
+    if (this.isDesktopDevice) {
       window.removeEventListener('keydown', this.keydown)
       window.removeEventListener('mousemove', this.mousemove)
     }
@@ -513,11 +515,11 @@ export default {
       
       const obj = {
         disabled: this.disableSortableMount,
-        multiDrag: this.enableSelect || !this.isDesktop,
+        multiDrag: this.enableSelect || !this.isDesktopDevice,
         direction: 'vertical',
 
         animation: 200,
-        delay: this.isDesktop ? 25 : 100,
+        delay: this.isDesktopDevice ? 25 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -736,7 +738,7 @@ export default {
           
           this.$store.commit('moving', false)
           
-          if (this.isDesktop)
+          if (this.isDesktopDevice)
             window.removeEventListener('mousemove', onMove)
           
           if (!cancel) {
@@ -755,7 +757,7 @@ export default {
               })
           }
           
-          if (this.isDesktop && this.comp === 'Task') {
+          if (this.isDesktopDevice && this.comp === 'Task') {
             this.movingItem = false
             this.$store.commit('movingTask', false)
           }
@@ -770,7 +772,7 @@ export default {
         onStart: evt => {
           this.$store.commit('moving', true)
           
-          if (this.isDesktop)
+          if (this.isDesktopDevice)
             window.addEventListener('mousemove', onMove)
           
           cancel = true
@@ -778,12 +780,12 @@ export default {
           lastToElement = null
           moveIsSmart = null
 
-          if (this.isDesktop && this.comp === 'Task') {
+          if (this.isDesktopDevice && this.comp === 'Task') {
             this.movingItem = true
             this.$store.commit('movingTask', true)
           }
           
-          if (!this.isDesktop)
+          if (!this.isDesktopDevice)
             window.navigator.vibrate(100)
         },
         onChange: evt => {
@@ -810,7 +812,7 @@ export default {
           }
         },
       }
-      if (this.isDesktop) {
+      if (this.isDesktopDevice) {
         obj['multiDragKey'] = 'CTRL'
       } else {
         obj.forceFallback = true
@@ -824,7 +826,7 @@ export default {
         let i = 0
         const length = items.length
 
-        const timeout = this.isDesktop ? 15 : length * 5
+        const timeout = this.isDesktopDevice ? 15 : length * 5
         
         const add = item => {
           this.lazyItems.push(item)
@@ -848,7 +850,7 @@ export default {
         let i = 0
         const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.items && h.items.length > 0)
         const length = headinsgWithItems.length
-        let timeout = this.isDesktop ? 80 : 230
+        let timeout = this.isDesktopDevice ? 80 : 230
 
         if (length < 5) timeout = 175
         
@@ -1050,7 +1052,7 @@ export default {
       this.changedViewName = true
       this.clearLazySettimeout()
       
-      if (this.isDesktop)
+      if (this.isDesktopDevice)
         Promise.all([
           this.slowlyAddHeadings(this.headings),
           this.slowlyAddItems(this.items),
@@ -1079,8 +1081,9 @@ export default {
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
-      platform: 'platform',
-      isDesktop: 'isDesktop',
+      layout: 'layout',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
+      isDesktopDevice: 'isDesktopDevice',
       getTaskBodyDistance: 'task/getTaskBodyDistance',
       getTasksById: 'task/getTasksById',
       getTagsByName: 'tag/getTagsByName',
@@ -1094,7 +1097,7 @@ export default {
       )
     },
     showAddItemButton() {
-      return this.isDesktop && !this.hasEdit && !this.moving && !this.disableRootActions && !this.disableSortableMount
+      return this.isDesktopDevice && !this.moving && !this.disableRootActions && !this.disableSortableMount
     },
     allItemsIds() {
       if (!this.isRoot)
@@ -1155,7 +1158,7 @@ export default {
       return document.getElementById('app')
     },
     itemHeight() {
-      return this.isDesktop ? 38 : 50
+      return this.isDesktopDevice ? 38 : 50
     },
     pressingMultiSelectKeys() {
       return this.isOnShift
@@ -1165,12 +1168,12 @@ export default {
     },
     enableSelect() {
       if (this.disableSelect) return false
-      return this.openCalendar || !this.isDesktop ||
+      return this.openCalendar || !this.isDesktopDevice ||
       (this.pressingSelectKeys || this.isSelecting)
     },
     isSelecting() {
       if (this.selected.length > 0 || this.openCalendar) return true
-      if (this.isDesktop)
+      if (this.isDesktopDevice)
         return this.pressingSelectKeys
     },
     inflate() {
@@ -1265,7 +1268,7 @@ export default {
         this.sortable.options.disabled = this.disableSortableMount
     },
     enableSelect() {
-      if (this.sortable && this.isDesktop) {
+      if (this.sortable && this.isDesktopDevice) {
         setTimeout(() => {
           this.sortable.options.multiDrag = this.enableSelect
         })
@@ -1337,6 +1340,7 @@ export default {
 .item-renderer-root {
   outline: none;
   position: relative;
+  min-height: 35px;
   z-index: 2;
   overflow: visible;
   height: 100%;
@@ -1401,10 +1405,6 @@ export default {
 
 .add-item-wrapper:active .add-item {
   transform: scale(.95,.95);
-}
-
-.dontHaveItems {
-  min-height: 35px;
 }
 
 .inflate {

@@ -1,5 +1,5 @@
 <template>
-  <div class="addGroup popup cb shadow rb" :class="platform">
+  <div class="addGroup popup cb shadow rb" :class="layout">
     <DropInput
       back-color='var(--card)'
       placeholder="Group name..."
@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      platform: 'platform',
+      layout: 'layout',
     }),
     ...mapState({
       groups: state => state.group.groups,

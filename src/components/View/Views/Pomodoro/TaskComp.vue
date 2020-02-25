@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskComp" :class="platform" @click.stop="selectTask">
+  <div class="TaskComp" :class="layout" @click.stop="selectTask">
     <div class="task rb cursor" ref="task">
       <span>{{ taskMsg }}</span>
       <CircleBubble/>
@@ -67,7 +67,7 @@ export default {
       task: state => state.pomo.task,
     }),
     ...mapGetters({
-      platform: 'platform',
+      layout: 'layout',
       taskMsg: 'pomo/taskMsg',
     })
   },

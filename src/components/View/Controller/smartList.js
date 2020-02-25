@@ -10,6 +10,7 @@ export default {
     fallbackFunctionData() {
       return () => ({
         calendarDate: this.getCalendarOrderDate,
+        scheduleOrder: this.getCurrentScheduleTasksOrder,
       })
     },
     rootFallbackItem() {
@@ -35,20 +36,6 @@ export default {
       if (this.isCalendarOrderViewType)
         return fs.calendarOrder
       return fs.smartOrder
-      
-      return ids => {
-        if (this.isSmartOrderViewType) {
-          this.$store.dispatch('list/updateViewOrder', {
-            view: this.viewName,
-            ids,
-          })
-        } else {
-          this.$store.dispatch('task/saveCalendarOrder', {
-            ids: utilsTask.concatArraysRemovingOldEls( this.getCurrentScheduleTasksOrder, ids),
-            date: this.getCalendarOrderDate,
-          })
-        }
-      }
     },
     saveSchedule() {
       return schedule => {

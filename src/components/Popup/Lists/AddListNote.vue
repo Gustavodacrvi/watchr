@@ -1,5 +1,5 @@
 <template>
-  <div class="AddNote popup cb shadow rb" :class="platform">
+  <div class="AddNote popup cb shadow rb" :class="layout">
     <InputApp
       back-color='var(--card)'
       :focus="true"
@@ -32,7 +32,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     ...mapState({
       payload: state => state.popup.payload,
     })

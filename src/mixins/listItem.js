@@ -32,7 +32,7 @@ export default {
   },
   mounted() {
     this.bindMainSelection()
-    if (this.isDesktop)
+    if (this.isDesktopDevice)
       this.bindContextMenu(this.options)
     
     window.addEventListener('click', this.deselectItem)
@@ -57,7 +57,7 @@ export default {
       this.$store.commit('pushIconDrop', this.assignUserProfiles)
     },
     bindMainSelection() {
-      if (this.isDesktop)
+      if (this.isDesktopDevice)
         if (this.isItemMainSelection)
           window.addEventListener('keydown', this.mainSelectionKeyDown)
         else
@@ -212,11 +212,11 @@ export default {
       this.$store.commit('pushIconDrop', this.options)
     },
     stopMouseUp(evt) {
-      if (!this.isDesktop)
+      if (!this.isDesktopDevice)
         evt.stopPropagation()
     },
     pointerdown(evt) {
-      if (!this.isDesktop)
+      if (!this.isDesktopDevice)
         evt.stopPropagation()
     },
     touchStart(e) {
@@ -291,11 +291,11 @@ export default {
       this.stopTouchEvents = false
     },
     desktopComplete() {
-      if (this.isDesktop)
+      if (this.isDesktopDevice)
         this.completeItem()
     },
     desktopCancel() {
-      if (this.isDesktop)
+      if (this.isDesktopDevice)
         this.cancelItem()
     },
     checkTouchStart() {
@@ -361,7 +361,7 @@ export default {
       user: state => state.user,
     }),
     ...mapGetters({
-      isDesktop: 'isDesktop',
+      isDesktopDevice: 'isDesktopDevice',
 
       nonReadCommentsById: 'group/nonReadCommentsById',
       getAssigneeIconDrop: 'group/getAssigneeIconDrop',
@@ -407,7 +407,7 @@ export default {
       this.bindContextMenu(this.options)
     },
     selectedItems() {
-      if (this.isDesktop)
+      if (this.isDesktopDevice)
         if (this.selectedItems && this.selectedItems.length > 0)
           this.bindContextMenu(this.multiSelectOptions)
         else this.bindContextMenu(this.options)

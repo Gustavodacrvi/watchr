@@ -21,7 +21,7 @@
             ref='tod'
             title='Today'
             :box='true'
-            :active='selectionPos === 1 && isDesktop'
+            :active='selectionPos === 1 && isDesktopBreakPoint'
             @click="today"
           />
           <Icon
@@ -31,7 +31,7 @@
             ref='tom'
             title='Tomorrow'
             :box='true'
-            :active='selectionPos === 2 && isDesktop'
+            :active='selectionPos === 2 && isDesktopBreakPoint'
             @click="tomorrow"
           />
           <Icon v-if="allowSomeday"
@@ -41,7 +41,7 @@
             icon="archive"
             title='Someday'
             :box='true'
-            :active='selectionPos === 3 && isDesktop'
+            :active='selectionPos === 3 && isDesktopBreakPoint'
             @click="someday"
           />
           <Icon v-if="allowBloqued"
@@ -51,7 +51,7 @@
             icon="bloqued"
             title='No date'
             :box='true'
-            :active='selectionPos === 4 && isDesktop'
+            :active='selectionPos === 4 && isDesktopBreakPoint'
             @click="noDate"
           />
           <Icon v-if="allowRepeat"
@@ -61,7 +61,7 @@
             icon="repeat"
             title='Recurring dates'
             :box='true'
-            :active='selectionPos === 5 && isDesktop'
+            :active='selectionPos === 5 && isDesktopBreakPoint'
             @click="$emit('repeat')"
           />
         </div>
@@ -150,7 +150,7 @@ export default {
   mounted() {
     window.addEventListener('keydown', this.keydown)
 
-    if (this.isDesktop)
+    if (this.isDesktopBreakPoint)
       this.focusName()
   },
   beforeDestroy() {
@@ -158,7 +158,7 @@ export default {
   },
   computed: {
     ...mapState(['userInfo', 'isOnShift']),
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
     allowSomeday() {
       return !this.onlyDates
     },

@@ -1,5 +1,5 @@
 <template>
-  <canvas id="Graph" width="100%" :height="isDesktop ? '30px' : '50px'"></canvas>
+  <canvas id="Graph" width="100%" :height="isDesktopBreakPoint ? '30px' : '50px'"></canvas>
 </template>
 
 <script>
@@ -82,7 +82,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
     gradient() {
       const gradient = this.$el.getContext('2d').createLinearGradient(0, 0, 0, 400)
 

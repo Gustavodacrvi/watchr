@@ -1,5 +1,5 @@
 <template>
-  <div class="Update popup cb shadow rb scroll-thin" :class="platform">
+  <div class="Update popup cb shadow rb scroll-thin" :class="layout">
     <div class="title tac">
       <h3 class="pc">What's new - {{parse(ver)}}</h3>
     </div>
@@ -132,7 +132,7 @@ export default {
   },
   computed: {
     ...mapState(['lang', 'version']),
-    ...mapGetters(['platform', 'versionDiff']),
+    ...mapGetters(['layout', 'versionDiff']),
     nonReadUpdates() {
       const nonRead = []
       for (let i = 0; i < this.diff;i++) {

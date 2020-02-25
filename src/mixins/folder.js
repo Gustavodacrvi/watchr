@@ -31,7 +31,7 @@ export default {
   methods: {
     ...mapActions(['getOptions']),
     async bindOptions() {
-      if (this.isDesktop && this.options) {
+      if (this.isDesktopBreakPoint && this.options) {
         utils.bindOptionsToEventListener(this.$refs.header, await this.getOptions(this.options), this)
       }
     },
@@ -103,17 +103,17 @@ export default {
       })
     },
     go() {
-      if (this.isDesktop) this.click()
+      if (this.isDesktopBreakPoint) this.click()
     },
   },
   computed: {
     ...mapState(['isOnControl']),
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters(['isDesktopBreakPoint', 'layout']),
     getItemContHeight() {
       return (this.itemHeight * this.listLength) + 'px'
     },
     itemHeight() {
-      return this.isDesktop ? 35 : 42
+      return this.isDesktopBreakPoint ? 35 : 42
     },
   },
   watch: {

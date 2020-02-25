@@ -1,5 +1,5 @@
 <template>
-  <div class="Pomodoro" :class="platform">
+  <div class="Pomodoro" :class="layout">
     <Squares/>
     <TaskComp/>
     <PomoClock/>
@@ -30,7 +30,7 @@ export default {
     Squares, TaskComp,
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
   },
 }
 

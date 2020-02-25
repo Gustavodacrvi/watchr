@@ -1,6 +1,6 @@
 
 <template>
-  <div class="Folder AppbarElement" :class="platform">
+  <div class="Folder AppbarElement" :class="layout">
     <div class="header rb handle-folder AppbarElement-link DRAG-AND-DROP-EL"
       ref='header'
       :class="{isActive, dragover}"

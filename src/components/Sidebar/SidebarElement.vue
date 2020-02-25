@@ -1,7 +1,7 @@
 <template>
   <div class="SidebarElement SidebarElement-link rb"
     :tabindex="tabindex"
-    :class="[platform, {hasSubList}]"
+    :class="[deviceLayout, {hasSubList}]"
   >
     <div
       class="link-wrapper SidebarElement-link rb DRAG-AND-DROP-EL"
@@ -137,7 +137,7 @@ export default {
   methods: {
     ...mapActions(['getOptions']),
     async bindOptions() {
-      if (this.isDesktop) {
+      if (this.isDesktopDevice) {
         if (this.options) {
           const el = this.$el.getElementsByClassName('link-wrapper')[0]
           utils.bindOptionsToEventListener(el, await this.getOptions(this.options), this)
@@ -208,7 +208,7 @@ export default {
       this.fail = false
     },
     linkCallback(evt) {
-      if (this.isDesktop) this.click()
+      if (this.isDesktopDevice) this.click()
     },
     click() {
       if (this.callback) this.callback()
@@ -230,14 +230,14 @@ export default {
       storeViewType: 'viewType',
     }),
     ...mapGetters({
-      platform: 'platform',
-      isDesktop: 'isDesktop',
+      deviceLayout: 'deviceLayout',
+      isDesktopDevice: 'isDesktopDevice',
 
       getGroupsById: 'group/getGroupsById',
       getAssignedTasksByList: 'task/getAssignedTasksByList',
     }),
     sublistHeight() {
-      return ((this.subList.length) * (this.isDesktop ? 35 : 42)) + 'px'
+      return ((this.subList.length) * (this.isDesktopDevice ? 35 : 42)) + 'px'
     },
     hasSubList() {
       return this.subList && this.subList.length > 0
@@ -283,7 +283,7 @@ export default {
       return !this.isSmart && !this.isActive
     },
     isActive() {
-      if ((this.hover && this.isDesktop) || (this.isTouching && !this.isDesktop)) return true
+      if ((this.hover && this.isDesktopDevice) || (this.isTouching && !this.isDesktopDevice)) return true
       return this.name === this.active && this.type === this.viewType || (this.viewName === this.name && this.type === this.storeViewType)
     },
   },

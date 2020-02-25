@@ -46,7 +46,7 @@ export default {
     ...mapState(['selectedItems']),
     ...mapGetters({
       getNumberOfTasksByFilter: 'task/getNumberOfTasksByFilter',
-      isDesktop: 'isDesktop',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
     }),
     sortedFilters() {
       return this.$store.getters['filter/sortedFilters']

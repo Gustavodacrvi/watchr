@@ -1,5 +1,5 @@
 <template>
-  <div class="ItemEdit rb shadow" :class="platform">
+  <div class="ItemEdit rb shadow" :class="layout">
     <div class="wrapper">
       <input class="input" ref='input'
         autocomplete="off"
@@ -69,7 +69,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['isOnShift', 'platform'])
+    ...mapState(['isOnShift', 'layout'])
   },
 }
 

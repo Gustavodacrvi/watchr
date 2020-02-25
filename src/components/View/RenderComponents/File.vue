@@ -19,7 +19,7 @@
         <span class="name">{{ name }}</span>
       </span>
       <transition name="fade-t">
-        <div v-if="hover || !isDesktop" class="info">
+        <div v-if="hover || !isDesktopBreakPoint" class="info">
           <Icon
             class="icon remove-highlight cursor primary-hover"
             icon='import'
@@ -85,7 +85,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopBreakPoint']),
   },
 }
 

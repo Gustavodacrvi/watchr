@@ -1,5 +1,5 @@
 <template>
-  <div class="Signin popup cb shadow rb" :class="platform">
+  <div class="Signin popup cb shadow rb" :class="layout">
     <div class="tac title">
       <h3 class="pc">Change E-mail</h3>
     </div>
@@ -81,7 +81,7 @@ export default {
   },
   computed: {
     ...mapState(['popup', 'user']),
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
   },
 }
 

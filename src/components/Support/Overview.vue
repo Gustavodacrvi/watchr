@@ -1,5 +1,5 @@
 <template>
-  <div class="Overview" :class="platform">
+  <div class="Overview" :class="layout">
     <div class="cont">
       <div v-for="area of getHeaderAreas" :key="area.title" class="area">
         <div class="header">
@@ -31,7 +31,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['layout']),
     getHeaderAreas() {
       const arr = []
 

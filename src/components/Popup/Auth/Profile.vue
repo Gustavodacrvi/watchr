@@ -1,9 +1,9 @@
 <template>
-  <div class="popup cb shadow rb Profile scroll-thin" :class="platform">
+  <div class="popup cb shadow rb Profile scroll-thin" :class="layout">
     <div class="nav-wrapper">
       <div class="nav">
         <div>
-          <div v-if="!isDesktop" style="height: 30px"></div>
+          <div v-if="!isDesktopBreakPoint" style="height: 30px"></div>
           <span class="option rb cursor remove-highlight" :class="{active: 'General' === option}" @click="option = 'General'">General
             <CircleBubble
               innerColor='var(--light-gray)'
@@ -276,7 +276,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop']),
+    ...mapGetters(['layout', 'isDesktopBreakPoint']),
     ...mapState(['user', 'userInfo']),
     sidebarSmartViews() {
       return this.$store.getters.sidebarElements
