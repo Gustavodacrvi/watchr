@@ -25,10 +25,6 @@ export default {
 }
 
 .handle {
-  color: white;
-}
-
-.handle:hover {
   text-decoration: underline;
 }
 

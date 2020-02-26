@@ -19,7 +19,9 @@
         />
       </transition>
       <transition name="fade-t" appear mode="out-in">
-          <router-view class="router-view" :class="{'non-hided': !hideNavbar && isDesktopBreakPoint}" :hideNavbar='hideNavbar'
+          <router-view
+            class="router-view"
+            :class="{'non-hided': !hideNavbar && isDesktopBreakPoint, relative: route !== 'home'}" :hideNavbar='hideNavbar'
         />
       </transition>
     </div>
@@ -330,8 +332,11 @@ export default {
 }
 
 .router-view {
-  position: relative;
   transition-duration: .3s;
+}
+
+.relative {
+  position: relative;
 }
 
 .desktop .router-view {

@@ -14,7 +14,7 @@
           @input="v => str = v"
           :focus="true"
           :disableAutoSelect='true'
-          :options="options"
+          :options="[]"
           @select="select"
           @enter='save'
           @goup='$emit("goup")'
