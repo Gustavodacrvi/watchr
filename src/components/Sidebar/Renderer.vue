@@ -241,11 +241,11 @@ export default {
     enter(el) {
       const s = el.style
       
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.3s'
       s.opacity = 0
       s.height = '0px'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.3s'
         s.opacity = 1
         s.height = (this.isDesktopDevice ? 35 : 42) + 'px'
         setTimeout(() => {

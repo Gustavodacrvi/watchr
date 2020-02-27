@@ -395,7 +395,7 @@ export default {
   overflow: hidden;
 }
 
-.mobile .link-wrapper {
+.SidebarElement.mobile .link-wrapper {
   height: 42px;
 }
 

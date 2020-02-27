@@ -396,7 +396,7 @@ export default {
             done()
           })
           setTimeout(() => {
-            s.transitionDuration = '.2s'
+            s.transitionDuration = '.3s'
             s.height = 'auto'
             s.minHeight = this.itemHeight + 'px'
           }, 300)
@@ -880,9 +880,12 @@ export default {
 .cont-wrapper {
   position: relative;
   min-height: 38px;
-  background-color: var(--back-color);
   z-index: 5;
   transition-duration: .25s;
+}
+
+.mobile .cont-wrapper {
+  background-color: var(--back-color);
 }
 
 .cont-wrapper-wrapper {

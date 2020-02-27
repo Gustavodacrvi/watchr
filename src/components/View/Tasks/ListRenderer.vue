@@ -84,9 +84,13 @@
           @cancel='removeEdit'
         />
       </template>
-      <div v-if="!moving && !hasEdit">
+      <div v-if="!moving && !hasEdit"
+        class='list-info'
+      >
         <transition name="fade-t">
-          <div v-if="computedShowSomedayButton && !isElementFromAnotherTabHovering" @click="$emit('allow-someday')">
+          <div v-if="computedShowSomedayButton && !isElementFromAnotherTabHovering"
+            @click="$emit('allow-someday')"
+          >
             <ButtonVue type="no-padding" value="Show someday items..."/>
           </div>
         </transition>
@@ -1024,7 +1028,7 @@ export default {
       if (!this.header && this.comp !== 'List') {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-        if (!isTyping && !this.isOnControl) {
+        if (!isTyping && !this.isOnControl && !this.isOnAlt) {
           if (!this.disableRootActions) {
             if (key === 'a')
               this.addEditComp(this.lazyItems.length)
@@ -1070,7 +1074,10 @@ export default {
     ...mapState({
       cameFromAnotherTabHTMLElement: state => state.cameFromAnotherTabHTMLElement,
       selected: state => state.selectedItems,
+
       isOnControl: state => state.isOnControl,
+      isOnAlt: state => state.isOnAlt,
+
       selectedType: state => state.selectedType,
       isOnShift: state => state.isOnShift,
       pressingKey: state => state.pressingKey,
@@ -1314,6 +1321,11 @@ export default {
   z-index: 1;
 }
 
+.list-info {
+  position: absolute;
+  width: 100%;
+}
+
 .ListRenderer {
   position: relative;
   margin-top: 16px;
@@ -1342,7 +1354,6 @@ export default {
   position: relative;
   min-height: 35px;
   z-index: 2;
-  overflow: visible;
   height: 100%;
   transition-duration: .2s;
 }
@@ -1381,7 +1392,6 @@ export default {
 
 .add-item-wrapper {
   height: 35px;
-  position: absolute;
   width: 100%;
 }
 

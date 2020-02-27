@@ -64,7 +64,7 @@ export default {
       s.height = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.3s'
         s.opacity = 1
         s.height = '30px'
 
@@ -77,7 +77,7 @@ export default {
 
       const s = el.style
 
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.3s'
       s.opacity = 0
       s.height = 0
 

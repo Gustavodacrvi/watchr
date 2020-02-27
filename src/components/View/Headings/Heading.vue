@@ -2,7 +2,7 @@
   <div class="Heading"
     :name='header.name'
     :id='header.id'
-    :class="layout"
+    :class="deviceLayout"
   >
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
@@ -48,7 +48,11 @@
           @save="saveNote"
         />
         <transition
+          appear
+
+          @beforeEnter='beforeEnter'
           @enter='enterCont'
+
           @leave='leaveCont'
         >
           <div v-if="renderCont" class="cont">
@@ -158,25 +162,28 @@ export default {
         this.toggleEditing()
     },
     
-    enterCont(el, done) {
-
+    beforeEnter(el) {
       const s = el.style
 
       s.transitionDuration = 0
       s.opacity = 0
       s.height = 0
-      s.overflow = 'hidden'
+      s.overflow = 'visible'
+    },
+    enterCont(el, done) {
 
-      requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+      const s = el.style
+      
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
         s.opacity = 1
         s.height = this.renderHeight
+  
         setTimeout(() => {
-          s.overflow = 'visible'
           s.height = 'auto'
           done()
-        }, 255)
-      })
+        }, 309)
+      }, 50)
     },
     leaveCont(el, done) {
 
@@ -184,20 +191,21 @@ export default {
 
       s.transitionDuration = 0
       s.opacity = 1
-      s.overflow = 'hidden'
       s.height = this.renderHeight
+      s.overflow = 'hidden'
 
-      requestAnimationFrame(() => {
-        s.transitionDuration = '.4s'
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
         s.opacity = 0
-        s.height = 0
-        setTimeout(done, 500)
-      })
-
+        s.height = '0px'
+        s.overflow = 'hidden'
+  
+        setTimeout(done, 301)
+      }, 100)
     },
     
     bindOptions() {
-      if (this.isDesktopBreakPoint) {
+      if (this.isDesktopDevice) {
         const header = this.$el.getElementsByClassName('header-wrapper')[0]
         if (header)
           utils.bindOptionsToEventListener(header, this.options, this)
@@ -233,7 +241,7 @@ export default {
       }
     },
     click(evt) {
-      if (this.isDesktopBreakPoint && !this.doingTransition) {
+      if (this.isDesktopDevice && !this.doingTransition) {
         this.showing = !this.showing
         this.left = evt.offsetX + 'px'
         this.top = evt.offsetY + 'px'
@@ -304,7 +312,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'layout']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'deviceLayout']),
     bigName() {
       const m = this.getMom
 
@@ -324,7 +332,7 @@ export default {
       return this.getMom.isValid()
     },
     renderHeight() {
-      return ((this.length * this.itemHeight) + 4) + 'px'
+      return ((this.length * this.itemHeight)) + 'px'
     },
     itemHeight() {
       return this.isDesktopDevice ? 38 : 50
@@ -425,7 +433,6 @@ export default {
 
 .cont {
   position: relative;
-  transition-duration: .2s;
   z-index: 49;
 }
 

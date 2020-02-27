@@ -65,7 +65,7 @@ export default {
       s.transitionDuration = 0
       s.height = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.3s'
         if (height < 36)
           s.height = '35px'
         else s.height = `${height}px`

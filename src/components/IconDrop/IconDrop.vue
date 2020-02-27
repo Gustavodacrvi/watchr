@@ -122,7 +122,7 @@ export default {
             s.width = oldWidth
             s.height = oldHeight
             setTimeout(() => {
-              s.transitionDuration = '.2s'
+              s.transitionDuration = '.3s'
               s.width = width
               s.height = height
             }, 125)

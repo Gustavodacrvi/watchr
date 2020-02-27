@@ -15,7 +15,7 @@
         :headingEditOptions='headingEditOptions'
         :color='h.color ? h.color : ""'
         :options='h.options ? h.options(h.nonFiltered) : []'
-        :length='h.length'
+        :length='(h.items.length === 0) ? 1 : h.items.length'
 
         @option-click='v => getOptionClick(h)(v)'
         @save-notes='v => getNotesOption(h)(v)'
@@ -26,6 +26,7 @@
         <ListRenderer
           v-bind="{...$props}"
 
+          :ref='h.id'
           :items='h.items'
           :headings='emptyHeadings'
           :isSmart='isSmart'
@@ -132,7 +133,7 @@ export default {
           this.sortable = new Sortable(el, {
             disabled: !this.updateHeadingIds,
             group: 'headings',
-            delay: this.isDesktopBreakPoint ? 25 : 150,
+            delay: this.isDesktopDevice ? 25 : 150,
             animation: 200,
             handle: '.handle',
       
@@ -179,7 +180,7 @@ export default {
     },
 
     enter(el, done) {
-      if (!this.isDesktopBreakPoint)
+      if (!this.isDesktopDevice)
         done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
@@ -196,17 +197,17 @@ export default {
       s.borderBoddom = '0px solid var(--back-color)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
-        w.transitionDuration = '.25s'
+        s.transitionDuration = '.3s'
+        w.transitionDuration = '.3s'
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = this.isDesktopBreakPoint ? '65px': '4px'
+          w.marginTop = this.isDesktopDevice ? '65px': '4px'
         s.height = '50px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
         s.padding = '0 6px'
-        s.overflow = 'hidden'
+        s.overflow = 'visible'
         setTimeout(() => {
           w.removeProperty('margin-top')
           done()
@@ -214,7 +215,7 @@ export default {
       })
     },
     leave(el, done) {
-      if (this.isChangingViewName || !this.isDesktopBreakPoint)
+      if (this.isChangingViewName || !this.isDesktopDevice)
         done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
@@ -222,18 +223,18 @@ export default {
 
       if (c) {
         c = c.style
-        c.transitionDuration = '.25s'
+        c.transitionDuration = '.3s'
         c.height = 0
-        c.overflow = 'hidden'
+        c.overflow = 'visible'
       }
 
-      s.transitionDuration = '.25s'
-      w.transitionDuration = '.25s'
+      s.transitionDuration = '.3s'
+      w.transitionDuration = '.3s'
       w.opacity = 0
       w.height = 0
-      w.overflow = 'hidden'
+      w.overflow = 'visible'
       s.height = 0
-      s.overflow = 'hidden'
+      s.overflow = 'visible'
       s.margin = 0
       s.padding = 0
       s.borderBoddom = '0px solid var(--back-color)'
@@ -242,7 +243,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktopBreakPoint']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice']),
     emptyHeadings() {
       return []
     },

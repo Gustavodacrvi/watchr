@@ -17,6 +17,7 @@
         :icon="icon"
         :title='title'
         :width='icon === "file" ? "19px" : undefined'
+        @click='openOptions'
       />
       <span v-show="content || right">
         <transition
@@ -45,8 +46,6 @@
 
 <script>
 
-import utils from '@/utils'
-
 export default {
   props: ['content', 'right', 'icon', 'options', 'title', 'number'],
   data() {
@@ -54,13 +53,10 @@ export default {
       hover: false,
     }
   },
-  mounted() {
-    this.bindContext()
-  },
   methods: {
-    bindContext() {
+    openOptions() {
       if (this.options)
-        utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
+        this.$store.commit('pushIconDrop', this.options)
     },
     click() {
       if (this.icon === 'file' && this.fileInput)
@@ -163,11 +159,6 @@ export default {
   computed: {
     fileInput() {
       return this.$refs['file']
-    },
-  },
-  watch: {
-    options() {
-      this.bindContext()
     },
   },
 }

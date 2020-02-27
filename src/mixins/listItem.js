@@ -257,7 +257,7 @@ export default {
       if (this.moved) {
         const cont = this.$refs['cont-wrapper'].style
 
-        cont.transitionDuration = '.2s'
+        cont.transitionDuration = '.3s'
         this.right = 0
         setTimeout(() => {
           cont.transitionDuration = 0
