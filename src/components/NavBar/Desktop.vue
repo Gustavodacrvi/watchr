@@ -95,7 +95,7 @@ export default {
 .link {
   text-decoration: none;
   color: var(--fade);
-  font-size: 1.05em;
+  font-size: 1em;
   display: inline-block;
   padding: 0 14px;
   outline: none;
