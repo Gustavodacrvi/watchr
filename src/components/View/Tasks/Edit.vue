@@ -55,6 +55,12 @@
               :value="calendarStr"
               @click="removeCalendar"
             />
+            <Tag v-if="isEvening"
+              icon="moon"
+              color="var(--dark-purple)"
+              value="Evening"
+              @click="toggleEvening"
+            />
             <Tag v-if="task.priority"
               icon="priority"
               :color="getPriorityColor"
@@ -143,6 +149,16 @@
                 @click='addChecklist'
                 title='Add checklist'
               />
+              <Icon v-if='showEveningIcon'
+                class="icon-box primary-hover cursor"
+                width="18px"
+                icon='moon'
+                :active='isIcon(3)'
+                :box='true'
+                ref='evening'
+                @click='toggleEvening'
+                title='Add to evening'
+              />
             </div>
           </transition>
           <transition name="btn">
@@ -152,7 +168,7 @@
                 :box='true'
                 width="18px"
                 :options="getTags"
-                :active='isIcon(11)'
+                :active='isIcon(12)'
                 ref='tag'
                
                 handleColor='var(--red)'
@@ -164,7 +180,7 @@
                 :box='true'
                 width="18px"
                 :options="priorityOptions"
-                :active='isIcon(10)'
+                :active='isIcon(11)'
                 ref='priority'
                
                 handleColor='var(--yellow)'
@@ -176,7 +192,7 @@
                 width="18px"
                 :box='true'
                 :options="listOptions"
-                :active='isIcon(9)'
+                :active='isIcon(10)'
                 ref='tasks'
                
                 handleColor='var(--primary)'
@@ -188,7 +204,7 @@
                 width="19px"
                 :box='true'
                 :options="folderOptions"
-                :active='isIcon(8)'
+                :active='isIcon(9)'
                 ref='folder'
                
                 title='Add to folder'
@@ -199,7 +215,7 @@
                 width="19px"
                 :box='true'
                 :options="groupOptions"
-                :active='isIcon(7)'
+                :active='isIcon(8)'
                 ref='group'
                
                 title='Add to group'
@@ -210,7 +226,7 @@
                 width="18px"
                 :box='true'
                 :options="calendarOptions"
-                :active='isIcon(6)'
+                :active='isIcon(7)'
                 ref='calendar'
                
                 handleColor='var(--green)'
@@ -221,7 +237,7 @@
                 class="icon-box primary-hover cursor"
                 width="18px"
                 icon='file'
-                :active='isIcon(5)'
+                :active='isIcon(6)'
                 :box='true'
                 ref='file'
                 :file='true'
@@ -232,7 +248,7 @@
                 handle="deadline"
                 width="18px"
                 :box='true'
-                :active='isIcon(4)'
+                :active='isIcon(5)'
                 ref='deadline'
                 :options="deadlineOptions"
                
@@ -244,7 +260,7 @@
                 handle="clock"
                 width="18px"
                 :box='true'
-                :active='isIcon(3)'
+                :active='isIcon(4)'
                 ref='clock'
                 :options="durationOptions"
                
@@ -775,7 +791,16 @@ export default {
       this.task.headingId = ''
     },
     isIcon(num) {
-      return !this.hasChecklist ? num === this.cursorPos : (num + this.task.checklist.length) === this.cursorPos
+      let pos = this.cursorPos
+
+      if (!this.showEveningIcon && pos >= (3 + this.task.checklist.length))
+        pos++
+      
+      return !this.hasChecklist ? num === pos : (num + this.task.checklist.length) === pos
+    },
+    toggleEvening() {
+      const c = this.task.calendar
+      this.task.calendar = {...c, evening: !c.evening} 
     },
   },
   computed: {
@@ -822,6 +847,10 @@ export default {
     hasChecklist() {
       return this.task.checklist.length > 0
     },
+    showEveningIcon() {
+      const c = this.task.calendar
+      return c && c.type !== 'someday' && !c.evening
+    },
     keyboardActions() {
       const c = ref => () => this.$refs[ref].click()
 
@@ -842,7 +871,7 @@ export default {
       const getIconsObj = () => {
         let num = !hasChecklist ? 2 : this.task.checklist.length + 2
 
-        return [
+        const icons = [
           'checklist-icon',
           'clock',
           'deadline',
@@ -853,7 +882,12 @@ export default {
           'tasks',
           'priority',
           'tag',
-        ].reduce((obj, icon) => {
+        ]
+
+        if (this.showEveningIcon)
+          icons.splice(1, 0, 'evening')
+
+        return icons.reduce((obj, icon) => {
           obj[num] = c(icon)
           num++
           return obj
@@ -988,6 +1022,9 @@ export default {
     atLeastOnSpecialTag() {
       const t = this.task
       return this.calendarStr || t.deadline || t.priority || t.folder || t.group || t.taskDuration || t.list || (t.list && t.heading)
+    },
+    isEvening() {
+      return this.task.calendar && this.task.calendar.evening
     },
     calendarStr() {
       if (this.task.calendar)
