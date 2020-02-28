@@ -20,7 +20,7 @@
       @dragleave='dragover = false'
     >
       <span class="icon-wrapper">
-        <Icon class="icon" :class="{headerHover}" icon="folder" width='21px'/>
+        <Icon class="icon" :class="{headerHover}" icon="folder" width='17px'/>
       </span>
       <span class="name-wrapper">
         <span class="name" key="nam"><b>{{ name }}</b></span>

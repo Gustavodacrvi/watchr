@@ -56,8 +56,8 @@
             <div class="header-name">{{ l.name }}</div>
             <div class="values">
               <Icon v-for="l in l.options" :key="l.id" class="val primary-hover icon cursor"
-                width="25px"
                 :icon="l.icon"
+                width='18px'
                 :color="l.color"
                 @click="linkCallback(l.callback, l)"
               />
@@ -79,7 +79,7 @@
       </transition-group>
     </div>
     <div v-if="select && links.onSave" class="btn">
-      <div style="height: 40px"></div>
+      <div style="height: 30px"></div>
       <div class="absolute-btn">
         <div class="abs-wrapper">
           <div class="back-layer"></div>
@@ -289,9 +289,9 @@ export default {
   align-items: center;
   transition-duration: .15s;
   white-space: nowrap;
-  height: 32px;
-  border-radius: 8px;
-  margin: 0 18px;
+  height: 22px;
+  border-radius: 4px;
+  margin: 0 10px;
   overflow: hidden;
   position: relative;
 }
@@ -352,13 +352,13 @@ export default {
 
 .search {
   margin: 0 12px;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
   min-width: 250px;
   position: relative;
 }
 
 .header-link {
-  margin: 8px 26px;  
+  margin: 8px 20px;
   width: 160px;
   transition: opacity .15s;
 }
@@ -376,7 +376,7 @@ export default {
 }
 
 .drop-division {
-  margin: 10px 26px;
+  margin: 10px 24px;
 }
 
 .division-line {
@@ -384,7 +384,7 @@ export default {
 }
 
 .btn {
-  margin: 4px 26px;
+  margin: 4px 24px;
 }
 
 .absolute-btn {
@@ -392,7 +392,7 @@ export default {
   width: 100%;
   left: 0;
   bottom: 6px;
-  padding: 0 18px;
+  padding: 0 10px;
 }
 
 .abs-wrapper {

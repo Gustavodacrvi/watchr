@@ -16,7 +16,7 @@
         <div class="fast-options">
           <Icon
             class="cursor icon-box"
-            width="24px"
+            width="19px"
             icon="star"
             ref='tod'
             title='Today'
@@ -26,7 +26,7 @@
           />
           <Icon
             class="cursor icon-box"
-            width="24px"
+            width="19px"
             icon="sun"
             ref='tom'
             title='Tomorrow'
@@ -36,7 +36,7 @@
           />
           <Icon v-if="allowSomeday"
             class="cursor icon-box"
-            width="24px"
+            width="19px"
             ref='som'
             icon="archive"
             title='Someday'
@@ -47,7 +47,7 @@
           <Icon v-if="allowBloqued"
             class="cursor icon-box"
             ref='bloq'
-            width="24px"
+            width="19px"
             icon="bloqued"
             title='No date'
             :box='true'
@@ -57,7 +57,7 @@
           <Icon v-if="allowRepeat"
             class="cursor icon-box"
             ref='rep'
-            width="24px"
+            width="19px"
             icon="repeat"
             title='Recurring dates'
             :box='true'
@@ -409,7 +409,7 @@ export default {
 
 .opt {
   margin: 0 26px;
-  height: 38px;
+  height: 28px;
   display: flex;
   align-items: center;
   position: relative;
@@ -624,6 +624,7 @@ export default {
 .day {
   width: 31px;
   height: 31px;
+  font-size: 1.2em;
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -133,7 +133,7 @@ export default {
           this.sortable = new Sortable(el, {
             disabled: !this.updateHeadingIds,
             group: 'headings',
-            delay: this.isDesktopDevice ? 25 : 150,
+            delay: this.isDesktopDevice ? 15 : 150,
             animation: 200,
             handle: '.handle',
       
@@ -202,8 +202,8 @@ export default {
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = this.isDesktopDevice ? '65px': '4px'
-        s.height = '50px'
+          w.marginTop = this.isDesktopDevice ? '45px': '4px'
+        s.height = '35px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
         s.padding = '0 6px'

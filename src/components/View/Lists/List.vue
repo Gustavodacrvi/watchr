@@ -28,12 +28,12 @@
           <Icon class="back-icon"
             icon='circle-filled'
             color='white'
-            width="22px"
+            width="16px"
           />
           <Icon class="back-icon"
             icon='circle-filled'
             color='white'
-            width="22px"  
+            width="16px"  
           />
         </div>
       </div>
@@ -430,13 +430,14 @@ export default {
 }
 
 .icon-wrapper {
-  width: 35px;
+  width: 25px;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
   opacity: .6;
+  transform: translate(1px, 2px);
 }
 
 .progress-icon {

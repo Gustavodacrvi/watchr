@@ -121,7 +121,7 @@ export default {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition-duration: .2s;
   transform: scale(1,1);

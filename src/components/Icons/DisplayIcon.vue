@@ -6,6 +6,7 @@ import ActualIcon from './Icon.vue'
 export default {
   functional: true,
   render(createElement, context) {
+    const isDesktopDevice = window.screen.width >= 820
     return createElement(
       'span',
       {
@@ -24,7 +25,7 @@ export default {
           {
             class: ['icon', 'remove-highlight'],
             style: {
-              width: (context.props.width ? context.props.width : '20px'),
+              width: (context.props.width ? context.props.width : (isDesktopDevice ? '15px' : '20px')),
               color: context.props.color,
             },
           },

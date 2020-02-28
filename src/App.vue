@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="[{hidePassive}, layout]">
+  <div id="app" :class="[{hidePassive}, deviceLayout]">
     <transition name="fade-t">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
@@ -243,7 +243,7 @@ export default {
   },
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift', 'userInfo']),
-    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'getInitialSmartView', 'needsUpdate', 'layout']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'getInitialSmartView', 'needsUpdate', 'layout', 'deviceLayout']),
     isReady() {
       return this.$store.state.googleCalendarReady
     },
@@ -340,7 +340,7 @@ export default {
 }
 
 .desktop .router-view {
-  top: 46px;
+  top: 30px;
 }
 
 .non-hided {
@@ -366,7 +366,7 @@ export default {
 
 .nav-trans-leave, .nav-trans-enter-to {
   opacity: 1 !important;
-  height: 65px !important;
+  height: 45px !important;
   transition: opacity .3s ease-in, height .3s ease-in;
 }
 
@@ -392,6 +392,11 @@ export default {
 .hidePassive .passive {
   opacity: 0 !important;
   transition: opacity .6s;
+}
+
+#app.desktop,
+#app.desktop button {
+  font-size: .8em;
 }
 
 </style>

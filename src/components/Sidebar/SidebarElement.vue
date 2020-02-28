@@ -325,7 +325,7 @@ export default {
 
 .icon-wrapper {
   height: 100%;
-  width: 40px;
+  width: 33px;
   flex-shrink: 0;
   position: relative;
 }
@@ -375,8 +375,12 @@ export default {
   transition: color .15s;
 }
 
+.Folder .SidebarElement {
+  color: var(--dark-txt);
+}
+
 .link-wrapper {
-  height: 35px;
+  height: 25px;
   position: relative;
   transition-duration: .15s;
 }

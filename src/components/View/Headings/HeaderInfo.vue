@@ -16,7 +16,7 @@
         class="icon faded"
         :icon="icon"
         :title='title'
-        :width='icon === "file" ? "19px" : undefined'
+        :width='icon === "file" ? "16px" : undefined'
         @click='openOptions'
       />
       <span v-show="content || right">
@@ -88,9 +88,9 @@ export default {
       s.padding = '0'
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
-        s.height = '35px'
+        s.height = '28px'
         s.padding = '0 8px'
-        s.width = '35px'
+        s.width = '28px'
         s.opacity = '1'
 
         setTimeout(() => {
@@ -183,7 +183,7 @@ export default {
 }
 
 .header-info {
-  height: 35px;
+  height: 28px;
   position: relative;
   display: inline-flex;
   padding: 0 8px;

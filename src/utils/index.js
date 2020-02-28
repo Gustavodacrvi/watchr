@@ -499,7 +499,8 @@ export default {
         const y = evt.pageY + 'px'
         const x = evt.pageX + 'px'
         const old = document.getElementById('contextmenu')
-        if (old) document.body.removeChild(old)
+        const body = document.getElementById('app')
+        if (old) body.removeChild(old)
 
         const Constructor = Vue.extend(IconDrop)
         const ins = new Constructor({
@@ -511,7 +512,7 @@ export default {
         })
         const vueEl = document.createElement('div')
         vueEl.setAttribute('id', 'click-contextmenu')
-        document.body.appendChild(vueEl)
+        body.appendChild(vueEl)
         ins.$mount('#click-contextmenu')
 
         const drop = document.getElementById('contextmenu')

@@ -146,7 +146,7 @@ export default {
 
 .act-button-wrapper .main {
   background-color: var(--sidebar-color);
-  border-radius: 10px;
+  border-radius: 6px;
   transition: background-color .2s, box-shadow;
 }
 

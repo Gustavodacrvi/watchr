@@ -197,7 +197,7 @@ export default {
   display: inline-block;
   padding: 6px;
   margin-left: 4px;
-  border-radius: 8px;
+  border-radius: 6px;
   transition-duration: .2s;
   cursor: pointer;
 }

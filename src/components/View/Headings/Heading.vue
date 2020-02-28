@@ -24,12 +24,12 @@
                 icon="tasks"
                 :color='getHeadingColor'
                 :progress="progress"
-                width='15px'
+                width='10px'
               />
               <Icon v-else-if="icon" class="icon"
                 :icon='icon'
                 :color='getHeadingColor'
-                width='22px'
+                width='16px'
               />
               <h3 class="name" :class="{hasIcon}" :style="{color: getHeadingColor}">{{ name }}</h3>
             </span>
@@ -182,7 +182,7 @@ export default {
         setTimeout(() => {
           s.height = 'auto'
           done()
-        }, 309)
+        }, 10001)
       }, 50)
     },
     leaveCont(el, done) {
@@ -332,10 +332,10 @@ export default {
       return this.getMom.isValid()
     },
     renderHeight() {
-      return ((this.length * this.itemHeight)) + 'px'
+      return ((this.length * this.itemHeight) - 4) + 'px'
     },
     itemHeight() {
-      return this.isDesktopDevice ? 38 : 50
+      return this.isDesktopDevice ? 28 : 50
     },
     renderCont() {
       return this.defer(2) && this.showing
@@ -394,7 +394,7 @@ export default {
 }
 
 .Heading + .Heading {
-  margin-top: 65px;
+  margin-top: 45px;
 }
 
 .Heading.mobile + .Heading {
@@ -412,7 +412,7 @@ export default {
 }
 
 .big-name {
-  font-size: 1.6em;
+  font-size: 1.4em;
 }
 
 .header-wrapper {
@@ -421,7 +421,7 @@ export default {
   align-items: center;
   margin-bottom: 0px;
   border-bottom: 1.5px solid var(--light-gray);
-  height: 50px;
+  height: 35px;
   opacity: 1;
   z-index: 50;
   cursor: text;
@@ -473,7 +473,7 @@ export default {
 
 .sortable-ghost {
   background-color: var(--sidebar-color);
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .sortable-ghost .header-wrapper {

@@ -33,7 +33,7 @@ export default {
 <style scoped>
 
 .SearchButton {
-  height: 35px;
+  height: 25px;
   background-color: var(--dark);
   transition: background-color .15s;
   display: flex;

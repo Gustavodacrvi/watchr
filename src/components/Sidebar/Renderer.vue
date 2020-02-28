@@ -109,7 +109,7 @@ export default {
           if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
-      delay: this.isDesktopDevice ? 25 : 150,
+      delay: this.isDesktopDevice ? 15 : 150,
       handle: '.item-handle',
 
       onUpdate: evt => {
@@ -247,7 +247,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
         s.opacity = 1
-        s.height = (this.isDesktopDevice ? 35 : 42) + 'px'
+        s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
         setTimeout(() => {
           s.height = 'auto'
         }, 220)
@@ -352,7 +352,7 @@ export default {
 
 .add-msg-wrapper {
   position: absolute;
-  height: 35px;
+  height: 25px;
   width: 100%;
 }
 
@@ -361,7 +361,7 @@ export default {
   justify-content: center;
   align-items: center;
   width: 100%;
-  border-radius: 8px;
+  border-radius: 6px;
   height: 0;
   opacity: 0;
   background-color: transparent;
@@ -372,7 +372,7 @@ export default {
 .add-msg-wrapper:hover .add-msg {
   opacity: 1;
   cursor: pointer;
-  height: 35px;
+  height: 25px;
   background-color: var(--dark);
 }
 
