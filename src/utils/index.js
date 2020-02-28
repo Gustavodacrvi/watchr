@@ -224,6 +224,13 @@ export default {
         },
       },
       {
+        match: ['evening', 'eve'],
+        get: () => {
+          cal.evening = true
+          return cal 
+        }
+      },
+      {
         match: 'no date',
         get: () => null,
       },
