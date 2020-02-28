@@ -335,10 +335,11 @@ export default {
         },
       },
       isListInView: {
-        getter({getters}, list, view) {
+        getter({getters, rootState}, list, view) {
           switch (view) {
             case 'Someday': return getters.isListSomeday(list)
             case 'Anytime': return getters.isListAnytime(list)
+            case 'Assigned to me': return list.assigned === rootState.user.uid
           }
         },
         cache(args) {
@@ -358,6 +359,12 @@ export default {
             }
             case 'Someday': {
               obj = t.calendar
+              break
+            }
+            case 'Assigned to me': {
+              obj = {
+                a: t.assigned
+              }
               break
             }
           }

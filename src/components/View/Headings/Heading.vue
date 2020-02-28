@@ -149,7 +149,6 @@ export default {
     },
     
     stopEditing(evt) {
-
       let found
       const path = event.path || (event.composedPath && event.composedPath())
       for (const p of path)

@@ -2,11 +2,9 @@
   <span>
     <Icon v-if="assigned === owner"
       icon='crown'
-      width='22px'
     />
     <Icon v-else-if='assigned === uid'
       icon='user'
-      width='22px'
       color='var(--primary)'
     />
     <ProfilePhoto v-else

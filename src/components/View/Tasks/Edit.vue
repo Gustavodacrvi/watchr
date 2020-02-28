@@ -4,7 +4,10 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, layout]" :style="editStyle">
+    <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, layout]" :style="editStyle"
+
+      @mouseup.stop
+    >
       <div class="fix-back" @click="remove"></div>
       <div class="edit-wrapper">
         <DropInput ref="task-name" class="name-input"
@@ -26,6 +29,7 @@
           :msg='dropInput'
           :class="{'no-back': !popup, show}"
           v-model="task.notes"
+          :onPaste='onNotePast'
           :enterOnShift='true'
           :options="[]"
           :placeholder="notesPlaceholder"
@@ -141,7 +145,7 @@
             <div v-if="showingOptions" class='icons row'>
               <Icon
                 class="icon-box primary-hover cursor"
-                width="18px"
+                width="17px"
                 icon='menu'
                 :active='isIcon(2)'
                 :box='true'
@@ -151,7 +155,7 @@
               />
               <Icon v-if='showEveningIcon'
                 class="icon-box primary-hover cursor"
-                width="18px"
+                width="17px"
                 icon='moon'
                 :active='isIcon(3)'
                 :box='true'
@@ -524,6 +528,28 @@ export default {
             this.incrementPos(1)
         }
       }
+    },
+    onNotePast(txt) {
+      const splitStrs = [' • ',' * ',' - ', ' [ ] ']
+
+      let toSplit = null
+
+      for (const split of splitStrs) {
+        if (txt.split(split).length > 2) {
+          toSplit = split
+          break
+        }
+      }
+
+      if (toSplit) {
+        txt.split(toSplit).filter(s => s)
+          .forEach(task => this.addSubtask({
+            name: task,
+            index: this.task.checklist.length,
+            ids: this.task.order
+          }))
+      }
+      
     },
     onPaste(txt) {
       if (this.fallbackItem) {

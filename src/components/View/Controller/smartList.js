@@ -105,13 +105,14 @@ export default {
         case 'Calendar': return task => this.isTaskShowingOnDate(task, this.calendarDate)
         case 'Upcoming': return task => task.calendar
         case 'Logged lists': return t => false
+        case 'Assigned to me': return t => t.assigned === this.user.uid
       }
       return task => this.isTaskInView(task, n)
     },
     rootFilter() {
       const n = this.viewName
       if (this.viewType === 'search')
-        return () => true
+      return () => true
       if (this.isSmartOrderViewType && this.ungroupTasksInHeadings || n === 'Recurring' || n === 'Inbox')
         return () => true
 
@@ -168,6 +169,7 @@ export default {
         }
         case 'Tomorrow': return heads
         case 'Someday': return heads
+        case 'Assigned to me': return heads
         case 'Deadlines': return this.deadlinesViewHeadings
         case 'Later lists': return this.laterListsHeadings
         case 'Anytime': return heads

@@ -124,9 +124,9 @@ export default {
   },
   computed: {
     ...mapState(['selectedItems']),
-    ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor']),
+    ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor', 'isSmartList']),
     isEditable() {
-      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktopBreakPoint
+      return !this.isSmartList && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktopBreakPoint
     },
   },
   watch: {
