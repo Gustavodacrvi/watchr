@@ -61,7 +61,7 @@
         class="toggle-icon cursor remove-highlight primary-hover"
         :class="{showingSublist}"
         icon="tiny-arrow"
-        width="26px"
+        width="22px"
         :circle="true"
         @click="showingSublist = !showingSublist"
       />

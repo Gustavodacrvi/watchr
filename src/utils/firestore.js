@@ -70,6 +70,7 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
   
       const getObj = () => ({
         ...hydratedTask, handleFiles: null,
+        lastEditDate: mom().format('Y-M-D HH:mm ss'),
         id,
         userId: uid(),
       })

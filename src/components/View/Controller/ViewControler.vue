@@ -544,6 +544,7 @@ export default {
 
       if (this.isCalendarOrderViewType) {
         const calendarDate = this.getCalendarOrderDate
+        const scheduleOrder = this.getCurrentScheduleTasksOrder
         arr.unshift({
           name: 'Evening',
           id: 'EVENING_SMART_VIEW',
@@ -554,10 +555,11 @@ export default {
           sort: this.sortArray,
           filter: t => t.calendar && t.calendar.evening,
           fallbackFunctionData: () => ({
-            scheduleOrder: this.getCurrentScheduleTasksOrder,
             viewName: this.viewName,
+            scheduleOrder,
             calendarDate,
           }),
+          order: scheduleOrder,
           updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
           fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Evening(t, f, {calendarDate}),
         })
