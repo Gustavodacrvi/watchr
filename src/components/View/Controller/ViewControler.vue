@@ -247,7 +247,7 @@ export default {
       getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
-    getListHeadingsByView() {
+    getListFolderGroupCalendarHeadings() {
       const viewName = this.viewName
       const savedLists = this.lists
       const savedFolders = this.folders
@@ -255,7 +255,7 @@ export default {
       const setOfLists = new Set()
       const setOfFolders = new Set()
       const setOfGroups = new Set()
-      const isSmartOrderViewType = (viewName === 'Someday' || viewName === 'Anytime')
+      const isSmartOrderViewType = this.isHeadingsSmartOrderViewType
 
       for (const t of savedLists) {
         if (!setOfLists.has(t)) {
@@ -530,7 +530,15 @@ export default {
         }
       }
 
-      if (!isSmartOrderViewType)
+      return arr
+    },
+    getListHeadingsByView() {
+      let arr = []
+
+      if (!(this.isCalendarOrderViewType && this.ungroupTasksInHeadings)) 
+        arr = this.getListFolderGroupCalendarHeadings
+
+      if (!this.isHeadingsSmartOrderViewType)
         arr = [...arr, ...this.lastDayDeadlineItemsHeadings]
       else
         arr = [...arr, ...this.smartOrderListHeadings]
@@ -1276,6 +1284,10 @@ export default {
     },
     isListType() {
       return !this.isSmart && this.viewList && this.viewType === 'list'
+    },
+    isHeadingsSmartOrderViewType() {
+      const n = this.viewName
+      return n === 'Someday' || n === 'Anytime'
     },
     isSmartOrderViewType() {
       const n = this.viewName

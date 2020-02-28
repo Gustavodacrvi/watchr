@@ -70,6 +70,7 @@ import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 import paperPlane from '@/assets/icons/paper-plane.svg'
 import laterLists from '@/assets/icons/later-lists.svg'
 import group from '@/assets/icons/group.svg'
+import moon from '@/assets/icons/moon.svg'
 import crown from '@/assets/icons/crown.svg'
 
 const icons = {
@@ -80,7 +81,7 @@ const icons = {
   envelope, deadline, sleep, repeat, box, file,
   folder, heart, close, filter, magic, clock,
   pomo, pie, check, group, message, crown,
-  comment, logbook,
+  comment, logbook, moon,
   "later-lists": laterLists,
   "logged-lists": loggedLists,
   "faded-logged-lists": fadedLoggedLists,

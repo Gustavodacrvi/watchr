@@ -163,6 +163,9 @@ export default {
     },
     
     beforeEnter(el) {
+      if (!this.isDesktopBreakPoint)
+        return done()
+      
       const s = el.style
 
       s.transitionDuration = 0
@@ -171,7 +174,7 @@ export default {
       s.overflow = 'visible'
     },
     enterCont(el, done) {
-      if (this.isDesktopBreakPoint)
+      if (!this.isDesktopBreakPoint)
         return done()
 
       const s = el.style
@@ -188,7 +191,7 @@ export default {
       }, 50)
     },
     leaveCont(el, done) {
-      if (this.isDesktopBreakPoint)
+      if (!this.isDesktopBreakPoint)
         return done()
 
       const s = el.style

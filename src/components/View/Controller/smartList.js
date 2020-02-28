@@ -154,8 +154,6 @@ export default {
       return null
     },
     headings() {
-      if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings) 
-        return []
       const heads = this.getListHeadingsByView
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadings
