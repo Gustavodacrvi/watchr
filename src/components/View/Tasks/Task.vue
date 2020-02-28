@@ -35,12 +35,12 @@
           <Icon class="back-icon"
             icon='circle-filled'
             color='white'
-            width="22px"
+            width="16px"
           />
           <Icon class="back-icon"
             icon='circle-filled'
             color='white'
-            width="22px"  
+            width="16px"  
           />
         </div>
       </div>
@@ -130,7 +130,7 @@
                     class="txt-icon checklist-icon"
                     icon="pie"
                     color="var(--fade)"
-                    width="12px"
+                    width="8px"
                     :progress='checklistPieProgress'/>
                     <span v-if="!isDesktopBreakPoint && nonReadComments" class="comment-icon">
                       <Icon
@@ -143,7 +143,7 @@
                     </span>
                     <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
                     <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="14px"/>
-                    <span v-if="nextCalEvent" class="tag dark rb">{{ nextCalEvent }}</span>
+                    <span v-if="nextCalEvent" class="txt-icon tag dark rb">{{ nextCalEvent }}</span>
                   </span>
                 </div>
               </div>
@@ -954,6 +954,7 @@ export default {
 
 .txt-icon {
   margin-left: 12px;
+  margin-right: 10px;
 }
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
@@ -1018,7 +1019,7 @@ export default {
 }
 
 .check {
-  width: 35px;
+  width: 25px;
   height: 100%;
   margin-left: 2px;
   flex-shrink: 0;
@@ -1081,8 +1082,8 @@ export default {
 }
 
 .name-icon {
-  margin-right: 9px;
-  transform: translateY(2px);
+  margin-right: 8px;
+  transform: translateY(.5px);
 }
 
 .apply {
@@ -1108,7 +1109,7 @@ export default {
 }
 
 .checklist-icon {
-  transform: translateY(1px);
+  transform: translateY(2.5px);
 }
 
 .isItemSelected .cont-wrapper {

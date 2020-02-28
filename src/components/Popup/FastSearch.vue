@@ -26,7 +26,9 @@
                 <div class="icon-wrapper">
                   <Icon :icon='o.icon' class="icon" :color="o.iconColor"/>
                 </div>
-                <span class="name">{{ o.name }}</span>
+                <span class="name-wrapper">
+                  <span class="name">{{ o.name }}</span>
+                </span>
               </div>
             </transition-group>
           </div>
@@ -66,9 +68,7 @@ export default {
       s.height = 0
       requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
-        if (height < 36)
-          s.height = '35px'
-        else s.height = `${height}px`
+        s.height = `${this.isDesktopDevice ? 25 : 35}px`
       })
     },
     leave(el) {
@@ -193,6 +193,7 @@ export default {
       groups: state => state.group.groups,
     }),
     ...mapGetters({
+      isDesktopDevice: 'isDesktopDevice',
       sidebarElements: 'sidebarElements',
       lists: 'list/lists',
       tags: 'tag/tags',
@@ -279,11 +280,20 @@ export default {
   transform: translate(-50%,-50%);
 }
 
-.name {
+.name-wrapper {
   display: flex;
   align-items: center;
   flex-basis: 100%;
-  word-wrap: break-all;
+  padding-right: 4px;
+  position: relative;
+}
+
+.name {
+  position: absolute;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .trans-lenter, .trans-leave-to {

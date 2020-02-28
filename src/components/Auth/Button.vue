@@ -65,7 +65,7 @@ export default {
 .Button {
   width: 100%;
   border: none;
-  padding: 12px;
+  padding: 8px;
   border-radius: 10px;
   font-size: 1.01em;
   cursor: pointer;
@@ -81,14 +81,14 @@ export default {
 }
 
 .tiny.normal {
-  padding: 8px;
+  padding: 6px;
 }
 
 .no-back {
   background-color: var(--back-color);
   border: 1px solid var(--primary);
   color: var(--primary);
-  padding: 8px;
+  padding: 6px;
 }
 
 .no-back:hover {
@@ -100,7 +100,7 @@ export default {
   display: inline-block;
   margin-top: 8px;
   width: unset;
-  padding: 10px;
+  padding: 6px;
   color: var(--fade);
   transition-duration: .15s;
   transform: scale(1,1);

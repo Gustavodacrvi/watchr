@@ -87,7 +87,7 @@ export default {
 }
 
 .wrapper {
-  height: 35px;
+  height: 25px;
 }
 
 .mobile .wrapper {
@@ -97,7 +97,8 @@ export default {
 .input {
   width: 100%;
   height: 100%;
-  padding-left: 12px;
+  font-size: 1em;
+  padding-left: 8px;
   outline: none;
 }
 

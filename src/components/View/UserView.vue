@@ -117,7 +117,7 @@ export default {
         const scroll = this.scrollTop + increment
         if (app) {
           const winHeight = app.offsetHeight
-          let top = (75 - scroll) + 'px'
+          let top = (55 - scroll) + 'px'
           let height = ((winHeight - 100) + scroll) + 'px'
           if (scroll > 50) {
             top = '30px'

@@ -35,7 +35,7 @@
       <span class='num'>{{ number }}</span>
     </span>
     <transition name="title-trans">
-      <div v-if="(showingTitle || active) && title && isDesktop"
+      <div v-if="(showingTitle || active) && title && isDesktopDevice"
         class="icon-title rb"
       >
         {{ title }}
@@ -94,7 +94,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktopDevice']),
     getProgress() {
       return 18.5 * this.progress / 100
     },
@@ -102,7 +102,9 @@ export default {
       return this.$refs['file']
     },
     getRawWidth() {
-      const defaultWidth = this.hasProgress ? 17 : 20
+      let defaultWidth = this.hasProgress ? 12 : 17
+      if (!this.isDesktopDevice)
+        defaultWidth = this.hasProgress ? 17 : 20
       return this.width ? parseInt(this.width, 10) : defaultWidth
     },
     getWidth() {
@@ -133,7 +135,7 @@ export default {
 }
 
 .box {
-  padding: 6px;
+  padding: 4px;
   background-color: transparent;
   transition-duration: .2s;
   border-radius: 7px;
@@ -203,7 +205,7 @@ export default {
 
 .pie-wrapper {
   position: relative;
-  transform: translateY(4px);
+  transform: translateY(2px);
   display: inline-block;
   stroke: var(--txt);
 }

@@ -89,7 +89,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
 
-        s.height = '35px'
+        s.height = '25px'
         s.opacity = 1
         s.margin = '10px 0'
 

@@ -270,7 +270,7 @@ export default {
 
 .input {
   border: none;
-  padding: 12px;
+  padding: 9px;
   outline: none;
   border-radius: 10px;
   font-size: 1em;
@@ -291,7 +291,7 @@ export default {
 
 .link {
   height: 40px;
-  padding: 0 12px;
+  padding: 0 9px;
   display: flex;
   align-items: center;
   opacity: 0;

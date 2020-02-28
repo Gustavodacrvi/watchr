@@ -291,7 +291,7 @@ const store = new Vuex.Store({
         {
           name: 'Logbook',
           icon: 'logbook',
-          iconColor: 'var(--purple)'
+          iconColor: 'var(--dark-blue)'
         },
         {
           name: 'Later lists',
@@ -301,7 +301,7 @@ const store = new Vuex.Store({
         {
           name: 'Logged lists',
           icon: 'logged-lists',
-          iconColor: 'var(--purple)'
+          iconColor: 'var(--dark-blue)'
         },
         {
           name: 'Statistics',

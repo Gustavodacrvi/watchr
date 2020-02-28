@@ -226,7 +226,7 @@ export default {
 
 .tag {
   display: inline-block;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: var(--dark);
   padding: 6px;
   font-size: .8em;

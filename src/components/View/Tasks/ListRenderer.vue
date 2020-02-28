@@ -8,7 +8,7 @@
           left: (isDesktopBreakPoint ? width : 0) + 'px',
         }"
       >
-        <Icon :icon='(icon === "logged-lists" ? "faded-logged-lists" : icon)' color='var(--sidebar-color)' width="150px"/>
+        <Icon :icon='(icon === "logged-lists" ? "faded-logged-lists" : icon)' color='var(--sidebar-color)' width="100px"/>
       </div>
     </transition>
     <div
@@ -523,7 +523,7 @@ export default {
         direction: 'vertical',
 
         animation: 200,
-        delay: this.isDesktopDevice ? 25 : 100,
+        delay: this.isDesktopDevice ? 15 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -1165,7 +1165,7 @@ export default {
       return document.getElementById('app')
     },
     itemHeight() {
-      return this.isDesktopDevice ? 38 : 50
+      return this.isDesktopDevice ? 28 : 50
     },
     pressingMultiSelectKeys() {
       return this.isOnShift
@@ -1303,7 +1303,7 @@ export default {
 }
 
 .cameFromAnotherTab-ghost {
-  height: 38px;
+  height: 28px;
   background-color: var(--sidebar-color);
   transition: transform .2s;
 }
@@ -1352,7 +1352,7 @@ export default {
 .item-renderer-root {
   outline: none;
   position: relative;
-  min-height: 35px;
+  min-height: 25px;
   z-index: 2;
   height: 100%;
   transition-duration: .2s;
@@ -1391,7 +1391,7 @@ export default {
 }
 
 .add-item-wrapper {
-  height: 35px;
+  height: 25px;
   width: 100%;
 }
 
@@ -1407,7 +1407,7 @@ export default {
 }
 
 .add-item-wrapper:hover .add-item {
-  height: 35px;
+  height: 25px;
   opacity: 1;
   cursor: pointer;
   outline: none;

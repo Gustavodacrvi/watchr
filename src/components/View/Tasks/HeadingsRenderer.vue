@@ -133,7 +133,7 @@ export default {
           this.sortable = new Sortable(el, {
             disabled: !this.updateHeadingIds,
             group: 'headings',
-            delay: this.isDesktopDevice ? 25 : 150,
+            delay: this.isDesktopDevice ? 15 : 150,
             animation: 200,
             handle: '.handle',
       
@@ -180,8 +180,8 @@ export default {
     },
 
     enter(el, done) {
-      if (!this.isDesktopDevice)
-        done()
+      if (!this.isDesktopBreakPoint)
+        return done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
 
@@ -202,8 +202,8 @@ export default {
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = this.isDesktopDevice ? '65px': '4px'
-        s.height = '50px'
+          w.marginTop = this.isDesktopDevice ? '45px': '4px'
+        s.height = '35px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
         s.padding = '0 6px'
@@ -215,8 +215,8 @@ export default {
       })
     },
     leave(el, done) {
-      if (this.isChangingViewName || !this.isDesktopDevice)
-        done()
+      if (this.isChangingViewName || !this.isDesktopBreakPoint)
+        return done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
       let c = el.getElementsByClassName('cont')[0]

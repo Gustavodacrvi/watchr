@@ -1166,7 +1166,6 @@ export default {
           },
         ]
       }
-      
       const saveDeadline = deadline => {
         if (this.shortcutsType === 'Task')
           this.$store.dispatch('task/saveTasksById', {
@@ -1260,6 +1259,13 @@ export default {
             }
           },
           {
+            name: 'Show completed',
+            icon: 'circle-check',
+            callback: () => this.toggleCompleted()
+          },
+        ]
+        if (this.getCalendarOrderDate)
+          opt.splice(opt.length - 1, 0, {
             name: 'Auto schedule',
             icon: 'magic',
             callback: () => {
@@ -1276,13 +1282,9 @@ export default {
                 ]
               return getScheduleIconDropObject(null)
             }
-          },
-          {
-            name: 'Show completed',
-            icon: 'circle-check',
-            callback: () => this.toggleCompleted()
-          },
-        ]
+          })
+
+
         if (!this.allowCalendar && (this.getCalendarOrderDate || this.viewName === 'Upcoming'))
           opt.push({
             name: 'Show Google Calendar',
@@ -1611,7 +1613,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 95px;
+  margin: 0 55px;
   min-height: 100%;
   position: relative;
   display: flex;

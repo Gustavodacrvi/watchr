@@ -99,7 +99,7 @@ export default {
 
 .NavBar {
   position: relative;
-  height: 65px;
+  height: 45px;
   display: flex;
   justify-content: center;
   align-items: center;

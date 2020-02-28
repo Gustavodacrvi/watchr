@@ -176,7 +176,7 @@ export default {
         sort: o.sort ? o.sort : this.sortArray,
         order: o.order ? o.order : this.getCalendarOrderByDate(date),
 
-        filter: o.filter ? o.filter : task => this.isTaskShowingOnDate(task, date),
+        filter: o.filter ? o.filter : task => this.isTaskShowingOnDate(task, date, true),
         fallbackFunctionData: o.fallbackFunctionData ? o.fallbackFunctionData : () => ({
           calendarDate: date,
         }),

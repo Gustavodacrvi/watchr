@@ -15,13 +15,6 @@
         <div>
           <transition name="bar-trans">
           <div v-if="!isDesktopBreakPoint || showing" class="sidebar-content">
-            <transition name="search-t">
-              <SearchButton v-if="isDesktopBreakPoint && !disableSearch"
-                @click="$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})"
-                @mouseenter="showSearch"
-                @mouseleave="hideSearch"
-              />
-            </transition>
               <SidebarRenderer
                 type='list'
                 :isSmart='true'
@@ -37,7 +30,7 @@
                 :mapNumbers='numberOfTasks'
                 @update='update'
               />
-              <div v-if='showFavorites' style="margin-top: 28px"></div>
+              <div v-if='showFavorites' style="margin-top: 25px"></div>
               <SidebarRenderer v-if="showFavorites"
                 :enableSort='true'
                 :disabled='false'
@@ -68,7 +61,7 @@
                 </div>
                 <div class="line section-line"></div>
               </div>
-              <div v-else style="margin-top: 35px"></div>
+              <div v-else style="margin-top: 25px"></div>
               <div class="comp-wrapper">
                 <transition name="sect-trans"
                   @leave="leave"
@@ -90,7 +83,7 @@
             </div>
           </transition>
         </div>
-        <div v-if="isDesktopBreakPoint" style="height: 35px;"></div>
+        <div v-if="isDesktopBreakPoint" style="height: 25px;"></div>
         <div v-if="!removeFooter" class="footer" :class="[layout, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop" v-if="showIconDropdown">
@@ -668,7 +661,7 @@ export default {
 .footer {
   position: absolute;
   left: 0;
-  bottom: 0;
+  bottom: -12px;
   height: 40px;
   border: none;
   padding: 0 25px;
@@ -683,7 +676,7 @@ export default {
 }
 
 .mobile .inner-footer {
-  box-shadow: 0 -3px 4px var(--dark);
+  box-shadow: 0 -3px 3px black;
 }
 
 .comp-wrapper {

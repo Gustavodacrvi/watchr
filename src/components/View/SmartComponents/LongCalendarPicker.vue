@@ -94,7 +94,7 @@
       >
         <Icon class="icon"
           icon='tiny-arrow'
-          width='35px'
+          width='25px'
         />
         <CircleBubble
           innerColor='var(--light-gray)'
@@ -108,7 +108,7 @@
       >
         <Icon class="icon"
           icon='tiny-arrow'
-          width='35px'
+          width='25px'
         />
         <CircleBubble
           innerColor='var(--light-gray)'
@@ -484,8 +484,8 @@ export default {
   transform: translateY(-50%);
   top: 50%;
   background-color: var(--card);
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 1000px;
   overflow: hidden;
   transition-duration: .2s;
@@ -496,7 +496,7 @@ export default {
 }
 
 .right-btn {
-  right: -50px;
+  right: -35px;
 }
 
 .right-btn .icon {
@@ -504,7 +504,7 @@ export default {
 }
 
 .left-btn {
-  left: -50px;
+  left: -35px;
 }
 
 .left-btn .icon {

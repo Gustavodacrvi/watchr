@@ -230,7 +230,7 @@ export default {
   top: 0;
   width: 0;
   height: 0;
-  padding: 18px 0;
+  padding: 10px 0;
   overflow: hidden;
   transition-duration: .15s;
   z-index: 5;

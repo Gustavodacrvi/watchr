@@ -58,7 +58,7 @@
             <Tag v-if="task.priority"
               icon="priority"
               :color="getPriorityColor"
-              value="task.priority"
+              :value="task.priority"
               @click="task.priority = ''"
             />
             <Tag v-if="task.folder"
@@ -147,7 +147,7 @@
               <IconDrop
                 handle="tag"
                 :box='true'
-                width="22px"
+                width="18px"
                 :options="getTags"
                 :active='isIcon(11)'
                 ref='tag'
@@ -159,7 +159,7 @@
               <IconDrop
                 handle="priority"
                 :box='true'
-                width="22px"
+                width="18px"
                 :options="priorityOptions"
                 :active='isIcon(10)'
                 ref='priority'
@@ -170,7 +170,7 @@
               />
               <IconDrop
                 handle="tasks"
-                width="22px"
+                width="18px"
                 :box='true'
                 :options="listOptions"
                 :active='isIcon(9)'
@@ -182,7 +182,7 @@
               />
               <IconDrop
                 handle="folder"
-                width="23.5px"
+                width="19px"
                 :box='true'
                 :options="folderOptions"
                 :active='isIcon(8)'
@@ -193,7 +193,7 @@
               />
               <IconDrop
                 handle="group"
-                width="23.5px"
+                width="19px"
                 :box='true'
                 :options="groupOptions"
                 :active='isIcon(7)'
@@ -204,7 +204,7 @@
               />
               <IconDrop
                 handle="calendar"
-                width="22px"
+                width="18px"
                 :box='true'
                 :options="calendarOptions"
                 :active='isIcon(6)'
@@ -216,7 +216,7 @@
               />
               <Icon
                 class="icon-box primary-hover cursor"
-                width="22px"
+                width="18px"
                 icon='file'
                 :active='isIcon(5)'
                 :box='true'
@@ -227,7 +227,7 @@
               />
               <IconDrop
                 handle="deadline"
-                width="22px"
+                width="18px"
                 :box='true'
                 :active='isIcon(4)'
                 ref='deadline'
@@ -239,7 +239,7 @@
               />
               <IconDrop
                 handle="clock"
-                width="22px"
+                width="18px"
                 :box='true'
                 :active='isIcon(3)'
                 ref='clock'

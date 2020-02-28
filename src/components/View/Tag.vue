@@ -129,7 +129,7 @@ export default {
   height: 22px;
   display: inline-flex;
   align-items: center;
-  padding: 1px 14px;
+  padding: 1px 8px;
   position: relative;
   overflow: hidden;
   border-radius: 125px;

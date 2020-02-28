@@ -12,13 +12,13 @@ html {
   --back-color: #1c1c1c;
   --primary-dark: #64a0bb;
   --primary: #64a0bb;
-  --primary-light: #86b5ca;
+  --primary-light: #9fc4d5;
   --sidebar-color: #171717;
   --light-sidebar-color: #1a1a1a;
   --card: #1f1f1f;
   --txt: #b3b3b3;
+  --dark-txt: #999999;
   --fade: #696969;
-  --fade-light: #A6A6A6;
 
   --dark: #1c1c1c;
   --dark-gray: #202020;
@@ -61,7 +61,7 @@ body {
 
 body, input, button, textarea {
   font-family: var(--font);
-  font-weight: 400;
+  font-weight: 425;
   caret-color: var(--primary);
   color: var(--txt);
 }
@@ -101,7 +101,7 @@ body, input, button, textarea {
 }
 
 .rb {
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .tac {
