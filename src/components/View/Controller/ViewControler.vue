@@ -190,6 +190,7 @@ export default {
       userInfo: state => state.userInfo,
       groups: state => state.group.groups,
       userId: state => state.user.uid,
+      user: state => state.user,
     }),
     ...mapMutations(['pushToast']),
     ...mapGetters({
@@ -255,7 +256,7 @@ export default {
       const setOfLists = new Set()
       const setOfFolders = new Set()
       const setOfGroups = new Set()
-      const isSmartOrderViewType = this.isHeadingsSmartOrderViewType
+      const isSmartOrderViewType = this.isSmartOrderViewType
 
       for (const t of savedLists) {
         if (!setOfLists.has(t)) {
@@ -538,7 +539,7 @@ export default {
     getListHeadingsByView() {
       let arr = []
 
-      if (!(this.isCalendarOrderViewType && this.ungroupTasksInHeadings)) 
+      if (!((this.isCalendarOrderViewType || this.isSmartOrderViewType) && this.ungroupTasksInHeadings)) 
         arr = this.getListFolderGroupCalendarHeadings
 
       if (this.isCalendarOrderViewType) {
@@ -562,7 +563,7 @@ export default {
         })
       }
 
-      if (!this.isHeadingsSmartOrderViewType)
+      if (!this.isSmartOrderViewType)
         arr = [...arr, ...this.lastDayDeadlineItemsHeadings]
       else
         arr = [...arr, ...this.smartOrderListHeadings]
@@ -1250,11 +1251,7 @@ export default {
 
       const filterFunction = l => this.isListInView(l, viewName)
 
-      let color
-      if (viewName === 'Someday')
-        color = 'var(--brown)'
-      if (viewName === 'Anytime')
-        color = 'var(--dark-blue)'
+      let color = this.$store.getters.sidebarElements.find(el => el.name === viewName).color
 
       arr.push({
         color,
@@ -1309,14 +1306,10 @@ export default {
     isListType() {
       return !this.isSmart && this.viewList && this.viewType === 'list'
     },
-    isHeadingsSmartOrderViewType() {
-      const n = this.viewName
-      return n === 'Someday' || n === 'Anytime'
-    },
     isSmartOrderViewType() {
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart &&
-        (n === 'Someday' || n === 'Anytime' || n === 'Inbox')
+        (n === 'Someday' || n === 'Anytime' || n === 'Inbox' || n === 'Assigned to me')
     },
     getCalendarOrderDate() {
       let currentDate = mom()

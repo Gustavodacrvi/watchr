@@ -69,11 +69,13 @@ const getDefaultInfo = () => ({
   info: {
     dummy: null,
     info: {
+      ungroupTasksInHeadings: true,
       hidedViews: [
         'Tomorrow',
         'Pomodoro',
         'Later lists',
         'Recurring',
+        'Logged lists',
         'Statistics',
         'Calendar',
       ],
@@ -210,42 +212,32 @@ const store = new Vuex.Store({
         return ordered
       },
     }),
-    isSmartList(state) {
-      return [
-        'Today',
-        'Later lists',
-        'Pomodoro',
-        'Statistics',
-        'Someday',
-        'Anytime',
-        'Calendar',
-        'Recurring',
-        'Upcoming',
-        'Logged lists',
-        'Deadlines',
-        'Logbook',
-        'Tomorrow',
-        'Inbox'
-      ].includes(state.viewName) && state.viewType === 'list'
+    isSmartList(state, getters) {
+      return getters.sidebarElements.find(el => el.name === state.viewName)
     },
     sidebarElements() {
       return [
+        {
+          name: 'Inbox',
+          disableAction: true,
+          icon: 'inbox',
+          iconColor: 'var(--primary)'
+        },
         {
           name: 'Today',
           icon: 'star',
           iconColor: 'var(--yellow)'
         },
         {
+          name: 'Assigned to me',
+          icon: 'group',
+          iconColor: 'var(--orange)'
+        },
+        {
           name: 'Tomorrow',
           id: 'tom',
           icon: 'sun',
           iconColor: 'var(--orange)'
-        },
-        {
-          name: 'Inbox',
-          disableAction: true,
-          icon: 'inbox',
-          iconColor: 'var(--primary)'
         },
         {
           name: 'Upcoming',
@@ -263,7 +255,7 @@ const store = new Vuex.Store({
           name: 'Anytime',
           disableAction: true,
           icon: 'layer-group',
-          iconColor: 'var(--dark-blue)',
+          iconColor: 'var(--olive)',
         },
         {
           name: 'Someday',

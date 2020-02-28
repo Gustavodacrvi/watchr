@@ -397,7 +397,7 @@ export default {
         },
       },
       isTaskInView: {
-        getter({getters}, task, view) {
+        getter({getters, rootState}, task, view) {
           switch (view) {
             case 'Inbox': return getters.isTaskInbox(task)
             case 'Today': return getters.isTaskShowingOnDate(task, TODAY_DATE)
@@ -408,6 +408,7 @@ export default {
             case 'Anytime': return getters.isTaskAnytime(task)
             case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
             case 'Logbook': return getters.isTaskInLogbookView(task)
+            case 'Assigned to me': return task.assigned === rootState.user.uid
           }
         },
         cache(args) {
@@ -492,6 +493,12 @@ export default {
                 cal: t.calendar,
                 c: t.completed,
                 ca: t.canceled,
+              }
+              break
+            }
+            case 'Assigned to me': {
+              obj = {
+                a: t.assigned
               }
               break
             }
@@ -898,6 +905,7 @@ export default {
           'deadline',
           'group',
           'tags',
+          'assigned',
           'completeDate',
         ],
         getter({getters}, viewName) {

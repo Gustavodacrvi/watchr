@@ -312,7 +312,7 @@ export default {
           notCompleted: 0,
         }
       const obj = this.getNumberOfTasksByView(viewName)
-      if (viewName !== 'Today' && viewName !== 'Deadlines')
+      if (viewName !== 'Today' && viewName !== 'Deadlines' && viewName !== 'Assigned to me')
         return {total: obj.total}
       return obj
     },

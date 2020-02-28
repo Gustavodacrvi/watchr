@@ -145,7 +145,7 @@
             <div v-if="showingOptions" class='icons row'>
               <Icon
                 class="icon-box primary-hover cursor"
-                width="18px"
+                width="17px"
                 icon='menu'
                 :active='isIcon(2)'
                 :box='true'
@@ -155,7 +155,7 @@
               />
               <Icon v-if='showEveningIcon'
                 class="icon-box primary-hover cursor"
-                width="18px"
+                width="17px"
                 icon='moon'
                 :active='isIcon(3)'
                 :box='true'

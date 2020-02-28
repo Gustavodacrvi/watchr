@@ -10,13 +10,13 @@
       <Icon v-if="isOwner"
         class="plus icon"
         icon='plus'
-        width='26px'
+        width='18px'
         @click.native.stop="$emit('assign')"
       />
       <Icon
         class="icon"
         icon='comment'
-        width='26px'
+        width='18px'
         @click.native.stop="$emit('comment')"
       />
       <transition name="num-t">
@@ -110,7 +110,7 @@ export default {
 
 .plus {
   position: absolute;
-  right: 34px;
+  right: 22px;
   top: -1px;
 }
 
