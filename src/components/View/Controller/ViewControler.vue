@@ -346,6 +346,7 @@ export default {
             hideListName: true,
             hideFolderName: true,
             showHeadingName: true,
+            showHeading: false,
             id: list.id,
             
             onEdit: tasks => name => {
@@ -420,6 +421,7 @@ export default {
             allowEdit: true,
             hideFolderName: true,
             showHeadingName: true,
+            showHeading: false,
             icon: 'folder',
             id: folder.id,
 
@@ -494,6 +496,7 @@ export default {
             allowEdit: true,
             hideGroupName: true,
             showHeadingName: true,
+            showHeading: false,
             icon: 'group',
             id: group.id,
 
@@ -537,6 +540,27 @@ export default {
 
       if (!(this.isCalendarOrderViewType && this.ungroupTasksInHeadings)) 
         arr = this.getListFolderGroupCalendarHeadings
+
+      if (this.isCalendarOrderViewType) {
+        const calendarDate = this.getCalendarOrderDate
+        arr.unshift({
+          name: 'Evening',
+          id: 'EVENING_SMART_VIEW',
+          color: 'var(--dark-purple)',
+          icon: 'moon',
+          showHeading: true,
+
+          sort: this.sortArray,
+          filter: t => t.calendar && t.calendar.evening,
+          fallbackFunctionData: () => ({
+            scheduleOrder: this.getCurrentScheduleTasksOrder,
+            viewName: this.viewName,
+            calendarDate,
+          }),
+          updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
+          fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Evening(t, f, {calendarDate}),
+        })
+      }
 
       if (!this.isHeadingsSmartOrderViewType)
         arr = [...arr, ...this.lastDayDeadlineItemsHeadings]

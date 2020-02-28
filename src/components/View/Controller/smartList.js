@@ -112,16 +112,23 @@ export default {
       const n = this.viewName
       if (this.viewType === 'search')
         return () => true
-      if ((this.isCalendarOrderViewType || this.isSmartOrderViewType) && this.ungroupTasksInHeadings)
+      if (this.isSmartOrderViewType && this.ungroupTasksInHeadings || n === 'Recurring' || n === 'Inbox')
         return () => true
-      if (n === 'Recurring' || n === 'Inbox')
-        return () => true
-      if (n === 'Calendar')
-        return task => !task.list && !task.folder && !task.group
+
+      if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
+        return t => !t.calendar.evening
+
       if (n === 'Today' && this.hasOverdueTasks)
         return () => false
-      if (this.isCalendarOrderViewType || this.isSmartOrderViewType)
-        return task => !task.list && !task.folder && !task.group
+
+      const isHeadingTask = t => t.list || t.folder || t.group
+
+      if (n === 'Calendar' || this.isSmartOrderViewType)
+        return t => !isHeadingTask(t)
+      
+      if (this.isCalendarOrderViewType)
+        return t => !isHeadingTask(t) && !t.calendar.evening
+        
       return () => false
     },
     configFilterOptions() {
@@ -146,11 +153,8 @@ export default {
       return this.isFixedHeadingsView
     },
     showHeading() {
-      const n = this.viewName
-      if (this.isFixedHeadingsView || this.isSmartOrderViewType)
-        return h => {
-          return h.showHeading
-        }
+      if (this.isFixedHeadingsView || this.isSmartOrderViewType || this.isCalendarOrderViewType)
+        return h => h.showHeading
       return null
     },
     headings() {

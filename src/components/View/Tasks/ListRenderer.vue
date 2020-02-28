@@ -258,6 +258,13 @@ export default {
     }
   },
   methods: {
+    filterHeading(h) {
+      if (this.showHeading && this.showHeading(h)) {
+        return true
+      }
+
+      return this.showEmptyHeadings || h.items.length > 0
+    },
     dragenter(evt) {
       if (!this.moving)
         evt.preventDefault()
@@ -852,7 +859,7 @@ export default {
         this.isAddingHeadings = true
         this.lazyHeadings = []
         let i = 0
-        const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.items && h.items.length > 0)
+        const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(this.filterHeading)
         const length = headinsgWithItems.length
         let timeout = this.isDesktopDevice ? 80 : 230
 
@@ -1150,13 +1157,7 @@ export default {
       return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditLazyTasks.length > 3
     },
     getHeadings() {
-      return this.lazyHeadings.filter(h => {
-        if (this.showHeading && this.showHeading(h)) {
-          return true
-        }
-
-        return this.showEmptyHeadings || h.items.length > 0
-      })
+      return this.lazyHeadings.filter(this.filterHeading)
     },
     isRoot() {
       return !this.header

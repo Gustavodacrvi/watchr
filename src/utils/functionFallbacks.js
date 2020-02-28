@@ -6,6 +6,16 @@ import utilsTask from './task'
 import { setInfo, setTag, setList, setGroup, setFolder, uid } from './firestore'
 
 const isAlreadyOnAnotherList = t => t.list || t.folder || t.group
+const getSpecificCalendar = specific => {
+  const m = mom().format('Y-M-D')
+  return {
+    type: 'specific',
+    editDate: m,
+    begins: m,
+
+    specific,
+  }
+}
 
 export default {
   viewFallbacks: {
@@ -21,16 +31,8 @@ export default {
       return t
     },
     calendarOrder(t, force = false, specific) {
-      if (force || !t.calendar) {
-        const m = mom().format('Y-M-D')
-        t.calendar = {
-          type: 'specific',
-          editDate: m,
-          begins: m,
-    
-          specific,
-        }
-      }
+      if (force || !t.calendar)
+        t.calendar = getSpecificCalendar(specific)
       return t
     },
     deadlineOrder(t, force = false, deadline) {
@@ -61,6 +63,16 @@ export default {
         t.tags = [...t.tags, tagId]
       else
         t.tags = [tagId]
+      return t
+    },
+    Evening(t, force = false, {calendarDate}) {
+      if (force || !t.calendar) {
+        t.calendar = getSpecificCalendar(calendarDate)
+        t.calendar.evening = true
+      } else {
+        t.calendar.evening = true
+      }
+      
       return t
     },
     List(t, force = false, {listId, groupId, listTagIds = []}) {
@@ -111,6 +123,10 @@ export default {
   viewPositionFallbacks: {
     pureSmartViewRoot(t, force = false) {
       if (force) {
+        
+        if (t.calendar)
+          t.calendar.evening = false
+        
         t.group = null
         t.folder = null
         t.list = null
