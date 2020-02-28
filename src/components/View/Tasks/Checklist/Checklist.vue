@@ -205,8 +205,7 @@ export default {
       return ids
     },
     addChecklist() {
-      if (this.list && this.list.length === 0)
-        setTimeout(() => this.addEdit(0))
+      setTimeout(() => this.addEdit(this.list.length))
     },
   },
   computed: {

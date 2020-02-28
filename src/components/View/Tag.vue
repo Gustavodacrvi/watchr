@@ -10,7 +10,7 @@
         @mouseenter="hover = true"
         @mouseleave="hover = false"
       >
-        <Icon class="icon" :icon="icon" :color="color" width="14px"/>
+        <Icon class="icon" :icon="icon" :color="color" width="12px"/>
         <span class="name">{{ value }}</span>
         <Icon v-if="extraIcon"
           class="extra-icon"
@@ -141,7 +141,7 @@ export default {
 }
 
 .name {
-  font-size: .8em;
+  font-size: .9em;
   transition-duration: .2s;
   white-space: nowrap;
 }
