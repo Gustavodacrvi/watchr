@@ -131,16 +131,19 @@
         </div>
         <span v-if="isEditingFiles" class="files show" :class="{show}" style="opacity: .4;margin-left: 8px">Note: file upload/delete operations won't work while offline.</span>
         <div class="options hide" :class="{show}">
-          <transition name="btn">
-            <ButtonApp v-if="showingOptions && doesntHaveChecklist"
-              class="add-checklist-button"
-              style="margin-left: 4px;margin-top: 0px;opacity: .6"
-              type="card"
-              value="Add checklist"
-
-              :class="{selected: cursorPos === 2}"
-              @click.native.stop="addChecklist"
-            />
+          <transition name='btn'>
+            <div v-if="showingOptions" class='icons row'>
+              <Icon
+                class="icon-box primary-hover cursor"
+                width="18px"
+                icon='menu'
+                :active='isIcon(2)'
+                :box='true'
+                ref='checklist-icon'
+                @click='addChecklist'
+                title='Add checklist'
+              />
+            </div>
           </transition>
           <transition name="btn">
             <div v-if="showingOptions" class="icons">
@@ -772,7 +775,7 @@ export default {
       this.task.headingId = ''
     },
     isIcon(num) {
-      return !this.hasChecklist ? num === this.cursorPos : (num + this.task.checklist.length - 1) === this.cursorPos
+      return !this.hasChecklist ? num === this.cursorPos : (num + this.task.checklist.length) === this.cursorPos
     },
   },
   computed: {
@@ -829,21 +832,18 @@ export default {
 
       const hasChecklist = this.hasChecklist
 
-      if (!hasChecklist)
-        obj[2] = () => this.addChecklist()
-      else {
-        let num = 2
-        
-        for (const t of this.getChecklist) {
-          obj[num] = t.id
-          num++ 
-        }
+      let num = 2
+      
+      for (const t of this.getChecklist) {
+        obj[num] = t.id
+        num++ 
       }
       
       const getIconsObj = () => {
-        let num = !hasChecklist ? 3 : this.task.checklist.length + 2
+        let num = !hasChecklist ? 2 : this.task.checklist.length + 2
 
         return [
+          'checklist-icon',
           'clock',
           'deadline',
           'file',
@@ -1321,23 +1321,9 @@ export default {
   flex-wrap: wrap;
 }
 
-.add-checklist-button {
-  display: inline-block;
-  flex-basis: 180px;
-}
-
-.mobile .add-checklist-button {
-  flex-basis: 40px;
-}
-
 .show {
   opacity: 1;
   transition-duration: .2s;
-}
-
-.options {
-  padding-left: 4px;
-  padding-bottom: 4px;
 }
 
 .tags-wrapper {
@@ -1388,15 +1374,9 @@ export default {
 }
 
 .options {
-  margin-top: 4px;
   display: flex;
-  justify-content: space-between;
+  padding: 4px 12px;
   align-items: center;
-}
-
-.mobile .options {
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .button-wrapper {
@@ -1412,7 +1392,7 @@ export default {
 }
 
 .icons {
-  display: inline-flex;
+  display: flex;
   flex-basis: 100%;
   flex-direction: row-reverse;
   align-items: center;
@@ -1420,9 +1400,9 @@ export default {
   position: relative;
 }
 
-.mobile .icons {
-  display: flex;
-  width: 100%;
+.row {
+  margin-left: 0px;
+  flex-direction: row;
 }
 
 .progress {
@@ -1454,14 +1434,20 @@ export default {
 
 .btn-enter, .btn-leave-to {
   opacity: 0;
+  max-height: 0;
+  min-height: 0;
   height: 0;
-  transition-duration: .15s;
+  overflow: visible !important;
+  transition-duration: .2s;
 }
 
 .btn-leave, .btn-enter-to {
   opacity: 1;
+  min-height: 35px;
   height: 35px;
-  transition-duration: .15s;
+  max-height: 35px;
+  overflow: visible !important;
+  transition-duration: .2s;
 }
 
 </style>
