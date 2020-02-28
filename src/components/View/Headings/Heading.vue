@@ -171,6 +171,8 @@ export default {
       s.overflow = 'visible'
     },
     enterCont(el, done) {
+      if (this.isDesktopBreakPoint)
+        return done()
 
       const s = el.style
       
@@ -182,10 +184,12 @@ export default {
         setTimeout(() => {
           s.height = 'auto'
           done()
-        }, 10001)
+        }, 301)
       }, 50)
     },
     leaveCont(el, done) {
+      if (this.isDesktopBreakPoint)
+        return done()
 
       const s = el.style
 

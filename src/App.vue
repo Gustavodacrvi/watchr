@@ -394,8 +394,7 @@ export default {
   transition: opacity .6s;
 }
 
-#app.desktop,
-#app.desktop button {
+#app.desktop {
   font-size: .8em;
 }
 

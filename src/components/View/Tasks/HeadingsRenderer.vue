@@ -180,8 +180,8 @@ export default {
     },
 
     enter(el, done) {
-      if (!this.isDesktopDevice)
-        done()
+      if (!this.isDesktopBreakPoint)
+        return done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
 
@@ -215,8 +215,8 @@ export default {
       })
     },
     leave(el, done) {
-      if (this.isChangingViewName || !this.isDesktopDevice)
-        done()
+      if (this.isChangingViewName || !this.isDesktopBreakPoint)
+        return done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style
       let c = el.getElementsByClassName('cont')[0]
