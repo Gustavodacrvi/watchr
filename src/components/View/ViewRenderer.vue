@@ -1109,63 +1109,6 @@ export default {
         dispatch('task/saveTasksById', {ids, task: {priority: pri}})
       }
 
-      const formatTime = time => mom(time, 'HH:mm').format(this.userInfo.disablePmFormat ? 'HH:mm' : 'LT')
-
-      const getScheduleIconDropObject = info => {
-        if (!info)
-            info = {time: mom().format('HH:mm'), buffer: '00:05', fallback: '00:15'}
-        
-        const {time, buffer, fallback} = info
-
-        return [
-          {
-            name: `${'Start from:'} <span class="fade">${formatTime(time)}</span>`,
-            callback: () => ({
-              comp: 'TimePicker',
-              content: {
-                msg: 'Start from:',
-                callback: newTime => getScheduleIconDropObject({
-                  time: newTime, buffer, fallback,
-                })
-              }
-            })
-          },
-          {
-            name: `${'Buffer time:'} <span class="fade">${utils.formatQuantity(buffer)}</span>`,
-            callback: () => ({
-              comp: 'TimePicker',
-              content: {
-                format: '24hr',
-                msg: "Buffer time:",
-                callback: newBuffer => getScheduleIconDropObject({
-                  time, buffer: newBuffer, fallback,
-                })
-              }
-            })
-          },
-          {
-            name: `${'Fallback time:'} <span class="fade">${utils.formatQuantity(fallback)}</span>`,
-            callback: () => ({
-              comp: 'TimePicker',
-              content: {
-                format: '24hr',
-                msg: "Buffer time:",
-                callback: newFallback => getScheduleIconDropObject({
-                  time, buffer, fallback: newFallback,
-                })
-              }
-            })
-          },
-          {
-            name: 'Auto schedule',
-            callback: () => {
-              this.saveAutoSchedule({...info})
-              return null
-            },
-            type: 'button',
-          },
-        ]
-      }
       const saveDeadline = deadline => {
         if (this.shortcutsType === 'Task')
           this.$store.dispatch('task/saveTasksById', {
@@ -1265,24 +1208,7 @@ export default {
           },
         ]
         if (this.getCalendarOrderDate)
-          opt.splice(opt.length - 1, 0, {
-            name: 'Auto schedule',
-            icon: 'magic',
-            callback: () => {
-              if (this.autoSchedule)
-                return [
-                  {
-                    name: 'Remove schedule',
-                    callback: () => this.saveAutoSchedule(null)
-                  },
-                  {
-                    name: 'Edit schedule',
-                    callback: () => getScheduleIconDropObject(this.autoSchedule)
-                  }
-                ]
-              return getScheduleIconDropObject(null)
-            }
-          })
+          opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(this.autoSchedule, this.saveAutoSchedule, this.userInfo))
 
 
         if (!this.allowCalendar && (this.getCalendarOrderDate || this.viewName === 'Upcoming'))

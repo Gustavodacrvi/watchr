@@ -118,7 +118,7 @@
                     </transition>
 
                     <Icon v-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-                    <Icon v-else-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+                    <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)"/>
                     <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                     <span v-else-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
                     <span v-else-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb">{{ calendarStr }}</span>
@@ -202,7 +202,7 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'activeTags', 'header', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
@@ -298,6 +298,8 @@ export default {
       this.onHover = false
     },
     taskLeave(el, done) {
+      const hasBeenDroppedOnSidebar = this.$parent.droppedIds.includes(this.item.id)
+      
       this.doneTransition = false
       const back = this.$refs['back']
       let cn = this.$refs['comment-counter']
@@ -312,7 +314,7 @@ export default {
         n = this.$refs['parsed-name'].style
       }
       
-      s.opacity = 1
+      s.opacity = hasBeenDroppedOnSidebar ? 0 : 1
       if (cn) {
         cn.transitionDuration = '0s'
         cn.opacity = 1

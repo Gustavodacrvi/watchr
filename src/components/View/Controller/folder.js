@@ -56,9 +56,6 @@ export default {
         })
       }
     },
-    saveSchedule() {
-      return info => localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
-    },
     
     
     mainFilter() {
@@ -111,10 +108,6 @@ export default {
     },
     getPieProgress() {
       return null
-    },
-    savedSchedule() {
-      const schedule = localStorage.getItem('schedule_' + this.viewName)
-      return schedule !== 'null' ? JSON.parse(schedule) : null
     },
     removeListHandlerWhenThereArentLists() {
       return true

@@ -37,17 +37,6 @@ export default {
         return fs.calendarOrder
       return fs.smartOrder
     },
-    saveSchedule() {
-      return schedule => {
-        if (!this.isCalendarOrderViewType) {
-          localStorage.setItem('schedule_' + this.viewName, JSON.stringify(schedule))
-        } else {
-          this.$store.dispatch('task/saveSchedule', {
-            schedule, date: this.getCalendarOrderDate,
-          })
-        }
-      }
-    },
     onSortableAdd() {
       const n = this.viewName
 
@@ -218,10 +207,6 @@ export default {
     },
     savedSchedule() {
       const n = this.viewName
-      if (!this.isCalendarOrderViewType) {
-        const schedule = localStorage.getItem('schedule_' + n)
-        return schedule !== 'null' ? JSON.parse(schedule) : null
-      }
       if (this.calendarOrders) {
         let date = this.getCalendarOrderDate
         const schedule = (this.calendarOrders[date] && this.calendarOrders[date].schedule)

@@ -23,6 +23,7 @@
 
         @dragover='dragover = true'
         @dragleave='dragover = false'
+        @drop='dragover = false'
       >
         <div class="icon-wrapper" @click="clickIcon">
           <Icon class="main-icon"
