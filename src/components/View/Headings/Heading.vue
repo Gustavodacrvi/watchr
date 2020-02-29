@@ -96,7 +96,7 @@ export default {
   mixins: [
     Defer(),
   ],
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon', 'nonFiltered', 'autoSchedule'],
   components: {
     CalendarEvents,
     EditHeading: EditVue,
@@ -214,12 +214,12 @@ export default {
       if (this.isDesktopDevice) {
         const header = this.$el.getElementsByClassName('header-wrapper')[0]
         if (header)
-          utils.bindOptionsToEventListener(header, this.options, this)
+          utils.bindOptionsToEventListener(header, this.options(this.nonFiltered, this.autoSchedule), this)
       }
     },
     openMobileOptions() {
       window.navigator.vibrate(100)
-      this.$store.commit('pushIconDrop', this.options)
+      this.$store.commit('pushIconDrop', this.options(this.nonFiltered, this.autoSchedule))
     },
     touchStart(e) {
       this.isTouching = true
@@ -357,7 +357,13 @@ export default {
     },
   },
   watch: {
+    nonFiltered() {
+      this.bindOptions()
+    },
     options() {
+      this.bindOptions()
+    },
+    autoSchedule() {
       this.bindOptions()
     },
     name() {

@@ -245,20 +245,18 @@ export default {
       this.createSchedule({...obj})
     },
     createSchedule(newObj) {
-      const obj = newObj || this.getScheduleObject()
+      const obj = newObj || this.getScheduleObject(this.autoSchedule, this.allViewTasks)
       this.scheduleObject = obj
       this.$emit('save-schedule-object', obj)
     },
     notChar(s) {
       return s !== 'A' && s !== 'M' && s !== 'P'
     },
-    getScheduleObject() {
-      if (!this.autoSchedule) return null
+    getScheduleObject(autoSchedule, tasks) {
+      if (!autoSchedule) return null
       
-      const { time, buffer, fallback } = this.autoSchedule
+      const { time, buffer, fallback } = autoSchedule
 
-      const tasks = this.allViewTasks
-      
       let init = mom(time, 'HH:mm')
 
       const bufferSplit = buffer.split(':')
@@ -367,7 +365,6 @@ export default {
       const mainTasks = this.mainTasks
 
       return headings.map(head => {
-        
         const nonFiltered = !head.directFiltering ?
           head.sort(this.tempoOrder[head.id] || head.order || [],
             (!head.log ? mainTasks : this.logTasks).filter(task => head.filter(task))
@@ -407,7 +404,7 @@ export default {
 
           b.commit()
         }
-        
+
         const unshiftSortingOptions = options => {
           const opt = [
             {
@@ -469,13 +466,41 @@ export default {
         if (!head.updateViewIds)
           updateIds = undefined
 
+
+        let scheduleObject = null
+        const createSchedule = newObj => {
+          const obj = newObj || this.getScheduleObject(head.autoSchedule, tasks)
+          scheduleObject = obj
+          head.saveScheduleObject(obj)
+        }
+        
+        if (head.allowAutoSchedule) {
+          if (head.autoSchedule) {
+            if (!head.autoSchedule.scheduleObject)
+              createSchedule()
+            else
+              scheduleObject = head.autoSchedule.scheduleObject
+          }
+          else scheduleObject = null
+        }
+
+
         return {
           ...head,
           filter: undefined,
+          scheduleObject,
           items: tasks,
           nonFiltered,
-          options: tasks => {
+          options: (tasks, autoSchedule) => {
             let options = head.options ? head.options(tasks) : []
+
+            if (head.allowAutoSchedule && head.saveAutoSchedule)
+              options.push(
+                utils.getAutoSchedulerIconDropObject(autoSchedule, obj => {
+                  head.autoSchedule = obj
+                  head.saveAutoSchedule(obj)
+                }, this.userInfo),
+              )
 
             if (updateIds)
               options = unshiftSortingOptions(options)

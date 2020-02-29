@@ -86,9 +86,16 @@ export default {
     return {
       showCompleted: false,
       calendarDate: null,
+
+      headingSchedules: {},
     }
   },
   methods: {
+    saveSchedule(schedule, date = this.getCalendarOrderDate) {
+      this.$store.dispatch('task/saveSchedule', {
+        schedule, date,
+      })
+    },
     getCalObjectByView(viewName, cal) {
       if (this.viewName === 'Today')
         return this.getSpecificDayCalendarObj(mom(), cal)
@@ -683,9 +690,23 @@ export default {
 
       for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
+        const date = tod.format('Y-M-D')
+        const orders = this.calendarOrders
+        
+        const autoSchedule = (orders[date] && orders[date].schedule) || null
+
+        const saveAutoSchedule = schedule => this.saveSchedule(schedule, date)
+
         arr.push(
-          this.getCalendarOrderTypeHeadings(tod.format('Y-M-D'), {
+          this.getCalendarOrderTypeHeadings(date, {
             disableCalendarStr: true,
+            saveAutoSchedule,
+            saveScheduleObject: scheduleObject => saveAutoSchedule({
+              ...autoSchedule,
+              scheduleObject,
+            }),
+            autoSchedule,
+            allowAutoSchedule: true,
           })
         )
       }

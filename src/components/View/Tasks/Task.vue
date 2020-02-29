@@ -118,7 +118,7 @@
                     </transition>
 
                     <Icon v-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-                    <Icon v-else-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+                    <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)"/>
                     <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                     <span v-else-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
                     <span v-else-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb">{{ calendarStr }}</span>

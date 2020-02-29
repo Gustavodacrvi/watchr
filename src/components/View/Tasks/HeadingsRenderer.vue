@@ -14,8 +14,9 @@
 
         :headingEditOptions='headingEditOptions'
         :color='h.color ? h.color : ""'
-        :options='h.options ? h.options(h.nonFiltered) : []'
-        :length='(h.items.length === 0) ? 1 : h.items.length'
+        :options='h.options'
+        :autoSchedule='h.autoSchedule'
+        :length='showAllHeadingsItems ? 3 : h.items.length || 1'
 
         @option-click='v => getOptionClick(h)(v)'
         @save-notes='v => getNotesOption(h)(v)'
@@ -57,7 +58,7 @@
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
           :showHeadingName="h.showHeadingName"
-          :scheduleObject='scheduleObject'
+          :scheduleObject='h.scheduleObject || scheduleObject'
           :onSortableAdd='h.onSortableAdd'
           :addedHeading='justAddedHeading'
           :isLast='(i + 1) === headings.length'

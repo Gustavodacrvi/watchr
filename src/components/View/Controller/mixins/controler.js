@@ -5,8 +5,7 @@ const computed = [
   'removeHeaderTag', 'saveHeaderName', 'disableSortableMount',
 ]
 
-const methods = ['save-schedule',
-'add-task', 'add-heading', 'update-ids']
+const methods = ['add-task', 'add-heading', 'update-ids']
 
 const getComputedProperties = () => {
   const obj = {}

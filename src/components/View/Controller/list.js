@@ -105,9 +105,6 @@ export default {
     },
 
     removeDeadline() {},
-    saveSchedule() {
-      return info =>  localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
-    },
     removeDeferDate() {},
     
     
@@ -341,10 +338,6 @@ export default {
       if (list && !this.isViewListSomeday)
         return this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], list.id, task => this.isTaskInView(task, "Logbook"))
       return null
-    },
-    savedSchedule() {
-      const schedule = localStorage.getItem('schedule_' + this.viewName)
-      return schedule !== 'null' ? JSON.parse(schedule) : null
     },
   },
 }
