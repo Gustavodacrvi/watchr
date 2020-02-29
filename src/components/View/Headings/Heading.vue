@@ -163,7 +163,7 @@ export default {
     
     beforeEnter(el) {
       if (!this.isDesktopBreakPoint)
-        return done()
+        return;
       
       const s = el.style
 

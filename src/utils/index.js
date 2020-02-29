@@ -13,6 +13,83 @@ import ErrorComponent from '../components/Illustrations/ErrorComponent.vue'
 let contextMenuRunned = false
 
 export default {
+  getAutoSchedulerIconDropObject(autoSchedule, saveAutoSchedule, userInfo) {
+    return {
+      name: 'Auto schedule',
+      icon: 'magic',
+      callback: () => {
+        if (autoSchedule)
+          return [
+            {
+              name: 'Remove schedule',
+              callback: () => saveAutoSchedule(null)
+            },
+            {
+              name: 'Edit schedule',
+              callback: () => this.getScheduleIconDropObject(autoSchedule, saveAutoSchedule, userInfo)
+            }
+          ]
+        return this.getScheduleIconDropObject(null, saveAutoSchedule, userInfo)
+      }
+    }
+  },
+  getScheduleIconDropObject(info, saveAutoSchedule, userInfo) {
+    if (!info)
+      info = {time: mom().format('HH:mm'), buffer: '00:05', fallback: '00:15'}
+
+    const {time, buffer, fallback} = info
+
+    const formatTime = time => mom(time, 'HH:mm').format(userInfo.disablePmFormat ? 'HH:mm' : 'LT')
+
+    return [
+      {
+        name: `${'Start from:'} <span class="fade">${formatTime(time)}</span>`,
+        callback: () => ({
+          comp: 'TimePicker',
+          content: {
+            msg: 'Start from:',
+            callback: newTime => this.getScheduleIconDropObject({
+              time: newTime, buffer, fallback,
+            }, saveAutoSchedule, userInfo)
+          }
+        })
+      },
+      {
+        name: `${'Buffer time:'} <span class="fade">${this.formatQuantity(buffer)}</span>`,
+        callback: () => ({
+          comp: 'TimePicker',
+          content: {
+            format: '24hr',
+            msg: "Buffer time:",
+            callback: newBuffer => this.getScheduleIconDropObject({
+              time, buffer: newBuffer, fallback,
+            }, saveAutoSchedule, userInfo)
+          }
+        })
+      },
+      {
+        name: `${'Fallback time:'} <span class="fade">${this.formatQuantity(fallback)}</span>`,
+        callback: () => ({
+          comp: 'TimePicker',
+          content: {
+            format: '24hr',
+            msg: "Buffer time:",
+            callback: newFallback => this.getScheduleIconDropObject({
+              time, buffer, fallback: newFallback,
+            }, saveAutoSchedule, userInfo)
+          }
+        })
+      },
+      {
+        name: 'Auto schedule',
+        callback: () => {
+          saveAutoSchedule({...info})
+          return null
+        },
+        type: 'button',
+      },
+    ]
+  },
   calendarObjNaturalCalendarInput(str, disablePmFormat) {
     const tod = mom()
     const TOD_STR = tod.format('Y-M-D')

@@ -200,6 +200,7 @@ export default {
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
       selectedElements: [],
+      droppedIds: [],
       changedViewName: true,
       waitingUpdateTimeout: null,
       changingViewName: false,
@@ -754,6 +755,9 @@ export default {
           
           if (!cancel) {
             const handle = obj => this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', obj)
+
+            this.droppedIds = finalIds
+            setTimeout(() => this.droppedIds = [], 750)
 
             if (moveIsSmart)
               handle({
