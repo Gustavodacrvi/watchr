@@ -1,6 +1,7 @@
 
 import utilsTask from '@/utils/task'
 import utilsList from '@/utils/list'
+import momUtils from '@/utils/moment'
 import { pipeBooleanFilters, memoize } from '@/utils/memo'
 import utils from '@/utils/'
 import mom from 'moment'
@@ -328,7 +329,7 @@ export default {
     itemCompletionCompareDate() {
       const list = this.viewList
       const c = list && list.calendar
-      return c && c.lastCompleteDate
+      return c && momUtils.getNextEventAfterCompletionDate(c).format('Y-M-D')
     },
     viewItem() {
       return this.viewList

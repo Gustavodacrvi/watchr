@@ -6,7 +6,7 @@
   >
     <div class="Edit" @click.stop>
       <div class="wrapper rb">
-        <InputApp
+        <InputApp class='input'
           :value='name'
           @input='v => name = v'
           :focus='true'
@@ -73,14 +73,8 @@ export default {
       requestAnimationFrame(() => {
         c.transitionDuration = '.15s'
         s.transitionDuration = '.15s'
-        if (height < 31) {
-          s.height = '30px'
-          c.height = '30px'
-        }
-        else {
-          s.height = height + 'px'
-          c.height = height + 'px'
-        }
+        s.height = '30px'
+        c.height = '30px'
         c.opacity = 1
         s.width = '100%'
         c.width = '100%'
@@ -110,6 +104,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.input {
+  padding: 8px;
 }
 
 .wrapper {

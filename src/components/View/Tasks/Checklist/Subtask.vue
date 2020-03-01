@@ -118,7 +118,7 @@ export default {
       if (!this.completeDate)
         return false
 
-      return this.completed && mom(this.compareDate, 'Y-M-D').isSameOrAfter(mom(this.completeDate, 'Y-M-D'), 'day')
+      return this.completed && mom(this.completeDate, 'Y-M-D').isSameOrAfter(mom(this.compareDate, 'Y-M-D'), 'day')
     },
   },
   watch: {
