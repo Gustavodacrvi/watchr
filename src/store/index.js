@@ -70,6 +70,7 @@ const getDefaultInfo = () => ({
     dummy: null,
     info: {
       ungroupTasksInHeadings: true,
+      margins: ['DEFAULT_1', 'DEFAULT_2'],
       hidedViews: [
         'Tomorrow',
         'Pomodoro',
