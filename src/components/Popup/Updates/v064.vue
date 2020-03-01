@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 25th, 2019
+    </div>
+    
     <h3>Better Upcoming, Today, Tomorrow Integration</h3>
     
   <br>
@@ -8,3 +12,5 @@
     <span>This update integrates these views better, for now on, you will be able to plan out your week using Upcoming or Tomorrow, the order will then be used in "Today", functioning exactly as it should.</span>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

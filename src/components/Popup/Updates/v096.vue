@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      March 1st, 2020
+    </div>
+    
     <h3>Upcoming Update</h3>
     <br>
 
@@ -8,8 +12,6 @@
     <li>Show recent views on the quick find popup.</li>
     <br>
     <li>Toggle on/off Google Calendar.</li>
-    <br>
-    <li>Landing page</li>
     <br>
     <li>Import tasks from other major apps.</li>
     <li>Auto detect checklist when pasting text in the notes section, for example, pasting the following text would create a checklist:
@@ -25,3 +27,5 @@
     
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Jan 27th, 2020
+    </div>
+    
     <h3>More Keyboard Shortcuts</h3>
     <br>
     <div class="line">
@@ -32,20 +36,4 @@
   </div>
 </template>
 
-<style scoped>
-
-.line {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
-
-.tag {
-  display: inline-block;
-  border-radius: 6px;
-  background-color: var(--dark);
-  padding: 6px;
-  font-size: .8em;
-}
-
-</style>
+<style scoped src='@/assets/css/updates.css'></style>

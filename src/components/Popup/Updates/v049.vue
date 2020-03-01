@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 3th, 2019
+    </div>
+    
     <h4>Changes</h4>
     <ul>
       <li>Someday smart view(Things 3 inspired).</li>
@@ -8,3 +12,5 @@
     </ul>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

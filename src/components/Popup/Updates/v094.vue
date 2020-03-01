@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      February 18th, 2020
+    </div>
+    
     <h3>Changes</h3>
     <br>
 
@@ -84,3 +88,5 @@
 }
 
 </style>
+
+<style scoped src='@/assets/css/updates.css'></style>

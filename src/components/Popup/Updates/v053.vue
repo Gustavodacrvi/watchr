@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 7th, 2019
+    </div>
+    
     <h4>Changes</h4>
       <li>You can now filter by folders too, instead of only tags and lists.</li>
       <li>Exclusive tag, list, folder selection: <br><br>
@@ -13,3 +17,5 @@
     </ul>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 6th, 2019
+    </div>
+    
     <h4>Changes</h4>
     <ul>
       <h5>Favorites</h5>
@@ -9,3 +13,5 @@
     </ul>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

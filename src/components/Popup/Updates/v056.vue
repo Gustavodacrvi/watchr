@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 14th, 2019
+    </div>
+    
     <li>New logo.</li>
     <li>New list progress icon.</li>
     <li>Much better popup interface.</li>
@@ -23,3 +27,5 @@
       <li>Couldn't open list options on the mobile menu.</li>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

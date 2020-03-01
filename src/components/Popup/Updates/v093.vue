@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      February 14th, 2020
+    </div>
+    
     <h3>Bug Fixes</h3>
     <br>
 
@@ -31,3 +35,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

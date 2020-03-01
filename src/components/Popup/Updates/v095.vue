@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      February 23th, 2020
+    </div>
+    
     <h3>New Smart Views</h3>
     <br>
 
@@ -18,3 +22,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

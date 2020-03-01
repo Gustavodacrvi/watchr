@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 12th, 2019
+    </div>
+    
     <h4>Changes</h4>
     <ul>
       <li>It's now possible to change the initial view by sorting the smart views using drag and drop, by the default, the initial view is the Today.</li>
@@ -15,3 +19,5 @@
     </ul>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>
