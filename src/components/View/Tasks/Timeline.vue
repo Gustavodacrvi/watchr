@@ -70,7 +70,7 @@ export default {
   transform: translateY(-50%);
   float: right;
   position: absolute;
-  right: calc(100% + 10px);
+  right: calc(100% + 5px);
 }
 
 .wrapper {
@@ -84,11 +84,11 @@ export default {
 }
 
 .hour {
-  font-size: 2em;
+  font-size: 1.6em;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  min-width: 35px;
+  min-width: 30px;
   text-align: center;
 }
 
@@ -97,7 +97,7 @@ export default {
 }
 
 .info {
-  font-size: .8em;
+  font-size: .7em;
   display: inline-flex;
   justify-content: center;
   flex-direction: column;

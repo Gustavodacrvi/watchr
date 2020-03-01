@@ -657,7 +657,24 @@ export default {
     },
     
     checklistPieProgress() {
-      let completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
+      const c = this.item.calendar
+      let completed
+      
+      if (!c || c.type === 'specific' || c.type === 'someday')
+        completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
+      else {
+        const compareDate = utilsMoment.getNextEventAfterCompletionDate(c).format('Y-M-D')
+        
+        completed = this.item.checklist.reduce((acc, opt) => {
+          if (!compareDate)
+            return opt.completed ? acc + 1 : acc
+          if (!opt.completeDate)
+            return false
+
+          return (opt.completed && mom(opt.completeDate, 'Y-M-D').isSameOrAfter(mom(compareDate, 'Y-M-D'), 'day')) ? acc + 1 : acc
+        }, 0)
+      }
+
       return 100 * completed / this.item.checklist.length
     },
     parsedName() {

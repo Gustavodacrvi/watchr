@@ -461,10 +461,30 @@ export default {
       if (this.userInfo && this.userInfo.links) {
         return this.userInfo.links
       }
-      return this.$store.getters.sidebarElements.map(el => el.name)
+      return [
+        'Inbox',
+
+        'DEFAULT_1',
+        
+        'Today',
+        'Assigned to me',
+        'Upcoming',
+        'Anytime',
+        'Someday',
+        
+        'DEFAULT_2',
+        
+        'Deadlines',
+        'Logbook',
+      ]
     },
     getLinksOrdered() {
-      return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.nonHidedLinks)
+      return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.smartMargins)
+    },
+    smartMargins() {
+      if (this.userInfo && this.userInfo.margins)
+        return [...this.nonHidedLinks, ...this.userInfo.margins.map(el => ({id: el, isEmpty: true}))]
+      return this.nonHidedLinks
     },
     nonHidedLinks() {
       if (!this.userInfo.hidedViews) return this.links

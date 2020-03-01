@@ -145,7 +145,7 @@
             <div v-if="showingOptions" class='icons row'>
               <Icon
                 class="icon-box primary-hover cursor"
-                width="17px"
+                width="16px"
                 icon='menu'
                 :active='isIcon(2)'
                 :box='true'
@@ -155,7 +155,7 @@
               />
               <Icon v-if='showEveningIcon'
                 class="icon-box primary-hover cursor"
-                width="17px"
+                width="15px"
                 icon='moon'
                 :active='isIcon(3)'
                 :box='true'
@@ -299,6 +299,7 @@ import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils/'
 import taskUtils from '@/utils/task'
+import momUtils from '@/utils/moment'
 
 import FileMixin from '@/mixins/file.js'
 
@@ -860,9 +861,11 @@ export default {
       return this.task.notes.length > 0
     },
     getCompareDate() {
-      if (!this.defaultTask || !this.defaultTask.calendar)
+      if (!this.defaultTask) return null
+      const c = this.defaultTask.calendar
+      if (!c || c.type === 'specific' || c.type === 'someday')
         return null
-      return this.defaultTask.calendar.lastCompleteDate
+      return momUtils.getNextEventAfterCompletionDate(c).format('Y-M-D')
     },
     activeChecklistId() {
       return this.keyboardActions[this.cursorPos]

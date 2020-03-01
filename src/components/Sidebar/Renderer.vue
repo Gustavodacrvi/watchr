@@ -9,7 +9,14 @@
       data-name='sidebar-renderer'
     >
       <template v-for="(el,i) in items">
-        <SidebarElement v-if="!el.isEdit" 
+        <div v-if="isSmart && el.isEmpty"
+          :key='el.id'
+
+          class='empty item-handle'
+          :data-id='el.id'
+        >
+        </div>
+        <SidebarElement v-else-if="!el.isEdit" 
           :key="el.id"
           v-bind="{...mapNumbersBind(el), ...el}"
           class="element"
@@ -354,6 +361,15 @@ export default {
   position: absolute;
   height: 25px;
   width: 100%;
+}
+
+.empty {
+  height: 20px;
+}
+
+.sortable-ghost.empty {
+  background-color: var(--dark-void);
+  border-radius: 6px;
 }
 
 .add-msg {

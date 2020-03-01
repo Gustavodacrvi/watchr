@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div class="cont-wrapper">
+    <div class="cont-wrapper scroll-thin">
       <div class="cont">
         <transition name="fade-t" mode="out-in">
           <div v-if="option === 'General'" class="General" key="general">
@@ -106,7 +106,7 @@
           <div v-else class="Sidebar" key="sidebar">
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
-              name='Go to the last visited view on app start instead of the first smart view'
+              name='Go to the last visited view on app start instead of the Today view'
               :value='goToLastViewOnEnter'
               @input="toggleGoToLastViewOnEnter"
             />
@@ -384,6 +384,7 @@ export default {
 
 .cont-wrapper {
   flex-basis: 100%;
+  overflow: auto;
 }
 
 .mobile .cont-wrapper {
@@ -401,13 +402,12 @@ export default {
 }
 
 .option {
-  height: 35px;
+  height: 30px;
   display: flex;
   align-items: center;
   padding: 0 18px;
   transform: scale(1,1);
   transition-duration: .2s;
-  overflow: hidden;
   position: relative;
 }
 

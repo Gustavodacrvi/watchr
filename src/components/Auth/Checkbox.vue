@@ -1,6 +1,6 @@
 
 <template>
-  <div class="Checkbox cursor" :class="{fade: !toggle}" @click="toggle = !toggle">
+  <div class="Checkbox cursor" :class="[{fade: !toggle}, deviceLayout]" @click="toggle = !toggle">
       <Icon v-if="icon" class="behind-icon"
         :icon='icon'
         :color='color'
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['name', 'value', 'icon', 'color'],
@@ -27,6 +28,9 @@ export default {
     return {
       toggle: this.value,
     }
+  },
+  computed: {
+    ...mapGetters(['deviceLayout'])
   },
   watch: {
     toggle() {
@@ -42,9 +46,16 @@ export default {
 
 <style scoped>
 
+.Checkbox.desktop {
+  min-height: 25px;
+}
+
+.Checkbox.mobile {
+  min-height: 35px;
+}
+
 .Checkbox {
   padding: 0 26px;
-  min-height: 35px;
   display: flex;
   align-items: center;
   transition-duration: .15s;
