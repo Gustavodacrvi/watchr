@@ -4,7 +4,7 @@
   height: 28px;
   border-bottom: 1px solid var(--light-gray);
   font-size: 1.1em;
-  margin-bottom: 12px;
+  margin-bottom: 30px;
 }
 
 .line {
@@ -19,4 +19,23 @@
   background-color: var(--dark);
   padding: 6px;
   font-size: .8em;
+}
+
+.division {
+  border-bottom: 1px solid var(--light-gray);
+  margin: 30px 0;
+}
+
+.icon {
+  transform: translateY(5px);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: unset;
+  color: var(--primary);
+}
+
+.heading-icon {
+  transform: translateY(2px);
+  margin-right: 4px;
 }

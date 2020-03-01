@@ -24,7 +24,7 @@
           @enter='contentEnter'
           @leave='contentLeave'
         >
-          <span v-if="content" class="cont">{{ content }}</span>
+          <span v-if="content && doneAnimation" class="cont">{{ content }}</span>
         </transition>
         <transition
           @enter='contentEnter'
@@ -51,6 +51,7 @@ export default {
   data() {
     return {
       hover: false,
+      doneAnimation: false,
     }
   },
   methods: {
@@ -78,26 +79,28 @@ export default {
     },
 
     enter(el, done) {
+      this.doneAnimation = false
       const s = el.style
 
       s.transitionDuration = '0s'
       s.opacity = '0'
       s.height = '0px'
-      s.width = 0
+      s.minWidth = 0
       s.overflow = 'hidden'
       s.padding = '0'
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         s.height = '28px'
         s.padding = '0 8px'
-        s.width = '28px'
+        s.minWidth = '28px'
         s.opacity = '1'
 
         setTimeout(() => {
           s.overflow = 'visible'
-          s.width = 'auto'
+          s.minWidth = 'auto'
+          this.doneAnimation = true
           done()
-        }, 255)
+        }, 225)
       })
     },
     leave(el, done) {
@@ -107,7 +110,7 @@ export default {
         s.transitionDuration = '0s'
       s.height = '0px'
       s.padding = '0'
-      s.width = '0px'
+      s.minWidth = '0px'
       s.opacity = '0'
 
       setTimeout(done, 255)
@@ -184,13 +187,15 @@ export default {
 
 .header-info {
   height: 28px;
+  min-width: 28px;
   position: relative;
   display: inline-flex;
   padding: 0 8px;
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
-  overflow: visible;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .cont {

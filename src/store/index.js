@@ -51,7 +51,7 @@ import { userRef, cacheRef, setInfo } from "../utils/firestore"
 
 const uid = () => auth.currentUser.uid
 
-const version = '095'
+const version = '096'
 
 let lastVersion = localStorage.getItem('watchr_version')
 

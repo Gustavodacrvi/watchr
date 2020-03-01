@@ -117,7 +117,8 @@
                       <span v-if="logStr" class="check-date" ref='check-name'>{{ logStr }}</span>
                     </transition>
 
-                    <Icon v-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+                    <Icon v-if="isToday && !isEvening" class="name-icon" icon="star" color="var(--yellow)"/>
+                    <Icon v-else-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)"/>
                     <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)"/>
                     <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                     <span v-else-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
@@ -126,6 +127,7 @@
                     <div class="parsed-wrapper">
                       <span v-html="parsedName" ref='parsed-name'></span>
                     </div>
+                    <Icon v-if="isEvening" class="txt-icon" icon="moon" color="var(--fade)"/>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
                     icon="pie"
@@ -803,6 +805,12 @@ export default {
       if (!fold || (fold.name === this.viewName)) return null
       if (this.taskList && this.viewName === this.taskList.name) return null
       return fold.name
+    },
+    isEvening() {
+      const c = this.item.calendar
+      if (!c || !c.evening || this.viewName === 'Today')
+        return false
+      return true
     },
     calendarStr() {
       const {t,c} = this.getTask
