@@ -338,14 +338,11 @@ const store = new Vuex.Store({
     deviceLayout(s, getters) {
       return getters.isDesktopDevice ? 'desktop' : 'mobile'
     },
-    getInitialSmartView(state) {
+    getInitialSmartView() {
       const goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter')
 
       if (goToLastViewOnEnter !== 'true') {
-        const arr = state.userInfo.links
-        let viewName = 'Today'
-        if (arr && arr[0]) viewName = arr[0]
-        return { viewName, viewType: 'list'}
+        return { viewName: 'Today', viewType: 'list'}
       } else {
         const viewName = localStorage.getItem('watchr_last_view_name')
         const viewType = localStorage.getItem('watchr_last_view_type')

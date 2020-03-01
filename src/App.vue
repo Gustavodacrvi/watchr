@@ -52,8 +52,6 @@ export default {
       timeBeforeMouseMove: 0,
       scrollTimeout: null,
 
-      initialSmartViewRender: false,
-
       lastRouteCameFromMenu: false,
       saveHistory: true,
     }

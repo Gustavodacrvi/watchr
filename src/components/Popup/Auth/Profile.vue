@@ -106,7 +106,7 @@
           <div v-else class="Sidebar" key="sidebar">
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
-              name='Go to the last visited view on app start instead of the first smart view'
+              name='Go to the last visited view on app start instead of the Today view'
               :value='goToLastViewOnEnter'
               @input="toggleGoToLastViewOnEnter"
             />
