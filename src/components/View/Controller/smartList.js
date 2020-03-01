@@ -102,7 +102,7 @@ export default {
       const n = this.viewName
       if (this.viewType === 'search')
       return () => true
-      if (this.isSmartOrderViewType && this.ungroupTasksInHeadings || n === 'Recurring' || n === 'Inbox')
+      if (n === 'Recurring' || n === 'Inbox')
         return () => true
 
       if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
@@ -113,7 +113,7 @@ export default {
 
       const isHeadingTask = t => t.list || t.folder || t.group
 
-      if (n === 'Calendar' || this.isSmartOrderViewType)
+      if (this.isSmartOrderViewType)
         return t => !isHeadingTask(t)
       
       if (this.isCalendarOrderViewType)
@@ -122,10 +122,11 @@ export default {
       return () => false
     },
     configFilterOptions() {
-      if (this.viewName === 'Logbook')
+      const n = this.viewName
+      if (n === 'Logbook')
         return pipe => pipe !== 'pipeCanceled' && pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
-      if (this.viewName === 'Recurring')
-        return pipe => pipe !== 'pipeCompleted'
+      if (n === 'Recurring' || n === 'Later lists')
+        return pipe => pipe !== 'pipeSomeday'
       return null
     },
     tasksOrder() {
@@ -169,7 +170,7 @@ export default {
       return []
     },
     showAllHeadingsItems() {
-      return this.viewName === 'Today' && this.isSmart
+      return this.isCalendarOrderViewType
     },
     headerOptions() {
       return null

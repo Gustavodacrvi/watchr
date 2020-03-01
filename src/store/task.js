@@ -751,11 +751,12 @@ export default {
       },
       isTaskInGroup: {
         getter({}, task, groupId) {
-          return task.group === groupId
+          return task.group === groupId && !task.list
         },
         cache(args) {
           return JSON.stringify({
             t: args[0].group,
+            p: args[0].list,
             l: args[1],
           })
         }

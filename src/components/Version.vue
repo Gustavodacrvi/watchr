@@ -32,7 +32,7 @@ export default {
 <style scoped>
 
 .tag {
-  font-size: .9em;
+  font-size: .85em;
   border-radius: 50px;
   padding: 8px 12px;
   transition-duration: .15s;
@@ -57,7 +57,7 @@ export default {
 }
 
 .update-diff {
-  margin-left: 8px;
+  margin-left: 2px;
   color: var(--txt);
 }
 

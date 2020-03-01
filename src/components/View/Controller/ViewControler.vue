@@ -546,7 +546,7 @@ export default {
     getListHeadingsByView() {
       let arr = []
 
-      if (!((this.isCalendarOrderViewType || this.isSmartOrderViewType) && this.ungroupTasksInHeadings)) 
+      if (!(this.isCalendarOrderViewType && this.ungroupTasksInHeadings)) 
         arr = this.getListFolderGroupCalendarHeadings
 
       if (this.isCalendarOrderViewType) {
@@ -718,7 +718,64 @@ export default {
       const arr = []
 
       const laterLists = this.getLaterLists()
+      const viewOrders = this.viewOrders
+      const viewName = this.viewName
 
+      const smartOrder = (viewOrders[viewName] && viewOrders[viewName].tasks) || []
+      
+      arr.push({
+        name: 'Someday lists',
+        id: 'SOMEDAY_LISTS',
+
+        listType: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+        
+        sort: this.sortArray,
+        order: smartOrder,
+        filter: l => l.calendar && l.calendar.type === 'someday',
+
+        fallbackFunctionData: () => ({
+          viewName,
+        }),
+        updateViewIds: functionFallbacks.updateOrderFunctions.smartOrder,
+        fallbackItem: (list, force) => {
+          if (force || !list.calendar) {
+            const m = mom().format('Y-M-D')
+            list.calendar = {
+              type: 'someday',
+              editDate: m,
+              begins: m,
+            }
+          }
+          return list
+        },
+      })
+      arr.push({
+        name: 'Recurring lists',
+        id: 'RECURRING_LISTS',
+        disableSortableMount: true,
+
+        listType: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+        
+        sort: this.sortArray,
+        order: smartOrder,
+        filter: l => l.calendar && l.calendar.type !== 'someday' && !l.calendar.type !== 'specific',
+
+        fallbackFunctionData: () => ({
+          viewName,
+        }),
+        updateViewIds: functionFallbacks.updateOrderFunctions.smartOrder,
+      })
+      
       if (laterLists.length > 0) {
 
         const set = new Set()

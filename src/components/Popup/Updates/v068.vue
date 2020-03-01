@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 29th, 2019
+    </div>
+    
     <h3>Basic Pomodoro Timer</h3>
     <br>
 
@@ -8,3 +12,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

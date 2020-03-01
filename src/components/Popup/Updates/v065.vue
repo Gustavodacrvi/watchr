@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 26th, 2019
+    </div>
+    
     <h3>New Calendar Smart View</h3>
     <br>
 
@@ -9,3 +13,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

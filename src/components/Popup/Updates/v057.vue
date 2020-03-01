@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 15th, 2019
+    </div>
+    
     <h4>Auto scheduler</h4>
     <br>
     <span>Tasks now can have a duration property, 5 minutes, 45 minutes, etc..., which then can be used for auto-scheduling.
@@ -25,3 +29,5 @@
     </span>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

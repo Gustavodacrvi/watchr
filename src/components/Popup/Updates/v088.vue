@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Jan 27th, 2020
+    </div>
+    
     <h3>Text Formatting in task names and list/headings notes</h3>
     <br>
 
@@ -67,3 +71,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

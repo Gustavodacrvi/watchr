@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Jan 21th, 2020
+    </div>
+
     <h3>Additions</h3>
 
     <li>It's now possible to add files to list/task using file drag and drop.</li>
@@ -11,3 +15,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

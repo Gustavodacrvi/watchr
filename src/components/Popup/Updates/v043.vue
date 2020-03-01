@@ -8,3 +8,5 @@
     </ul>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

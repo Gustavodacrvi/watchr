@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Jan 29th, 2020
+    </div>
+    
     <h3>Google Calendar API</h3>
     <br>
 
@@ -29,3 +33,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 28th, 2019
+    </div>
+    
     <h3>Floating Action Button Redesign</h3>
     <br>
 
@@ -9,3 +13,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

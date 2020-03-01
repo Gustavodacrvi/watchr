@@ -314,7 +314,11 @@ export default {
       const obj = this.getNumberOfTasksByView(viewName)
       if (viewName !== 'Today' && viewName !== 'Deadlines' && viewName !== 'Assigned to me')
         return {total: obj.total}
-      return obj
+      const listNumbers = this.getNumberOfListsByView(viewName)
+      return {
+        notCompleted: obj.notCompleted + listNumbers.notCompleted,
+        total: obj.total + listNumbers.total
+      }
     },
     mapProgress(link) {
       if (link.type === 'list')
@@ -354,6 +358,7 @@ export default {
       isDesktopBreakPoint: 'isDesktopBreakPoint',
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
+      getNumberOfListsByView: 'list/getNumberOfListsByView',
       favLists: 'list/getFavoriteLists',
       sortedFromMeInvites: 'invites/sortedFromMeInvites',
       sortedToMeInvites: 'invites/sortedToMeInvites',

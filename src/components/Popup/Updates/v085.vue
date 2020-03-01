@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Jan 25th, 2020
+    </div>
+    
     <h3>Ability to Cancel Tasks</h3>
 
     <br>
@@ -11,3 +15,5 @@
 
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>

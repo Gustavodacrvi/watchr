@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="date-wrapper">
+      Dec 17th, 2019
+    </div>
+    
     <h4>Improvements</h4>
       <br>
     <li>Disable schedule and save schedule.</li>
@@ -13,3 +17,5 @@
     <li>Bug, where completed periodic or weekly tasks, would not disappear from Today.</li>
   </div>
 </template>
+
+<style scoped src='@/assets/css/updates.css'></style>
