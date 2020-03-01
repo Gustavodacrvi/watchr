@@ -16,7 +16,7 @@
         :color='h.color ? h.color : ""'
         :options='h.options'
         :autoSchedule='h.autoSchedule'
-        :length='showAllHeadingsItems ? 3 : h.items.length || 1'
+        :length='getContHeight(h)'
 
         @option-click='v => getOptionClick(h)(v)'
         @save-notes='v => getNotesOption(h)(v)'
@@ -118,6 +118,12 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    getContHeight(h) {
+      const l = h.items.length
+      if (!this.showAllHeadingsItems)
+        return l >= 3 ? 3 : l || 1
+      return l || 1
+    },
     addedHeadingCompleteMount() {
       this.$emit("added-heading-complete-mount")
     },

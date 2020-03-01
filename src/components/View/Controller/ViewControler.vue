@@ -754,6 +754,28 @@ export default {
           return list
         },
       })
+      arr.push({
+        name: 'Recurring lists',
+        id: 'RECURRING_LISTS',
+        disableSortableMount: true,
+
+        listType: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+        
+        sort: this.sortArray,
+        order: smartOrder,
+        filter: l => l.calendar && l.calendar.type !== 'someday' && !l.calendar.type !== 'specific',
+
+        fallbackFunctionData: () => ({
+          viewName,
+        }),
+        updateViewIds: functionFallbacks.updateOrderFunctions.smartOrder,
+      })
+      
       if (laterLists.length > 0) {
 
         const set = new Set()

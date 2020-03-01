@@ -170,7 +170,7 @@ export default {
       return []
     },
     showAllHeadingsItems() {
-      return this.viewName === 'Today' && this.isSmart
+      return this.isCalendarOrderViewType
     },
     headerOptions() {
       return null
