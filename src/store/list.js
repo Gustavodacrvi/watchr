@@ -546,6 +546,7 @@ export default {
   actions: {
     // ADD
     addViewList({rootState}, {b, writes, list}) {
+      console.log(list)
       return setList(b, {
         ...list,
         smartViewsOrders: {},

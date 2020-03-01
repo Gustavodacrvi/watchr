@@ -122,10 +122,11 @@ export default {
       return () => false
     },
     configFilterOptions() {
-      if (this.viewName === 'Logbook')
+      const n = this.viewName
+      if (n === 'Logbook')
         return pipe => pipe !== 'pipeCanceled' && pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
-      if (this.viewName === 'Recurring')
-        return pipe => pipe !== 'pipeCompleted'
+      if (n === 'Recurring' || n === 'Later lists')
+        return pipe => pipe !== 'pipeSomeday'
       return null
     },
     tasksOrder() {

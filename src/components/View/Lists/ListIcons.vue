@@ -25,11 +25,11 @@
     />
     <Icon v-else-if="!props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="4"
       icon="circle-dash"
-      width="10px"
+      width="14px"
     />
     <Icon v-else-if="props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="5"
       icon="circle-check-dash"
-      width="10px"
+      width="14px"
     />
     <Icon v-else-if="!props.co && props.ac && props.se && !props.so" class="tra-icon cursor remove-highlight" key="6"
       icon="circle-filled"
@@ -41,7 +41,7 @@
     />
     <Icon v-else-if="!props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="7"
       icon="circle-dash"
-      width="10px"
+      width="14px"
     />
     <Icon v-else-if="props.co && props.se && !props.so" class="tra-icon cursor remove-highlight" key="9"
       icon="circle-check"
@@ -49,7 +49,7 @@
     />
     <Icon v-else-if="props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="10"
       icon="circle-check-dash"
-      width="10px"
+      width="14px"
     />
   </transition-group>
 </template>
