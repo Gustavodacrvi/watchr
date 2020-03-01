@@ -546,7 +546,7 @@ export default {
     getListHeadingsByView() {
       let arr = []
 
-      if (!((this.isCalendarOrderViewType || this.isSmartOrderViewType) && this.ungroupTasksInHeadings)) 
+      if (!(this.isCalendarOrderViewType && this.ungroupTasksInHeadings)) 
         arr = this.getListFolderGroupCalendarHeadings
 
       if (this.isCalendarOrderViewType) {

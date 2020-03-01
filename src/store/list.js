@@ -255,10 +255,13 @@ export default {
         },
       },
       isListBeginDay: {
-        getter({}, list, date) {
-          if (!list.calendar || list.completed || list.canceled || list.calendar.type !== 'specific')
+        getter({}, list, date = TOD_DATE) {
+          const c = list.calendar
+          if (!c || c.type === 'someday')
             return false
-          return list.calendar.specific === (date || TOD_DATE)
+          if (c.type === 'specific')
+            return c.specific === date
+          return utilsMoment.getNextEventAfterCompletionDate(c)
         },
         cache(args) {
           return JSON.stringify({
@@ -334,11 +337,27 @@ export default {
           })
         },
       },
+      isListOnCalendarView: {
+        getter({getters}, list, date = TOD_DATE) {
+          if (list.deadline === date)
+            return true
+          return getters.isListBeginDay(list, date)
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].calendar,
+            e: args[0].deadline,
+            d: args[1],
+          })
+        },
+      },
       isListInView: {
         getter({getters, rootState}, list, view) {
           switch (view) {
             case 'Someday': return getters.isListSomeday(list)
             case 'Anytime': return getters.isListAnytime(list)
+            case 'Today': return getters.isListOnCalendarView(list, TOD_DATE)
+            case 'Tomorrow': return getters.isListOnCalendarView(list, TOM_DATE)
             case 'Assigned to me': return list.assigned === rootState.user.uid
           }
         },
@@ -354,6 +373,20 @@ export default {
                 list: t.list,
                 folder: t.folder,
                 tags: t.tags,
+              }
+              break
+            }
+            case 'Tomorrow': {
+              obj = {
+                c: t.calendar,
+                d: t.deadline,
+              }
+              break
+            }
+            case 'Today': {
+              obj = {
+                c: t.calendar,
+                d: t.deadline,
               }
               break
             }
@@ -471,6 +504,39 @@ export default {
           return result
         }
         return 0
+      },
+      getNumberOfListsByView: {
+        react: [
+          'calendar',
+          'completed',
+          'list',
+          'folder',
+          'deadline',
+          'group',
+          'tags',
+          'assigned',
+          'completeDate',
+        ],
+        getter({getters}, viewName) {
+          const ts = getters.lists.filter(
+            list => getters.isListInView(list, viewName)
+          )
+
+          const getDate = () => {
+            switch (viewName) {
+              case 'Today': return TOD_DATE
+              case 'Tomorrow': return TOM_DATE
+            }
+          }
+
+          return {
+            total: ts.length,
+            notCompleted: ts.filter(
+              list => !getters.isListCompleted(list, getDate()) &&
+              !getters.isListCanceled(list)
+            ).length,
+          }
+        },
       },
     }, true),
     getFavoriteLists(s, getters) {

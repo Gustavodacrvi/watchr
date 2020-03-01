@@ -102,7 +102,7 @@ export default {
       const n = this.viewName
       if (this.viewType === 'search')
       return () => true
-      if (this.isSmartOrderViewType && this.ungroupTasksInHeadings || n === 'Recurring' || n === 'Inbox')
+      if (n === 'Recurring' || n === 'Inbox')
         return () => true
 
       if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
@@ -113,7 +113,7 @@ export default {
 
       const isHeadingTask = t => t.list || t.folder || t.group
 
-      if (n === 'Calendar' || this.isSmartOrderViewType)
+      if (this.isSmartOrderViewType)
         return t => !isHeadingTask(t)
       
       if (this.isCalendarOrderViewType)
