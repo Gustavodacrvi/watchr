@@ -36,6 +36,15 @@
         @click="emit('folder', l.name)"
       />
     </div>
+    <div class="tags" :class="{margins: groups.length > 0}">
+      <Tag class="tag" v-for="l in groups" :key="l.id"
+        :value="l.name"
+        :selected='inclusiveGroup === l.name || exclusiveGroups.includes(l.name)'
+        :extraIcon="getGroupExclusiveIcon(l.name)"
+        icon="group"
+        @click="emit('group', l.name)"
+      />
+    </div>
   </div>
 </template>
 
@@ -47,7 +56,7 @@ export default {
   components: {
     Tag,
   },
-  props: ['exclusiveTags', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'tags', 'priorities', 'lists', 'folders'],
+  props: ['exclusiveTags', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'inclusiveGroup', 'exclusiveGroups', 'tags', 'priorities', 'lists', 'folders', 'groups'],
   methods: {
     emit(evt, name) {
       this.$emit(evt, name)
@@ -76,6 +85,11 @@ export default {
     },
     getFolderExclusiveIcon(name) {
       if (this.exclusiveFolders.includes(name))
+        return 'close'
+      return null
+    },
+    getGroupExclusiveIcon(name) {
+      if (this.exclusiveGroups.includes(name))
         return 'close'
       return null
     },

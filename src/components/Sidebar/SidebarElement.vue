@@ -31,6 +31,7 @@
             :style="iconStyle"
             :icon="icon"
             :progress='progress'
+            :width='progress !== undefined ? null : "17px"'
           />
         </div>
         <div class="name-wrapper">
@@ -238,7 +239,7 @@ export default {
       getAssignedTasksByList: 'task/getAssignedTasksByList',
     }),
     sublistHeight() {
-      return ((this.subList.length) * (this.isDesktopDevice ? 35 : 42)) + 'px'
+      return ((this.subList.length) * (this.isDesktopDevice ? 25 : 42)) + 'px'
     },
     hasSubList() {
       return this.subList && this.subList.length > 0

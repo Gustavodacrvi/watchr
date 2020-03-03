@@ -10,7 +10,7 @@
 }
 
 .popup.fillSpace {
-  overflow: hidden;
+  overflow: auto;
   margin: 0;
   margin-top: initial;
   flex-basis: initial;

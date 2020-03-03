@@ -17,12 +17,15 @@
         :exclusiveLists='exclusiveLists'
         :inclusiveFolder='inclusiveFolder'
         :exclusiveFolders='exclusiveFolders'
+        :inclusiveGroup='inclusiveGroup'
+        :exclusiveGroups='exclusiveGroups'
 
         :tags='tagSelectionOptions'
         :removeHeaderTag='removeHeaderTag'
         :priorities='priorityOptions'
         :lists='listSelectionOptions'
         :folders='folderSelectionOptions'
+        :groups='groupSelectionOptions'
         :extraIcons='extraIcons'
 
         :viewName="viewName"
@@ -33,6 +36,7 @@
         @priority='selectPriority'
         @list='selectList'
         @folder='selectFolder'
+        @group='selectGroup'
       />
       <component v-if='smartComponent'
         class='component'
@@ -77,9 +81,10 @@
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
           @save-schedule-object='saveScheduleObject'
 
-          @present-tags='v => presentTags = v'
-          @present-lists='v => presentLists = v'
-          @present-folders='v => presentFolders = v'
+          @present-tags='getPresentTags'
+          @present-lists='getPresentLists'
+          @present-folders='getPresentFolders'
+          @present-groups='getPresentGroups'
 
           @go='go'
 
@@ -162,6 +167,7 @@ export default {
       showingTagSelection: false,
       showingListSelection: false,
       showingFolderSelection: false,
+      showingGroupSelection: false,
       showingPrioritySelection: false,
       showCompleted: false,
       showSomeday: false,
@@ -170,9 +176,11 @@ export default {
       presentTags: [],
       presentLists: [],
       presentFolders: [],
+      presentGroups: [],
       additionalTags: [],
       additionalLists: [],
       additionalFolders: [],
+      additionalGroups: [],
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
@@ -186,6 +194,8 @@ export default {
       exclusiveLists: [],
       inclusiveFolder: null,
       exclusiveFolders: [],
+      inclusiveGroup: null,
+      exclusiveGroups: [],
 
       initialX: 0,
       initialY: 0,
@@ -205,6 +215,7 @@ export default {
     this.getComputedOptions()
     this.showingTagSelection = localStorage.getItem('tagFilters') === 'true'
     this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
+    this.showingGroupSelection = localStorage.getItem('groupFilters') === 'true'
     this.showingListSelection = localStorage.getItem('listFilters') === 'true'
     this.autoSchedule = this.savedSchedule
 
@@ -221,6 +232,39 @@ export default {
   methods: {
     ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
+    spliceRemovedElements(oldArr, presentTags) {
+       oldArr.forEach(el => {
+         if (!presentTags.includes(el)) {
+            const i = oldArr.findIndex(id => id === el)
+            if (i > -1)
+              oldArr.splice(i, 1)
+         }
+       })
+    },
+    getPresentTags(v) {
+      this.spliceRemovedElements(this.inclusiveTags, v)
+
+      this.presentTags = v
+    },
+    getPresentFolders(v) {
+      if (!v.includes(this.inclusiveFolder))
+        this.inclusiveFolder = null
+      
+      this.presentFolders = v
+    },
+    getPresentGroups(v) {
+      if (!v.includes(this.inclusiveGroup))
+        this.inclusiveGroup = null
+      
+      this.presentGroups = v
+    },
+    getPresentLists(v) {
+      if (!v.includes(this.inclusiveList))
+        this.inclusiveList = null
+      this.spliceRemovedElements(this.exclusiveLists, v)
+      
+      this.presentLists = v
+    },
     getAllTasksIds(ids) {
       this.allViewTasksIds = ids
     },
@@ -612,6 +656,8 @@ export default {
     selectList(name) {
       this.inclusiveFolder = null
       this.exclusiveFolders = []
+      this.inclusiveGroup = null
+      this.exclusiveGroups = []
       if (this.inclusiveList !== name && !this.exclusiveLists.includes(name)) {
         this.inclusiveList = name
       } else if (this.inclusiveList === name) {
@@ -625,6 +671,8 @@ export default {
     selectFolder(name) {
       this.inclusiveList = null
       this.exclusiveLists = []
+      this.inclusiveGroup = null
+      this.exclusiveGroups = []
       if (this.inclusiveFolder !== name && !this.exclusiveFolders.includes(name)) {
         this.inclusiveFolder = name
       } else if (this.inclusiveFolder === name) {
@@ -633,6 +681,21 @@ export default {
       } else {
         const index = this.exclusiveFolders.findIndex(el => el === name)
         this.exclusiveFolders.splice(index, 1)
+      }
+    },
+    selectGroup(name) {
+      this.inclusiveFolder = null
+      this.exclusiveFolders = []
+      this.inclusiveList = null
+      this.exclusiveLists = []
+      if (this.inclusiveGroup !== name && !this.exclusiveGroups.includes(name)) {
+        this.inclusiveGroup = name
+      } else if (this.inclusiveGroup === name) {
+        this.inclusiveGroup = null
+        this.exclusiveGroups.push(name)
+      } else {
+        const index = this.exclusiveGroups.findIndex(el => el === name)
+        this.exclusiveGroups.splice(index, 1)
       }
     },
     toggleTagSelection() {
@@ -652,8 +715,13 @@ export default {
     },
     toggleFolderSelection() {
       this.showingFolderSelection = !this.showingFolderSelection
-      this.inclusiveFolders = ''
+      this.inclusiveFolders = []
       this.exclusiveFolder = ''
+    },
+    toggleGroupSelection() {
+      this.showingGroupSelection = !this.showingGroupSelection
+      this.inclusiveGroups = []
+      this.exclusiveGroup = ''
     },
 
     getRootNonFilteredFromTaskHandler(rootNonFiltered) {
@@ -778,11 +846,15 @@ export default {
       getListsByName: 'list/getListsByName',
       getFoldersByName: 'folder/getFoldersByName',
       getFoldersById: 'folder/getFoldersById',
+      getGroupsById: 'group/getGroupsById',
+      getGroupsByName: 'group/getGroupsByName',
       getAssigneeIconDrop: 'group/getAssigneeIconDrop',
       getTasksById: 'task/getTasksById',
 
       doesTaskPassExclusiveFolders: 'task/doesTaskPassExclusiveFolders',
       doesTaskPassInclusiveFolder: 'task/doesTaskPassInclusiveFolder',
+      doesTaskPassExclusiveGroups: 'task/doesTaskPassExclusiveGroups',
+      doesTaskPassInclusiveGroup: 'task/doesTaskPassInclusiveGroup',
       doesTaskPassExclusiveLists: 'task/doesTaskPassExclusiveLists',
       doesTaskPassInclusiveList: 'task/doesTaskPassInclusiveList',
       doesTaskPassExclusiveTags: 'task/doesTaskPassExclusiveTags',
@@ -935,6 +1007,11 @@ export default {
           icon: 'folder',
           callback: () => this.showingFolderSelection = false
         })
+      if (this.showingGroupSelection)
+        arr.push({
+          icon: 'group',
+          callback: () => this.showingGroupSelection = false
+        })
       if (this.showingPrioritySelection)
         arr.push({
           icon: 'priority',
@@ -962,7 +1039,7 @@ export default {
     },
     pipeFilterOptions() {
       const toPipe = []
-      const {tags, list, folder, priorities} = this.getFilterOptions
+      const {tags, list, group, folder, priorities} = this.getFilterOptions
 
       if (tags.inclusive.length > 0)
         toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive, this.tags || []))
@@ -983,6 +1060,11 @@ export default {
         toPipe.push(t => this.doesTaskPassInclusiveFolder(t, folder.inclusive))
       if (folder.exclusive.length > 0)
         toPipe.push(t => this.doesTaskPassExclusiveFolders(t, folder.exclusive))
+
+      if (group.inclusive)
+        toPipe.push(t => this.doesTaskPassInclusiveGroup(t, group.inclusive))
+      if (group.exclusive.length > 0)
+        toPipe.push(t => this.doesTaskPassExclusiveGroups(t, group.exclusive))
       
       if (toPipe.length > 0) {
         return pipeBooleanFilters(...toPipe)
@@ -1031,6 +1113,9 @@ export default {
     },
     folderSelectionOptions() {
       return this.showingFolderSelection ? this.getFoldersById(this.presentFolders) : []
+    },
+    groupSelectionOptions() {
+      return this.showingGroupSelection ? this.getGroupsById(this.presentGroups) : []
     },
     getIconDropOptionsTags() {
       const arr = []
@@ -1189,6 +1274,11 @@ export default {
                 name: 'Filter by folders',
                 icon: 'folder',
                 callback: () => this.toggleFolderSelection()
+              },
+              {
+                name: 'Filter by Groups',
+                icon: 'group',
+                callback: () => this.toggleGroupSelection()
               },
             ],
           },
@@ -1486,6 +1576,10 @@ export default {
           inclusive: this.getInclusiveFolderId,
           exclusive: this.getExclusiveFoldersId,
         },
+        group: {
+          inclusive: this.getInclusiveGroupId,
+          exclusive: this.getExclusiveGroupsId,
+        },
       }
     },
     getInclusiveTagIds() {
@@ -1512,6 +1606,16 @@ export default {
     getExclusiveFoldersId() {
       if (this.exclusiveFolders)
         return this.getFoldersByName(this.exclusiveFolders).map(el => el.id)
+      return null
+    },
+    getInclusiveGroupId() {
+      if (this.inclusiveGroup)
+        return this.getGroupsByName([this.inclusiveGroup])[0].id
+      return null
+    },
+    getExclusiveGroupsId() {
+      if (this.exclusiveGroups)
+        return this.getGroupsByName(this.exclusiveGroups).map(el => el.id)
       return null
     },
   },

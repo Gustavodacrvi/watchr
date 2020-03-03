@@ -658,6 +658,14 @@ export default {
           return JSON.stringify({t: args[0].folder, l: args[1]})
         }
       },
+      doesTaskPassExclusiveGroups: {
+        getter({}, task, ids) {
+          return ids.every(el => task.group !== el)
+        },
+        cache(args) {
+          return JSON.stringify({t: args[0].group, l: args[1]})
+        }
+      },
       doesTaskIncludeText: {
         getter({}, task, name) {
           return task.name && task.name.includes(name)
@@ -672,6 +680,14 @@ export default {
         },
         cache(args) {
           return JSON.stringify({t: args[0].folder, l: args[1]})
+        }
+      },
+      doesTaskPassInclusiveGroup: {
+        getter({}, task, groupId) {
+          return task.group === groupId
+        },
+        cache(args) {
+          return JSON.stringify({t: args[0].group, l: args[1]})
         }
       },
       doesTaskPassExclusiveLists: {

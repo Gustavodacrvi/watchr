@@ -649,9 +649,18 @@ export default {
         }
       })
     },
-    presentFolder() {
+    presentFolders() {
       const unique = new Set()
       return this.allNonFilteredViewTasks.map(t => t.folder).filter(id => {
+        if (id && !unique.has(id)) {
+          unique.add(id) 
+          return id
+        }
+      })
+    },
+    presentGroups() {
+      const unique = new Set()
+      return this.allNonFilteredViewTasks.map(t => t.group).filter(id => {
         if (id && !unique.has(id)) {
           unique.add(id) 
           return id
@@ -668,6 +677,9 @@ export default {
     },
     presentFolders() {
       this.$emit('present-folders', this.presentFolders)
+    },
+    presentGroups() {
+      this.$emit('present-groups', this.presentGroups)
     },
     rootNonFiltered() {
       this.$emit('root-non-filtered', this.rootNonFiltered)

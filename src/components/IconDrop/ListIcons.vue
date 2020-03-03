@@ -1,6 +1,6 @@
 
 <template>
-  <div class="ListIcons scroll-thin" :class="{overflow: links.allowSearch}">
+  <div class="ListIcons scroll-thin" :class="[{overflow: links.allowSearch}, deviceLayout]">
     <div class="links" ref='main-content'>
       <span v-if="select && allowKeyboard" class="notes">
         Shift + Enter to save
@@ -247,6 +247,7 @@ export default {
     ...mapState({
       isOnShift: state => state.isOnShift,
     }),
+    ...mapGetters(['deviceLayout']),
     keyboardActions() {
       let num = 0
       return this.getLinks.reduce((obj, l) => {
@@ -294,6 +295,10 @@ export default {
   margin: 0 10px;
   overflow: hidden;
   position: relative;
+}
+
+.mobile .link {
+  height: 30px;
 }
 
 .link:hover, .active {

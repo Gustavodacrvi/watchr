@@ -1,7 +1,7 @@
 <template>
   <div class="Desktop">
     <div class="logo" :class="{normal: isntOnIndexPage}">
-      <LogoApp :width='isntOnIndexPage ? "30px" : "45px"' :class="{'illustration-colors': isntOnIndexPage}" :trans='true'/>
+      <LogoApp :width='isntOnIndexPage ? "15px" : "30px"' :class="{'illustration-colors': isntOnIndexPage}" :trans='true'/>
       <span class="watchr"><b>watchr</b></span>
     </div>
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('home')}" to="/">{{ 'Home' }}</router-link>

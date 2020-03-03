@@ -1,5 +1,5 @@
 <template>
-  <div class="CircleBubble">
+  <div v-if="!isDesktopDevice" class="CircleBubble">
     <div class="wrapper">
       <transition
         @enter='enter'
@@ -16,6 +16,8 @@
   </div>
 </template>
 <script>
+
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['innerColor', 'outerColor', 'opacity'],
@@ -118,6 +120,9 @@ export default {
       this.el = this.$el.parentElement
       return this.el
     }
+  },
+  computed: {
+    ...mapGetters(['isDesktopDevice']),
   },
   watch: {
     innerColor() {

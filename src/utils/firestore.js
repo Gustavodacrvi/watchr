@@ -245,7 +245,7 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
       solve()
     }
     if (task.handleFiles)
-      task.handleFiles(ref.id).then(save).catch(reject)
+      task.handleFiles(id).then(save).catch(reject)
     else save()
   })
 }

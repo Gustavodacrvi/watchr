@@ -193,6 +193,9 @@ export default {
   color: var(--primary);
 }
 
+.comp {
+  overflow: auto;
+}
 
 .opt + .opt {
   margin-left: 4px;
