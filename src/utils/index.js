@@ -183,6 +183,20 @@ export default {
         },
       },
       {
+        match: /\severy (\d+) days after/g,
+        get: (m, str) => {
+          const daily = parseInt(str.split(' ')[1], 10)
+          if (daily)
+            cal = {
+              type: 'after completion',
+              afterCompletion: daily,
+
+              editDate: TOD_STR,
+              begins: TOD_STR,
+            }
+        },
+      },
+      {
         match: /\sin (\d+) (\w+)/g,
         get: (match, str) => {
           const split = str.split(' ')
