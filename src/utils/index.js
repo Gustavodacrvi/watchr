@@ -169,10 +169,22 @@ export default {
         get: () => spec(tod.clone().add(1, 'year').startOf('year').format('Y-M-D')),
       },
       {
-        match: /\sin (\d+) (\w+)/g,
-        get: match => {
-          const str = (match[0] && match[0].trim()) || ''
+        match: /\severy (\d+) days/g,
+        get: (m, str) => {
+          const daily = parseInt(str.split(' ')[1], 10)
+          if (daily)
+            cal = {
+              type: 'daily',
+              daily,
 
+              editDate: TOD_STR,
+              begins: TOD_STR,
+            }
+        },
+      },
+      {
+        match: /\sin (\d+) (\w+)/g,
+        get: (match, str) => {
           const split = str.split(' ')
           const num = parseInt(split[1], 10)
           const type = split[split.length - 1]
@@ -196,8 +208,8 @@ export default {
       },
       {
         match: /\s([0-3][0-9])th/g,
-        get: match => {
-          parseDay((match[0] && match[0].trim()) || '')
+        get: (match, str) => {
+          parseDay(str)
         },
       },
       {
@@ -250,10 +262,8 @@ export default {
       },
       {
         match: /\s([0-9][0-9][0-9][0-9])/g,
-        get: match => {
+        get: (match, str) => {
           if (cal && cal.type === 'specific') {
-            const str = (match[0] && match[0].trim()) || ''
-  
             let time = mom(str, 'Y')
             
             if (time.isValid()) {
@@ -279,9 +289,7 @@ export default {
       },
       {
         match: !disablePmFormat ? /\s(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/g : /\s(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/g, // match 1am - 12am, 1pm - 12pm
-        get: match => {
-          const str = (match[0] && match[0].trim()) || ''
-
+        get: (match, str) => {
           const time = mom(str, format)
           if (time.isValid()) {
             const hour = time.format('HH:mm')
@@ -301,10 +309,12 @@ export default {
         },
       },
       {
-        match: ['evening', 'eve'],
+        match: ['evening', 'eve '],
         get: () => {
-          cal.evening = true
-          return cal 
+          if (cal) {
+            cal.evening = true
+            return cal 
+          }
         }
       },
       {
@@ -317,7 +327,7 @@ export default {
       if (obj.match instanceof RegExp) {
         const match = str.match(obj.match)
         if (match) {
-          obj.get(match)
+          obj.get(match, (match[0] && match[0].trim()) || '')
         }
       } else if (!Array.isArray(obj.match) && str.includes(' ' + obj.match)) {
         matches.push(obj.match)
