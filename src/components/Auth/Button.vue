@@ -5,12 +5,7 @@
     @leave='leave'
   >
     <button class="Button cbd" :class="getType" @click="$emit('click')">{{ value }}
-      <CircleBubble
-        innerColor='var(--light-gray)'
-        outerColor='var(--fade)'
-        opacity='0'
-      />
-    </button>  
+    </button>
   </transition>
 </template>
 

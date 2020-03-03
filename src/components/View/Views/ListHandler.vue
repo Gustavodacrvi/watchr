@@ -52,7 +52,7 @@ export default {
     HandlerMixin,
   ],
   props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday',
-  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'selectEverythingToggle'],
+  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'selectEverythingToggle', 'filterByAssigned'],
   components: {
     ListRendererVue,
   },
@@ -115,6 +115,9 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      user: state => state.user,
+    }),
     ...mapGetters({
       storeLists: 'list/lists',
       storeFolders: 'folder/folders',
@@ -167,7 +170,12 @@ export default {
         list => this.isListCompletedPipe(list),
         list => this.isListCanceledPipe(list),
         this.isSomedayPipe,
+        this.filterByAssignedPipe,
       )
+    },
+    filterByAssignedPipe() {
+      if (!this.filterByAssigned) return () => true
+      return l => l.assigned === this.user.uid
     },
     isSomedayPipe() {
       if (this.showSomeday) return () => true

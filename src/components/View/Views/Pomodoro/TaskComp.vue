@@ -1,9 +1,7 @@
 <template>
   <div class="TaskComp" :class="layout" @click.stop="selectTask">
     <div class="task rb cursor" ref="task">
-      <span>{{ taskMsg }}</span>
-      <CircleBubble/>
-    </div>
+      </div>
   </div>
 </template>
 

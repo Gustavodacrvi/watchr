@@ -54,11 +54,6 @@
 
         @click.stop="click"
       >
-        <CircleBubble v-if="!isDesktopBreakPoint"
-          innerColor='var(--light-gray)'
-          outerColor='var(--fade)'
-          opacity='0'
-        />
         <div class="cont">
           <div class="icon-wrapper" :class="{fade: !onHover}"
             @click.stop="desktopComplete"
@@ -313,6 +308,9 @@ export default {
     },
     calendarStr() {
       if (this.disableCalendarStr)
+        return null
+      const c = this.item.calendar
+      if (c && c.type !== 'someday' && c.type !== 'specific' && !this.isDesktopBreakPoint)
         return null
       const res = this.getListCalendarStr(this.item, this.userInfo)
       if (res === 'Someday') return null

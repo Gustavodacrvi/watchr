@@ -2,11 +2,6 @@
   <span class="tag cb cursor" :class="{needsUpdate}" @click.stop="showUpdates">
     <span>{{ parsedVersion }}</span>
     <span v-if="needsUpdate" class="update-diff">+{{versionDiff}}</span>
-    <CircleBubble
-      innerColor='var(--light-gray)'
-      outerColor='var(--fade)'
-      opacity='0'
-    />
   </span>  
 </template>
 

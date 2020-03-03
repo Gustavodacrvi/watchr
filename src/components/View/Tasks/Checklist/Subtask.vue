@@ -92,7 +92,7 @@ export default {
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
-        s.height = '25px'
+        s.height = this.isDesktopDevice ? '25px' : '30px'
         s.opacity = 1
 
         setTimeout(done, 205)
@@ -108,7 +108,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktopBreakPoint']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice']),
     showDeleteIcon() {
       return !this.isDesktopBreakPoint || this.hover
     },

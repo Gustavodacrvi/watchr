@@ -65,7 +65,7 @@ export default {
     'selectEverythingToggle', 'getCalendarOrderDate', 'updateViewIds',
     'width', 'disableRootActions', 'fallbackFunctionData',
 
-    'headingEditOptions', 'taskIconDropOptions',
+    'headingEditOptions', 'taskIconDropOptions', 'filterByAssigned',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
     'itemCompletionCompareDate', 'rootFallbackItem', 'autoSchedule',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
@@ -322,6 +322,7 @@ export default {
     ...mapState({
       selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
+      user: state => state.user,
     }),
     ...mapGetters({
       lists: 'list/lists',
@@ -591,7 +592,7 @@ export default {
     },
     filterOptionsPipes() {
       return [
-        'pipeCompleted', 'pipeSomeday', 'pipeCanceled', 'pipeFilterOptions',
+        'pipeCompleted', 'pipeSomeday', 'pipeCanceled', 'filterByAssignedPipe', 'pipeFilterOptions',
       ]
     },
     filteredFilterOptionsByConfig() {
@@ -621,6 +622,10 @@ export default {
     pipeSomeday() {
       if (this.showSomeday) return () => true
       return task => !this.isTaskSomeday(task)
+    },
+    filterByAssignedPipe() {
+      if (!this.filterByAssigned) return () => true
+      return t => t.assigned === this.user.uid
     },
     pipeCompleted() {
       if (this.showCompleted) return () => true

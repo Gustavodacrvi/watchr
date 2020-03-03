@@ -153,7 +153,7 @@
       <h3 class="pc">Move items</h3>
       <div class="line">
         <span>Move to list</span>
-        <span class="tag">Alt + L</span>
+        <span class="tag">Alt + K</span>
       </div>
       <div class="line">
         <span>Move to folder</span>

@@ -54,6 +54,7 @@
         :showSomeday='passSomedayTasks'
         :taskIconDropOptions='taskIconDropOptions'
         :selectEverythingToggle='selectEverythingToggle'
+        :filterByAssigned='filterByAssigned'
         :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
         @allow-someday='showSomeday = true'
@@ -75,6 +76,7 @@
           :selectEverythingToggle='selectEverythingToggle'
           :taskIconDropOptions='taskIconDropOptions'
           :autoSchedule='autoSchedule'
+          :filterByAssigned='filterByAssigned'
           :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
           @allow-someday='showSomeday = true'
@@ -173,6 +175,8 @@ export default {
       showSomeday: false,
       helperComponent: false,
 
+      filterByAssigned: false,
+
       presentTags: [],
       presentLists: [],
       presentFolders: [],
@@ -232,36 +236,44 @@ export default {
   methods: {
     ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
-    spliceRemovedElements(oldArr, presentTags) {
+    spliceRemovedElements(oldArr, presentTags, remove) {
        oldArr.forEach(el => {
          if (!presentTags.includes(el)) {
-            const i = oldArr.findIndex(id => id === el)
-            if (i > -1)
-              oldArr.splice(i, 1)
+            if (remove)
+              remove(el)
+            else {
+              const i = oldArr.findIndex(id => id === el)
+              if (i > -1)
+                oldArr.splice(i, 1)
+            }
          }
        })
     },
     getPresentTags(v) {
-      this.spliceRemovedElements(this.inclusiveTags, v)
+      this.spliceRemovedElements(this.getInclusiveTagIds, v, id => {
+        const tagName = this.getTagsById([id])[0].name
+        const i = this.inclusiveTags.findIndex(name => name === tagName)
+        if (i > -1)
+          this.inclusiveTags.splice(i, 1)
+      })
 
       this.presentTags = v
     },
     getPresentFolders(v) {
-      if (!v.includes(this.inclusiveFolder))
+      if (!v.includes(this.getInclusiveFolderId))
         this.inclusiveFolder = null
       
       this.presentFolders = v
     },
     getPresentGroups(v) {
-      if (!v.includes(this.inclusiveGroup))
+      if (!v.includes(this.getInclusiveGroupId))
         this.inclusiveGroup = null
       
       this.presentGroups = v
     },
     getPresentLists(v) {
-      if (!v.includes(this.inclusiveList))
+      if (!v.includes(this.getInclusiveListId))
         this.inclusiveList = null
-      this.spliceRemovedElements(this.exclusiveLists, v)
       
       this.presentLists = v
     },
@@ -627,6 +639,7 @@ export default {
       this.pagination = newPage
     },
     selectTag(name) {
+      console.warn('NOT THIS')
       const inc = this.inclusiveTags
       const exc = this.exclusiveTags
       if (!inc.includes(name) && !exc.includes(name)) {
@@ -1007,6 +1020,11 @@ export default {
           icon: 'folder',
           callback: () => this.showingFolderSelection = false
         })
+      if (this.filterByAssigned)
+        arr.push({
+          icon: 'user',
+          callback: () => this.filterByAssigned = false
+        })
       if (this.showingGroupSelection)
         arr.push({
           icon: 'group',
@@ -1280,6 +1298,11 @@ export default {
                 icon: 'group',
                 callback: () => this.toggleGroupSelection()
               },
+              {
+                name: 'Show only assigned to me',
+                icon: 'user',
+                callback: () => this.filterByAssigned = !this.filterByAssigned
+              }
             ],
           },
           {

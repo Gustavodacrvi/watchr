@@ -69,11 +69,6 @@
             @click="click"
             :style='{height: itemHeight + "px"}'
           >
-            <CircleBubble v-if="!isDesktopDevice"
-              innerColor='var(--light-gray)'
-              outerColor='var(--fade)'
-              opacity='0'
-            />
             <div class="cont"
               ref='cont'
             >
@@ -474,6 +469,7 @@ export default {
       isTaskCanceled: 'task/isTaskCanceled',
       getTaskDeadlineStr: 'task/getTaskDeadlineStr',
       isTaskInView: 'task/isTaskInView',
+      getListsById: 'list/getListsById',
       isRecurringTask: 'task/isRecurringTask',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
@@ -773,6 +769,11 @@ export default {
     taskList() {
       return this.savedLists.find(el => el.id === this.item.list)
     },
+    itemList() {
+      if (!this.item.list)
+        return null
+      return this.getListsById([this.item.list])[0]
+    },
     listStr() {
       const list = this.item.list
       if (!list || this.hideListName) return null
@@ -815,6 +816,8 @@ export default {
     calendarStr() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || this.disableCalendarStr || !this.isRoot) return null
+      if (c.type !== 'someday' && c.type !== 'specific' && !this.isDesktopBreakPoint)
+        return null
       const str = utils.parseCalendarObjectToString(c, this.userInfo)
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str

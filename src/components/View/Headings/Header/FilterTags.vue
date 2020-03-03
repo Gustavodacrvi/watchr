@@ -9,7 +9,7 @@
         @click="emit('tag', t.name)"
       />
     </div>
-    <div class="tags" :class="{margins: priorities.length > 0}">
+    <div class="tags" :class="{margins: showPrioritiesMargin}">
       <Tag class="tag" v-for="p in priorities" :key="p"
         :value="p"
         :selected='isPrioritySelected(p)'
@@ -18,7 +18,7 @@
         @click="emit('priority', p)"
       />
     </div>
-    <div class="tags" :class="{margins: lists.length > 0}">
+    <div class="tags" :class="{margins: showListMargin}">
       <Tag class="tag" v-for="l in lists" :key="l.id"
         :value="l.name"
         :selected='inclusiveList === l.name || exclusiveLists.includes(l.name)'
@@ -27,7 +27,7 @@
         @click="emit('list', l.name)"
       />
     </div>
-    <div class="tags" :class="{margins: folders.length > 0}">
+    <div class="tags" :class="{margins: showFoldersMargin}">
       <Tag class="tag" v-for="l in folders" :key="l.id"
         :value="l.name"
         :selected='inclusiveFolder === l.name || exclusiveFolders.includes(l.name)'
@@ -36,7 +36,7 @@
         @click="emit('folder', l.name)"
       />
     </div>
-    <div class="tags" :class="{margins: groups.length > 0}">
+    <div class="tags" :class="{margins: showGroupsMargin}">
       <Tag class="tag" v-for="l in groups" :key="l.id"
         :value="l.name"
         :selected='inclusiveGroup === l.name || exclusiveGroups.includes(l.name)'
@@ -93,7 +93,21 @@ export default {
         return 'close'
       return null
     },
-  }
+  },
+  computed: {
+    showPrioritiesMargin() {
+      return this.tags.length === 0 && this.priorities.length > 0
+    },
+    showListMargin() {
+      return this.tags.length === 0 && !this.showPrioritiesMargin && this.lists.length > 0
+    },
+    showFoldersMargin() {
+      return this.tags.length === 0 && !this.showListMargin && !this.showPrioritiesMargin && this.folders.length > 0
+    },
+    showGroupsMargin() {
+      return this.tags.length === 0 && !this.showListMargin && !this.showPrioritiesMargin && !this.showFoldersMargin && this.groups.length > 0
+    },
+  },
 }
 
 </script>
@@ -113,10 +127,6 @@ export default {
 .margins {
   transition-duration: .2s;
   margin-top: 30px;
-}
-
-.tags + .margins {
-  margin-top: 4px;
 }
 
 .tag {

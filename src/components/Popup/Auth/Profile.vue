@@ -5,18 +5,8 @@
         <div>
           <div v-if="!isDesktopBreakPoint" style="height: 30px"></div>
           <span class="option rb cursor remove-highlight" :class="{active: 'General' === option}" @click="option = 'General'">General
-            <CircleBubble
-              innerColor='var(--light-gray)'
-              outerColor='var(--fade)'
-              opacity='0'
-            />
           </span>
           <span class="option rb cursor remove-highlight" :class="{active: 'Sidebar' === option}" @click="option = 'Sidebar'">Sidebar
-            <CircleBubble
-              innerColor='var(--light-gray)'
-              outerColor='var(--fade)'
-              opacity='0'
-            />
           </span>
         </div>
         <div>

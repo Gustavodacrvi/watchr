@@ -67,10 +67,6 @@
         </div>
         <div v-if="!noTime" class="opt cursor time-option remove-highlight rb" @click='$emit("get-time", selectedMoment.format("Y-M-D"))'>
           <span class="msg">Time: {{ getTime }}</span>
-          <CircleBubble
-            innerColor='rgba(87,160,222,.1)'
-            outerColor='var(--primary)'
-          />
         </div>
         <div class="cont">
           <div class="header">

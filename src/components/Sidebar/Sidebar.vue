@@ -53,11 +53,6 @@
                   @click="moveLine(i)"
                   :data-section="s.name"
                 >{{ s.name }}
-                  <CircleBubble
-                    innerColor='var(--light-gray)'
-                    outerColor='var(--fade)'
-                    opacity='0'
-                  />
                 </div>
                 <div class="line section-line"></div>
               </div>
@@ -83,7 +78,6 @@
             </div>
           </transition>
         </div>
-        <div v-if="isDesktopBreakPoint" style="height: 25px;"></div>
         <div v-if="!removeFooter" class="footer" :class="[layout, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop" v-if="showIconDropdown">
@@ -686,7 +680,7 @@ export default {
 .footer {
   position: absolute;
   left: 0;
-  bottom: -12px;
+  bottom: -28px;
   height: 40px;
   border: none;
   padding: 0 25px;

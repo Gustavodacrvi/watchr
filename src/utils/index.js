@@ -523,7 +523,7 @@ export default {
 
     if (c.time) str += ` at ${this.parseTime(c.time, userInfo)}`
 
-    if (c.begins && c.begins !== c.editDate) {
+    if (c.begins && c.begins !== c.editDate && mom(c.begins, 'Y-M-D').isSameOrAfter(mom(), 'day')) {
       str += `, begins on ${this.getHumanReadableDate(c.begins)}`
     }
 
@@ -800,7 +800,7 @@ export default {
           })
           break
         }
-        case "l": {
+        case "k": {
           p()
           iconDrop({
             links: vm.lists.map(t => ({

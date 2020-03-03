@@ -765,6 +765,8 @@ export default {
           else if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
             const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c, true)
             c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
+            if (mom(c.lastCompleteDate, 'Y-M-D').isBefore(mom(TOD_DATE, 'Y-M-D'), 'day'))
+              c.lastCompleteDate = TOD_DATE
           }
 
           if (c.times) c.times--

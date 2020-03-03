@@ -29,11 +29,6 @@
               <span class="day">
                 {{ d.day }}
               </span>
-              <CircleBubble
-                innerColor='var(--txt)'
-                outerColor='white'
-                opacity='0'
-              />
             </div>
           </div>
         </div>
@@ -52,11 +47,6 @@
               <span class="day">
                 {{ d.day }}
               </span>
-              <CircleBubble
-                innerColor='var(--txt)'
-                outerColor='white'
-                opacity='0'
-              />
             </div>
           </div>
         </div>
@@ -75,11 +65,6 @@
               <span class="day">
                 {{ d.day }}
               </span>
-              <CircleBubble
-                innerColor='var(--txt)'
-                outerColor='white'
-                opacity='0'
-              />
             </div>
           </div>
         </div>
@@ -96,11 +81,6 @@
           icon='tiny-arrow'
           width='25px'
         />
-        <CircleBubble
-          innerColor='var(--light-gray)'
-          outerColor='var(--fade)'
-          opacity='0'
-        />
       </div>
       <div v-if="isDesktopBreakPoint"
         class="btn shadow left-btn cursor"
@@ -109,11 +89,6 @@
         <Icon class="icon"
           icon='tiny-arrow'
           width='25px'
-        />
-        <CircleBubble
-          innerColor='var(--light-gray)'
-          outerColor='var(--fade)'
-          opacity='0'
         />
       </div>
     </div>

@@ -18,11 +18,6 @@
           :color="color"
           width="10px"
         />
-        <CircleBubble
-          innerColor='var(--txt)'
-          outerColor='white'
-          opacity='0'
-        />
       </div>
     </div>
   </transition>

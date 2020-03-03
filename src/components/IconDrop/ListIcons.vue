@@ -46,11 +46,6 @@
                 />
               </span>
             </div>
-            <CircleBubble
-              innerColor='rgba(87,160,222,.1)'
-              outerColor='var(--primary)'
-              opacity='0'
-            />
           </div>
           <div v-else-if="l.type === 'optionsList'" :key="l.name" class="header-link hide-trans">
             <div class="header-name">{{ l.name }}</div>

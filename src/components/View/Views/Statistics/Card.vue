@@ -12,11 +12,6 @@
       <div class="cont">
         {{descr}}
       </div>
-      <CircleBubble class="bubble"
-        innerColor='var(--light-gray)'
-        outerColor='var(--fade)'
-        opacity='0'
-      />
     </div>
   </div>
 </template>

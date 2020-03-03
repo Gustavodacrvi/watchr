@@ -10,9 +10,6 @@ import Icon from "@/components/Icons/IconWrapper.vue"
 import VueWorker from 'vue-worker'
 import vueSmoothScroll from 'vue2-smooth-scroll'
 
-import CircleBubble from "@/components/CircleBubble.vue"
-
-Vue.component('CircleBubble', CircleBubble)
 Vue.component('Icon', Icon)
 
 Vue.use(vueSmoothScroll)

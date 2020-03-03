@@ -768,7 +768,7 @@ export default {
         
         sort: this.sortArray,
         order: smartOrder,
-        filter: l => l.calendar && l.calendar.type !== 'someday' && !l.calendar.type !== 'specific',
+        filter: l => l.calendar && l.calendar.type !== 'someday' && l.calendar.type !== 'specific',
 
         fallbackFunctionData: () => ({
           viewName,

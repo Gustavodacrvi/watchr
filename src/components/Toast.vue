@@ -7,13 +7,6 @@
         @click="runCallback"
       >
         <span class="name" v-html="toast.name"></span>
-        <div v-if="toast.callback" class="bubble">
-          <CircleBubble
-            innerColor='var(--light-gray)'
-            outerColor='var(--fade)'
-            opacity='0'
-          />
-        </div>
       </div>
     </transition>
   </div>
