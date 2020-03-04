@@ -197,6 +197,31 @@ export default {
         },
       },
       {
+        match: /\severy (\d+) weeks( on)? ((Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat),?(\s)?)+/gi,
+        get: (m, str) => {
+          const split = str.split(' ')
+
+          const days = parseInt(split[1], 10)
+
+          split.splice(0, str.includes(' on') ? 4 : 3)
+
+          const weekList = split.map(el => el.replace(',', '').slice(0, 2))
+
+          if (days && weekList) {
+            cal = {
+              type: 'weekly',
+              weekly: {
+                every: days,
+                days: weekList.map(w => parseInt(mom(w, 'ddd').format('e'), 10)),
+              },
+              
+              editDate: TOD_STR,
+              begins: TOD_STR,   
+            }
+          }
+        }
+      },
+      {
         match: /\sin (\d+) (\w+)/g,
         get: (match, str) => {
           const split = str.split(' ')
