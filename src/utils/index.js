@@ -170,6 +170,7 @@ export default {
       },
       {
         match: /\severy (\d+) days/g,
+        unshift: true,
         get: (m, str) => {
           const daily = parseInt(str.split(' ')[1], 10)
           if (daily)
@@ -184,6 +185,7 @@ export default {
       },
       {
         match: /\severy (\d+) days after/g,
+        unshift: true,
         get: (m, str) => {
           const daily = parseInt(str.split(' ')[1], 10)
           if (daily)
@@ -198,6 +200,7 @@ export default {
       },
       {
         match: /\severy (\d+) weeks( on)? ((Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat),?(\s)?)+/gi,
+        unshift: true,
         get: (m, str) => {
           const split = str.split(' ')
 
@@ -327,7 +330,7 @@ export default {
         get: () => get({type: 'someday'})
       },
       {
-        match: !disablePmFormat ? /\s(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/g : /\s(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/g, // match 1am - 12am, 1pm - 12pm
+        match: !disablePmFormat ? /\s(at )?(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/g : /\s(at )?(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/g, // match 1am - 12am, 1pm - 12pm
         get: (match, str) => {
           const time = mom(str, format)
           if (time.isValid()) {
@@ -366,7 +369,12 @@ export default {
       if (obj.match instanceof RegExp) {
         const match = str.match(obj.match)
         if (match) {
-          obj.get(match, (match[0] && match[0].trim()) || '')
+          const first = (match[0] && match[0].trim()) || ''
+          if (!obj.unshift)
+            matches.push(first)
+          else
+            matches.unshift(first)
+          obj.get(match, first)
         }
       } else if (!Array.isArray(obj.match) && str.includes(' ' + obj.match)) {
         matches.push(obj.match)

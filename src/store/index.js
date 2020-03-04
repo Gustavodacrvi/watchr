@@ -168,6 +168,7 @@ const store = new Vuex.Store({
     googleCalendarReady: false,
     gmailReady: false,
     calendarList: [],
+    calendarColorIds: {},
 
     isFirstSnapshot: true,
 
@@ -387,6 +388,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    saveCalendarColorIds(state, ids) {
+      state.calendarColorIds = ids
+    },
     toggleTaskCompletion(state, toggleTaskCompletion) {
       state.toggleTaskCompletion = toggleTaskCompletion || []
     },

@@ -198,6 +198,9 @@ export default {
         gapi.client.calendar.calendarList.list().then(res => {
           this.$store.commit('saveCalendarList', res.result.items)
         })
+        gapi.client.calendar.colors.get().then(res => {
+          this.$store.commit('saveCalendarColorIds', res.result.event)
+        })
       }
     },
     async getGmailInbox() {

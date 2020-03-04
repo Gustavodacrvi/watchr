@@ -168,6 +168,9 @@ export default {
               const res = responses[i]
               const calendar = list[i]
               
+              // console.log(calendar.backgroundColor)
+              // console.log(res.result.items[0])
+              const colors = this.calendarColorIds
               const obj = {
                 id: calendar.id,
                 name: calendar.summary,
@@ -176,7 +179,7 @@ export default {
                 items: res.result.items.map(el => ({
                   id: el.id,
                   name: el.summary,
-                  color: el.backgroundColor,
+                  color: (colors[el.colorId] && colors[el.colorId].background) || '',
                   htmlLink: el.htmlLink,
                   start: el.start.dateTime ? mom(el.start.dateTime).format(this.getFormat) : null,
                   end: el.end.dateTime ? mom(el.end.dateTime).format(this.getFormat) : null,
@@ -191,14 +194,14 @@ export default {
       }
     },
     toggleEvents() {
-      if (this.date && this.date !== this.date && this.allowCalendar)
+      if (this.date && this.allowCalendar)
         this.getEvents()
       else this.events = []
     },
   },
   // colorId
   computed: {
-    ...mapState(['userInfo', 'calendarList', 'allowCalendar']),
+    ...mapState(['userInfo', 'calendarList', 'allowCalendar', 'calendarColorIds']),
     getHeight() {
       return (this.getCalendars.reduce((tot, cal) => {
         return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'
