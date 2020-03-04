@@ -225,6 +225,39 @@ export default {
         }
       },
       {
+        match: /\severy (\d+) months( on)?( the)? (last|[1-7])(st|nd|rd|th)? (day|Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat)/gi,
+        unshift: true,
+        get: (m, str) => {
+          const split = str.split(' ')
+          
+          const days = parseInt(split[1], 10)
+
+          let weekDayPos = 3
+
+          if (str.includes(' on'))
+            weekDayPos++
+          if (str.includes(' the'))
+            weekDayPos++
+
+          const monthDay = split[weekDayPos]
+          const weekDay = split[weekDayPos + 1]
+
+          if (days && monthDay && weekDay) {
+            cal = {
+              type: 'monthly',
+              monthly: {
+                every: days,
+                place: monthDay,
+                type: weekDay === 'day' ? 'day' : parseInt(mom(weekDay.slice(0, 2), 'ddd').format('e'), 10),
+              },
+              
+              editDate: TOD_STR,
+              begins: TOD_STR,   
+            }
+          }
+        },
+      },
+      {
         match: /\sin (\d+) (\w+)/g,
         get: (match, str) => {
           const split = str.split(' ')
