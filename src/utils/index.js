@@ -202,19 +202,19 @@ export default {
         match: /\severy (\d+) weeks( on)? ((Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat),?(\s)?)+/gi,
         unshift: true,
         get: (m, str) => {
-          const split = str.split(' ')
+          const split = str.split(' ').filter(el => el)
 
-          const days = parseInt(split[1], 10)
+          const weeks = parseInt(split[1], 10)
 
           split.splice(0, str.includes(' on') ? 4 : 3)
 
           const weekList = split.map(el => el.replace(',', '').slice(0, 2))
 
-          if (days && weekList) {
+          if (weeks && weekList) {
             cal = {
               type: 'weekly',
               weekly: {
-                every: days,
+                every: weeks,
                 days: weekList.map(w => parseInt(mom(w, 'ddd').format('e'), 10)),
               },
               
@@ -228,9 +228,9 @@ export default {
         match: /\severy (\d+) months( on)?( the)? (last|[1-7])(st|nd|rd|th)? (day|Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat)/gi,
         unshift: true,
         get: (m, str) => {
-          const split = str.split(' ')
+          const split = str.split(' ').filter(el => el)
           
-          const days = parseInt(split[1], 10)
+          const months = parseInt(split[1], 10)
 
           let weekDayPos = 3
 
@@ -242,11 +242,11 @@ export default {
           const monthDay = split[weekDayPos]
           const weekDay = split[weekDayPos + 1]
 
-          if (days && monthDay && weekDay) {
+          if (months && monthDay && weekDay) {
             cal = {
               type: 'monthly',
               monthly: {
-                every: days,
+                every: months,
                 place: monthDay,
                 type: weekDay === 'day' ? 'day' : parseInt(mom(weekDay.slice(0, 2), 'ddd').format('e'), 10),
               },
@@ -255,6 +255,57 @@ export default {
               begins: TOD_STR,   
             }
           }
+        },
+      },
+      {
+        match: /\severy (\d+) years( on)? ((January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sep|October|Oct|November|Nov|December|Dec),?(\s)?)+( on)?( the)? (last|[1-7])(st|nd|rd|th)? (day|Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat)/gi,
+        unshift: true,
+        get: (m, str) => {
+          const split = str.split(' ').filter(el => el)
+          
+          const years = parseInt(split[1], 10)
+
+          split.splice(0, split[3] === 'on' ? 4 : 3)
+
+          const months = []
+          for (const m of split) {
+            if (
+              m === 'on' || m === 'the' || m === 'last' ||
+              (parseInt(m, 10) > 0 && parseInt(m, 10) < 8)
+              )
+              break
+            else months.push(m.replace(',', '').replace(' ', ''))
+          }
+
+          split.splice(0, months.length)
+
+          let i = split.findIndex(el => el === 'on')
+          if (i > -1)
+            split.splice(i, 1)
+
+          i = split.findIndex(el => el === 'the')
+          if (i > -1)
+            split.splice(i, 1)
+
+          const monthDay = split[0]
+
+          split.splice(0, 1)
+
+          const weekDay = split[0]
+
+          if (years && months && months.length > 0 && monthDay && weekDay)
+            cal = {
+              editDate: TOD_STR,
+              begins: TOD_STR,
+
+              type: 'yearly',
+              yearly: {
+                every: years,
+                months: months.map(w => parseInt(mom(w, 'MMM').format('M'), 10)),
+                place: monthDay,
+                type: weekDay === 'day' ? 'day' : parseInt(mom(weekDay.slice(0, 2), 'ddd').format('e'), 10),
+              }
+            }
         },
       },
       {
