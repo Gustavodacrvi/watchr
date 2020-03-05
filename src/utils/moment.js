@@ -39,7 +39,7 @@ export default {
     }
     return clone
   },
-  nextWeekDay(initial, weekday, format) {
+  nextWeekDay(initial, weekday, format, skipToday = false) {
     if (!format) format = 'd'
     
     const clone = initial.clone()
@@ -54,11 +54,17 @@ export default {
     const isOnIt = (week) => {
       return formatedWeekdays.includes(week)
     }
+
     while (true) {
-      if (isOnIt(clone.format('dddd')))
-        return clone
+      if (isOnIt(clone.format('dddd'))) {
+        if (!skipToday || !mom().isSame(clone, 'day'))
+          return clone
+      }
       clone.add(1, 'd')
-      if (i > 10) return clone
+      if (i > 10) {
+        if (!skipToday || !mom().isSame(clone, 'day'))
+          return clone
+      }
       i++
     }
   },

@@ -127,47 +127,93 @@ export default {
       }
     }
 
-    const keywords = [
+    const getWeekSpecific = week => spec(utilsMoment.nextWeekDay(tod, week, 'ddd', true).format('Y-M-D'))
+
+    const specificMatches = [
       {
-        match: 'next week',
-        get: () => spec(tod.clone().add(1, 'week').startOf('week').add(1, 'd').format('Y-M-D')),
+        match: ' next week',
+        get: () => spec(tod.clone().add(1, 'week').startOf('week').add(1, 'd').format('Y-M-D'))
       },
       {
-        match: ['monday', 'mon'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Mon', 'ddd').format('Y-M-D'))
-      },
-      {
-        match: ['tuesday', 'tue'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Tue', 'ddd').format('Y-M-D'))
-      },
-      {
-        match: ['wednesday', 'wed'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Wed', 'ddd').format('Y-M-D'))
-      },
-      {
-        match: ['thursday', 'thu'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Thu', 'ddd').format('Y-M-D'))
-      },
-      {
-        match: ['friday', 'fri'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Fri', 'ddd').format('Y-M-D'))
-      },
-      {
-        match: ['saturday', 'sat'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sat', 'ddd').format('Y-M-D'))
-      },
-      {
-        match: ['sunday', 'sun'],
-        get: () => spec(utilsMoment.nextWeekDay(tod, 'Sun', 'ddd').format('Y-M-D'))
-      },
-      {
-        match: 'next month',
+        match: ' next month',
         get: () => spec(tod.clone().add(1, 'month').startOf('month').format('Y-M-D')),
       },
       {
-        match: 'next year',
+        match: ' next year',
         get: () => spec(tod.clone().add(1, 'year').startOf('year').format('Y-M-D')),
       },
+      {
+        match: ' in (\\d+) (\\w+)',
+        get: (match, str) => {
+          
+          const split = str.split(' ')
+          const num = parseInt(split[1], 10)
+          const type = split[split.length - 1]
+
+          const types = [
+            'hours', 'days', 'weeks',
+            'months', 'years',
+          ]
+
+          let calend
+          if (num && type && types.includes(type)) {
+            if (type !== 'hours') {
+              calend = spec(tod.clone().add(num, type).format('Y-M-D'))
+            } else {
+              const mo = tod.clone().add(num, 'hours')
+              calend = spec(mo.format('Y-M-D'))
+              calend.time = mo.format('HH:mm')
+            }
+            matches.push(str)
+            return calend
+          }
+          return null
+        },
+      },
+
+      {
+        match: ' (sunday|sun)',
+        get: () => getWeekSpecific('Sun'),
+      },
+      {
+        match: ' (monday|mon)',
+        get: () => getWeekSpecific('Mon'),
+      },
+      {
+        match: ' (tuesday|tue)',
+        get: () => getWeekSpecific('Tue'),
+      },
+      {
+        match: ' (wednesday|wed)',
+        get: () => getWeekSpecific('Wed'),
+      },
+      {
+        match: ' (thursday|thu)',
+        get: () => getWeekSpecific('Thu'),
+      },
+      {
+        match: ' (friday|fri)',
+        get: () => getWeekSpecific('Fri'),
+      },
+      {
+        match: ' (saturday|sat)',
+        get: () => getWeekSpecific('Sat'),
+      },
+
+      {
+        match: ' (today|tod)',
+        get: () => spec(TOD_STR),
+      },
+      {
+        match: ' (tomorrow|tom|(next day))',
+        get: () => spec(tod.clone().add(1, 'd').format('Y-M-D')),
+      },
+    ]
+
+    let periodic = false
+    let matchedSpecific = false
+    
+    const keywords = [
       {
         match: /\severy (\d+) days/g,
         unshift: true,
@@ -258,6 +304,12 @@ export default {
         },
       },
       {
+        match: / ends today/gi,
+        get: (m, str) => {
+          
+        },
+      },
+      {
         match: /\severy (\d+) years( on)? ((January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sep|October|Oct|November|Nov|December|Dec),?(\s)?)+( on)?( the)? (last|[1-7])(st|nd|rd|th)? (day|Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat)/gi,
         unshift: true,
         get: (m, str) => {
@@ -293,7 +345,8 @@ export default {
 
           const weekDay = split[0]
 
-          if (years && months && months.length > 0 && monthDay && weekDay)
+          if (years && months && months.length > 0 && monthDay && weekDay) {
+            periodic = true
             cal = {
               editDate: TOD_STR,
               begins: TOD_STR,
@@ -306,32 +359,20 @@ export default {
                 type: weekDay === 'day' ? 'day' : parseInt(mom(weekDay.slice(0, 2), 'ddd').format('e'), 10),
               }
             }
-        },
-      },
-      {
-        match: /\sin (\d+) (\w+)/g,
-        get: (match, str) => {
-          const split = str.split(' ')
-          const num = parseInt(split[1], 10)
-          const type = split[split.length - 1]
-
-          const types = [
-            'hours', 'days', 'weeks',
-            'months', 'years',
-          ]
-
-          if (num && type && types.includes(type)) {
-            if (type !== 'hours') {
-              cal = spec(tod.clone().add(num, type).format('Y-M-D'))
-            } else {
-              const mo = tod.clone().add(num, 'hours')
-              cal = spec(mo.format('Y-M-D'))
-              cal.time = mo.format('HH:mm')
-            }
-            matches.push(str)
           }
         },
       },
+      ...(periodic ? [] :
+          specificMatches.map(el => ({
+            match: new RegExp(el.match, 'gi'),
+            get: (...args) => {
+              if (!matchedSpecific) {
+                cal = el.get(...args)
+                matchedSpecific = true
+              }
+            }
+          }))
+        ),
       {
         match: /\s([0-3][0-9])th/g,
         get: (match, str) => {
@@ -388,7 +429,7 @@ export default {
       },
       {
         match: /\s([0-9][0-9][0-9][0-9])/g,
-        get: (match, str) => {
+        get: (m, str) => {
           if (cal && cal.type === 'specific') {
             let time = mom(str, 'Y')
             
@@ -400,14 +441,6 @@ export default {
             }
           }
         },
-      },
-      {
-        match: ['today', 'tod'],
-        get: () => spec(TOD_STR)
-      },
-      {
-        match: ['tomorrow', 'tom', 'next day'],
-        get: () => spec(tod.clone().add(1, 'd').format('Y-M-D'))
       },
       {
         match: ['someday', 'som'],
@@ -449,23 +482,29 @@ export default {
       },
     ]
 
+    const matchRegex = (obj, tryMatch) => {
+      const match = str.match(tryMatch)
+      if (match) {
+        const first = (match[0] && match[0].trim()) || ''
+        if (!obj.unshift)
+          matches.push(first)
+        else
+          matches.unshift(first)
+        obj.get(match, first)
+      }
+    }
+    
     for (const obj of keywords) {
       if (obj.match instanceof RegExp) {
-        const match = str.match(obj.match)
-        if (match) {
-          const first = (match[0] && match[0].trim()) || ''
-          if (!obj.unshift)
-            matches.push(first)
-          else
-            matches.unshift(first)
-          obj.get(match, first)
-        }
+        matchRegex(obj, obj.match)
       } else if (!Array.isArray(obj.match) && str.includes(' ' + obj.match)) {
         matches.push(obj.match)
         cal = obj.get()
       } else if (Array.isArray(obj.match)) {
         for (const k of obj.match)
-          if (str.includes(' ' + k)) {
+          if (k instanceof RegExp) {
+            matchRegex(obj, k)
+          } else if (str.includes(' ' + k)) {
             matches.push(k)
             cal = obj.get()
           }
