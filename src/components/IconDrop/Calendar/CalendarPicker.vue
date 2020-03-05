@@ -167,7 +167,7 @@ export default {
     calendarStr() {
       if (!this.calendar)
         return null
-      return utils.parseCalendarObjectToString(this.calendar, this.userInfo)
+      return utils.parseCalendarObjectToString(this.calendar, this.userInfo, true)
     },
     getTime() {
       if (this.time) {

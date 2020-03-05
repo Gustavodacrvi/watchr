@@ -1057,7 +1057,7 @@ export default {
     },
     calendarStr() {
       if (this.task.calendar)
-        return utils.parseCalendarObjectToString(this.task.calendar, this.userInfo)
+        return utils.parseCalendarObjectToString(this.task.calendar, this.userInfo, true)
       return null
     },
     deadlineStr() {

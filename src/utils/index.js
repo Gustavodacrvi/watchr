@@ -108,20 +108,9 @@ export default {
       specific: str,
     })
 
-    const parseDay = str => {
-      const time = mom('' + parseInt(str, 10), 'D')
-
-      if (time.isValid()) {
-        if (time.isAfter(tod, 'day'))
-          cal = spec(time.format('Y-M-D'))
-        else
-          cal = spec(time.add(1, 'month').format('Y-M-D'))
-        matches.push(str)
-      }
-    }
-    const setMonth = num => {
-      if (cal && cal.type === 'specific') {
-        const time = mom(cal.specific, 'Y-M-D')
+    const setMonth = (num, calend) => {
+      if (calend && calend.type === 'specific') {
+        const time = mom(calend.specific, 'Y-M-D')
         time.month(num)
         return spec(time.format('Y-M-D'))
       }
@@ -170,6 +159,99 @@ export default {
           return null
         },
       },
+      {
+        match: '\\s([0-3][0-9])th',
+        get: (match, str) => {
+          const time = mom('' + parseInt(str, 10), 'D')
+
+          let calend
+          if (time.isValid()) {
+            if (time.isAfter(tod, 'day'))
+              calend = spec(time.format('Y-M-D'))
+            else
+              calend = spec(time.add(1, 'month').format('Y-M-D'))
+            matches.push(str)
+            return calend
+          }
+          return null
+        },
+      },
+      {
+        match: ' (january|jan)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(0, calend),
+      },
+      {
+        match: ' (february|feb)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(1, calend),
+      },
+      {
+        match: ' (march|mar)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(2, calend),
+      },
+      {
+        match: ' (april|apr)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(3, calend),
+      },
+      {
+        match: ' (may)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(4, calend),
+      },
+      {
+        match: ' (june|jun)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(5, calend),
+      },
+      {
+        match: ' (july|jul)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(6, calend),
+      },
+      {
+        match: ' (august|aug)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(7, calend),
+      },
+      {
+        match: ' (september|sep)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(8, calend),
+      },
+      {
+        match: ' (october|oct)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(9, calend),
+      },
+      {
+        match: ' (november|nov)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(10, calend),
+      },
+      {
+        match: ' (december|dec)',
+        ignoreOtherMatches: true,
+        get: (m, s, calend) => setMonth(11, calend),
+      },
+      {
+        match: ' ([0-9][0-9][0-9][0-9])',
+        ignoreOtherMatches: true,
+        get: (m, str, calend) => {
+          if (calend && calend.type === 'specific') {
+            let time = mom(str, 'Y')
+            
+            if (time.isValid()) {
+              time = mom(calend.specific, 'Y-M-D')
+              time.year(parseInt(str, 10))
+              matches.push(str)
+              return spec(time.format('Y-M-D'))
+            }
+          }
+        },
+      },
 
       {
         match: ' (sunday|sun)',
@@ -210,6 +292,18 @@ export default {
       },
     ]
 
+    const getSpecificInputFromStr = str => {
+      for (const el of specificMatches) {
+        const match = str.match(new RegExp(el.match, 'gi'))
+        if (match) {
+          const first = (match[0] && match[0].trim()) || ''
+          const obj = el.get(match, first)
+          if (obj)
+            return obj
+        }
+      }
+    }
+
     let periodic = false
     let matchedSpecific = false
     
@@ -219,7 +313,8 @@ export default {
         unshift: true,
         get: (m, str) => {
           const daily = parseInt(str.split(' ')[1], 10)
-          if (daily)
+          if (daily) {
+            periodic = true
             cal = {
               type: 'daily',
               daily,
@@ -227,6 +322,7 @@ export default {
               editDate: TOD_STR,
               begins: TOD_STR,
             }
+          }
         },
       },
       {
@@ -234,7 +330,8 @@ export default {
         unshift: true,
         get: (m, str) => {
           const daily = parseInt(str.split(' ')[1], 10)
-          if (daily)
+          if (daily) {
+            periodic = true
             cal = {
               type: 'after completion',
               afterCompletion: daily,
@@ -242,6 +339,7 @@ export default {
               editDate: TOD_STR,
               begins: TOD_STR,
             }
+          }
         },
       },
       {
@@ -257,6 +355,7 @@ export default {
           const weekList = split.map(el => el.replace(',', '').slice(0, 2))
 
           if (weeks && weekList) {
+            periodic = true
             cal = {
               type: 'weekly',
               weekly: {
@@ -289,6 +388,7 @@ export default {
           const weekDay = split[weekDayPos + 1]
 
           if (months && monthDay && weekDay) {
+            periodic = true
             cal = {
               type: 'monthly',
               monthly: {
@@ -301,12 +401,6 @@ export default {
               begins: TOD_STR,   
             }
           }
-        },
-      },
-      {
-        match: / ends today/gi,
-        get: (m, str) => {
-          
         },
       },
       {
@@ -362,88 +456,43 @@ export default {
           }
         },
       },
-      ...(periodic ? [] :
-          specificMatches.map(el => ({
+      {
+        match: / ends( on)? (.*)/gi,
+        get: (m, str) => {
+          if (periodic && cal) {
+            const obj = getSpecificInputFromStr(str)
+            if (obj && obj.specific) {
+              cal.ends = {
+                type: 'on date',
+                onDate: obj.specific,
+              }
+            }
+          }
+        },
+      },
+      {
+        match: / begins( on)? (.*)/gi,
+        get: (m, str) => {
+          if (periodic && cal) {
+            const obj = getSpecificInputFromStr(str)
+            if (obj && obj.specific) {
+              cal.begins = obj.specific
+            }
+          }
+        },
+      },
+      ...(specificMatches.map(el => ({
             match: new RegExp(el.match, 'gi'),
-            get: (...args) => {
-              if (!matchedSpecific) {
-                cal = el.get(...args)
+            get: (m, s) => {
+              if (!periodic && (!matchedSpecific || el.ignoreOtherMatches)) {
+                cal = el.get(m, s, cal)
                 matchedSpecific = true
               }
             }
           }))
         ),
       {
-        match: /\s([0-3][0-9])th/g,
-        get: (match, str) => {
-          parseDay(str)
-        },
-      },
-      {
-        match: ['january', 'jan'],
-        get: m => setMonth(0),
-      },
-      {
-        match: ['february', 'feb'],
-        get: m => setMonth(1),
-      },
-      {
-        match: ['march', 'mar'],
-        get: m => setMonth(2),
-      },
-      {
-        match: ['april', 'apr'],
-        get: m => setMonth(3),
-      },
-      {
-        match: 'may',
-        get: m => setMonth(4),
-      },
-      {
-        match: ['june', 'jun'],
-        get: m => setMonth(5),
-      },
-      {
-        match: ['july', 'jul'],
-        get: m => setMonth(6),
-      },
-      {
-        match: ['august', 'aug'],
-        get: m => setMonth(7),
-      },
-      {
-        match: ['september', 'sep'],
-        get: m => setMonth(8),
-      },
-      {
-        match: ['october', 'oct'],
-        get: m => setMonth(9),
-      },
-      {
-        match: ['november', 'nov'],
-        get: m => setMonth(10),
-      },
-      {
-        match: ['december', 'dec'],
-        get: m => setMonth(11),
-      },
-      {
-        match: /\s([0-9][0-9][0-9][0-9])/g,
-        get: (m, str) => {
-          if (cal && cal.type === 'specific') {
-            let time = mom(str, 'Y')
-            
-            if (time.isValid()) {
-              time = mom(cal.specific, 'Y-M-D')
-              time.year(parseInt(str, 10))
-              cal = spec(time.format('Y-M-D'))
-              matches.push(str)
-            }
-          }
-        },
-      },
-      {
-        match: ['someday', 'som'],
+        match: / (someday|som)/gi,
         get: () => get({type: 'someday'})
       },
       {
@@ -468,7 +517,7 @@ export default {
         },
       },
       {
-        match: ['evening', 'eve '],
+        match: / (evening|eve)/gi,
         get: () => {
           if (cal) {
             cal.evening = true
@@ -477,13 +526,13 @@ export default {
         }
       },
       {
-        match: 'no date',
+        match: / (no date)/gi,
         get: () => null,
       },
     ]
-
-    const matchRegex = (obj, tryMatch) => {
-      const match = str.match(tryMatch)
+    
+    for (const obj of keywords) {
+      const match = str.match(obj.match)
       if (match) {
         const first = (match[0] && match[0].trim()) || ''
         if (!obj.unshift)
@@ -491,23 +540,6 @@ export default {
         else
           matches.unshift(first)
         obj.get(match, first)
-      }
-    }
-    
-    for (const obj of keywords) {
-      if (obj.match instanceof RegExp) {
-        matchRegex(obj, obj.match)
-      } else if (!Array.isArray(obj.match) && str.includes(' ' + obj.match)) {
-        matches.push(obj.match)
-        cal = obj.get()
-      } else if (Array.isArray(obj.match)) {
-        for (const k of obj.match)
-          if (k instanceof RegExp) {
-            matchRegex(obj, k)
-          } else if (str.includes(' ' + k)) {
-            matches.push(k)
-            cal = obj.get()
-          }
       }
     }
 
@@ -651,7 +683,7 @@ export default {
       return time
     return mom(time, 'H:m').format('h:m A')
   },
-  parseCalendarObjectToString(obj, userInfo) {
+  parseCalendarObjectToString(obj, userInfo, forceShowInfo = false) {
     let str = ''
 
     const c = obj
@@ -703,7 +735,7 @@ export default {
 
     if (c.time) str += ` at ${this.parseTime(c.time, userInfo)}`
 
-    if (c.begins && c.begins !== c.editDate && mom(c.begins, 'Y-M-D').isSameOrAfter(mom(), 'day')) {
+    if (c.begins && c.begins !== c.editDate && (forceShowInfo || mom(c.begins, 'Y-M-D').isSameOrAfter(mom(), 'day'))) {
       str += `, begins on ${this.getHumanReadableDate(c.begins)}`
     }
 
