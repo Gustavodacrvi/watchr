@@ -1273,8 +1273,9 @@ export default {
             if (mom(c.lastCompleteDate, 'Y-M-D').isBefore(mom(TODAY_DATE, 'Y-M-D'), 'day'))
               c.lastCompleteDate = TODAY_DATE
           }
-
-          if (c.times) c.times--
+          if (c.ends && c.ends.type === 'times') {
+            c.ends.times--
+          }
         }
 
         const tod = mom()
@@ -1327,7 +1328,7 @@ export default {
       const writes = []
       for (const t of tasks) {
         const c = t.calendar
-        if (c && c.times === 0) c.times = null
+        if (c && c.ends) c.ends = null
         if (c) {
           c.lastCompleteDate = null
         }
