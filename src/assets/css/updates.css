@@ -13,12 +13,20 @@
   margin-top: 8px;
 }
 
+.green {
+  color: var(--green);
+}
+
 .tag {
   display: inline-block;
   border-radius: 6px;
   background-color: var(--dark);
   padding: 6px;
   font-size: .8em;
+}
+
+.list {
+  margin-left: 30px;
 }
 
 .division {
