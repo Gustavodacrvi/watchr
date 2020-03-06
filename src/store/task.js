@@ -34,24 +34,24 @@ export default {
       
       return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
     },
-    logTasks(state) {
+    logTasks(state, getters) {
       const keys = Object.keys(state.tasks).filter(
-        k => state.tasks[k] && state.tasks[k].logbook
+        k => state.tasks[k] && getters.isTaskInLogbook(state.tasks[k])
       )
       const groupKeys = Object.keys(state.groupTasks).filter(
-        k => state.groupTasks[k] && state.groupTasks[k].logbook
+        k => state.groupTasks[k] && getters.isTaskInLogbook(state.groupTasks[k])
       )
       
       return Object.freeze(
         keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
       )
     },
-    tasks(state) {
+    tasks(state, getters) {
       const keys = Object.keys(state.tasks).filter(
-        k => state.tasks[k] && !state.tasks[k].logbook
+        k => state.tasks[k] && !getters.isTaskInLogbook(state.tasks[k])
       )
       const groupKeys = Object.keys(state.groupTasks).filter(
-        k => state.groupTasks[k] && !state.groupTasks[k].logbook
+        k => state.groupTasks[k] && !getters.isTaskInLogbook(state.groupTasks[k])
       )
 
       return keys.map(k => state.tasks[k]).concat(groupKeys.map(k => state.groupTasks[k]))
@@ -109,7 +109,7 @@ export default {
         if (c.ends) {
           if (c.ends.type === 'on date' && tod.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day'))
             return false
-          else if (c.ends.times === null)
+          else if (c.ends.times === 0)
             return false
         }
         if (c.begins && !tod.isSameOrAfter(begins, 'day'))
@@ -183,6 +183,29 @@ export default {
           const eventNotToday = !c.weekly.find(w => w.toLowerCase() === todaysWeekDayName)
           if (eventNotToday) return false
         } */
+      },
+      isTaskInLogbook: {
+        getter({}, task) {
+          const { logbook, calendar } = task
+
+          const c = calendar
+
+          if (!c || c.type === 'specific' || c.type === 'someday')
+            return logbook
+          
+          if (c.ends) {
+            if (c.ends.type === 'on date' && TODAY_MOM.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day'))
+              return true
+            else if (c.ends.times === 0)
+              return true
+          }
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].calendar,
+            l: args[0].logbook
+          })
+        },
       },
       isTaskCompleted: {
         getter({}, task, moment, compareDate) {
@@ -314,15 +337,18 @@ export default {
         },
       },
       wasTaskLoggedLastWeek: {
-        getter({}, task) {
-          if (!task.logbook || !task.logDate)
+        getter({getters}, task) {
+          if (!getters.isTaskInLogbook(task) || !task.logDate)
             return false
-          return mom(task.logbook, 'Y-M-D').isSame(
+          return mom(task.logDate, 'Y-M-D').isSame(
             mom(TODAY_DATE, 'Y-M-D').subtract(1, 'week')
           , 'week')
         },
         cache(args) {
-          return args[0].logDate
+          return JSON.stringify({
+            l: args[0].logDate,
+            t: args[0].logbook
+          })
         }
       },
       doesTaskPassInclusivePriority: {
@@ -362,11 +388,14 @@ export default {
         }
       },
       isTaskInLogbookView: {
-        getter({}, task) {
-          return task.logbook
+        getter({getters}, task) {
+          return getters.isTaskInLogbook(task)
         },
         cache(args) {
-          return args[0].logbook + ''
+          return JSON.stringify({
+            c: args[0].calendar,
+            l: args[0].logbook,
+          })
         },
       },
       getTaskDeadlineStr: {
@@ -1246,7 +1275,6 @@ export default {
           }
 
           if (c.times) c.times--
-          if (c.times === 0) c.times = null
         }
 
         const tod = mom()

@@ -111,11 +111,12 @@ export default {
 
     const saveDeadline = deadline => saveList({deadline})
     
+    const logbook = getters['list/isListInLogbook']
     const nonInListOptions = [
       {
-        name: list.logbook ? 'Remove from logbook' : 'Log lists',
+        name: logbook ? 'Remove from logbook' : 'Log lists',
         icon: 'faded-logged-lists',
-        callback: () => dispatch(list.logbook ? 'list/unlogLists' : 'list/logLists', [listId])
+        callback: () => dispatch(logbook ? 'list/unlogLists' : 'list/logLists', [listId])
       },
       {
         type: 'optionsList',

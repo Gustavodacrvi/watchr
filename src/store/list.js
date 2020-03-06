@@ -11,7 +11,9 @@ import router from '../router'
 
 import mom from 'moment'
 
-const TOD_DATE = mom().format('Y-M-D')
+const TODAY_MOM = mom()
+
+const TOD_DATE = TODAY_MOM.format('Y-M-D')
 const TOM_DATE = mom().add(1, 'day').format('Y-M-D')
 
 export default {
@@ -21,12 +23,12 @@ export default {
     groupLists: {},
   },
   getters: {
-    lists(state) {
+    lists(state, getters) {
       const keys = Object.keys(state.lists).filter(
-        k => state.lists[k] && !state.lists[k].logbook
+        k => state.lists[k] && !getters.isListInLogbook(state.lists[k])
       )
       const groupKeys = Object.keys(state.groupLists).filter(
-        k => state.groupLists[k] && !state.groupLists[k].logbook
+        k => state.groupLists[k] && !getters.isListInLogbook(state.groupLists[k])
       )
 
       return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
@@ -48,10 +50,10 @@ export default {
     },
     logLists(state) {
       const keys = Object.keys(state.lists).filter(
-        k => state.lists[k] && state.lists[k].logbook
+        k => state.lists[k] && getters.isListInLogbook(state.lists[k])
       )
       const groupKeys = Object.keys(state.groupLists).filter(
-        k => state.groupLists[k] && state.groupLists[k].logbook
+        k => state.groupLists[k] && getters.isListInLogbook(state.groupLists[k])
       )
       
       return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
@@ -67,6 +69,29 @@ export default {
         },
         cache(args) {
           return JSON.stringify(args[0].calendar)
+        },
+      },
+      isListInLogbook: {
+        getter({}, list) {
+          const { logbook, calendar } = list
+
+          const c = calendar
+
+          if (!c || c.type === 'specific' || c.type === 'someday')
+            return logbook
+          
+          if (c.ends) {
+            if (c.ends.type === 'on date' && TODAY_MOM.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day'))
+              return true
+            else if (c.ends.times === 0)
+              return true
+          }
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].calendar,
+            l: args[0].logbook
+          })
         },
       },
       isListCompleted: {
@@ -128,7 +153,7 @@ export default {
           if (c.ends) {
             if (c.ends.type === 'on date' && tod.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day'))
               return false
-            else if (c.ends.times === null)
+            else if (c.ends.times === 0)
               return false
           }
           if (c.begins && begins.isAfter(tod, 'day'))
@@ -770,7 +795,6 @@ export default {
           }
 
           if (c.times) c.times--
-          if (c.times === 0) c.times = null
         }
 
         const tod = mom()

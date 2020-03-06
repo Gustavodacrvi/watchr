@@ -617,10 +617,14 @@ export default {
   height: 18px;
 }
 
+.dates {
+  grid-column: 7;
+}
+
 .day {
   width: 31px;
   height: 31px;
-  font-size: 1.2em;
+  font-size: 1.1em;
   display: inline-flex;
   align-items: center;
   justify-content: center;
