@@ -326,7 +326,7 @@ export default {
         },
       },
       {
-        match: /\severy (\d+) days after/g,
+        match: / every (\d+) days after/g,
         unshift: true,
         get: (m, str) => {
           const daily = parseInt(str.split(' ')[1], 10)
@@ -467,6 +467,19 @@ export default {
                 onDate: obj.specific,
               }
             }
+          }
+        },
+      },
+      {
+        match: / (\d+) times/g,
+        get: (m, str) => {
+          if (periodic && cal) {
+            const days = parseInt(str.split(' ')[0], 10)
+            if (days)
+              cal.ends = {
+                type: 'times',
+                times: days,
+              }
           }
         },
       },
