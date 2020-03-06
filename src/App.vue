@@ -341,11 +341,11 @@ export default {
 }
 
 .desktop .router-view {
-  top: 30px;
+  top: 25px;
 }
 
 .non-hided {
-  top: 0;
+  top: -3px !important;
 }
 
 .menu {

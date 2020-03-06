@@ -30,9 +30,16 @@ export default {
       }
       return t
     },
-    calendarOrder(t, force = false, specific) {
-      if (force || !t.calendar)
-        t.calendar = getSpecificCalendar(specific)
+    calendarOrder(t, force = false, specific, header) {
+      const isEvening = (header && header.id === 'EVENING_SMART_VIEW')
+      const c = t.calendar
+      if (force || !c) {
+        if (isEvening && c && c.type !== 'specific' && c.type !== 'someday') {
+          c.evening = true
+        } else {
+          t.calendar = getSpecificCalendar(specific)
+        }
+      }
       return t
     },
     deadlineOrder(t, force = false, deadline) {
@@ -67,10 +74,12 @@ export default {
     },
     Evening(t, force = false, {calendarDate}) {
       if (force || !t.calendar) {
-        t.calendar = getSpecificCalendar(calendarDate)
-        t.calendar.evening = true
-      } else {
-        t.calendar.evening = true
+        if (!t.calendar) {
+          t.calendar = getSpecificCalendar(calendarDate)
+          t.calendar.evening = true
+        } else {
+          t.calendar.evening = true
+        }
       }
       
       return t

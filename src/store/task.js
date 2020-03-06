@@ -1230,7 +1230,7 @@ export default {
       
       b.commit()
     },
-    completeTasks({rootState}, tasks) {
+    completeTasks({rootState, rootGetters}, tasks) {
       const b = fire.batch()
 
       const writes = []
@@ -1266,7 +1266,17 @@ export default {
 
         const isNotRecurringTask = !c || (c.type == 'someday' || c.type === 'specific')
 
-        if (!rootState.userInfo.manuallyLogTasks && isNotRecurringTask) {
+        const isFromRecurringList = () => {
+          if (!t.list)
+            return false
+          
+          const lists = rootGetters['list/lists']
+          const l = lists.find(el => el.id === t.list)
+          if (l)
+            return (l.calendar && l.calendar.type !== 'specific' && l.calendar.type !== 'someday')
+        }
+
+        if ((!rootState.userInfo.manuallyLogTasks && !isFromRecurringList()) && isNotRecurringTask) {
           obj = {
             ...obj,
             logbook: true,

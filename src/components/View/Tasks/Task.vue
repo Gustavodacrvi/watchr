@@ -122,7 +122,6 @@
                     <div class="parsed-wrapper">
                       <span v-html="parsedName" ref='parsed-name'></span>
                     </div>
-                    <Icon v-if="isEvening" class="txt-icon" icon="moon" color="var(--fade)"/>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
                     icon="pie"
