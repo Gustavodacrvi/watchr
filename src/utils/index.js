@@ -177,62 +177,62 @@ export default {
         },
       },
       {
-        match: ' (january|jan)',
+        match: ' (january|jan)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(0, calend),
       },
       {
-        match: ' (february|feb)',
+        match: ' (february|feb)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(1, calend),
       },
       {
-        match: ' (march|mar)',
+        match: ' (march|mar)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(2, calend),
       },
       {
-        match: ' (april|apr)',
+        match: ' (april|apr)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(3, calend),
       },
       {
-        match: ' (may)',
+        match: ' (may)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(4, calend),
       },
       {
-        match: ' (june|jun)',
+        match: ' (june|jun)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(5, calend),
       },
       {
-        match: ' (july|jul)',
+        match: ' (july|jul)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(6, calend),
       },
       {
-        match: ' (august|aug)',
+        match: ' (august|aug)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(7, calend),
       },
       {
-        match: ' (september|sep)',
+        match: ' (september|sep)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(8, calend),
       },
       {
-        match: ' (october|oct)',
+        match: ' (october|oct)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(9, calend),
       },
       {
-        match: ' (november|nov)',
+        match: ' (november|nov)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(10, calend),
       },
       {
-        match: ' (december|dec)',
+        match: ' (december|dec)(?!(\\w+))',
         ignoreOtherMatches: true,
         get: (m, s, calend) => setMonth(11, calend),
       },
@@ -254,40 +254,40 @@ export default {
       },
 
       {
-        match: ' (sunday|sun)',
+        match: ' (sunday|sun)(?!(\\w+))',
         get: () => getWeekSpecific('Sun'),
       },
       {
-        match: ' (monday|mon)',
+        match: ' (monday|mon)(?!(\\w+))',
         get: () => getWeekSpecific('Mon'),
       },
       {
-        match: ' (tuesday|tue)',
+        match: ' (tuesday|tue)(?!(\\w+))',
         get: () => getWeekSpecific('Tue'),
       },
       {
-        match: ' (wednesday|wed)',
+        match: ' (wednesday|wed)(?!(\\w+))',
         get: () => getWeekSpecific('Wed'),
       },
       {
-        match: ' (thursday|thu)',
+        match: ' (thursday|thu)(?!(\\w+))',
         get: () => getWeekSpecific('Thu'),
       },
       {
-        match: ' (friday|fri)',
+        match: ' (friday|fri)(?!(\\w+))',
         get: () => getWeekSpecific('Fri'),
       },
       {
-        match: ' (saturday|sat)',
+        match: ' (saturday|sat)(?!(\\w+))',
         get: () => getWeekSpecific('Sat'),
       },
 
       {
-        match: ' (today|tod)',
+        match: ' (today|tod)(?!(\\w+))',
         get: () => spec(TOD_STR),
       },
       {
-        match: ' (tomorrow|tom|(next day))',
+        match: ' (tomorrow|tom|(next day))(?!(\\w+))',
         get: () => spec(tod.clone().add(1, 'd').format('Y-M-D')),
       },
     ]
@@ -507,7 +507,7 @@ export default {
           }))
         ),
       {
-        match: / (someday|som)/gi,
+        match: / (someday|som)(?!(\w+))/gi,
         get: () => cal = get({type: 'someday'})
       },
       {
@@ -532,7 +532,7 @@ export default {
         },
       },
       {
-        match: / (evening|eve)/gi,
+        match: / (evening|eve)(?!(\w+))/gi,
         get: () => {
           if (cal) {
             cal.evening = true
@@ -541,7 +541,7 @@ export default {
         }
       },
       {
-        match: / (no date)/gi,
+        match: / (no date)(?!(\w+))/gi,
         get: () => cal = null,
       },
     ]

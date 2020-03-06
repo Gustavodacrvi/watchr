@@ -122,7 +122,6 @@
                     <div class="parsed-wrapper">
                       <span v-html="parsedName" ref='parsed-name'></span>
                     </div>
-                    <Icon v-if="isEvening" class="txt-icon" icon="moon" color="var(--fade)"/>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
                     icon="pie"
@@ -467,6 +466,7 @@ export default {
       fallbackSelected: 'fallbackSelected',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskCanceled: 'task/isTaskCanceled',
+      isTaskInLogbook: 'task/isTaskInLogbook',
       getTaskDeadlineStr: 'task/getTaskDeadlineStr',
       isTaskInView: 'task/isTaskInView',
       getListsById: 'list/getListsById',
@@ -475,9 +475,13 @@ export default {
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
     }),
+    isItemLogged() {
+      return this.isTaskInLogbook(this.item)
+    },
     options() {
       const {c,t} = this.getTask
       const dispatch = this.$store.dispatch
+      const logbook = this.isItemLogged
       const arr = [
         {
           name: 'Pomo this task',
@@ -487,10 +491,10 @@ export default {
           },
         },
         {
-          name: !this.item.logbook ? 'Move to logbook' : 'Remove from logbook',
+          name: !logbook ? 'Move to logbook' : 'Remove from logbook',
           icon: 'logbook',
           callback: () => {
-            if (!this.item.logbook)
+            if (!logbook)
               this.$store.dispatch('task/logTasks', [this.item.id])
             else this.$store.dispatch('task/unlogTasks', [this.item.id])
           }

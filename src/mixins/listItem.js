@@ -325,8 +325,9 @@ export default {
         this.cancelItem(true)
       } else {
         this.completeAnimation = !this.completed
-        this.completed = !this.completed
-        if (this.completed || (this.viewName !== 'Today' && this.comp === "Task"))
+        const anticipate = (this.viewName !== 'Today' && this.comp === "Task")
+        this.completed = !this.completed || anticipate
+        if (this.completed || anticipate)
           this.dispatchCompleteItem()
         else this.dispatchUncompleteItem()
       }

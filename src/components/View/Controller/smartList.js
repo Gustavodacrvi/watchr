@@ -22,7 +22,7 @@ export default {
     mainFallbackItem() {
       const fs = functionFallbacks.viewFallbacks
       if (this.isCalendarOrderViewType)
-        return (t, f) => fs.calendarOrder(t, f, this.getCalendarOrderDate)
+        return (t, f, h) => fs.calendarOrder(t, f, this.getCalendarOrderDate, h)
       if (this.viewName === 'Deadlines')
         return fs.deadlineOrder
       if (this.viewName === 'Upcoming')
@@ -126,7 +126,7 @@ export default {
       if (n === 'Logbook')
         return pipe => pipe !== 'pipeCanceled' && pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
       if (n === 'Recurring' || n === 'Later lists')
-        return pipe => pipe !== 'pipeSomeday'
+        return pipe => pipe !== 'pipeSomeday' && pipe !== 'pipeCompleted'
       return null
     },
     tasksOrder() {

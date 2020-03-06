@@ -111,22 +111,14 @@ export default {
     },
     getNavTopPosition() {
       setTimeout(() => {
-        let increment = 0
-        if (this.hideNavbar) increment = 22
         const app = document.getElementById('app')
-        const scroll = this.scrollTop + increment
         if (app) {
-          const winHeight = app.offsetHeight
-          let top = (55 - scroll) + 'px'
-          let height = ((winHeight - 100) + scroll) + 'px'
-          if (scroll > 50) {
-            top = '30px'
-            height = (winHeight - 100 + 45) + 'px'
-          }
-  
+          let height = app.offsetHeight
+
+          const minimalBottomPosition = this.hideNavbar ? 45 : 60
+        
           this.navObj = {
-            top,
-            height,
+            height: (height - minimalBottomPosition) + 'px',
           }
         }
       })

@@ -619,7 +619,7 @@ export default {
       return 'tag'
     },
     deadlinesViewHeadings() {
-      const arr = []
+      let arr = []
       const tod = mom()
       const dispatch = this.$store.dispatch
 
@@ -646,7 +646,7 @@ export default {
           })
         )
       }
-      return arr.concat(
+      arr = arr.concat(
         this.getWholeYearCalendarHeadings({
           'This month': {
             filter: this.isTaskDeadlineThisMonth,
@@ -662,6 +662,28 @@ export default {
           },
         }, false)
       )
+
+      arr.push({
+        name: 'Lists',
+        id: 'LISTS_WITH_DEADLIENS',
+        icon: 'tasks',
+
+        disableSortableMount: true,        
+
+        listType: true,
+        disableDeadlineStr: true,
+        directFiltering: true,
+
+        comp: 'List',
+        editComp: 'ListEdit',
+        itemPlaceholder: 'List name...',
+
+        sort: this.sortArray,
+        order: [],
+        filter: l => l.deadline,
+      })
+      
+      return arr
     },
     recurringHeadings() {
       return [{

@@ -680,7 +680,7 @@ export default {
 .footer {
   position: absolute;
   left: 0;
-  bottom: -28px;
+  bottom: 0px;
   height: 40px;
   border: none;
   padding: 0 25px;
