@@ -309,7 +309,7 @@ export default {
     
     const keywords = [
       {
-        match: /\severy (\d+) days/g,
+        match: /\severy (\d+) days/gi,
         unshift: true,
         get: (m, str) => {
           const daily = parseInt(str.split(' ')[1], 10)
@@ -326,7 +326,7 @@ export default {
         },
       },
       {
-        match: / every (\d+) days after/g,
+        match: / every (\d+) days after/gi,
         unshift: true,
         get: (m, str) => {
           const daily = parseInt(str.split(' ')[1], 10)
@@ -387,7 +387,9 @@ export default {
           const monthDay = split[weekDayPos]
           const weekDay = split[weekDayPos + 1]
 
-          if (months && monthDay && weekDay) {
+          const isPossibleWeekdayOverflow = (weekDay !== 'day' && (monthDay > 3))
+
+          if (months && monthDay && weekDay && !isPossibleWeekdayOverflow) {
             periodic = true
             cal = {
               type: 'monthly',
@@ -457,7 +459,7 @@ export default {
         },
       },
       {
-        match: / ends( on)? (.*)/gi,
+        match: / (ends|defer)( on)? (.*)/gi,
         get: (m, str) => {
           if (periodic && cal) {
             const obj = getSpecificInputFromStr(str)
@@ -471,7 +473,7 @@ export default {
         },
       },
       {
-        match: / (\d+) times/g,
+        match: / (\d+) times/gi,
         get: (m, str) => {
           if (periodic && cal) {
             const days = parseInt(str.split(' ')[0], 10)
@@ -484,7 +486,7 @@ export default {
         },
       },
       {
-        match: / begins( on)? (.*)/gi,
+        match: / (begins|due)( on)? (.*)/gi,
         get: (m, str) => {
           if (periodic && cal) {
             const obj = getSpecificInputFromStr(str)
@@ -506,10 +508,10 @@ export default {
         ),
       {
         match: / (someday|som)/gi,
-        get: () => get({type: 'someday'})
+        get: () => cal = get({type: 'someday'})
       },
       {
-        match: !disablePmFormat ? /\s(at )?(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/g : /\s(at )?(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/g, // match 1am - 12am, 1pm - 12pm
+        match: !disablePmFormat ? /\s(at )?(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/gi : /\s(at )?(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/gi, // match 1am - 12am, 1pm - 12pm
         get: (match, str) => {
           const time = mom(str, format)
           if (time.isValid()) {
@@ -540,7 +542,7 @@ export default {
       },
       {
         match: / (no date)/gi,
-        get: () => null,
+        get: () => cal = null,
       },
     ]
     
@@ -566,10 +568,10 @@ export default {
     }
     
     return escapeHTML(str)
-          .replace(/\[(https?:\/\/[^\]\s]+)(?: ([^\]]*))?\]/g, "<a class='parsed-link' target='_blank' oncontextmenu='event.stopPropagation()' onclick='event.stopPropagation()' href='$1'>$2</a>")
-          .replace(/__(.*?)__/g, "<b>$1</b>")
-          .replace(/\*(.*?)\*/g, "<i>$1</i>")
-          .replace(/\{(.*?)(?: ([^\}]*))?\}/g, "<span style='color: $1'>$2</span>")
+          .replace(/\[(https?:\/\/[^\]\s]+)(?: ([^\]]*))?\]/gi, "<a class='parsed-link' target='_blank' oncontextmenu='event.stopPropagation()' onclick='event.stopPropagation()' href='$1'>$2</a>")
+          .replace(/__(.*?)__/gi, "<b>$1</b>")
+          .replace(/\*(.*?)\*/gi, "<i>$1</i>")
+          .replace(/\{(.*?)(?: ([^\}]*))?\}/gi, "<span style='color: $1'>$2</span>")
   },
   asyncComp(comp, allowComp = true) {
     return () => ({
