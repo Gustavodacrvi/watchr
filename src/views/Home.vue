@@ -95,6 +95,20 @@ export default {
 
 </script>
 
+<style>
+
+p {
+  font-size: 1.125em;
+  line-height: 19px;
+  color: var(--dark-txt);
+}
+
+.Home {
+  font-size: 1em;
+}
+
+</style>
+
 <style scoped>
 
 #main-illustration-wrapper-wrapper {
@@ -112,16 +126,9 @@ export default {
   z-index: -1;
 }
 
-p {
-  font-size: 1.1em;
-  line-height: 18px;
-  color: var(--dark-txt);
-}
-
 .Home {
   display: flex;
   justify-content: center;
-  font-size: 1em;
 }
 
 .hero-header-wrapper {

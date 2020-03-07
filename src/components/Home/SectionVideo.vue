@@ -12,7 +12,10 @@
             :key="o.heading"
           >
             <div class="section-heading">
-              <h3>{{ o.heading }}</h3>
+              <span class="ball-wrapper">
+                <Icon class="play" width='24px' icon='play' color='var(--primary)'/>
+              </span>
+              <h3 class="h3">{{ o.heading }}</h3>
             </div>
             <p class="section-paragraph">
               {{ o.txt }}
@@ -57,6 +60,12 @@ export default {
 .section-heading {
   font-size: 1.2em;
   margin: 2.5em 0;
+  display: flex;
+  align-items: center;
+}
+
+.h3 {
+  margin-left: 10px;
 }
 
 .section-wrapper {
@@ -66,6 +75,25 @@ export default {
 
 .section-cont {
   flex-basis: 100%;
+}
+
+.ball-wrapper {
+  border-radius: 6px;
+  padding: 4px 5px 0px 4px;
+  transition-duration: .2s;
+  transform: scale(1,1);
+}
+
+.ball-wrapper:hover {
+  background-color: rgba(106, 156, 180, .2);
+}
+
+.ball-wrapper:active {
+  transform: scale(.9,.9);
+}
+
+.play {
+  transform: translate(.5px);
 }
 
 </style>
