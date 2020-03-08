@@ -45,8 +45,8 @@
           },
         ]"
       >
-        <div class="magic-btn-wrapper">
-          <div class="magic-button">
+        <div class="section-title-wrapper">
+          <div class="section-icon magic-button">
             <Icon class="magic-btn-icon" color='white' icon='plus' width='16px'/>
           </div>
           <h2>Magic Button</h2>
@@ -79,6 +79,21 @@
       >
         <h2>Batch Edit and Multiple Windows</h2>
       </SectionVideo>
+
+      <div class="section-main-heading">
+        <div class="section-title-wrapper">
+          <Icon class="section-icon" color='var(--primary)' icon='inbox' width='40px'/>
+          <h2>Many Smart Views</h2>
+        </div>
+      </div>
+      <div class="section-wrapper">
+        <div class="section">
+          <p>
+            Smart views are basically smart lists that show you only what you need to see, there are many smart views available, you can choose the ones you want to bind onto the sidebar, the hided ones can still be finded using the Quick Search.
+          </p>
+          <SmartViewsSelector/>
+        </div>
+      </div>
 
 
       <p>a</p>
@@ -154,10 +169,12 @@
 <script>
 
 import SectionVideo from "@/components/Home/SectionVideo.vue"
+import SmartViewsSelector from "@/components/View/RenderComponents/SmartViewsSelector.vue"
 
 export default {
   components: {
     SectionVideo,
+    SmartViewsSelector,
   },
 }
 
@@ -165,7 +182,7 @@ export default {
 
 <style>
 
-p {
+.Home p {
   font-size: 1.125em;
   line-height: 19px;
   color: var(--dark-txt);
@@ -173,6 +190,23 @@ p {
 
 .Home {
   font-size: 1em;
+}
+
+.Home .section-main-heading {
+  font-size: 1.35em;
+  margin: 3.5em 0;
+  text-align: center;
+}
+
+.Home .section {
+  flex-basis: 1000px;
+  margin: 0 12px;
+}
+
+.Home .section-wrapper {
+  display: flex;
+  margin-top: 7em;
+  justify-content: center;
 }
 
 </style>
@@ -186,6 +220,10 @@ p {
 
 #main-illustration-wrapper {
   flex-basis: 85%;
+}
+
+.section-icon {
+
 }
 
 #main-illustration {
@@ -215,14 +253,17 @@ p {
   text-justify: inter-word;
 }
 
-.magic-btn-wrapper {
+.section-title-wrapper {
   display: inline-flex;
+}
+
+.section-icon {
+  transform: translateY(-3px);
+  margin-right: 10px;
 }
 
 .magic-button {
   border-radius: 500px;
-  transform: translateY(-3px);
-  margin-right: 10px;
   width: 2.2em;
   height: 2.2em;
   background-color: var(--primary);

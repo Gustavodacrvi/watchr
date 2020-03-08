@@ -1,11 +1,11 @@
 <template>
-  <div class="SectionVideo">
+  <div class="SectionVideo section-wrapper">
     <div class="section">
       <div class="section-main-heading">
         <slot></slot>
       </div>
 
-      <div class="section-wrapper" :class="{invert}">
+      <div class="section-cont-wrapper" :class="{invert}">
         <div class="section-cont">
           <div v-for="o in cont"
             class="section-section"
@@ -137,11 +137,11 @@ export default {
   align-items: center;
 }
 
-.section-wrapper {
+.section-cont-wrapper {
   display: flex;
 }
 
-.section-wrapper.invert {
+.section-cont-wrapper.invert {
   flex-direction: row-reverse;
 }
 
@@ -175,7 +175,7 @@ export default {
 }
 
 @media (max-width: 820px) {
-  .section-wrapper {
+  .section-cont-wrapper {
     flex-direction: column;
   }
 }
