@@ -383,6 +383,7 @@ export default {
             case 'Anytime': return getters.isListAnytime(list)
             case 'Today': return getters.isListOnCalendarView(list, TOD_DATE)
             case 'Tomorrow': return getters.isListOnCalendarView(list, TOM_DATE)
+            case 'Deadlines': return list.deadline
             case 'Assigned to me': return list.assigned === rootState.user.uid
           }
         },
@@ -412,6 +413,12 @@ export default {
               obj = {
                 c: t.calendar,
                 d: t.deadline,
+              }
+              break
+            }
+            case 'Deadlines': {
+              obj = {
+                c: t.deadline
               }
               break
             }

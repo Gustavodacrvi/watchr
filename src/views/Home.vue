@@ -34,12 +34,13 @@
           },
           {
             heading: 'Adding headings',
-            name: 'magic_heading_add',
+            name: 'magic_button_heading_add',
             txt: `Headings are used for organizing and to visually group your stuff more easily, you can use the magic button to add a list heading anywhere.<br><br>
             Simply drop it to the left margin and type in its name, all of the tasks below the target will then be inside the created heading.`,
           },
           {
             heading: 'Add tags and lists',
+            name: 'magic_button_sidebar',
             txt: `The magic button can also be used to add lists directly inside its folder, tags, and subtags right on the sidebar.`,
           },
         ]"
