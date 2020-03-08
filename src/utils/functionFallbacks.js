@@ -36,7 +36,7 @@ export default {
       if (force || !c) {
         if (isEvening && c && c.type !== 'specific' && c.type !== 'someday') {
           c.evening = true
-        } else if (!c) {
+        } else if (force || !c) {
           t.calendar = getSpecificCalendar(specific)
         }
       }

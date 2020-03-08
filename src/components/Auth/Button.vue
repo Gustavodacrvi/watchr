@@ -70,7 +70,7 @@ export default {
   position: relative;
 }
 
-.Button.normal:hover, .Button.normal:focus {
+.Button.normal:hover, .Button.tiny:hover, .Button.normal:focus {
   background-color: var(--light-gray);
   color: white;
 }

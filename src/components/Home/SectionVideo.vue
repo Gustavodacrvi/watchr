@@ -2,10 +2,10 @@
   <div class="SectionVideo">
     <div class="section">
       <div class="section-main-heading">
-        <h2>Magic Button</h2>
+        <slot></slot>
       </div>
 
-      <div class="section-wrapper">
+      <div class="section-wrapper" :class="{invert}">
         <div class="section-cont">
           <div v-for="o in cont"
             class="section-section"
@@ -49,7 +49,7 @@
 <script>
 
 export default {
-  props: ['cont'],
+  props: ['cont', 'invert'],
   data() {
     return {
       url: null,
@@ -99,7 +99,7 @@ export default {
 }
 
 .video:active {
-  transform: scale(1,1);
+  transform: scale(.98,.98);
 }
 
 .video-tag {
@@ -111,6 +111,10 @@ export default {
   display: flex;
   margin-top: 7em;
   justify-content: center;
+}
+
+.SectionVideo + .SectionVideo {
+  margin-top: 2em;
 }
 
 .section {
@@ -137,7 +141,10 @@ export default {
 
 .section-wrapper {
   display: flex;
-  height: 400px;
+}
+
+.section-wrapper.invert {
+  flex-direction: row-reverse;
 }
 
 .section-cont {

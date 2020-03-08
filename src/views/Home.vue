@@ -44,7 +44,37 @@
             txt: `The magic button can also be used to add lists directly inside its folder, tags, and subtags right on the sidebar.`,
           },
         ]"
-      />
+      >
+        <div class="magic-btn-wrapper">
+          <div class="magic-button">
+            <Icon class="magic-btn-icon" color='white' icon='plus' width='16px'/>
+          </div>
+          <h2>Magic Button</h2>
+        </div>
+      </SectionVideo>
+
+      <SectionVideo
+        :invert='true'
+        :cont="[
+          {
+            heading: 'Batch edit items',
+            name: 'batch_edit_upcoming',
+            txt: `You can select multiple items using the <strong>Control</strong> key or the keyboard, once selected, sort, edit, delete, move or even assign them to other people.`,
+          },
+          {
+            heading: 'Sidebar Drag and Drop',
+            name: 'magic_button_heading_add',
+            txt: ``,
+          },
+          {
+            heading: 'Between Windows drag and drop',
+            name: 'magic_button_sidebar',
+            txt: ``,
+          },
+        ]"
+      >
+        <h2>Batch Edit and Multiple Windows</h2>
+      </SectionVideo>
 
 
       <p>a</p>
@@ -179,6 +209,26 @@ p {
   font-size: 1.5em;
   text-align: justify;
   text-justify: inter-word;
+}
+
+.magic-btn-wrapper {
+  display: inline-flex;
+}
+
+.magic-button {
+  border-radius: 500px;
+  transform: translateY(-3px);
+  margin-right: 10px;
+  width: 2.2em;
+  height: 2.2em;
+  background-color: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.magic-btn-icon {
+  transform: translateY(2px);
 }
 
 @media (max-width: 820px) {

@@ -11,7 +11,7 @@ const TOD_STR = mom().format('Y-M-D')
 
 Vue.use(Vuex)
 
-const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
+const MINIMUM_DESKTOP_SCREEN_WIDTH = 120
 
 import firebase from 'firebase/app'
 import 'firebase/auth'

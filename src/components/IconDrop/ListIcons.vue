@@ -391,7 +391,7 @@ export default {
   position: absolute;
   width: 100%;
   left: 0;
-  bottom: 6px;
+  bottom: -2.5px;
   padding: 0 10px;
 }
 
