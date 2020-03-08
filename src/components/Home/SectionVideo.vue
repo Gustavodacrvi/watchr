@@ -12,7 +12,7 @@
             :key="o.heading"
           >
             <div class="section-heading">
-              <span class="ball-wrapper" @click="play(o.name)">
+              <span v-if="o.name" class="ball-wrapper" @click="play(o.name)">
                 <Icon class="play" width='24px' icon='play' color='var(--primary)'/>
               </span>
               <h3 class="h3">
@@ -34,6 +34,8 @@
 
                 :src="getUrl"
                 type='video/mp4'
+
+                preload
               >
                 <source>
                 Your browser does not support videos.
@@ -135,10 +137,6 @@ export default {
   align-items: center;
 }
 
-.h3 {
-  margin-left: 10px;
-}
-
 .section-wrapper {
   display: flex;
 }
@@ -156,6 +154,7 @@ export default {
 }
 
 .ball-wrapper {
+  margin-right: 10px;
   border-radius: 6px;
   padding: 4px 5px 0px 4px;
   transition-duration: .2s;

@@ -41,7 +41,7 @@
           {
             heading: 'Add tags and lists',
             name: 'magic_button_sidebar',
-            txt: `The magic button can also be used to add lists directly inside its folder, tags, and subtags right on the sidebar.`,
+            txt: `The magic button can also be used to add lists directly inside folders or subtags right on the sidebar.`,
           },
         ]"
       >
@@ -59,17 +59,21 @@
           {
             heading: 'Batch edit items',
             name: 'batch_edit_upcoming',
-            txt: `You can select multiple items using the <strong>Control</strong> key or the keyboard, once selected, sort, edit, delete, move or even assign them to other people.`,
+            txt: `You can select multiple items using the <strong>Control</strong> key or the keyboard, once selected, sort, edit, delete, move or even assign them to other people with ease.`,
           },
           {
             heading: 'Sidebar Drag and Drop',
             name: 'magic_button_heading_add',
-            txt: ``,
+            txt: `Watchr has many advanced drag-and-drop capabilities, you can drag the selected items to the sidebar to move them into another list, or to move them to 'Tomorrow' or the 'Logbook', don't forget to organize your lists using folders!<br><br>
+            You can also drag the selected items into the 'Tags' sidebar section for batch tag adding.
+            `,
           },
           {
-            heading: 'Between Windows drag and drop',
-            name: 'magic_button_sidebar',
-            txt: ``,
+            heading: 'Between Windows Drag and Drop',
+            txt: `
+              Watchr has support for multiple windows, just open as many tabs as you want, then drag and drop any item between them, this way, you can take your planning into another level!<br><br>
+              This way, you could have one window on the 'Inbox' view, and another one to empty your inbox with ease, or one window on the 'Upcoming' for week planning, simply grab them and it's done!
+            `,
           },
         ]"
       >
