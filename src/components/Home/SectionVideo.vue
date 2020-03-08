@@ -26,12 +26,17 @@
         </div>
         <div class="video-section">
           <div class="video-wrapper">
-            <div class="video" @click="play">
+            <div class="video" @click="play()">
               <video
                 ref='video'
                 class="video-tag"
+                crossOrigin="anonymous"
+
+                :src="getUrl"
+                type='video/mp4'
               >
-                <source :src="getUrl" type='video/mp4'>
+                <source>
+                Your browser does not support videos.
               </video>
             </div>
           </div>
@@ -54,12 +59,14 @@ export default {
     play(url) {
       if (url)
         this.url = url
-      this.$refs.video.play()
+      this.$nextTick(() => {
+        this.$refs.video.play()
+      })
     },
   },
   computed: {
     getUrl() {
-      return `img/videos/${this.url || this.cont[0].name}.mp4`
+      return `/video/${this.url || this.cont[0].name}.mp4`
     },
   },
 }
@@ -77,10 +84,22 @@ export default {
 }
 
 .video {
-  box-shadow: 0 0 28px var(--dark-void);
+  box-shadow: 0 0 18px var(--dark-void);
   border: 1px solid var(--void);
   overflow: hidden;
+  min-height: 724px;
   border-radius: 12px;
+  transition-duration: .2s;
+  transform: scale(1,1);
+}
+
+.video:hover {
+  transform: scale(1.007,1.007);
+  box-shadow: 0 0 38px var(--dark-void);
+}
+
+.video:active {
+  transform: scale(1,1);
 }
 
 .video-tag {
@@ -122,11 +141,11 @@ export default {
 }
 
 .section-cont {
-  flex-basis: 40%;
+  flex-basis: 45%;
 }
 
 .video-section {
-  flex-basis: 60%;
+  flex-basis: 55%;
 }
 
 .ball-wrapper {

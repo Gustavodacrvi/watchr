@@ -235,7 +235,8 @@ export default {
   },
   mounted() {
     if (this.header && this.header.name === this.addedHeading) {
-      this.addEditComp(0)
+      if (this.getItems.length === 0)
+        this.addEditComp(0)
       this.$emit('added-heading-complete-mount')
     }
     this.mountSortables()
