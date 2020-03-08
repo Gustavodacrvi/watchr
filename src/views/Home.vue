@@ -89,7 +89,7 @@
       <div class="section-wrapper">
         <div class="section">
           <p>
-            Smart views are basically smart lists that show you only what you need to see, there are many smart views available, you can choose the ones you want to bind onto the sidebar, the hided ones can still be finded using the Quick Search.
+            Smart views are basically smart lists that show you only what you need to see, there are many smart views available, you can choose the ones you want to attach to the sidebar, the hided ones can still be found using the Quick Search.
           </p>
           <SmartViewsSelector/>
         </div>

@@ -5,6 +5,8 @@
       <div v-for="v in sidebarElements"
         class="smart-card card"
         :key="v.name"
+        :class="{active: v.name === activeView}"
+        @click="active = v.name"
       >
         <Icon
           :icon='v.icon'
@@ -12,6 +14,12 @@
           width='42px'
         />
       </div>
+    </div>
+    <div class="descr">
+      <h3 class="active-name">{{ activeSmartView.name }}</h3>
+      <p>
+        <span v-html="activeSmartView.descr"></span>
+      </p>
     </div>
   </div>  
 </template>
@@ -21,8 +29,19 @@
 import { mapGetters } from 'vuex'
 
 export default {
+  data() {
+    return {
+      active: null,
+    }
+  },
   computed: {
-    ...mapGetters(['sidebarElements'])
+    ...mapGetters(['sidebarElements']),
+    activeView() {
+      return this.active || this.sidebarElements[0].name
+    },
+    activeSmartView() {
+      return this.sidebarElements.find(el => el.name === this.activeView)
+    }
   },
 }
 
@@ -42,6 +61,15 @@ export default {
   padding: 18px 0;
 }
 
+.descr {
+  margin-top: 36px;
+}
+
+.active-name {
+  margin-bottom: 36px;
+  font-size: 1.6em;
+}
+
 .smart-card {
   flex-basis: 110px;
   height: 110px;
@@ -56,10 +84,14 @@ export default {
   transition-duration: .2s;
 }
 
-.smart-card:hover {
+.active, .smart-card:hover {
   background-color: var(--light-gray);
+}
+
+.smart-card:hover {
   transform: scale(1.01,1.01) translateY(-4px);
 }
+
 
 .smart-card:active {
   transform: scale(.98,.98) translateY(2px);
