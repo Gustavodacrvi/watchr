@@ -95,6 +95,17 @@
         </div>
       </div>
 
+      <div class="section-main-heading">
+        <div class="section-title-wrapper">
+          <Icon class="section-icon" color='var(--orange)' icon='group' width='40px'/>
+          <h2>Sharing Tasks and Lists</h2>
+        </div>
+      </div>
+      <div class="section-wrapper">
+        <div class="section">
+        </div>
+      </div>
+
 
       <p>a</p>
       <p>a</p>
