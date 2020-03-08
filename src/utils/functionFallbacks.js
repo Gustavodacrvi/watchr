@@ -36,7 +36,7 @@ export default {
       if (force || !c) {
         if (isEvening && c && c.type !== 'specific' && c.type !== 'someday') {
           c.evening = true
-        } else {
+        } else if (!c) {
           t.calendar = getSpecificCalendar(specific)
         }
       }
@@ -72,8 +72,8 @@ export default {
         t.tags = [tagId]
       return t
     },
-    Evening(t, force = false, {calendarDate}) {
-      if (force || !t.calendar) {
+    Evening(t, force = false, {calendarDate}, adding = false) {
+      if (force || adding || !t.calendar) {
         if (!t.calendar) {
           t.calendar = getSpecificCalendar(calendarDate)
           t.calendar.evening = true

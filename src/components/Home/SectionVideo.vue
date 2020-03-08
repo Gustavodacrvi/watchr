@@ -12,18 +12,29 @@
             :key="o.heading"
           >
             <div class="section-heading">
-              <span class="ball-wrapper">
+              <span class="ball-wrapper" @click="play(o.name)">
                 <Icon class="play" width='24px' icon='play' color='var(--primary)'/>
               </span>
-              <h3 class="h3">{{ o.heading }}</h3>
+              <h3 class="h3">
+                <span v-html="o.heading"></span>
+              </h3>
             </div>
             <p class="section-paragraph">
-              {{ o.txt }}
+              <span v-html='o.txt'></span>
             </p>
           </div>
         </div>
-        <div class="section-cont">
-          right section
+        <div class="video-section">
+          <div class="video-wrapper">
+            <div class="video" @click="play">
+              <video
+                ref='video'
+                class="video-tag"
+              >
+                <source :src="getUrl" type='video/mp4'>
+              </video>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -33,12 +44,49 @@
 <script>
 
 export default {
-  props: ['cont']
+  props: ['cont'],
+  data() {
+    return {
+      url: null,
+    }
+  },
+  methods: {
+    play(url) {
+      if (url)
+        this.url = url
+      this.$refs.video.play()
+    },
+  },
+  computed: {
+    getUrl() {
+      return `img/videos/${this.url || this.cont[0].name}.mp4`
+    },
+  },
 }
 
 </script>
 
 <style scoped>
+
+.video-wrapper, .video {
+  width: 100%;
+}
+
+.video-wrapper {
+  padding: 50px;
+}
+
+.video {
+  box-shadow: 0 0 28px var(--dark-void);
+  border: 1px solid var(--void);
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.video-tag {
+  width: 100%;
+  object-fit: cover;
+}
 
 .SectionVideo {
   display: flex;
@@ -47,7 +95,7 @@ export default {
 }
 
 .section {
-  flex-basis: 1100px;
+  flex-basis: 1000px;
   margin: 0 12px;
 }
 
@@ -74,7 +122,11 @@ export default {
 }
 
 .section-cont {
-  flex-basis: 100%;
+  flex-basis: 40%;
+}
+
+.video-section {
+  flex-basis: 60%;
 }
 
 .ball-wrapper {
@@ -86,6 +138,7 @@ export default {
 
 .ball-wrapper:hover {
   background-color: rgba(106, 156, 180, .2);
+  cursor: pointer;
 }
 
 .ball-wrapper:active {
@@ -94,6 +147,12 @@ export default {
 
 .play {
   transform: translate(.5px);
+}
+
+@media (max-width: 820px) {
+  .section-wrapper {
+    flex-direction: column;
+  }
 }
 
 </style>

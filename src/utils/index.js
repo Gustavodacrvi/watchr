@@ -707,7 +707,9 @@ export default {
 
     switch (c.type) {
       case 'specific': {
-        str += this.getHumanReadableDate(c.specific)
+        const date = this.getHumanReadableDate(c.specific)
+        if (date !== 'Today')
+          str += date
         break
       }
       case 'after completion': {
@@ -719,7 +721,9 @@ export default {
         break
       }
       case 'weekly': {
-        str += `Every ${c.weekly.every} weeks on `
+        if (c.weekly.every > 1)
+          str += `Every ${c.weekly.every} weeks on `
+        else str += 'Every '
         let i = 0
         for (const w of c.weekly.days) {
           str += mom(w, 'e').format('ddd')

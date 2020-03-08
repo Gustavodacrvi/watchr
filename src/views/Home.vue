@@ -28,57 +28,20 @@
         :cont="[
           {
             heading: 'Insert todos anywhere',
-            txt: 'You not only can tap the magic button to add tasks, you can drag and drop it anywhere to add a task exactly where it should be!',
+            name: 'magic_button',
+            txt: 'You not only can tap the magic button to add tasks, you can drag and drop it anywhere to insert one exactly where it should be!',
           },
           {
             heading: 'Adding headings',
-            txt: `Headings are used to organize and visually separate your stuff more easily, you can use the magic button to add a list heading anywhere.
-
+            txt: `Headings are used to organize and visually separate your stuff more easily, you can use the magic button to add a list heading anywhere.<br><br>
             Simply drop it to the left margin and type in its name, all of the tasks below the target will then be inside the created heading.`,
           },
           {
             heading: 'Add tags and lists',
-            txt: `The magic button can also be used to add lists directly inside its folder, tags and subtags.`,
+            txt: `The magic button can also be used to add lists directly inside its folder, tags and subtags right on the sidebar.`,
           },
         ]"
       />
-
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
-      <p>asdfasdf</p>
     </div>
   </main>
 </template>

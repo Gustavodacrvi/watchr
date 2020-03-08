@@ -957,11 +957,11 @@ export default {
       let t = item
 
       if (this.mainFallbackItem)
-        t = this.mainFallbackItem(item, force, this.header)
+        t = this.mainFallbackItem(item, force, this.header, true)
       if (this.isRoot && this.rootFallbackItem)
-        t = this.rootFallbackItem(t, force, this.header)
+        t = this.rootFallbackItem(t, force, this.header, true)
       else if (this.headingFallbackItem)
-        t = this.headingFallbackItem(t, force, this.header)
+        t = this.headingFallbackItem(t, force, this.header, true)
 
       return t
     },

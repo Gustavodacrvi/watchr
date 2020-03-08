@@ -568,7 +568,7 @@ export default {
           }),
           order: scheduleOrder,
           updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
-          fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Evening(t, f, {calendarDate}),
+          fallbackItem: (t, f, c, p) => functionFallbacks.viewFallbacks.Evening(t, f, {calendarDate}, p),
         })
       }
 
