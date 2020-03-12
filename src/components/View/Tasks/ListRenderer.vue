@@ -13,7 +13,7 @@
     </transition>
     <div
       class="front item-renderer-root"
-      :class="{inflate, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
+      :class="{isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
 
       data-name='item-renderer'
@@ -186,7 +186,7 @@ export default {
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
-   'disableFallback', 'isLast', 'getCalendarOrderDate'],
+   'disableFallback', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
@@ -200,6 +200,7 @@ export default {
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
       selectedElements: [],
+      disableItemEnterTransitionIds: [],
       droppedIds: [],
       changedViewName: true,
       waitingUpdateTimeout: null,
@@ -268,12 +269,12 @@ export default {
       return this.showEmptyHeadings || h.items.length > 0
     },
     dragenter(evt) {
-      if (!this.moving)
+      if (!this.moving && !this.hasEdit)
         evt.preventDefault()
     },
     dragover(evt) {
       this.cameFromAnotherTab = !this.moving && this.allowSortableAdd
-      if (this.cameFromAnotherTab) {
+      if (this.cameFromAnotherTab && !this.hasEdit) {
         const draggableRoot = this.draggableRoot
         this.$store.commit('cameFromAnotherTabDragStart', draggableRoot)
         evt.preventDefault()
@@ -308,25 +309,29 @@ export default {
       }
     },
     drop(evt) {
-      if (this.cameFromAnotherTab) {
-        const res = evt.dataTransfer.getData('text/plain')
-        if (!res) return;
-        const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
-        if (!obj) return;
-        if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
-        evt.preventDefault()
-        let items = this.getTasksById(obj.ids)
-        const alreadyHasItem = this.lazyItems.some(el => items.some(i => i.id  === el.id))
-        
-        if (!alreadyHasItem) {
-          localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
-          items = items.map(el => this.fallbackItem(el, true))
-
-          this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
-          const finalIds = this.lazyItems.map(el => el.id)
+      try {
+        if (this.cameFromAnotherTab) {
+          const res = evt.dataTransfer.getData('text/plain')
+          if (!res) return;
+          const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
+          if (!obj) return;
+          if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
+          evt.preventDefault()
+          let items = this.getTasksById(obj.ids)
+          const alreadyHasItem = this.lazyItems.some(el => items.some(i => i.id  === el.id))
+          
+          if (!alreadyHasItem) {
+            localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
+            items = items.map(el => this.fallbackItem(el, true))
   
-          this.addToList(finalIds, obj.ids)
+            this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
+            const finalIds = this.lazyItems.map(el => el.id)
+    
+            this.addToList(finalIds, obj.ids)
+          }
         }
+      } catch (arr) {
+        
       }
       this.cameFromAnotherTab = false
     },
@@ -532,7 +537,7 @@ export default {
         direction: 'vertical',
 
         animation: 200,
-        delay: this.isDesktopDevice ? 15 : 100,
+        delay: this.isDesktopDevice ? 10 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -655,6 +660,7 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
+            this.disableItemEnterTransitionIds = ids
             this.addToList(this.lazyItems.filter(el => el).map(el => el.id), ids)
             this.sourceVueInstance = null
           } else {  
@@ -690,7 +696,7 @@ export default {
             finalIds = taskIds
             
             const specialClass = 'DRAG-AND-DROP-EL'
-            const containsInfo = el => el.classList && el.classList.contains(specialClass)
+            const containsInfo = el => el && el.classList && el.classList.contains(specialClass)
             
             let target = evt.related
 
@@ -1189,11 +1195,6 @@ export default {
       if (this.isDesktopDevice)
         return this.pressingSelectKeys
     },
-    inflate() {
-      if ((this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
-        return true
-      return false
-    },
     draggableRoot() {
       return this.$refs['item-renderer-root']
     },
@@ -1421,14 +1422,6 @@ export default {
 
 .add-item-wrapper:active .add-item {
   transform: scale(.95,.95);
-}
-
-.inflate {
-  min-height: 700px;
-}
-
-.sortable-ghost .inflate {
-  min-height: unset;
 }
 
 .isRootAndHaveItems {

@@ -635,7 +635,7 @@ export default {
         const y = this.isDesktopBreakPoint ? -2 : 4
         t.transform = `translate(27px, ${y}px)`
         requestAnimationFrame(() => {
-          t.transitionDuration = '.25s'
+          t.transitionDuration = '.15s'
           t.transform = `translate(0px, ${y}px)`
         })
       }
@@ -644,7 +644,7 @@ export default {
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       s.margin = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
         if (height < 36)
           s.height = '35px'
         else
@@ -670,7 +670,7 @@ export default {
         const y = this.isDesktopBreakPoint ? -2 : 4
         t.transform = `translate(0px, ${y}px)`
         requestAnimationFrame(() => {
-          t.transitionDuration = '.25s'
+          t.transitionDuration = '.15s'
           t.transform = `translate(27px, ${y}px)`
         })
       }
@@ -679,7 +679,7 @@ export default {
       s.height = el.offsetHeight + 'px'
       requestAnimationFrame(() => {
         this.show = false
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'

@@ -89,7 +89,7 @@ export default {
       s.overflow = 'hidden'
       s.padding = '0'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
         s.height = '28px'
         s.padding = '0 8px'
         s.minWidth = '28px'
@@ -105,7 +105,7 @@ export default {
     },
     leave(el, done) {
       const s = el.style
-      s.transitionDuration = '.25s'
+      s.transitionDuration = '.15s'
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'
@@ -113,7 +113,7 @@ export default {
       s.minWidth = '0px'
       s.opacity = '0'
 
-      setTimeout(done, 255)
+      setTimeout(done, 155)
     },
 
     contentEnter(el, done) {
@@ -128,7 +128,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
 
         s.width = width
         s.marginLeft = '6px'
@@ -150,7 +150,7 @@ export default {
       s.marginLeft = '6px'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         s.width = 0
         s.marginLeft = 0
         s.opacity = 0

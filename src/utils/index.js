@@ -698,7 +698,7 @@ export default {
       return time
     return mom(time, 'H:m').format('h:m A')
   },
-  parseCalendarObjectToString(obj, userInfo, forceShowInfo = false) {
+  parseCalendarObjectToString(obj, userInfo, forceShowInfo = false, allowHours = true) {
     let str = ''
 
     const c = obj
@@ -752,7 +752,7 @@ export default {
       }
     }
 
-    if (c.time) str += ` at ${this.parseTime(c.time, userInfo)}`
+    if (c.time && allowHours) str += ` at ${this.parseTime(c.time, userInfo)}`
 
     if (c.begins && c.begins !== c.editDate && (forceShowInfo || mom(c.begins, 'Y-M-D').isSameOrAfter(mom(), 'day'))) {
       str += `, begins on ${this.getHumanReadableDate(c.begins)}`

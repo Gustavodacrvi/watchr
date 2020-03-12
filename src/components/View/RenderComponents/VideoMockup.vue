@@ -22,10 +22,15 @@
 
 export default {
   props: ['url'],
+  methods: {
+    play() {
+      this.$refs.video.play()
+    },
+  },
   watch: {
     url() {
       this.$nextTick(() => {
-        this.$refs.video.play()
+        this.play()
       })
     },
   },

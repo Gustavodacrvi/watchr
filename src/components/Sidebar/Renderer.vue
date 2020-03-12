@@ -81,7 +81,9 @@ export default {
       hover: false,
       isDragging: false,
 
+      disableItemEnterTransitionId: null,
       items: [],
+      sourceVueInstance: null,
       hasEdit: false,
       addedItem: null,
 
@@ -151,11 +153,45 @@ export default {
             
           this.addEdit(i)
         } else if (type === 'sidebar-element') {
-          if (this.onSortableAdd)
+          if (this.onSortableAdd) {
+            this.removeEdit()
+            this.sourceVueInstance.removeEdit()
+
+            let sourceItems = this.sourceVueInstance.items
+            const newItems = this.items
+
+            let sourceItem
+            const i = sourceItems.findIndex(el => el.id === item.dataset.id)
+            if (i > -1)
+              sourceItem = sourceItems.splice(i, 1)[0]
+            
+            this.disableItemEnterTransitionId = item.dataset.id
+            if (sourceItem)
+              newItems.splice(evt.newIndex, 0, sourceItem)
+
+            this.sourceVueInstance = null
+
             this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
+          }
         }
         this.draggableRoot.removeChild(item)
       },
+      onMove: (t, e) => {
+        const isSidebarRenderer = t.to.classList.contains('sidebar-renderer-root')
+        const isComingFromAnotherTaskRenderer = t.to !== this.draggableRoot
+
+        if (isSidebarRenderer && isComingFromAnotherTaskRenderer) {
+          let vue = t.related.__vue__ ||
+                t.related.parentNode.__vue__
+          while (true) {
+            if (vue.$el.classList && vue.$el.classList.contains('Renderer'))
+              break
+            else vue = vue.$parent
+          }
+
+          vue.sourceVueInstance = this
+        }
+      }
     })
   },
   beforeDestroy() {
@@ -247,12 +283,18 @@ export default {
     },
     enter(el) {
       const s = el.style
+
+      let disableTrans
+      if (el.dataset.id === this.disableItemEnterTransitionId) {
+        this.disableItemEnterTransitionId = null
+        disableTrans = true
+      }
       
-      s.transitionDuration = '.3s'
+      s.transitionDuration = 0
       s.opacity = 0
       s.height = '0px'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = disableTrans ? 0 : '.2s'
         s.opacity = 1
         s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
         setTimeout(() => {

@@ -116,12 +116,15 @@
                     <Icon v-else-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)"/>
                     <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)"/>
                     <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
-                    <span v-else-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
-                    <span v-else-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb">{{ calendarStr }}</span>
+                    <template v-else>
+                      <span v-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
+                      <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb">{{ calendarStr }}</span>
+                    </template>
 
                     <div class="parsed-wrapper">
                       <span v-html="parsedName" ref='parsed-name'></span>
                     </div>
+                    <span v-if="timeStr" class="txt-icon tag dark rb">{{ timeStr }}</span>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
                     icon="pie"
@@ -249,15 +252,15 @@ export default {
         co.transform = 'translateX(-27px)'
         this.deselectItem()
         requestAnimationFrame(() => {
-          c.transitionDuration = '.25s'
-          co.transitionDuration = '.25s'
-          inf.transitionDuration = '.25s'
+          c.transitionDuration = '.15s'
+          co.transitionDuration = '.15s'
+          inf.transitionDuration = '.15s'
           c.opacity = .25
           inf.opacity = 1
           co.transform = 'translateX(0px)'
           setTimeout(() => {
             this.doneTransition = true
-          }, 254)
+          }, 155)
         })
       }
     },
@@ -275,18 +278,18 @@ export default {
         inf.opacity = 1
         co.transform = 'translateX(0px)'
         requestAnimationFrame(() => {
-          c.transitionDuration = '.25s'
-          co.transitionDuration = '.25s'
-          inf.transitionDuration = '.25s'
+          c.transitionDuration = '.15s'
+          co.transitionDuration = '.15s'
+          inf.transitionDuration = '.15s'
           c.opacity = 0
           inf.opacity = 0
           co.transform = 'translateX(-27px)'
           setTimeout(() => {
             this.doneTransition = true
-          }, 252)
+          }, 152)
         })
       } else {
-        el.style.transitionDuration = '.25s'
+        el.style.transitionDuration = '.15s'
       }
     },
     editCancel() {
@@ -328,10 +331,10 @@ export default {
 
       const hideTask = () => {
         if (cn) {
-          cn.transitionDuration = '.25s'
+          cn.transitionDuration = '.15s'
           cn.opacity = 0
         }
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
@@ -339,7 +342,7 @@ export default {
         setTimeout(() => {
           this.completeAnimation = false
           done()
-        }, 253)
+        }, 153)
       }
       
       requestAnimationFrame(() => {
@@ -361,6 +364,14 @@ export default {
     },
     taskEnter(el, done) {
       const cont = this.$refs['cont-wrapper']
+      const parentIds = this.$parent.disableItemEnterTransitionIds
+      
+      let disableTransition = false
+      if (parentIds.includes(this.item.id)) {
+        const i = parentIds.findIndex(id => id === this.item.id)
+        parentIds.splice(i, 1)
+        disableTransition = true
+      }
       this.doneTransition = false
       if (cont) {
         const s = cont.style
@@ -384,17 +395,17 @@ export default {
           
           requestAnimationFrame(() => {
             if (cn) {
-              cn.transitionDuration = '.25s'
+              cn.transitionDuration = disableTransition ? 0 : '.15s'
               cn.opacity = 1
             }
-            s.transitionDuration = '.25s'
+            s.transitionDuration = disableTransition ? 0 : '.15s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
             s.minHeight = this.itemHeight + 'px'
             done()
           })
           setTimeout(() => {
-            s.transitionDuration = '.3s'
+            s.transitionDuration = '.2s'
             s.height = 'auto'
             s.minHeight = this.itemHeight + 'px'
           }, 300)
@@ -819,12 +830,21 @@ export default {
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if ((!c || c.type === 'someday') || this.disableCalendarStr || !this.isRoot) return null
+      if ((!c || c.type === 'someday') || this.disableCalendarStr) return null
+
       if (c.type !== 'someday' && c.type !== 'specific' && !this.isDesktopBreakPoint)
         return null
-      const str = utils.parseCalendarObjectToString(c, this.userInfo)
+
+      const str = utils.parseCalendarObjectToString(c, this.userInfo, false, false)
+
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
+
       return str
+    },
+    timeStr() {
+      const c = this.item.calendar
+      if (!c || !c.time) return null
+      return `at ${utils.parseTime(c.time, this.userInfo)}`
     },
     isLogbookTask() {
       return this.item.logDate
@@ -915,7 +935,7 @@ export default {
   position: relative;
   min-height: 38px;
   z-index: 5;
-  transition-duration: .25s;
+  transition-duration: .15s;
 }
 
 .mobile .cont-wrapper {
@@ -951,7 +971,7 @@ export default {
   border-radius: 100px;
   border: 0px solid transparent;
   background-color: var(--txt);
-  transition-duration: .25s;
+  transition-duration: .15s;
 }
 
 .schedule.mobile {

@@ -87,13 +87,13 @@ export default {
       s.margin = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
 
         s.height = '25px'
         s.opacity = 1
         s.margin = '10px 0'
 
-        setTimeout(done, 255)
+        setTimeout(done, 155)
       })
       
     },
@@ -101,14 +101,14 @@ export default {
       
       const s = el.style
 
-      s.transitionDuration = '.25s'
+      s.transitionDuration = '.15s'
 
       s.height = 0
       s.width = 0
       s.opacity = 0
       s.margin = 0
 
-      setTimeout(done, 255)
+      setTimeout(done, 155)
 
     },
     tagsEnter(el, done) {
@@ -121,26 +121,26 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
 
         s.height = '22px'
         s.margin = '10px 0'
         s.opacity = 1
 
-        setTimeout(done, 255)
+        setTimeout(done, 155)
       })
 
     },
     tagsLeave(el, done) {
       const s = el.style
       
-      s.transitionDuration = '.25s'
+      s.transitionDuration = '.15s'
 
       s.height = 0
       s.opacity = 0
       s.margin = 0
 
-      setTimeout(done, 255)
+      setTimeout(done, 155)
     },
     openComments() {
       this.$store.dispatch('pushPopup', {

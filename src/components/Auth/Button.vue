@@ -24,7 +24,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         s.height = height
         s.opacity = 1
 
@@ -37,7 +37,7 @@ export default {
 
       const {height, width} = getComputedStyle(el)
 
-      s.transitionDuration = '.3s'
+      s.transitionDuration = '.2s'
       s.height = 0
       s.opacity = 0
 

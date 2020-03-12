@@ -11,7 +11,7 @@ const TOD_STR = mom().format('Y-M-D')
 
 Vue.use(Vuex)
 
-const MINIMUM_DESKTOP_SCREEN_WIDTH = 120
+const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
 
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -453,7 +453,12 @@ const store = new Vuex.Store({
       state.cameFromAnotherTabHTMLElement = element
     },
     moving(state, moving) {
-      state.moving = moving
+      
+      if (!moving)
+        setTimeout(() => {
+          state.moving = false
+        }, 100)
+      else state.moving = true
     },
     isEditing(state, toggle) {
       state.isEditing = toggle

@@ -46,13 +46,15 @@ export default {
         this.onDrop(evt.dataTransfer.files)
     },
     onDrag() {
-      this.dragging = true
-      if (this.dragOverTimeout)
-        clearTimeout(this.dragOverTimeout)
-
-      this.dragOverTimeout = setTimeout(() => {
-        this.dragging = false
-      }, 1250)
+      setTimeout(() => {
+        this.dragging = true
+        if (this.dragOverTimeout)
+          clearTimeout(this.dragOverTimeout)
+  
+        this.dragOverTimeout = setTimeout(() => {
+          this.dragging = false
+        }, 1250)
+      }, 100)
     },
     dragEnd() {
       this.dragging = false

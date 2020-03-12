@@ -80,7 +80,7 @@ export default {
       s.opacity = 0
       s.borderBottom = '0px solid transparent'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         if (height < 36)
           s.height = '35px'
         else
@@ -98,7 +98,7 @@ export default {
     leave(el) {
       const s = el.style
 
-      s.transitionDuration = '.3s'
+      s.transitionDuration = !this.heading ? '2s' : 0
       s.overflow = 'hidden'
       s.opacity = 0
       s.borderBottom = '0px solid transparent'

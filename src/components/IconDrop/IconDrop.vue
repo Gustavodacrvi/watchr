@@ -122,7 +122,7 @@ export default {
             s.width = oldWidth
             s.height = oldHeight
             setTimeout(() => {
-              s.transitionDuration = '.3s'
+              s.transitionDuration = '.2s'
               s.width = width
               s.height = height
             }, 125)
@@ -278,7 +278,7 @@ export default {
 
 .drop-trans-enter-active .hide-trans {
   transition-duration: .5s;
-  transition-delay: .25s;
+  transition-delay: .15s;
 }
 
 .drop-trans-leave-active .hide-trans {

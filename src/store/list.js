@@ -696,9 +696,15 @@ export default {
 
       batchSetLists(b, {
         logbook: false,
-        logFire: fd().delete(),
-        logDate: fd().delete(),
-        fullLogDate: fd().delete(),
+        logFire: null,
+        logDate: null,
+        fullLogDate: null,
+        completedFire: null,
+        completeDate: null,
+        completed: false,
+        checked: false,
+        checkDate: null,
+        fullCheckDate: null,
       }, lists, rootState, writes)
 
       cacheBatchedItems(b, writes)
@@ -1171,7 +1177,7 @@ export default {
     updateListHeadings({rootState}, {ids, listId}) {
       const b = fire.batch()
       
-      setList(batch, {headingsOrder: ids}, listId, rootState)
+      setList(b, {headingsOrder: ids}, listId, rootState)
 
       b.commit()
     },
@@ -1267,21 +1273,23 @@ export default {
       ids.forEach(id => {
 
         const list = getters.getListsById([id])[0]
-        let folder = null
-        if (list.folder) folder = list.folder
-
-        const taskIds = []
-        tasks.forEach(el => {
-          if (el.list === id) taskIds.push(el.id)
-        })
-        batchSetTasks(b, {
-          list: null,
-          group: list.group || null,
-          folder,
-          heading: null,
-        }, taskIds, rootState, writes)
-
-        deleteList(b, id, rootState, writes)
+        if (list) {
+          let folder = null
+          if (list.folder) folder = list.folder
+  
+          const taskIds = []
+          tasks.forEach(el => {
+            if (el.list === id) taskIds.push(el.id)
+          })
+          batchSetTasks(b, {
+            list: null,
+            group: list.group || null,
+            folder,
+            heading: null,
+          }, taskIds, rootState, writes)
+  
+          deleteList(b, id, rootState, writes)
+        }
         
       })
 

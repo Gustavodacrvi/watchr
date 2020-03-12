@@ -158,7 +158,7 @@ export default {
       s.height = 0
       s.opacity = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         s.height = this.sublistHeight
         s.opacity = 1
         setTimeout(() => {
@@ -173,7 +173,7 @@ export default {
       
       s.height = this.sublistHeight
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         s.height = '0px'
         s.overflow = 'hidden'
         setTimeout(done, 310)

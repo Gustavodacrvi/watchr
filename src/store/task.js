@@ -394,6 +394,8 @@ export default {
         cache(args) {
           return JSON.stringify({
             c: args[0].calendar,
+            co: args[0].completeDate,
+            ca: args[0].canceled,
             l: args[0].logbook,
           })
         },
@@ -946,6 +948,7 @@ export default {
         react: [
           'calendar',
           'completed',
+          'logbook',
           'list',
           'folder',
           'deadline',
@@ -1250,9 +1253,15 @@ export default {
 
       await batchSetTasks(b, {
         logbook: false,
-        logFire: fd().delete(),
-        logDate: fd().delete(),
-        fullLogDate: fd().delete(),
+        logFire: null,
+        logDate: null,
+        fullLogDate: null,
+        completedFire: null,
+        completeDate: null,
+        completed: false,
+        checked: false,
+        checkDate: null,
+        fullCheckDate: null,
       }, tasks, rootState, writes)
 
       cacheBatchedItems(b, writes)

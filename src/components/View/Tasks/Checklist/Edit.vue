@@ -4,9 +4,9 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Edit" @click.stop>
+    <div class="Edit" :class="{isDesktopDevice}" @click.stop>
       <div class="wrapper rb">
-        <InputApp class='input'
+        <InputApp class='sub-edit'
           :value='name'
           @input='v => name = v'
           :focus='true'
@@ -61,7 +61,7 @@ export default {
       const cont = el.getElementsByClassName('wrapper')[0]
       const s = el.style
       const c = cont.style
-      const height = el.offsetHeight
+      const height = el.offsetHeight + 'px'
 
       c.transitionDuration = '0s'
       s.transitionDuration = '0s'
@@ -73,8 +73,8 @@ export default {
       requestAnimationFrame(() => {
         c.transitionDuration = '.15s'
         s.transitionDuration = '.15s'
-        s.height = '30px'
-        c.height = '30px'
+        s.height = height
+        c.height = height
         c.opacity = 1
         s.width = '100%'
         c.width = '100%'
@@ -85,6 +85,9 @@ export default {
         this.$emit('add', this.name)
       this.name = ''
     },
+  },
+  computed: {
+    ...mapGetters(['isDesktopDevice']),
   },
 }
 
@@ -106,7 +109,7 @@ export default {
   align-items: center;
 }
 
-.input {
+.Edit.isDesktopDevice .sub-edit {
   padding: 8px;
 }
 
