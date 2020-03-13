@@ -1476,6 +1476,8 @@ export default {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }
+
+      console.log(elIds, taskIds, type)
       switch (type) {
         case 'tag': {
           dispatch('addTagsToTasksById', {

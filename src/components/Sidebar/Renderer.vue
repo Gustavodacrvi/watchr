@@ -107,7 +107,7 @@ export default {
           if (!this.enableSort && name === 'sidebar-renderer') return false
           if (name === 'folders-root') return false
           if (name === 'sidebar-renderer') return true
-          if (name === 'item-renderer') return 'clone'
+          if (name === 'item-renderer') return true
         },
         put: (l,j,item) => {
           const type = item.dataset.type
@@ -142,7 +142,9 @@ export default {
         const type = item.dataset.type
         const items = evt.items
 
-        if (type === 'add-task-floatbutton') {
+        if (type === 'Task') {
+        }
+        else if (type === 'add-task-floatbutton') {
           item.dataset.id = 'floating-button'
           const childs = this.draggableRoot.childNodes
           let i = 0
@@ -381,11 +383,11 @@ export default {
 <style>
 
 .Renderer .Task {
-  height: 0 !important;
+  max-height: 0;
+  overflow: hidden !important;
 }
 
 .movingTask .dragover, .movingTask .dragover {
-  transform: scale(1.03, 1.05) !important;
   background-color: var(--light-gray) !important;
   cursor: move !important;
 }
@@ -409,7 +411,7 @@ export default {
   height: 20px;
 }
 
-.sortable-ghost.empty {
+.Renderer .sortable-ghost.empty {
   background-color: var(--dark-void);
   border-radius: 6px;
 }

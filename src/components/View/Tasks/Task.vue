@@ -868,6 +868,7 @@ export default {
       const {t,c} = this.getTask
       if (!c || c.type === 'someday' || c.type === 'specific')
         return null
+
       const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c, true)
 
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'))
@@ -1179,6 +1180,10 @@ export default {
 
 .isItemSelected .back {
   opacity: 0;
+}
+
+.sortable-ghost {
+  height: unset !important;
 }
 
 .sortable-ghost .cont-wrapper {

@@ -406,11 +406,7 @@ export default {
 }
 
 .Heading + .Heading {
-  margin-top: 45px;
-}
-
-.Heading.mobile + .Heading {
-  margin-top: 25px;
+  margin-top: 55px;
 }
 
 .Heading:hover {

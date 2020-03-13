@@ -579,7 +579,7 @@ export default {
       loading: allowComp ? LoadingComponent : undefined,
       error: allowComp ? ErrorComponent : undefined,
       delay: 300,
-      timeout: 7500,
+      timeout: 75000,
     })
   },
   addIdsToObjectFromKeys(obj) {

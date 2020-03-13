@@ -391,8 +391,9 @@ export default {
       this.bindMainSelection()
     },
     toggleTaskCompletion() {
-      if (this.comp === 'Task' && this.toggleTaskCompletion.includes(this.item.id))
+      if (this.comp === 'Task' && this.toggleTaskCompletion.includes(this.item.id)) {
         this.completeItem()
+      }
     },
     toggleListCompletion() {
       if (this.comp !== 'Task' && this.toggleListCompletion.includes(this.item.id))

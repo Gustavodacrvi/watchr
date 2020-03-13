@@ -290,6 +290,9 @@ export default {
     },
   },
   watch: {
+    dragover() {
+      this.$store.commit('toggleSidebarElementHover', this.dragover)
+    },
     storeTasks() {
       setTimeout(() => {
         this.selectedItems = [...this.storeTasks]

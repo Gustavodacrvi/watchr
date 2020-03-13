@@ -41,7 +41,7 @@ export default {
   },
   nextWeekDay(initial, weekday, format, skipToday = false) {
     if (!format) format = 'd'
-    
+
     const clone = initial.clone()
     let i = 0
     let possibleWeekdays = []
@@ -57,12 +57,12 @@ export default {
 
     while (true) {
       if (isOnIt(clone.format('dddd'))) {
-        if (!skipToday || !mom().isSame(clone, 'day'))
+        if (!skipToday || !initial.isSame(clone, 'day'))
           return clone
       }
       clone.add(1, 'd')
       if (i > 10) {
-        if (!skipToday || !mom().isSame(clone, 'day'))
+        if (!skipToday || !initial.isSame(clone, 'day'))
           return clone
       }
       i++
@@ -180,7 +180,7 @@ export default {
         return lastComplete.add(c.afterCompletion, 'd')
       } else if (c.type === 'weekly') {
         while (true) {
-          const week = this.nextWeekDay(lastComplete, c.weekly.days)
+          const week = this.nextWeekDay(lastComplete, c.weekly.days, undefined, true)
 
           const weekDiff = week.diff(begins.startOf('week'), 'weeks')
           if (weekDiff < 0 || weekDiff % c.weekly.every !== 0) {

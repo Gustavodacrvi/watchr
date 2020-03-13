@@ -33,7 +33,6 @@ export default {
     calendarOrder(t, force = false, specific, header) {
       const isEvening = (header && header.id === 'EVENING_SMART_VIEW')
       const c = t.calendar
-      console.log(force, c)
       if (force || !c) {
         if (isEvening && c && c.type !== 'specific' && c.type !== 'someday') {
           c.evening = true

@@ -120,6 +120,9 @@ export default {
     options() {
       this.bindOptions()
     },
+    dragover() {
+      this.$store.commit('toggleSidebarElementHover', this.dragover)
+    },
     item() {
       this.bindOptions()
     }

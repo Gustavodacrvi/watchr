@@ -145,6 +145,7 @@ const store = new Vuex.Store({
     authState: false,
     fileURL: null,
     firstFireLoad: false,
+    isDraggingOverSidebarElement: false,
     toasts: [],
     toggleTaskCompletion: [],
     toggleListCompletion: [],
@@ -163,6 +164,7 @@ const store = new Vuex.Store({
     isOnAlt: false,
     moving: false,
     pressingKey: null,
+    movingTimeout: null,
     historyPos: 0,
 
     googleCalendarReady: false,
@@ -434,14 +436,17 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleSidebarElementHover(state, bool) {
+      state.isDraggingOverSidebarElement = bool
+    },
     saveCalendarColorIds(state, ids) {
       state.calendarColorIds = ids
     },
     toggleTaskCompletion(state, toggleTaskCompletion) {
-      state.toggleTaskCompletion = toggleTaskCompletion || []
+      state.toggleTaskCompletion = (toggleTaskCompletion || []).slice()
     },
     toggleListCompletion(state, toggleListCompletion) {
-      state.toggleListCompletion = toggleListCompletion || []
+      state.toggleListCompletion = (toggleListCompletion || []).slice()
     },
     toggleCalendar(state, allowCalendar) {
       state.allowCalendar = allowCalendar
@@ -455,10 +460,14 @@ const store = new Vuex.Store({
     moving(state, moving) {
       
       if (!moving)
-        setTimeout(() => {
+        state.movingTimeout = setTimeout(() => {
           state.moving = false
         }, 100)
-      else state.moving = true
+      else {
+        if (state.movingTimeout)
+          clearTimeout(state.movingTimeout)
+        state.moving = true
+      }
     },
     isEditing(state, toggle) {
       state.isEditing = toggle
