@@ -61,7 +61,6 @@
           :scheduleObject='h.scheduleObject || scheduleObject'
           :onSortableAdd='h.onSortableAdd'
           :addedHeading='justAddedHeading'
-          :isLast='(i + 1) === headings.length'
           @add-heading='addHeading'
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
@@ -149,6 +148,12 @@ export default {
               if (this.updateHeadingIds)
                 this.updateHeadingIds(ids)
             },
+            onStart: () => {
+              this.$store.commit('moving', true)
+            },
+            onEnd: () => {
+              this.$store.commit('moving', false)
+            },
           })
         }
       }
@@ -204,12 +209,12 @@ export default {
       s.borderBoddom = '0px solid var(--back-color)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
-        w.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
+        w.transitionDuration = '.2s'
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = this.isDesktopDevice ? '45px': '4px'
+          w.marginTop = this.isDesktopDevice ? '55px': '4px'
         s.height = '35px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1
@@ -230,13 +235,13 @@ export default {
 
       if (c) {
         c = c.style
-        c.transitionDuration = '.3s'
+        c.transitionDuration = '.2s'
         c.height = 0
         c.overflow = 'visible'
       }
 
-      s.transitionDuration = '.3s'
-      w.transitionDuration = '.3s'
+      s.transitionDuration = '.2s'
+      w.transitionDuration = '.2s'
       w.opacity = 0
       w.height = 0
       w.overflow = 'visible'

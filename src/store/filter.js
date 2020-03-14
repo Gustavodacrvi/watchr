@@ -49,7 +49,7 @@ export default {
     },
   },
   actions: {
-    addFilter(c, {name, index, ids}) {
+    addFilter({rootState}, {name, index, ids}) {
       const obj = {
         createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
@@ -67,7 +67,7 @@ export default {
         ord.splice(index, 0, ref.id)
         setInfo(batch, {
           filters: ord,
-        })
+        }, rootState)
   
         batch.commit()
       }
@@ -103,12 +103,12 @@ export default {
       
       batch.commit()
     },
-    updateOrder(c, ids) {
+    updateOrder({rootState}, ids) {
       const b = fire.batch()
 
       setInfo(b, {
         filters: ids,
-      })
+      }, rootState)
 
       b.commit()
     },

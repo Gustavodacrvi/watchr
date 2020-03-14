@@ -219,7 +219,7 @@ export default {
       this.$store.dispatch('list/updateOrder', ids)
     },
     getListProgress(list) {
-      return this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], list.id, task => this.isTaskInView(task, "Logbook"))
+      return this.pieProgress(list.id)
     },
     getListIcon(list) {
       const arr = []
@@ -243,6 +243,19 @@ export default {
       
       return null
     },
+    addListOptions(oldLists) {
+      const lists = oldLists.map(el => ({...el}))
+      for (const list of lists) {
+        list.callback = () => {
+          this.$router.push('/user?list=' + list.name)
+        }
+        list.options = utilsList.listOptions(list)
+        list.iconClick = () => {
+          this.$store.dispatch('list/completeLists', [list])
+        }
+      }
+      return lists
+    },
   },
   computed: {
     ...mapState({
@@ -258,46 +271,36 @@ export default {
       sortedFoldersAndGroups: 'folder/sortedFoldersAndGroups',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
+      pieProgress: 'list/pieProgress',
       getListsByFolderId: 'folder/getListsByFolderId',
       getListsByGroupId: 'group/getListsByGroupId',
       getLaterLists: 'list/getLaterLists',
+      filteredSidebarLists: 'list/filteredSidebarLists',
 
       sortedLists: 'list/sortedLists',
-      filterSidebarLists: 'list/filterSidebarLists',
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
     laseredFoldersAndGrups() {
       const sortedFoldersAndGroups = this.sortedFoldersAndGroups
       sortedFoldersAndGroups.forEach(fold => {
         if (!fold.isGroup) {
-          fold.list = this.filterSidebarLists(fold.order,
-            this.getListsByFolderId({id: fold.id, order: fold.order, lists: this.listsWithFolders})
+          fold.list = this.addListOptions(
+            this.getListsByFolderId(fold.id)
           )
 
           fold.comp = "Folder"
         } else {
           fold.comp = "Group"
-          fold.list = this.filterSidebarLists(fold.listsOrder,
-            this.getListsByGroupId({
-              id: fold.id,
-              lists: this.getLists,
-            })
+          fold.list = this.addListOptions(
+            this.getListsByGroupId(fold.id)
           )
         }
       })
       return sortedFoldersAndGroups
     },
-    listsWithFolders() {
-      const lists = this.filteredLists
-
-      const arr = []
-      for (const f of lists) if (f.folder) arr.push(f)
-
-      return arr
-    },
 
     rootLists() {
-      const lists = this.filteredLists
+      const lists = this.filteredSidebarLists
 
       const arr = []
       for (const f of lists) if (!f.folder && !f.group) arr.push(f)
@@ -324,21 +327,8 @@ export default {
 
       return arr
     },
-    filteredLists() {
-      return this.filterSidebarLists([], this.getLists)
-    },
     getLists() {
-      const lists = this.sortedLists.map(el => ({...el}))
-      for (const list of lists) {
-        list.callback = () => {
-          this.$router.push('/user?list=' + list.name)
-        }
-        list.options = utilsList.listOptions(list)
-        list.iconClick = () => {
-          this.$store.dispatch('list/completeLists', [list])
-        }
-      }
-      return lists
+      return this.addListOptions(this.sortedLists)
     },
   },
 }

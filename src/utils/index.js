@@ -579,7 +579,7 @@ export default {
       loading: allowComp ? LoadingComponent : undefined,
       error: allowComp ? ErrorComponent : undefined,
       delay: 300,
-      timeout: 7500,
+      timeout: 75000,
     })
   },
   addIdsToObjectFromKeys(obj) {
@@ -698,7 +698,7 @@ export default {
       return time
     return mom(time, 'H:m').format('h:m A')
   },
-  parseCalendarObjectToString(obj, userInfo, forceShowInfo = false) {
+  parseCalendarObjectToString(obj, userInfo, forceShowInfo = false, allowHours = true) {
     let str = ''
 
     const c = obj
@@ -707,7 +707,9 @@ export default {
 
     switch (c.type) {
       case 'specific': {
-        str += this.getHumanReadableDate(c.specific)
+        const date = this.getHumanReadableDate(c.specific)
+        if (date !== 'Today')
+          str += date
         break
       }
       case 'after completion': {
@@ -719,7 +721,9 @@ export default {
         break
       }
       case 'weekly': {
-        str += `Every ${c.weekly.every} weeks on `
+        if (c.weekly.every > 1)
+          str += `Every ${c.weekly.every} weeks on `
+        else str += 'Every '
         let i = 0
         for (const w of c.weekly.days) {
           str += mom(w, 'e').format('ddd')
@@ -748,7 +752,7 @@ export default {
       }
     }
 
-    if (c.time) str += ` at ${this.parseTime(c.time, userInfo)}`
+    if (c.time && allowHours) str += ` at ${this.parseTime(c.time, userInfo)}`
 
     if (c.begins && c.begins !== c.editDate && (forceShowInfo || mom(c.begins, 'Y-M-D').isSameOrAfter(mom(), 'day'))) {
       str += `, begins on ${this.getHumanReadableDate(c.begins)}`

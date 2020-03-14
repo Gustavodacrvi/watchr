@@ -145,6 +145,7 @@ const store = new Vuex.Store({
     authState: false,
     fileURL: null,
     firstFireLoad: false,
+    isDraggingOverSidebarElement: false,
     toasts: [],
     toggleTaskCompletion: [],
     toggleListCompletion: [],
@@ -163,6 +164,7 @@ const store = new Vuex.Store({
     isOnAlt: false,
     moving: false,
     pressingKey: null,
+    movingTimeout: null,
     historyPos: 0,
 
     googleCalendarReady: false,
@@ -176,44 +178,42 @@ const store = new Vuex.Store({
     toggleClipboardPaste: false,
   },
   getters: {
-    ...Memoize(null, {
-      checkMissingIdsAndSortArr({}, order, arr, property = 'id') {
+    checkMissingIdsAndSortArr: () => (order, arr, property = 'id') => {
 
-        let items = []
-        for (const id of order) {
-          const item = arr.find(el => el[property] === id)
-          if (item) items.push(item)
+      let items = []
+      for (const id of order) {
+        const item = arr.find(el => el[property] === id)
+        if (item) items.push(item)
+      }
+  
+      let notIncluded = []
+      for (const item of arr) {
+        if (!order.includes(item[property]))
+          notIncluded.push(item)
+      }
+  
+      let haveCreationDate = true
+      for (const item of notIncluded) {
+        if (!item.created) {
+          haveCreationDate = false
+          break
         }
+      }
+      if (haveCreationDate)
+        notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
+      items = [...items, ...notIncluded]
     
-        let notIncluded = []
-        for (const item of arr) {
-          if (!order.includes(item[property]))
-            notIncluded.push(item)
+      const ids = new Set()
+      const ordered = []
+      for (const item of items) {
+        if (!ids.has(item[property])) {
+          ids.add(item[property])
+          ordered.push(item)
         }
-    
-        let haveCreationDate = true
-        for (const item of notIncluded) {
-          if (!item.created) {
-            haveCreationDate = false
-            break
-          }
-        }
-        if (haveCreationDate)
-          notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
-        items = [...items, ...notIncluded]
+      }
       
-        const ids = new Set()
-        const ordered = []
-        for (const item of items) {
-          if (!ids.has(item[property])) {
-            ids.add(item[property])
-            ordered.push(item)
-          }
-        }
-        
-        return ordered
-      },
-    }),
+      return ordered
+    },
     isSmartList(state, getters) {
       return getters.sidebarElements.find(el => el.name === state.viewName)
     },
@@ -223,77 +223,123 @@ const store = new Vuex.Store({
           name: 'Inbox',
           disableAction: true,
           icon: 'inbox',
+          descr: `
+            The Inbox is where all of your stuff goes to, it's where you put all of your collected things. Whenever you have an idea or something you've got to do, remove it from your mind and add it to the Inbox.<br><br> You can then every night or every three days empty the Inbox, that is, decide what is important and what isn't, decide which/folder list it should go to, possibly add tags and decide when the task should be completed.
+          `,
           iconColor: 'var(--primary)'
         },
         {
           name: 'Today',
           icon: 'star',
+          descr: `
+            Gives you an overview of everything that needs to be done today, just like any other calendar smart view, Today has an Evening heading for the tasks that should be completed at night or later.<br><br>
+            If you have a task or list whose deadline ends today, it'll be shown on the Today smart view.
+          `,
           iconColor: 'var(--yellow)'
         },
         {
           name: 'Assigned to me',
           icon: 'group',
+          descr: `
+            Shows all of your assigned tasks and lists in headings.
+          `,
           iconColor: 'var(--orange)'
         },
         {
           name: 'Tomorrow',
           id: 'tom',
+          descr: `
+            It's just like Today, but for tomorrow ;/.
+          `,
           icon: 'sun',
           iconColor: 'var(--orange)'
         },
         {
           name: 'Upcoming',
           disableAction: true,
+          descr: `
+          Shows your upcoming tasks, first, your next 7 days, then this month and all of the upcoming months, where each one is a heading.<br><br>
+            You can drag and drop items to change their dates, it's useful for planning the week, especially with multiple windows opened.
+
+          `,
           icon: 'calendar',
           iconColor: 'var(--green)'
         },
         {
           name: "Recurring",
           disableAction: true,
+          descr: `
+            All of your recurring tasks will be shown here, the recurring lists will be inside its heading.
+          `,
           icon: 'repeat',
           iconColor: 'var(--txt)',
         },
         {
           name: 'Anytime',
           disableAction: true,
+          descr: `
+            Tasks and lists that can be completed anytime, but you're not sure when.
+          `,
           icon: 'layer-group',
           iconColor: 'var(--olive)',
         },
         {
           name: 'Someday',
           icon: 'archive',
+          descr: `
+            Tasks and lists that you can't do yet, or when you're unsure about its necessity, or for things that you simply don't want to do yet.
+          `,
           iconColor: 'var(--brown)'
         },
         {
           name: 'Deadlines',
           disableAction: true,
+          descr: `
+            It's just like Upcoming, but it works with deadlines, instead of grouping your stuff based on its specific completion date, it uses the deadlines.<br><br>
+            When dragging and dropping stuff around, instead of changing its date, it changes the deadline.
+          `,
           icon: 'deadline',
           iconColor: 'var(--red)'
         },
         {
           name: 'Pomodoro',
           disableAction: true,
+          descr: `
+            Special smart view that can be used with the Pomodoro timer.
+          `,
           icon: 'pomo',
           iconColor: 'var(--dark-red)'
         },
         {
           name: 'Calendar',
           disableAction: true,
+          descr: `
+            The Calendar gives you more control over the calendar date, instead of grouping the tasks in headings like on Upcoming, it shows only one date at a time and has a date picker.
+          `,
           icon: 'calendar-star',
           iconColor: 'var(--purple)'
         },
         {
           name: 'Logbook',
+          descr: `
+            When completing a task, you can log it, logged tasks aren't shown inside lists or folders, the Logbook groups the tasks using its log date.
+          `,
           icon: 'logbook',
           iconColor: 'var(--dark-blue)'
         },
         {
           name: 'Later lists',
           icon: 'later-lists',
+          descr: `
+            When you defer a list for the next week, or when a list has the someday label, it won't be shown on the sidebar, because there is no sense in showing a list you don't/can't complete yet, you can see all of these hided lists on the Later lists smart view.
+          `,
           iconColor: 'var(--txt)'
         },
         {
           name: 'Logged lists',
+          descr: `
+            Just like logbook, but for lists.
+          `,
           icon: 'logged-lists',
           iconColor: 'var(--dark-blue)'
         },
@@ -388,14 +434,17 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleSidebarElementHover(state, bool) {
+      state.isDraggingOverSidebarElement = bool
+    },
     saveCalendarColorIds(state, ids) {
       state.calendarColorIds = ids
     },
     toggleTaskCompletion(state, toggleTaskCompletion) {
-      state.toggleTaskCompletion = toggleTaskCompletion || []
+      state.toggleTaskCompletion = (toggleTaskCompletion || []).slice()
     },
     toggleListCompletion(state, toggleListCompletion) {
-      state.toggleListCompletion = toggleListCompletion || []
+      state.toggleListCompletion = (toggleListCompletion || []).slice()
     },
     toggleCalendar(state, allowCalendar) {
       state.allowCalendar = allowCalendar
@@ -407,7 +456,16 @@ const store = new Vuex.Store({
       state.cameFromAnotherTabHTMLElement = element
     },
     moving(state, moving) {
-      state.moving = moving
+      
+      if (!moving)
+        state.movingTimeout = setTimeout(() => {
+          state.moving = false
+        }, 100)
+      else {
+        if (state.movingTimeout)
+          clearTimeout(state.movingTimeout)
+        state.moving = true
+      }
     },
     isEditing(state, toggle) {
       state.isEditing = toggle
@@ -581,10 +639,10 @@ const store = new Vuex.Store({
         }, {merge: true})
       })
     },
-    setInfo(c, obj) {
+    setInfo({rootState}, obj) {
       const b = fire.batch()
 
-      setInfo(b, obj)
+      setInfo(b, obj, rootState)
 
       b.commit()
     },
@@ -593,15 +651,6 @@ const store = new Vuex.Store({
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
 
-        utils.addIdsToObjectFromKeys(data.tasks)
-        utils.addIdsToObjectFromKeys(data.tags)
-        utils.addIdsToObjectFromKeys(data.folders)
-        utils.addIdsToObjectFromKeys(data.stats)
-        utils.addIdsToObjectFromKeys(data.lists)
-
-        if (data.info && data.info.info)
-          utils.findChangesBetweenObjs(state.userInfo, data.info.info, (key, val) => Vue.set(state.userInfo, key, val))
-        
         setTimeout(() => {
           dispatch('pomo/updateDurations')
         })
@@ -611,7 +660,16 @@ const store = new Vuex.Store({
           utils.updateVuexObject(state.tag, 'tags', data.tags || {})
           utils.updateVuexObject(state.folder, 'folders', data.folders || {})
           utils.updateVuexObject(state.list, 'lists', data.lists || {})
-        } else {
+        } else if (!isFromHere) {
+          if (data.info && data.info.info)
+            utils.findChangesBetweenObjs(state.userInfo, data.info.info, (key, val) => Vue.set(state.userInfo, key, val))
+          
+          utils.addIdsToObjectFromKeys(data.tasks)
+          utils.addIdsToObjectFromKeys(data.tags)
+          utils.addIdsToObjectFromKeys(data.folders)
+          utils.addIdsToObjectFromKeys(data.stats)
+          utils.addIdsToObjectFromKeys(data.lists)
+          
           if (data.stats)
             state.pomo.stats = data.stats.pomo || {}
           if (data.tasks)

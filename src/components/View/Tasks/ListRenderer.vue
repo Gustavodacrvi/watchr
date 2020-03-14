@@ -13,7 +13,7 @@
     </transition>
     <div
       class="front item-renderer-root"
-      :class="{inflate, isRootAndHaveItems: isRoot && lazyItems.length > 0}"
+      :class="{isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
 
       data-name='item-renderer'
@@ -186,7 +186,7 @@ export default {
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
-   'disableFallback', 'isLast', 'getCalendarOrderDate'],
+   'disableFallback', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
@@ -200,6 +200,7 @@ export default {
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
       selectedElements: [],
+      disableItemEnterTransitionIds: [],
       droppedIds: [],
       changedViewName: true,
       waitingUpdateTimeout: null,
@@ -216,6 +217,7 @@ export default {
       lastButtonElement: null,
       editMoveType: 'add',
       headingsItemsIds: [],
+      oldRemovedIndicies: [],
       cameFromAnotherTab: false,
       cameFromAnotherTabIndex: null,
 
@@ -235,7 +237,8 @@ export default {
   },
   mounted() {
     if (this.header && this.header.name === this.addedHeading) {
-      this.addEditComp(0)
+      if (this.getItems.length === 0)
+        this.addEditComp(0)
       this.$emit('added-heading-complete-mount')
     }
     this.mountSortables()
@@ -267,12 +270,12 @@ export default {
       return this.showEmptyHeadings || h.items.length > 0
     },
     dragenter(evt) {
-      if (!this.moving)
+      if (!this.moving && !this.hasEdit)
         evt.preventDefault()
     },
     dragover(evt) {
       this.cameFromAnotherTab = !this.moving && this.allowSortableAdd
-      if (this.cameFromAnotherTab) {
+      if (this.cameFromAnotherTab && !this.hasEdit) {
         const draggableRoot = this.draggableRoot
         this.$store.commit('cameFromAnotherTabDragStart', draggableRoot)
         evt.preventDefault()
@@ -307,25 +310,29 @@ export default {
       }
     },
     drop(evt) {
-      if (this.cameFromAnotherTab) {
-        const res = evt.dataTransfer.getData('text/plain')
-        if (!res) return;
-        const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
-        if (!obj) return;
-        if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
-        evt.preventDefault()
-        let items = this.getTasksById(obj.ids)
-        const alreadyHasItem = this.lazyItems.some(el => items.some(i => i.id  === el.id))
-        
-        if (!alreadyHasItem) {
-          localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
-          items = items.map(el => this.fallbackItem(el, true))
-
-          this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
-          const finalIds = this.lazyItems.map(el => el.id)
+      try {
+        if (this.cameFromAnotherTab) {
+          const res = evt.dataTransfer.getData('text/plain')
+          if (!res) return;
+          const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
+          if (!obj) return;
+          if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
+          evt.preventDefault()
+          let items = this.getTasksById(obj.ids)
+          const alreadyHasItem = this.lazyItems.some(el => items.some(i => i.id  === el.id))
+          
+          if (!alreadyHasItem) {
+            localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
+            items = items.map(el => this.fallbackItem(el, true))
   
-          this.addToList(finalIds, obj.ids)
+            this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
+            const finalIds = this.lazyItems.map(el => el.id)
+    
+            this.addToList(finalIds, obj.ids)
+          }
         }
+      } catch (arr) {
+        
       }
       this.cameFromAnotherTab = false
     },
@@ -511,6 +518,11 @@ export default {
       if (this.sortable)
         this.sortable.destroy()
     },
+    isItemRenderable(task) {
+      return this.isRoot ? 
+        this.rootFilterFunction(task) :
+        this.headingFilterFunction(task)
+    },
     mountSortables() {
       let cancel = true
       let lastEventTime = false
@@ -531,7 +543,7 @@ export default {
         direction: 'vertical',
 
         animation: 200,
-        delay: this.isDesktopDevice ? 15 : 100,
+        delay: this.isDesktopDevice ? 10 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -587,11 +599,21 @@ export default {
         },
         onRemove: (evt) => {
           const items = evt.items
+
           if (items.length === 0) items.push(evt.item)
           const type = items[0].dataset.type
           const indicies = evt.oldIndicies.map(el => el.index)
           if (indicies.length === 0) indicies.push(evt.oldIndex)
           const root = this.draggableRoot
+
+          const oldIndicies = evt.oldIndicies
+          if (oldIndicies.length === 0)
+            oldIndicies.push({
+              multiDragElement: evt.item,
+              index: evt.oldIndex
+            })
+
+          this.oldRemovedIndicies = oldIndicies
           
           for (let i = 0; i < indicies.length;i++) {
             const s = items[i].style
@@ -628,9 +650,9 @@ export default {
           if (indicies.length === 0) indicies.push(evt.newIndex)
           
           if ((type === 'Task' || type === 'List') && this.comp === 'List') {
-            const finalIds = this.lazyItems.map(el => el.id)
-            finalIds.splice(indicies[0], 0, ...ids)
-            this.addToList(finalIds, ids)
+            const listIds = this.lazyItems.map(el => el.id)
+            listIds.splice(indicies[0], 0, ...ids)
+            this.addToList(listIds, ids)
           } else if (type === 'Task' && this.addToList && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
@@ -654,6 +676,7 @@ export default {
               newItems.splice(indicies[i], 0, tasks[i])
             }
 
+            this.disableItemEnterTransitionIds = ids
             this.addToList(this.lazyItems.filter(el => el).map(el => el.id), ids)
             this.sourceVueInstance = null
           } else {  
@@ -680,16 +703,16 @@ export default {
           } else if (t.to !== this.draggableRoot) {
 
             if ((new Date() - lastEventTime) < 50)
-              return false;
+              return 1;
             
             const evt = t
-            const taskIds = this.selected
+            const taskIds = this.selected.slice()
             if (taskIds.length === 0)
               taskIds.push(evt.dragged.dataset.id)
             finalIds = taskIds
             
             const specialClass = 'DRAG-AND-DROP-EL'
-            const containsInfo = el => el.classList && el.classList.contains(specialClass)
+            const containsInfo = el => el && el.classList && el.classList.contains(specialClass)
             
             let target = evt.related
 
@@ -715,14 +738,17 @@ export default {
                 }
               }
             }
-
+            
             if (cancelTimeout)
               clearTimeout(cancelTimeout)
-            cancelTimeout = setTimeout(() => cancel = true, 70)
+            cancelTimeout = setTimeout(() => {
+              if (!this.isDraggingOverSidebarElement)
+                  cancel = true
+              }, 70)
 
             lastEventTime = new Date()
-            
-            return false
+
+            return 1;
           }
         },
         onEnd: evt => {
@@ -734,13 +760,7 @@ export default {
                 obj.ids.forEach(id => {
                   const i = this.lazyItems.findIndex(el => el.id)
   
-                  let shouldRender
-                  if (this.isRoot)
-                    shouldRender = this.rootFilterFunction(this.lazyItems[i])
-                  else
-                    shouldRender = this.headingFilterFunction(this.lazyItems[i])
-                  
-                  if (i > -1 && !shouldRender)
+                  if (i > -1 && !this.isItemRenderable(this.lazyItems[i]))
                     this.lazyItems.splice(i, 1)
                 })
                 localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', '')
@@ -749,7 +769,7 @@ export default {
           })
           
           this.$store.commit('moving', false)
-          
+
           if (this.isDesktopDevice)
             window.removeEventListener('mousemove', onMove)
           
@@ -771,6 +791,27 @@ export default {
                 elIds: [moveId],
               })
           }
+          let notRunned = 0
+
+          for (const obj of this.oldRemovedIndicies) {
+            const {multiDragElement} = obj
+            const i = this.lazyItems.findIndex(el => el.id === multiDragElement.dataset.id)
+            if (i > -1)
+              this.lazyItems.splice(i, 1)
+          }
+
+          this.$nextTick(() => {
+            for (const obj of this.oldRemovedIndicies) {
+              const {index,multiDragElement} = obj
+              const t = this.getTasksById([multiDragElement.dataset.id])[0]
+              if (this.isItemRenderable(t)) {
+                this.lazyItems.splice(index - notRunned, 0, t)
+              } else {
+                notRunned++
+              }
+            }
+            this.oldRemovedIndicies = []
+          })
           
           if (this.isDesktopDevice && this.comp === 'Task') {
             this.movingItem = false
@@ -957,11 +998,11 @@ export default {
       let t = item
 
       if (this.mainFallbackItem)
-        t = this.mainFallbackItem(item, force, this.header)
+        t = this.mainFallbackItem(item, force, this.header, true)
       if (this.isRoot && this.rootFallbackItem)
-        t = this.rootFallbackItem(t, force, this.header)
+        t = this.rootFallbackItem(t, force, this.header, true)
       else if (this.headingFallbackItem)
-        t = this.headingFallbackItem(t, force, this.header)
+        t = this.headingFallbackItem(t, force, this.header, true)
 
       return t
     },
@@ -971,15 +1012,11 @@ export default {
         if (!this.disableFallback)
           t = this.fallbackItem(item, forceFallback)
 
-        let shouldRender = false
         const isNotEditingFiles = !t.handleFiles
+        let shouldRender = false
 
-        if (isNotEditingFiles) {
-          if (this.isRoot)
-            shouldRender = this.rootFilterFunction(t)
-          else
-            shouldRender = this.headingFilterFunction(t)
-        }
+        if (isNotEditingFiles)
+          shouldRender = this.isItemRenderable(t)
 
         const newItemRef = this.getItemFirestoreRef(this.header)
 
@@ -993,9 +1030,8 @@ export default {
 
         const index = targetIndex || this.getListRendererPosition()
 
-        if (shouldRender) {
+        if (shouldRender)
           this.lazyItems.splice(index, 0, t)
-        }
 
         this.addedItem = t.id
 
@@ -1083,6 +1119,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isDraggingOverSidebarElement: state => state.isDraggingOverSidebarElement,
       cameFromAnotherTabHTMLElement: state => state.cameFromAnotherTabHTMLElement,
       selected: state => state.selectedItems,
 
@@ -1187,11 +1224,6 @@ export default {
       if (this.selected.length > 0 || this.openCalendar) return true
       if (this.isDesktopDevice)
         return this.pressingSelectKeys
-    },
-    inflate() {
-      if ((this.isRoot && this.comp === "Task" && this.getHeadings.length === 0) || (this.isLast && !this.isRootAddingHeadings))
-        return true
-      return false
     },
     draggableRoot() {
       return this.$refs['item-renderer-root']
@@ -1420,14 +1452,6 @@ export default {
 
 .add-item-wrapper:active .add-item {
   transform: scale(.95,.95);
-}
-
-.inflate {
-  min-height: 700px;
-}
-
-.sortable-ghost .inflate {
-  min-height: unset;
 }
 
 .isRootAndHaveItems {

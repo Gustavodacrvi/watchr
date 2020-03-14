@@ -252,7 +252,7 @@ export default {
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
-      getListByName: 'list/getListByName',
+      getListsByName: 'list/getListsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     getListFolderGroupCalendarHeadings() {
@@ -364,7 +364,7 @@ export default {
             },
             sort: this.sortArray,
             order: viewTasksOrder,
-            progress: () => this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], list.id, this.isTaskCompleted),
+            progress: () => this.$store.getters['list/pieProgress'](list.id),
             filter: filterFunction,
             options: tasks => [
               {
@@ -551,7 +551,10 @@ export default {
 
       if (this.isCalendarOrderViewType) {
         const calendarDate = this.getCalendarOrderDate
-        const scheduleOrder = this.getCurrentScheduleTasksOrder
+        let scheduleOrder = this.getCurrentScheduleTasksOrder.slice()
+
+
+        
         arr.unshift({
           name: 'Evening',
           id: 'EVENING_SMART_VIEW',
@@ -568,7 +571,7 @@ export default {
           }),
           order: scheduleOrder,
           updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
-          fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Evening(t, f, {calendarDate}),
+          fallbackItem: (t, f, c, p) => functionFallbacks.viewFallbacks.Evening(t, f, {calendarDate}, p),
         })
       }
 
@@ -1393,7 +1396,7 @@ export default {
       return this.tasks.filter(el => el.calendar && el.calendar.type === 'weekly')
     },
     viewList() {
-      return this.getListByName(this.viewName)
+      return this.getListsByName([this.viewName])[0]
     },
     isViewListSomeday() {
       const list = this.viewList

@@ -1,5 +1,5 @@
 <template>
-  <div class="Checklist" :class="{hasAtLeastOnSubTask}">
+  <div class="Checklist">
     <div
       class="draggable-root"
       ref="draggable-root"
@@ -52,7 +52,7 @@ import SubtaskEdit from './Edit.vue'
 
 import mom from 'moment'
 
-import Sortable from 'sortablejs'
+import { Sortable } from 'sortablejs'
 
 import utils from '@/utils/'
 
@@ -69,7 +69,6 @@ export default {
       edit: null,
       addedTask: true,
       editIndex: 0,
-      hasAtLeastOnSubTask: false,
     }
   },
   mounted() {
@@ -238,10 +237,6 @@ export default {
   margin: 0;
   padding: 0 8px;
   transition: margin .15s;
-}
-
-.hasAtLeastOnSubTask {
-  margin: 20px 0;
 }
 
 .trans-enter, .trans-leave-to {

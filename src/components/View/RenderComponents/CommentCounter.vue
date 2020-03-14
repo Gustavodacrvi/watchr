@@ -100,7 +100,7 @@ export default {
   top: 4px;
   opacity: 0;
   transform: translateY(5px);
-  transition-duration: .25s;
+  transition-duration: .15s;
 }
 
 .photo {
@@ -123,7 +123,7 @@ export default {
 .show {
   opacity: 1;
   transform: translateY(0px);
-  transition-duration: .25s;
+  transition-duration: .15s;
 }
 
 .icon-wrapper {

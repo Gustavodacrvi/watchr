@@ -149,7 +149,7 @@ export default {
           pastShared: {
             [user.uid || user.userId]: utils.getUserProfileData(user)
           }
-        })
+        }, this.$store.state)
   
         await b.commit()
         this.inviteEmail = null

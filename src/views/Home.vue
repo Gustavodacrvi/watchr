@@ -1,200 +1,335 @@
 <template>
   <main class="Home">
-
-    <div class="header-wrapper">
-      <div class="header">
-        <div class="main">
-          <h1>
-            <span class="imp">Eliminate</span> day-to-day <span class="imp">stress</span> and <span class="imp">achieve</span> your <span class="imp">goals!</span>
-          </h1>
-        </div>
-
-        <h2 class="info mar">
-          An <Info handle='Open Source'>Open source software is a type of computer software with source code that anyone can inspect, modify, and enhance.<br><br> And embrace principles of open exchange, collaborative participation, rapid prototyping, transparency, meritocracy, and community-oriented development.</Info> 
-          <Info
-            handle='PWA'
-          >
-            Progressive Web Apps (PWA) are native like Web Apps built using modern web technologies, PWAs are reliable, fast, engaging, and can be installed for offline use.<br><br>They can be installed using the + on the address bar.
-          </Info>
-           task manager software, built with <Info handle="Firebase">Firebase is a backend service that allows you to create web applications without server-side programming, making development faster and easier.</Info> and inspired by the most popular todo apps. Capture, Organize and complete all of your tasks for only $5/year.
-        </h2>
-
-        <div class="btn-wrapper mar">
-          <button class="btn" @click="$store.dispatch('anonymousSignIn')"
-          >Start Planning!</button>
-        </div>
-      </div>
-    </div>
-
-    <img id='firebase-commet' src="/svg/commet.svg" alt="firebase">
-
-    <div class="section">
-      <div class="title-wrapper title">
-        <div class="floating-btn">
-          <Icon id='plus'
-            icon='plus'
-            width='28px'
-          />
-        </div>
-        <h3>Magic Floating Button</h3>
-      </div>
-      <div class="sect-cont">
-        <div class="side">
-          <h4 class="title">Add tasks and headings</h4>
-          <p class="para_margin">Tap the button to add a task directly on Inbox, or drag and drop it at the right place in your list. When inside projects, you can drag it right to the left margin to create headings.</p>
-          <h4 class="title">Add projects</h4>
-          <p class="para_margin">Drag the button to create a new project right on the sidebar, or to create tags in the tags sidebar section.</p>
-        </div>
-        <div class="side"></div>
-      </div>
-      <img class='back_layer' src="/svg/back_layer.svg" alt="background_faded_layer">
-      
-    </div>
     
+    <div class="main">
+      <div class="hero-header-wrapper">
+        <div class="hero-header">
+          <div class="main-heading">
+            <h1>Eliminate stress and achieve your goals!</h1>        
+          </div>
+          <div class="hero-paragraph">
+            <p>
+              An Open Source PWA task manager software, built with Firebase and  inspired by the most popular todo apps. Capture, Organize and complete all of your tasks for only $5/year.
+            </p>
+          </div>
+          <div class="hero-button">
+            <button class="btn">Start planning!</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="main-illustration-wrapper-wrapper">
+        <div id="main-illustration-wrapper">
+          <img id='main-illustration' src="/svg/main_illustration.svg" alt="background">
+        </div>
+      </div>
+
+      <SectionVideo
+        :cont="[
+          {
+            heading: 'Insert todos anywhere',
+            name: 'magic_button',
+            name: 'magic_button',
+            txt: 'You not only can tap the magic button to add tasks you can also drag and drop it anywhere to insert one exactly where it should be!',
+          },
+          {
+            heading: 'Adding headings',
+            name: 'magic_button_heading_add',
+            txt: `Headings are used for organizing and to visually group your stuff more easily, you can use the magic button to add a list heading anywhere.<br><br>
+            Simply drop it to the left margin and type in its name, all of the tasks below the target will then be inside the created heading.`,
+          },
+          {
+            heading: 'Add tags and lists',
+            name: 'magic_button_sidebar',
+            txt: `The magic button can also be used to add lists directly inside folders or subtags right on the sidebar.`,
+          },
+        ]"
+      >
+        <div class="section-title-wrapper">
+          <div class="section-icon magic-button">
+            <Icon class="magic-btn-icon" color='white' icon='plus' width='16px'/>
+          </div>
+          <h2>Magic Button</h2>
+        </div>
+      </SectionVideo>
+
+      <SectionVideo
+        :invert='true'
+        :cont="[
+          {
+            heading: 'Batch edit items',
+            name: 'batch_edit_upcoming',
+            txt: `You can select multiple items using the <strong>Control</strong> key or the keyboard, once selected, sort, edit, delete, move or even assign them to other people with ease.`,
+          },
+          {
+            heading: 'Sidebar Drag and Drop',
+            name: 'magic_button_heading_add',
+            txt: `Watchr has many advanced drag-and-drop capabilities, you can drag the selected items to the sidebar to move them into another list, or to move them to 'Tomorrow' or the 'Logbook', don't forget to organize your lists using folders!<br><br>
+            You can also drag the selected items into the 'Tags' sidebar section for batch tag adding.
+            `,
+          },
+          {
+            heading: 'Between Windows Drag and Drop',
+            txt: `
+              Watchr has support for multiple windows, just open as many tabs as you want, then drag and drop any item between them, this way, you can take your planning into another level!<br><br>
+              This way, you could have one window on the 'Inbox' view, and another one to empty your inbox with ease, or one window on the 'Upcoming' for week planning, simply grab them and it's done!
+            `,
+          },
+        ]"
+      >
+        <h2>Batch Edit and Multiple Windows</h2>
+      </SectionVideo>
+
+      <div class="section-main-heading">
+        <div class="section-title-wrapper">
+          <Icon class="section-icon" color='var(--primary)' icon='inbox' width='40px'/>
+          <h2>Many Smart Views</h2>
+        </div>
+      </div>
+      <div class="section-wrapper">
+        <div class="section">
+          <p>
+            Smart views are basically smart lists that show you only what you need to see, there are many smart views available, you can choose the ones you want to attach to the sidebar, the hided ones can still be found using the Quick Search.
+          </p>
+          <SmartViewsSelector/>
+        </div>
+      </div>
+
+      <div class="section-main-heading">
+        <div class="section-title-wrapper">
+          <Icon class="section-icon" color='var(--orange)' icon='group' width='40px'/>
+          <h2>Sharing Tasks and Lists</h2>
+        </div>
+      </div>
+      <div class="section-wrapper">
+        <div class="section">
+        </div>
+      </div>
+
+
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+      <p>a</p>
+    </div>
   </main>
 </template>
 
 <script>
 
-import AuthButton from '@/components/Auth/Button.vue'
-import Info from "@/components/Home/Info.vue"
+import SectionVideo from "@/components/Home/SectionVideo.vue"
+import SmartViewsSelector from "@/components/View/RenderComponents/SmartViewsSelector.vue"
 
 export default {
   components: {
-    AuthButton,
-    Info,
+    SectionVideo,
+    SmartViewsSelector,
   },
 }
 
 </script>
 
+<style>
+
+.Home p {
+  font-size: 1.125em;
+  line-height: 19px;
+  color: var(--dark-txt);
+}
+
+.Home {
+  font-size: 1em;
+}
+
+.Home .section-main-heading {
+  font-size: 1.35em;
+  margin: 3.5em 0;
+  text-align: center;
+}
+
+.Home .section {
+  flex-basis: 1000px;
+  margin: 0 12px;
+}
+
+.Home .section-wrapper {
+  display: flex;
+  margin-top: 7em;
+  justify-content: center;
+}
+
+</style>
+
 <style scoped>
 
-.sect-cont {
-  flex-basis: 1250px;
-  display: flex;
-  line-height: 28px;
-}
-
-.side {
-  margin-top: 100px;
-  flex-basis: 100%;
-  font-size: 1.2em;
-}
-
-.para_margin {
-  margin: 40px 0;
-}
-
-#firebase-commet {
-  position: absolute;
-  right: 175px;
-  top: 75px;
-}
-
-.title {
-  font-size: 1.6em;
-}
-
-.title-wrapper {
-  position: absolute;
-  width: 100%;
-  font-size: 1.6em;
+#main-illustration-wrapper-wrapper {
   display: flex;
   justify-content: center;
 }
 
-.floating-btn {
-  margin-right: 8px;
-  width: 50px;
-  transform: translate(-10px, -10px);
-  height: 50px;
+#main-illustration-wrapper {
+  flex-basis: 85%;
+}
+
+.section-icon {
+
+}
+
+#main-illustration {
+  width: 100%;
+  margin-top: 2em;
+  z-index: -1;
+}
+
+.Home {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-header-wrapper {
+  margin-top: 7em;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-header {
+  flex-basis: 425px;
+}
+
+.main-heading {
+  font-size: 1.5em;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.section-title-wrapper {
+  display: inline-flex;
+}
+
+.section-icon {
+  transform: translateY(-3px);
+  margin-right: 10px;
+}
+
+.magic-button {
+  border-radius: 500px;
+  width: 2.2em;
+  height: 2.2em;
+  background-color: var(--primary);
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
-  border-radius: 1000px;
+}
+
+.magic-btn-icon {
+  transform: translateY(2px);
+}
+
+@media (max-width: 820px) {
+  .Home {
+    font-size: .95em;
+  }
+
+  .hero-header {
+    flex-basis: 325px;
+  }
+
+  .main-heading {
+    font-size: 1.25em;
+  }
+}
+
+@media (max-width: 576px) {
+  .Home {
+    font-size: .85em;
+  }
+
+  .hero-header {
+    flex-basis: 305px;
+  }
+
+  .main-heading {
+    font-size: 1.35em;
+  }
+}
+
+.hero-button {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-button .btn {
+  font-size: 1.2em;
+  border-radius: 14px;
+  padding: 10px 20px;
   background-color: var(--primary);
-}
-
-#plus {
-  transform: translateY(2.5px);
-}
-
-.background {
-  position: absolute;
-  width: 100%;
-  left: 0;
-  top: 0;
-  z-index: -1;
-}
-
-.back_layer {
-  width: 100%;
-  position: absolute;
-  z-index: -1;
-}
-
-.section {
-  padding: 0 16px;
-  margin-top: 275px;
-  padding: 30px 0;
-  position: relative;
-  display: flex;
-  justify-content: center;
-}
-
-.header-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.imp {
-  color: var(--red);
-}
-
-.imp2 {
-  color: var(--green);
-}
-
-.info {
-  font-size: 1.3em;
-  font-weight: unset;
-  line-height: 1.8em;
-  color: var(--fade-light);
-}
-
-.mar {
-  margin-top: 80px;
-}
-
-.header {
-  margin-top: 7em;
-  flex-basis: 750px;
-}
-
-.main {
-  font-size: 1.4em;
-}
-
-.btn-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.btn {
-  background-color: var(--primary);
-  display: inline-block;
   color: white;
-  font-size: 1.3em;
-  border-radius: 22px;
-  padding: 16px 36px;
-  position: relative;
-  transition-duration: .15s;
 }
 
-.btn:hover {
-  background-color: var(--primary-light);
+.hero-paragraph {
+  margin: 40px 0px;
 }
 
 </style>

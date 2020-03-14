@@ -223,13 +223,13 @@ export default {
 .title-trans-enter, .title-trans-leave-to {
   opacity: 0;
   transform: translate(-50%, 25px);
-  transition-duration: .25s;
+  transition-duration: .15s;
 }
 
 .title-trans-leave, .title-trans-enter-to {
   opacity: 1;
   transform: translate(-50%, 0px);
-  transition-duration: .25s;
+  transition-duration: .15s;
 }
 
 </style>

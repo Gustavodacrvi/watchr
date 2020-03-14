@@ -62,13 +62,7 @@ export default {
       }
       if (this.name) {
         const list = this.lists.find(el => el.name === this.name)
-        if (this.isSmartList)
-          toast({
-            name: `This is a special list type.`,
-            type: 'error',
-            seconds: 4,
-          })
-        else if (!list && !this.isEditing) {
+        if (!list && !this.isEditing) {
           this.$store.dispatch('list/addList', {
             name: this.name,
             ...this.payload,

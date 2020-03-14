@@ -38,7 +38,7 @@ export default {
     saveHeaderName() {
       return name => {
         if (this.viewList) {
-          if (this.getListByName(name))
+          if (this.getListsByNames([name])[0])
             this.pushToast({
               name: 'This list already exists!',
               seconds: 4,
@@ -337,7 +337,7 @@ export default {
     getPieProgress() {
       const list = this.viewList
       if (list && !this.isViewListSomeday)
-        return this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], list.id, task => this.isTaskInView(task, "Logbook"))
+        return this.$store.getters['list/pieProgress'](list.id)
       return null
     },
   },

@@ -51,9 +51,9 @@ export default {
       icon.opacity = '0'
       el.style.opacity = '0'
       requestAnimationFrame(() => {
-        el.style.transitionDuration = '.3s'
-        name.transitionDuration = '.3s'
-        icon.transitionDuration = '.3s'
+        el.style.transitionDuration = '.2s'
+        name.transitionDuration = '.2s'
+        icon.transitionDuration = '.2s'
         requestAnimationFrame(() => {
           w.height = this.height + 'px'
           w.width = this.width + 'px'
@@ -78,7 +78,7 @@ export default {
       w.width = el.offsetWidth + 'px'
       
       requestAnimationFrame(() => {
-        el.style.transitionDuration = '.3s'
+        el.style.transitionDuration = '.2s'
         w.transitionDuration = '.35s'
         requestAnimationFrame(() => {
           w.height = '0px'

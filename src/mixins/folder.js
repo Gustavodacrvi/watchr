@@ -44,13 +44,13 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
         s.height = this.getItemContHeight
         s.opacity = 1
 
         setTimeout(() => {
           s.height = 'auto'
-        }, 255)
+        }, 155)
       })
     },
     async openMobileOptions() {
@@ -94,12 +94,12 @@ export default {
       s.opacity = 1
       
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
         s.height = '0px'
         s.overflow = 'visible'
         s.opacity = 0
 
-        setTimeout(done, 255)
+        setTimeout(done, 155)
       })
     },
     go() {
@@ -119,6 +119,9 @@ export default {
   watch: {
     options() {
       this.bindOptions()
+    },
+    dragover() {
+      this.$store.commit('toggleSidebarElementHover', this.dragover)
     },
     item() {
       this.bindOptions()

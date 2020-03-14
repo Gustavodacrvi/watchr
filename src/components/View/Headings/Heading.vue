@@ -179,7 +179,7 @@ export default {
       const s = el.style
       
       setTimeout(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         s.opacity = 1
         s.height = this.renderHeight
   
@@ -201,7 +201,7 @@ export default {
       s.overflow = 'hidden'
 
       setTimeout(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         s.opacity = 0
         s.height = '0px'
         s.overflow = 'hidden'
@@ -406,11 +406,7 @@ export default {
 }
 
 .Heading + .Heading {
-  margin-top: 45px;
-}
-
-.Heading.mobile + .Heading {
-  margin-top: 25px;
+  margin-top: 55px;
 }
 
 .Heading:hover {

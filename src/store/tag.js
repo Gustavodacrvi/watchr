@@ -37,44 +37,68 @@ export default {
       tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       return tags
     },
-    ...MemoizeGetters('tags', {
+    ...MemoizeGetters({
       getSubTagsByParentId: {
-        react: ['parent'],
-        getter({state, getters}, parentId) {
-          return getters.tags.filter(tag => tag.parent === parentId)
+        deepGetterTouch: {
+          'tag/tags': [
+            'parent',
+          ]
+        },
+        getter({}, parentId) {
+          return this['tag/tags'].filter(tag => tag.parent === parentId)
+        },
+        cache(args) {
+          return args[0]
         },
       },
-      getSubTagsByTagId({state, getters}, id) {
-        const walk = (parent, tags = []) => {
-          const childs = getters.tags.filter(tag => tag.parent === parent)
-          tags.push(childs)
-          for (const tag of childs) walk(tag.id, tags)
-          return tags
-        }
-        return walk(id).flat(Infinity)
+      getSubTagsByTagId: {
+        deepGetterTouch: {
+          'tag/tags': [
+            'parent',
+          ]
+        },
+        getter({state, getters}, id) {
+          const walk = (parent, tags = []) => {
+            const childs = this['tag/tags'].filter(tag => tag.parent === parent)
+            tags.push(childs)
+            for (const tag of childs) walk(tag.id, tags)
+            return tags
+          }
+          return walk(id).flat(Infinity)
+        },
+        cache(args) {
+          return args[0]
+        },
       },
       getTagsByName: {
-        react: [
-          'name',
-        ],
-        getter({state, getters}, names) {
+        deepGetterTouch: {
+          'tag/tags': [
+            'name'
+          ]
+        },
+        getter({}, names) {
           const arr = []
           for (const n of names) {
-            const tag = getters.tags.find(el => el.name === n)
+            const tag = this['tag/tags'].find(el => el.name === n)
             if (tag) arr.push(tag)
           }
           return arr
         },
       },
-      getTagsById({state, getters}, ids) {
-        const arr = []
-        for (const id of ids) {
-          const tag = getters.tags.find(el => el.id === id)
-          if (tag) arr.push(tag)
-        }
-        return arr
+      getTagsById: {
+        touchGetters: [
+          'tag/tags',
+        ],
+        getter({state, getters}, ids) {
+          const arr = []
+          for (const id of ids) {
+            const tag = this['tag/tags'].find(el => el.id === id)
+            if (tag) arr.push(tag)
+          }
+          return arr
+        },
       },
-    }, true),
+    }),
     getFavoriteTags(state, getters) {
       return getters.tags.filter(el => el.favorite).map(f => ({...f, icon: 'tag', color: 'var(--red)'}))
     },
@@ -87,7 +111,7 @@ export default {
 
       setTag(b, item, newItemRef.id, rootState, writes)
       
-      setInfo(b, {tags: ids}, writes)
+      setInfo(b, {tags: ids}, rootState, writes)
 
       cacheBatchedItems(b, writes)
       
@@ -150,7 +174,7 @@ export default {
       const writes = []
 
       setTag(b, {parent: null}, tagId, rootState, writes)
-      setInfo(b, {tags: ids}, writes)
+      setInfo(b, {tags: ids}, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -179,10 +203,10 @@ export default {
 
       b.commit()
     },
-    updateOrder(c, ids) {
+    updateOrder({rootState}, ids) {
       const b = fire.batch()
       
-      setInfo(b, {tags: ids})
+      setInfo(b, {tags: ids}, rootState)
 
       b.commit()
     },

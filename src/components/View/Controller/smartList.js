@@ -22,7 +22,7 @@ export default {
     mainFallbackItem() {
       const fs = functionFallbacks.viewFallbacks
       if (this.isCalendarOrderViewType)
-        return (t, f, h) => fs.calendarOrder(t, f, this.getCalendarOrderDate, h)
+        return (t, f, h, a) => fs.calendarOrder(t, f, this.getCalendarOrderDate, h, a)
       if (this.viewName === 'Deadlines')
         return fs.deadlineOrder
       if (this.viewName === 'Upcoming')

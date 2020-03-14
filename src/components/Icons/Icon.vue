@@ -72,6 +72,7 @@ import laterLists from '@/assets/icons/later-lists.svg'
 import group from '@/assets/icons/group.svg'
 import moon from '@/assets/icons/moon.svg'
 import crown from '@/assets/icons/crown.svg'
+import play from '@/assets/icons/play.svg'
 
 const icons = {
   inbox, calendar, sun, arrow, star, user, out,
@@ -80,7 +81,7 @@ const icons = {
   copy, plus, globe, heading, search, note,
   envelope, deadline, sleep, repeat, box, file,
   folder, heart, close, filter, magic, clock,
-  pomo, pie, check, group, message, crown,
+  pomo, pie, check, group, message, crown, play,
   comment, logbook, moon,
   "later-lists": laterLists,
   "logged-lists": loggedLists,

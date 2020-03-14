@@ -1,8 +1,8 @@
 
-export default (property, getters, getPropertyFromGetter) => {
-  const keys = Object.keys(getters)
+export default (memoizeObject) => {
+  const keys = Object.keys(memoizeObject)
 
-  const memo = (func, stringify) => {
+  const memo = (func, stringify, functionName) => {
     const cache = {}
     let getKey = stringify ? stringify : JSON.stringify
 
@@ -22,33 +22,59 @@ export default (property, getters, getPropertyFromGetter) => {
 
   const obj = {}
   for (const k of keys) {
-    obj[k] = function(vuexState, vuexGetters) {
-      const origin = getPropertyFromGetter ? vuexGetters : vuexState
+    obj[k] = function(state, getters, rootState, rootGetters) {
+      const val = memoizeObject[k]
       
-      if (property) {
-        if (!Array.isArray(property)) {
-          origin[property]
+      const thisBinding = {}
+      // TOUCH REACTIVE PROPERTIES
+      if (val.deepGetterTouch) {
+        
+        const touchKeys = Object.keys(val.deepGetterTouch)
+        
+        for (const str of touchKeys) {
+          thisBinding[str] = rootGetters[str]
+          const targetKeys = val.deepGetterTouch[str]
+          
+          for (const targetStr of targetKeys) {
+            for (const item of thisBinding[str]) {
+              item[targetStr]
+            }
+          }
         }
-        else
-          for (const k of property)
-            origin[k]        
-      }
-      const val = getters[k]
-      const firstArg = {
-        state: arguments[0],
-        getters: arguments[1],
-        rootState: arguments[2],
-        rootGetters: arguments[3],
+
       }
 
-      if (property && val.react)
-        for (const el of origin[property])
-          for (const p of val.react)
-            el[p]
+      if (val.touchGetters)
+        for (const str of val.touchGetters)
+          thisBinding[str] = rootGetters[str]
 
+      if (val.deepStateTouch) {
+
+        const touchKeys = Object.keys(val.deepStateTouch)
+
+        for (const str of touchKeys) {
+          const split = str.split('/')
+          thisBinding[str] = rootState[split[0]][split[1]]
+          const targetKeys = Object.keys(val.deepStateTouch[str])
+
+          for (const targetStr of targetKeys) {
+            for (const item of thisBinding[str])
+              item[targetStr]
+          }
+        }
+
+      }
+
+      if (val.touchState)
+        for (const str of val.touchState) {
+          const split = str.split('/')
+          thisBinding[str] = rootState[split[0]][split[1]]
+        }
+      
+      const firstArg = {state, getters, rootState, rootGetters}
       if (!val.getter)
-        return memo(val.bind(this, firstArg))
-      else return memo(val.getter.bind(this, firstArg), val.cache, val.type)
+        return memo(val.bind(thisBinding, firstArg))
+      else return memo(val.getter.bind(thisBinding, firstArg), val.cache, k)
     }
   }
   return obj

@@ -5,6 +5,14 @@ import { pipeBooleanFilters } from '@/utils/memo'
 import mom from 'moment'
 
 export default {
+  filterSidebarLists(rootGetters, lists, date) {
+    return lists.filter(l =>
+        !rootGetters['list/isListCompleted'](l) &&
+        !rootGetters['list/isListCanceled'](l) &&
+        !rootGetters['list/isListSomeday'](l) &&
+        rootGetters['list/isListShowingOnDate'](l, date)
+      )
+  },
   listHeadingOptions(list, heading, store, tasks) {
     const li = list
     const listId = li.id

@@ -137,8 +137,6 @@ export default {
       })
     },
     updateIds({finalIds, b = fire.batch(), writes = []}) {
-      this.order = finalIds.slice()
-      
       this.updateViewIds(
         b,
         writes,
@@ -147,6 +145,8 @@ export default {
           ...this.getUpdateIdsInfo()
         }
       )
+
+      this.order = finalIds.slice()
 
       cacheBatchedItems(b, writes)
 
@@ -341,6 +341,7 @@ export default {
       return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
     },
     rootNonFilteredIds() {
+      console.log(this.rootNonFiltered.map(el => el.id))
       return this.rootNonFiltered.map(el => el.id)
     },
     allViewTasks() {

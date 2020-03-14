@@ -5,7 +5,14 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Subtask rb item-handle" :class="{isTaskCompleted, active}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="edit">
+    <div
+      class="Subtask rb item-handle"
+      :class="{isTaskCompleted, active}"
+      
+      @mouseenter="hover = true"
+      @mouseleave="hover = false"
+      @click="edit"
+    >
       <span class="icons cursor" @click.stop="$emit('toggle')">
         <Icon v-if="!isTaskCompleted" class="icon primary-hover" icon="circle"/>
         <Icon v-else class="icon primary-hover" icon="circle-check"/>
@@ -91,7 +98,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         s.height = this.isDesktopDevice ? '25px' : '30px'
         s.opacity = 1
 

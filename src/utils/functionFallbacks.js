@@ -36,7 +36,7 @@ export default {
       if (force || !c) {
         if (isEvening && c && c.type !== 'specific' && c.type !== 'someday') {
           c.evening = true
-        } else {
+        } else if (force || !c) {
           t.calendar = getSpecificCalendar(specific)
         }
       }
@@ -72,8 +72,8 @@ export default {
         t.tags = [tagId]
       return t
     },
-    Evening(t, force = false, {calendarDate}) {
-      if (force || !t.calendar) {
+    Evening(t, force = false, {calendarDate}, adding = false) {
+      if (force || adding || !t.calendar) {
         if (!t.calendar) {
           t.calendar = getSpecificCalendar(calendarDate)
           t.calendar.evening = true
@@ -169,16 +169,16 @@ export default {
       
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(utilsTask.concatArraysRemovingOldEls(scheduleOrder, finalIds), calendarDate, rootState)
 
-      setInfo(b, {calendarOrders}, writes)
+      setInfo(b, {calendarOrders}, writes, rootState)
     },
-    smartOrder(b, writes, {viewName, finalIds}) {
+    smartOrder(b, writes, {viewName, finalIds, rootState}) {
       const obj = {}
       obj[viewName] = {}
       obj[viewName].tasks = finalIds
       
       setInfo(b, {
         viewOrders: obj,
-      }, writes)
+      }, rootState, writes)
     },
     smartViewLists(b, writes, {finalIds, rootState, viewName, rootGetters, listId}) {
       const list = rootGetters['list/getListsById']([listId])[0]

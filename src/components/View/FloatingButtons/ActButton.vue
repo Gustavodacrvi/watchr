@@ -39,7 +39,7 @@ export default {
   computed: {
     ...mapGetters(['layout', 'isDesktopBreakPoint']),
     styles() {
-      const height = (this.isDesktopBreakPoint ? 40 : 50) + 'px'
+      const height = (this.isDesktopBreakPoint ? 25 : 50) + 'px'
       return {
         height,
       }

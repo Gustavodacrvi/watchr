@@ -73,7 +73,7 @@ export default {
       s.marginRight = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.15s'
         s.width = width + 'px'
         s.marginRight = '8px'
         s.opacity = 1
@@ -82,7 +82,7 @@ export default {
     infoLeave(el) {
       const s = el.style
 
-      s.transitionDuration = '.25s'
+      s.transitionDuration = '.15s'
       s.width = 0
       s.marginRight = 0
       s.opacity = 0
@@ -257,7 +257,7 @@ export default {
       if (this.moved) {
         const cont = this.$refs['cont-wrapper'].style
 
-        cont.transitionDuration = '.3s'
+        cont.transitionDuration = '.2s'
         this.right = 0
         setTimeout(() => {
           cont.transitionDuration = 0
@@ -391,8 +391,9 @@ export default {
       this.bindMainSelection()
     },
     toggleTaskCompletion() {
-      if (this.comp === 'Task' && this.toggleTaskCompletion.includes(this.item.id))
+      if (this.comp === 'Task' && this.toggleTaskCompletion.includes(this.item.id)) {
         this.completeItem()
+      }
     },
     toggleListCompletion() {
       if (this.comp !== 'Task' && this.toggleListCompletion.includes(this.item.id))

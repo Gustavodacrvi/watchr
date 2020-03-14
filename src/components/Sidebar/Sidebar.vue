@@ -316,7 +316,7 @@ export default {
     },
     mapProgress(link) {
       if (link.type === 'list')
-        return this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], link.id, task => this.isTaskInView(task, "Logbook"))
+        return this.$store.getters['list/pieProgress'](link.id)
       return null
     },
     mapFavorites(link) {

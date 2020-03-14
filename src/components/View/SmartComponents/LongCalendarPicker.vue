@@ -134,7 +134,7 @@ export default {
 
     const ball = this.$refs['ball'].style
     setTimeout(() => {
-      ball.transitionDuration = '.3s'
+      ball.transitionDuration = '.2s'
     }, 1000)
   },
   beforeDestroy() {
@@ -158,8 +158,8 @@ export default {
       w.height = 0
 
       requestAnimationFrame(() => {
-        r.transitionDuration = '.3s'
-        w.transitionDuration = '.3s'
+        r.transitionDuration = '.2s'
+        w.transitionDuration = '.2s'
 
         r.margin = '8px 0'
         r.opacity = 1
@@ -171,8 +171,8 @@ export default {
       const r = root.style
       const w = this.$refs['wrapper'].style
 
-      r.transitionDuration = '.3s'
-      w.transitionDuration = '.3s'
+      r.transitionDuration = '.2s'
+      w.transitionDuration = '.2s'
 
       r.margin = 0
       r.height = 0

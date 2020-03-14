@@ -67,7 +67,7 @@ export default {
       s.transitionDuration = 0
       s.height = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.2s'
         s.height = `${this.isDesktopDevice ? 25 : 35}px`
       })
     },
