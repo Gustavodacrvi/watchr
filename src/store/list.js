@@ -1029,11 +1029,6 @@ export default {
 
       b.commit()
     },
-    sortListsByName({getters, dispatch}) {
-      const lists = getters.lists.slice()
-      lists.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
-      dispatch('updateOrder', lists.map(el => el.id))
-    },
 
     // TASKS
     

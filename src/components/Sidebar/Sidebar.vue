@@ -558,11 +558,6 @@ export default {
           }
         },
         {
-          name: 'Sort lists by name',
-          icon: 'sort-name',
-          callback: () => dispatch('list/sortListsByName'),
-        },
-        {
           name: 'Add folder',
           icon: 'folder',
           callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
