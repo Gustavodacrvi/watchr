@@ -463,7 +463,7 @@ const store = new Vuex.Store({
       if (!moving)
         state.movingTimeout = setTimeout(() => {
           state.moving = false
-        }, 100)
+        }, 200)
       else {
         if (state.movingTimeout)
           clearTimeout(state.movingTimeout)
