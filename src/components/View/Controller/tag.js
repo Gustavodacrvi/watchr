@@ -66,8 +66,30 @@ export default {
         },
       }
     },
-    headingsOptions() {
-      return []
+    headings() {
+      const arr = []
+      const viewTag = this.viewTag
+      if (viewTag) {
+        const tagId = viewTag.id
+
+        arr.push({
+          name: 'Logbook tasks',
+          id: 'logbook tasks',
+          disableSortableMount: true,
+          logStr: true,
+          log: true,
+          icon: 'logbook',
+          color: 'var(--dark-blue)',
+
+          options: this.getLogbookOptions(),
+          sort: ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate'),
+          filter: task => 
+            this.isTaskInLogbook(task) &&
+            this.doesTaskPassInclusiveTags(task, [tagId], this.tags, []),
+          configFilterOptions: p => p !== 'pipeCompleted',
+        })
+      }
+      return arr
     },
     headerOptions() {
       const tag = this.viewTag
