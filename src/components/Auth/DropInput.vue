@@ -92,7 +92,7 @@ export default {
       el.style.height = '0px'
       requestAnimationFrame(() => {
         el.style.opacity = 1
-        el.style.height = '40px'
+        el.style.height = '32px'
         setTimeout(() => done(), 300)
       })
     },
@@ -290,7 +290,7 @@ export default {
 }
 
 .link {
-  height: 40px;
+  height: 32px;
   padding: 0 9px;
   display: flex;
   align-items: center;
