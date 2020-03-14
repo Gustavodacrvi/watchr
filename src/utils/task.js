@@ -116,7 +116,7 @@ export default {
     })
   },
   getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
-    
+
     const removed = nonFiltered.filter(id => !filtered.includes(id))
     let firstNewIdIndex = null
     let j = 0
@@ -138,6 +138,7 @@ export default {
       i++
     }
     i = 0
+    console.log(newIds)
     for (const id of filtered) {
       if (!newIds.includes(id)) {
         removed.splice(missing[i], 0, id)

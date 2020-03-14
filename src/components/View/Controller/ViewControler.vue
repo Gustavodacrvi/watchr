@@ -551,7 +551,10 @@ export default {
 
       if (this.isCalendarOrderViewType) {
         const calendarDate = this.getCalendarOrderDate
-        const scheduleOrder = this.getCurrentScheduleTasksOrder
+        let scheduleOrder = this.getCurrentScheduleTasksOrder.slice()
+
+
+        
         arr.unshift({
           name: 'Evening',
           id: 'EVENING_SMART_VIEW',
