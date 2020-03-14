@@ -106,7 +106,7 @@
         >
           <div
             class="add-item rb"
-            @click.stop="addEditComp(nonEditGetItems.length)"
+            @click.stop="appendItem"
           >
             Add item
           </div>
@@ -264,6 +264,9 @@ export default {
     }
   },
   methods: {
+    appendItem() {
+      this.addEditComp(this.nonEditGetItems.length)
+    },
     filterHeading(h) {
       if (this.showHeading && this.showHeading(h)) {
         return true

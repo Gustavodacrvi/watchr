@@ -3,13 +3,13 @@
     :class="[layout, {moving}]"
     @click="click"
   >
-    <span></span>
-    <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" ref='edit-component' id="edit-component"
+    <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
       txt='Add item'
     />
+    <span></span>
   </div>
 </template>
 
@@ -22,6 +22,7 @@ import { mapGetters, mapState } from 'vuex'
 import Sortable from 'sortablejs'
 
 export default {
+  props: ['menu'],
   components: {
     Btn: ActButtonVue,
   },
@@ -64,7 +65,7 @@ export default {
   methods: {
     runTransition() {
       // FLIP
-      const target = this.$refs['edit-component'].$el
+      const target = this.$el.childNodes[0]
 
       const { top, height, left, width } = document.getElementById('item-renderer-root').getBoundingClientRect()
       const edit = target.getBoundingClientRect()
@@ -88,12 +89,12 @@ export default {
       s.transform = 'translate(0px, 0px) scale(1,1)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.35s'
 
         s.transform = `translate(${xDiff}px, ${yDiff}px) scale(.95,.95)`
         const onEnd = () => {
+          this.$emit('add-task')
           s.transform = `translate(0px, 0px) scale(1,1)`
-          s.ontransitionend = ''
           target.removeEventListener('transitionend', onEnd)
         }
         target.addEventListener('transitionend', onEnd)
@@ -106,7 +107,10 @@ export default {
       const els = path
       for (const e of els)
         if (e.classList && e.classList.contains('add-task-floating-button')) {
-          this.runTransition()
+          if (!this.menu)
+            this.runTransition()
+          else
+            this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
           break
         }
     },
@@ -131,6 +135,7 @@ export default {
   z-index: 15;
   position: sticky;
   display: flex;
+  flex-direction: row-reverse;
   justify-content: space-between;
   transition: opacity .15s;
   opacity: 1;
