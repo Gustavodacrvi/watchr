@@ -86,7 +86,7 @@ export default {
       const n = this.viewName
       if (this.viewType === 'search')
         return task => this.doesTaskIncludeText(task, n)
-      if (n === 'Today' && this.hasOverdueTasks && this.userInfo.allowOverdue)
+      if (n === 'Today' && this.hasOverdueTasks)
         return task => this.isTaskInView(task, 'Overdue') ||
                         this.isTaskInView(task, 'Today')
       switch (n) {
@@ -105,7 +105,7 @@ export default {
       if (n === 'Recurring' || n === 'Inbox')
         return () => true
         
-      if (n === 'Today' && this.hasOverdueTasks && this.userInfo.allowOverdue)
+      if (n === 'Today' && this.hasOverdueTasks)
         return () => false
 
       if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
@@ -155,7 +155,8 @@ export default {
         case 'Upcoming': return this.upcomingHeadings
         case 'Recurring': return this.recurringHeadings
         case 'Today': {
-          if (this.hasOverdueTasks && this.userInfo.allowOverdue) return this.todayHeadingsOptions
+          console.log
+          if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return heads
         }
         case 'Tomorrow': return heads

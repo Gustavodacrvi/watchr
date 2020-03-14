@@ -115,14 +115,14 @@ export default {
           if (specific && c.type !== 'specific') return false
           if (c.type === 'someday') return false
           // specific
+          const tod = mom(date, 'Y-M-D')
           if (c.type === 'specific') {
             const allowOverdue = rootState.userInfo.allowOverdue
             if (allowOverdue || specific)
               return date === c.specific
-            return mom(date, 'Y-M-D').isSameOrAfter(mom(c.specific, 'Y-M-D'), 'day')
+            return tod.isSameOrAfter(mom(c.specific, 'Y-M-D'), 'day')
           }
   
-          const tod = mom(date, 'Y-M-D')
           const begins = mom(c.begins, 'Y-M-D')
   
           if (c.ends) {
@@ -224,7 +224,10 @@ export default {
         },
       },
       isTaskOverdue: {
-        getter({getters}, task, date) {
+        deepStateTouch: {
+          'userInfo/allowOverdue': [],
+        },
+        getter({getters, rootState}, task, date) {
           const calendar = task.calendar
 
           let tod = null
@@ -240,6 +243,8 @@ export default {
           
           const c = calendar
           if (c.type === 'specific') {
+            if (!rootState.userInfo.allowOverdue)
+              return false
             const spec = mom(c.specific, 'Y-M-D')
             return spec.isBefore(getTod(), 'day')
           }
@@ -434,6 +439,7 @@ export default {
               obj = {
                 c: t.calendar,
                 t: t.completed,
+                e: t.checked,
                 d: t.deadline,
               }
               break

@@ -61,7 +61,7 @@
               @input="markEmailsAsRead = !markEmailsAsRead"
             />
             <CheckboxApp class="rb"
-              name='Enable overdue tasks'
+              name='Enable overdue defered tasks'
               :value='allowOverdue'
               @input="allowOverdue = !allowOverdue"
             />

@@ -774,7 +774,7 @@ export default {
       return this.isTaskInView(this.item, 'Today')
     },
     isTaskOverdue() {
-      if (!this.userInfo.allowOverdue || this.viewName === 'Today') return false
+      if (this.viewName === 'Today') return false
       return this.isTaskInView(this.item, 'Overdue')
     },
     isTomorrow() {
