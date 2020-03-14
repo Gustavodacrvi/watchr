@@ -23,6 +23,7 @@
         <Icon class="icon"
           :icon="icon"
           :color="color"
+          :width='isDesktopBreakPoint ? "" : "20px"'
         />
         <div class="path"></div>
       </div>

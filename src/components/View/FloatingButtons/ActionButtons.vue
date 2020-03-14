@@ -3,13 +3,34 @@
     :class="[layout, {moving}]"
     @click="click"
   >
+    <span v-if="moving"></span>
     <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
       txt='Add item'
     />
-    <span></span>
+    <span v-if="!moving"></span>
+    <div
+      class="inbox-wrapper"
+      ref='inbox-wrapper'
+
+      @pointerenter='inboxHover = true'
+      @pointerleave='inboxHover = false'
+    >
+      <transition name='trans-t'>
+        <div v-if="moving"
+          class="inbox"
+          :class="{inboxHover}"
+        >
+          <Icon
+            icon='inbox'
+            width='22px'
+            color='white'
+          />
+        </div>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -31,6 +52,7 @@ export default {
       sortable: null,
       showingTaskAdder: false,
       moving: false,
+      inboxHover: false,
     }
   },
   created() {
@@ -55,6 +77,8 @@ export default {
         this.moving = true
       },
       onEnd: () => {
+        if (this.inboxHover)
+          this.openQuickAdd()
         this.moving = false
       },
     })
@@ -63,9 +87,12 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    openQuickAdd() {
+      this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
+    },
     runTransition() {
       // FLIP
-      const target = this.$el.childNodes[0]
+      const target = this.$el.childNodes[1]
 
       const { top, height, left, width } = document.getElementById('item-renderer-root').getBoundingClientRect()
       const edit = target.getBoundingClientRect()
@@ -89,7 +116,8 @@ export default {
       s.transform = 'translate(0px, 0px) scale(1,1)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.35s'
+        s.transitionDuration = this.isDesktopBreakPoint ? '.2s' : '.15s'
+        s.transitionTimingFunction = 'ease-out'
 
         s.transform = `translate(${xDiff}px, ${yDiff}px) scale(.95,.95)`
         const onEnd = () => {
@@ -110,7 +138,7 @@ export default {
           if (!this.menu)
             this.runTransition()
           else
-            this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
+            this.openQuickAdd()
           break
         }
     },
@@ -129,6 +157,49 @@ export default {
 </script>
 
 <style scoped>
+
+.inbox-wrapper {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  overflow: visible;
+  position: relative;
+}
+
+.inbox {
+  background-color: var(--dark-void);
+  width: 55px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: all;
+  border-radius: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55px;
+  overflow: hidden;
+  transition-duration: .2s;
+}
+
+.inboxHover {
+  width: 80px;
+  height: 80px;
+}
+
+.trans-t-enter, .trans-t-leave-to {
+  height: 0;
+  width: 0;
+  opacity: 0;
+}
+
+.trans-t-leave, .trans-t-enter-to {
+  height: 55px;
+  width: 55px;
+  opacity: 1;
+}
+
 
 .ActionButtons {
   bottom: 16px;
