@@ -109,7 +109,7 @@
                       @enter='infoEnter'
                       @leave='infoLeave'
                     >
-                      <span v-if="logStr" class="check-date" ref='check-name'>{{ logStr }}</span>
+                      <span v-if="logStr && !showCheckDate" class="check-date" ref='check-name'>{{ logStr }}</span>
                     </transition>
 
                     <Icon v-if="isToday && !isEvening" class="name-icon" icon="star" color="var(--yellow)"/>

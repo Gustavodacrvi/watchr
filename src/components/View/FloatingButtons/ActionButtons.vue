@@ -16,7 +16,7 @@
       ref='inbox-wrapper'
 
       @pointerenter='inboxHover = true'
-      @pointerleave='inboxHover = false'
+      @pointerleave='leaveHover'
     >
       <transition name='trans-t'>
         <div v-if="moving"
@@ -89,6 +89,11 @@ export default {
   methods: {
     openQuickAdd() {
       this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
+    },
+    leaveHover() {
+      setTimeout(() => {
+        this.inboxHover = false
+      }, 100)
     },
     runTransition() {
       // FLIP
@@ -199,7 +204,6 @@ export default {
   width: 55px;
   opacity: 1;
 }
-
 
 .ActionButtons {
   bottom: 16px;

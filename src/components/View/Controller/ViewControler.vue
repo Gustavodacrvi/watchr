@@ -96,6 +96,20 @@ export default {
         schedule, date,
       })
     },
+    getLogbookOptions() {
+      return tasks => [
+            {
+              name: 'Remove from logbook',
+              icon: 'logbook',
+              callback: () => dispatch('task/unlogTasks', tasks.map(el => el.id)),
+            },
+            {
+              name: 'Delete tasks',
+              icon: 'trash',
+              callback: () => dispatch('task/deleteTasks', tasks.map(t => t.id)),
+            },
+          ]
+    },
     getCalObjectByView(viewName, cal) {
       if (this.viewName === 'Today')
         return this.getSpecificDayCalendarObj(mom(), cal)
@@ -231,6 +245,7 @@ export default {
       isTaskInFolder: 'task/isTaskInFolder',
       isTaskInListRoot: 'task/isTaskInListRoot',
       isTaskInPeriod: 'task/isTaskInPeriod',
+      isTaskInLogbook: 'task/isTaskInLogbook',
       isTaskInbox: 'task/isTaskInbox',
       hasTaskBeenCompletedOnDate: 'task/hasTaskBeenCompletedOnDate',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
@@ -875,18 +890,7 @@ export default {
       const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate')
       const dispatch = this.$store.dispatch
       
-      const options = tasks => [
-            {
-              name: 'Remove from logbook',
-              icon: 'logbook',
-              callback: () => dispatch('task/unlogTasks', tasks.map(el => el.id)),
-            },
-            {
-              name: 'Delete tasks',
-              icon: 'trash',
-              callback: () => dispatch('task/deleteTasks', tasks.map(t => t.id)),
-            },
-          ]
+      const options = this.getLogbookOptions()
 
       for (let i = 0; i < 7;i++) {
         const date = tod.format('Y-M-D')

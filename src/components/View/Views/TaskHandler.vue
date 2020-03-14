@@ -346,7 +346,6 @@ export default {
       return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
     },
     rootNonFilteredIds() {
-      console.log(this.rootNonFiltered.map(el => el.id))
       return this.rootNonFiltered.map(el => el.id)
     },
     allViewTasks() {
@@ -381,7 +380,13 @@ export default {
         if (head.react)
           for (const p of head.react) nonFiltered[p]
 
-        const tasks = nonFiltered.filter(this.filterOptionsPipe)
+        const tasks = nonFiltered.filter(
+          head.configFilterOptions ?
+            pipeBooleanFilters(
+              ...this.filterOptionsPipes.filter(head.configFilterOptions).map(p => this[p])
+            )
+           : this.filterOptionsPipe
+        )
 
         const saveTempo = final => {
           this.tempoOrder[head.id] = final.slice()
