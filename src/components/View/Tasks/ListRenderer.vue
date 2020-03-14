@@ -19,6 +19,8 @@
       data-name='item-renderer'
       tag='div'
 
+      v-bind='rootId'
+
       @dragenter='dragenter'
       @dragover='dragover'
       @drop='drop'
@@ -104,7 +106,7 @@
         >
           <div
             class="add-item rb"
-            @click.stop="addEditComp(nonEditGetItems.length)"
+            @click.stop="appendItem"
           >
             Add item
           </div>
@@ -262,6 +264,9 @@ export default {
     }
   },
   methods: {
+    appendItem() {
+      this.addEditComp(this.nonEditGetItems.length)
+    },
     filterHeading(h) {
       if (this.showHeading && this.showHeading(h)) {
         return true
@@ -1135,6 +1140,7 @@ export default {
       moving: state => state.moving,
     }),
     ...mapGetters({
+      itemHeight: 'itemHeight',
       savedTasks: 'task/tasks',
       layout: 'layout',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
@@ -1144,6 +1150,10 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    rootId() {
+      if (this.isRoot && this.comp === "Task")
+        return {id: `item-renderer-root`}
+    },
     allowSortableAdd() {
       return this.mainFallbackItem && (
         this.isRoot ?
@@ -1205,9 +1215,6 @@ export default {
     },
     app() {
       return document.getElementById('app')
-    },
-    itemHeight() {
-      return this.isDesktopDevice ? 28 : 50
     },
     pressingMultiSelectKeys() {
       return this.isOnShift

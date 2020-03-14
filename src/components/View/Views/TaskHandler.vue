@@ -2,6 +2,8 @@
 <template>
   <div class="TaskHandler">
     <ListRendererVue
+      ref='renderer'
+    
       v-bind="$props"
 
       :items='sortLaseredTasks'
@@ -87,6 +89,9 @@ export default {
     this.order = this.tasksOrder
   },
   methods: {
+    addTaskEdit() {
+      this.$refs.renderer.appendItem()
+    },
     onAddExistingItem(index, lazyItems, fallbackItem, callback) {
       this.$store.dispatch('pushPopup', {
         comp: 'FastSearch', 

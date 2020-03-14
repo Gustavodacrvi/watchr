@@ -98,6 +98,7 @@
     <transition name="fade-t" mode="out-in">
       <ActionButtons
         v-if="!getHelperComponent && isTaskHandler" key="buttons"
+        @add-task='addTask'
       />
       <HelperComponent v-else-if='getHelperComponent'
         :comp='getHelperComponent'
@@ -236,6 +237,9 @@ export default {
   methods: {
     ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
+    addTask() {
+      this.$refs.taskHandler.addTaskEdit()
+    },
     spliceRemovedElements(oldArr, presentTags, remove) {
        oldArr.forEach(el => {
          if (!presentTags.includes(el)) {

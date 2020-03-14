@@ -214,6 +214,9 @@ const store = new Vuex.Store({
       
       return ordered
     },
+    itemHeight(s, getters) {
+      return getters.isDesktopDevice ? 28 : 50
+    },
     isSmartList(state, getters) {
       return getters.sidebarElements.find(el => el.name === state.viewName)
     },

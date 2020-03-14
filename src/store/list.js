@@ -49,7 +49,7 @@ export default {
         return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, d.lists)
       return []
     },
-    logLists(state) {
+    logLists(state, getters) {
       const keys = Object.keys(state.lists).filter(
         k => state.lists[k] && getters.isListInLogbook(state.lists[k])
       )

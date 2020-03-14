@@ -20,7 +20,7 @@
           <span v-if="user && user.isAnonymous" class="cursor link rb" @click="$store.dispatch('logOut')">Log out</span>
         </div>
       </transition>
-      <ActionButtons class="action-buttons" v-if="appSection"/>
+      <ActionButtons class="action-buttons" v-if="appSection" :menu='true'/>
     </div>
   </div>
 </template>

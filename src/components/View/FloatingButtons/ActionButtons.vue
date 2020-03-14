@@ -1,12 +1,36 @@
 <template>
-  <div class="ActionButtons passive" :class="[layout, {moving}]" @click="click">
-    <span></span>
+  <div class="ActionButtons passive"
+    :class="[layout, {moving}]"
+    @click="click"
+  >
+    <span v-if="moving"></span>
     <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
       txt='Add item'
     />
+    <span v-if="!moving"></span>
+    <div
+      class="inbox-wrapper"
+      ref='inbox-wrapper'
+
+      @pointerenter='inboxHover = true'
+      @pointerleave='inboxHover = false'
+    >
+      <transition name='trans-t'>
+        <div v-if="moving"
+          class="inbox"
+          :class="{inboxHover}"
+        >
+          <Icon
+            icon='inbox'
+            width='22px'
+            color='white'
+          />
+        </div>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -14,11 +38,12 @@
 
 import ActButtonVue from './ActButton.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import Sortable from 'sortablejs'
 
 export default {
+  props: ['menu'],
   components: {
     Btn: ActButtonVue,
   },
@@ -27,6 +52,7 @@ export default {
       sortable: null,
       showingTaskAdder: false,
       moving: false,
+      inboxHover: false,
     }
   },
   created() {
@@ -43,6 +69,7 @@ export default {
 
       fallbackClass: "sortable-fallback",
       forceFallback: true,
+      delay: 10,
       fallbackOnBody: true,
       fallbackTolerance: 0,
 
@@ -50,6 +77,8 @@ export default {
         this.moving = true
       },
       onEnd: () => {
+        if (this.inboxHover)
+          this.openQuickAdd()
         this.moving = false
       },
     })
@@ -58,20 +87,65 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    openQuickAdd() {
+      this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
+    },
+    runTransition() {
+      // FLIP
+      const target = this.$el.childNodes[1]
+
+      const { top, height, left, width } = document.getElementById('item-renderer-root').getBoundingClientRect()
+      const edit = target.getBoundingClientRect()
+
+      const initial = {
+        left: edit.left,
+        top: edit.top,
+      }
+      const final = {
+        top: (top + height + (this.itemHeight / 2)),
+        left: (left + ((width / 2) - (this.isDesktopBreakPoint ? 25 : 50)))
+      }
+
+      const s = target.style
+
+      const yDiff = final.top - initial.top
+      const xDiff = final.left - initial.left
+
+      s.transitionDuration = 0
+
+      s.transform = 'translate(0px, 0px) scale(1,1)'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = this.isDesktopBreakPoint ? '.2s' : '.15s'
+        s.transitionTimingFunction = 'ease-out'
+
+        s.transform = `translate(${xDiff}px, ${yDiff}px) scale(.95,.95)`
+        const onEnd = () => {
+          this.$emit('add-task')
+          s.transform = `translate(0px, 0px) scale(1,1)`
+          target.removeEventListener('transitionend', onEnd)
+        }
+        target.addEventListener('transitionend', onEnd)
+      })
+
+      
+    },
     click(evt) {
       const path = event.path || (event.composedPath && event.composedPath())
       const els = path
       for (const e of els)
         if (e.classList && e.classList.contains('add-task-floating-button')) {
-          setTimeout(() => {
-            this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
-          }, 50)
+          if (!this.menu)
+            this.runTransition()
+          else
+            this.openQuickAdd()
           break
         }
     },
   },
   computed: {
-    ...mapGetters(['layout', 'isDesktopBreakPoint'])
+    ...mapState(['buttonTarget']),
+    ...mapGetters(['layout', 'itemHeight', 'isDesktopBreakPoint'])
   },
   watch: {
     moving() {
@@ -84,34 +158,78 @@ export default {
 
 <style scoped>
 
+.inbox-wrapper {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  overflow: visible;
+  position: relative;
+}
+
+.inbox {
+  background-color: var(--dark-void);
+  width: 55px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: all;
+  border-radius: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55px;
+  overflow: hidden;
+  transition-duration: .2s;
+}
+
+.inboxHover {
+  width: 80px;
+  height: 80px;
+}
+
+.trans-t-enter, .trans-t-leave-to {
+  height: 0;
+  width: 0;
+  opacity: 0;
+}
+
+.trans-t-leave, .trans-t-enter-to {
+  height: 55px;
+  width: 55px;
+  opacity: 1;
+}
+
+
 .ActionButtons {
   bottom: 16px;
   z-index: 15;
   position: sticky;
   display: flex;
+  flex-direction: row-reverse;
   justify-content: space-between;
   transition: opacity .15s;
   opacity: 1;
   pointer-events: none;
 }
 
-.ActionButtons .header {
-  transform: translateX(-48px) !important;
+/* .ActionButtons .header {
+  transform: translateX(-18px) !important;
   pointer-events: none;
 }
-
+ */
 .ActionButtons .add-task-floating-button {
-  transform: translateX(48px) !important;
+  transform: translateX(18px);
   pointer-events: all;
 }
 
 .ActionButtons.mobile .right-action-floating-button {
-  transform: translateX(-8px) !important;
+  transform: translateX(-8px);
 }
 
-.ActionButtons.mobile .left-act {
+/* .ActionButtons.mobile .left-act {
   transform: translateX(8px) !important;
-}
+} */
 
 </style>
 
@@ -122,7 +240,7 @@ export default {
 }
 
 .ActButton {
-  transition-duration: 0s !important;
+  transition-duration: 0s;
 }
 
 .ActButton .act-button-wrapper, .floating-btn-container .floating, .floating-btn-msg {
