@@ -19,6 +19,8 @@
       data-name='item-renderer'
       tag='div'
 
+      v-bind='rootId'
+
       @dragenter='dragenter'
       @dragover='dragover'
       @drop='drop'
@@ -236,7 +238,6 @@ export default {
     this.updateView()
   },
   mounted() {
-    this.saveFloatingButtonTarget()
     if (this.header && this.header.name === this.addedHeading) {
       if (this.getItems.length === 0)
         this.addEditComp(0)
@@ -244,8 +245,6 @@ export default {
     }
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
-    if (this.isRoot)
-      window.addEventListener('scroll', this.saveFloatingButtonTarget)
     window.addEventListener('touchmove', this.mousemove)
     if (this.isDesktopDevice) {
       window.addEventListener('keydown', this.keydown)
@@ -258,8 +257,6 @@ export default {
     this.destroySortables()
 
     window.removeEventListener('click', this.windowClick)
-    if (this.isRoot)
-      window.removeEventListener('scroll', this.saveFloatingButtonTarget)
     window.removeEventListener('touchmove', this.mousemove)
     if (this.isDesktopDevice) {
       window.removeEventListener('keydown', this.keydown)
@@ -1121,15 +1118,6 @@ export default {
         this.changedViewName = false
       }
     },
-    saveFloatingButtonTarget() {
-      if (this.isRoot) {
-        const { top, height, left, width } = this.draggableRoot.getBoundingClientRect()
-        this.$store.commit('saveFloatingButtonTarget', {
-          top: (top + height + (this.itemHeight / 2)) + 'px',
-          left: (left + ((width / 2) - (this.isDesktopBreakPoint ? 25 : 50))) + 'px'
-        })
-      }
-    },
   },
   computed: {
     ...mapState({
@@ -1149,6 +1137,7 @@ export default {
       moving: state => state.moving,
     }),
     ...mapGetters({
+      itemHeight: 'itemHeight',
       savedTasks: 'task/tasks',
       layout: 'layout',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
@@ -1158,6 +1147,10 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    rootId() {
+      if (this.isRoot && this.comp === "Task")
+        return {id: `item-renderer-root`}
+    },
     allowSortableAdd() {
       return this.mainFallbackItem && (
         this.isRoot ?
@@ -1220,9 +1213,6 @@ export default {
     app() {
       return document.getElementById('app')
     },
-    itemHeight() {
-      return this.isDesktopDevice ? 28 : 50
-    },
     pressingMultiSelectKeys() {
       return this.isOnShift
     },
@@ -1250,11 +1240,6 @@ export default {
     },
   },
   watch: {
-    getItems() {
-      setTimeout(() => {
-        this.saveFloatingButtonTarget()
-      }, 200)
-    },
     viewName() {
       this.deselectAll()
     },

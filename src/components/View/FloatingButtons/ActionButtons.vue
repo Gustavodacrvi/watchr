@@ -4,7 +4,7 @@
     @click="click"
   >
     <span></span>
-    <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
+    <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" ref='edit-component' id="edit-component"
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
@@ -46,6 +46,7 @@ export default {
 
       fallbackClass: "sortable-fallback",
       forceFallback: true,
+      delay: 10,
       fallbackOnBody: true,
       fallbackTolerance: 0,
 
@@ -61,19 +62,58 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    runTransition() {
+      // FLIP
+      const target = this.$refs['edit-component'].$el
+
+      const { top, height, left, width } = document.getElementById('item-renderer-root').getBoundingClientRect()
+      const edit = target.getBoundingClientRect()
+
+      const initial = {
+        left: edit.left,
+        top: edit.top,
+      }
+      const final = {
+        top: (top + height + (this.itemHeight / 2)),
+        left: (left + ((width / 2) - (this.isDesktopBreakPoint ? 25 : 50)))
+      }
+
+      const s = target.style
+
+      const yDiff = final.top - initial.top
+      const xDiff = final.left - initial.left
+
+      s.transitionDuration = 0
+
+      s.transform = 'translate(0px, 0px) scale(1,1)'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+
+        s.transform = `translate(${xDiff}px, ${yDiff}px) scale(.95,.95)`
+        const onEnd = () => {
+          s.transform = `translate(0px, 0px) scale(1,1)`
+          s.ontransitionend = ''
+          target.removeEventListener('transitionend', onEnd)
+        }
+        target.addEventListener('transitionend', onEnd)
+      })
+
+      
+    },
     click(evt) {
       const path = event.path || (event.composedPath && event.composedPath())
       const els = path
       for (const e of els)
         if (e.classList && e.classList.contains('add-task-floating-button')) {
-          this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
+          this.runTransition()
           break
         }
     },
   },
   computed: {
     ...mapState(['buttonTarget']),
-    ...mapGetters(['layout', 'isDesktopBreakPoint'])
+    ...mapGetters(['layout', 'itemHeight', 'isDesktopBreakPoint'])
   },
   watch: {
     moving() {
@@ -103,12 +143,12 @@ export default {
 }
  */
 .ActionButtons .add-task-floating-button {
-  transform: translateX(18px) !important;
+  transform: translateX(18px);
   pointer-events: all;
 }
 
 .ActionButtons.mobile .right-action-floating-button {
-  transform: translateX(-8px) !important;
+  transform: translateX(-8px);
 }
 
 /* .ActionButtons.mobile .left-act {
@@ -124,7 +164,7 @@ export default {
 }
 
 .ActButton {
-  transition-duration: 0s !important;
+  transition-duration: 0s;
 }
 
 .ActButton .act-button-wrapper, .floating-btn-container .floating, .floating-btn-msg {

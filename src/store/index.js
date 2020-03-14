@@ -141,10 +141,6 @@ const store = new Vuex.Store({
     firstFireLoad: false,
     cameFromAnotherTabHTMLElement: null,
     selectedItems: [],
-    buttonTarget: {
-      left: 0,
-      top: 0,
-    },
     fireBaseFirstLoaded: false,
     authState: false,
     fileURL: null,
@@ -217,6 +213,9 @@ const store = new Vuex.Store({
       }
       
       return ordered
+    },
+    itemHeight(s, getters) {
+      return getters.isDesktopDevice ? 28 : 50
     },
     isSmartList(state, getters) {
       return getters.sidebarElements.find(el => el.name === state.viewName)
@@ -438,9 +437,6 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
-    saveFloatingButtonTarget(state, buttonTarget) {
-      state.buttonTarget = buttonTarget
-    },
     toggleSidebarElementHover(state, bool) {
       state.isDraggingOverSidebarElement = bool
     },

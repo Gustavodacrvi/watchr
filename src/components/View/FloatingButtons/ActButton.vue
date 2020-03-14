@@ -55,7 +55,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: 0s !important;
+  transition-duration: 0s;
   position: relative;
 }
 
@@ -76,6 +76,10 @@ export default {
 
 .floating:hover {
   transform: scale(1.1,1.1);
+}
+
+.floating:active {
+  transform: scale(.95,.95);
 }
 
 .inner-ball-button {
@@ -129,7 +133,7 @@ export default {
 }
 
 .bright .path {
-  background-color: rgba(120, 201, 263, .9);
+  background-color: rgb(120, 201, 263);
 }
 
 .inner-ball-button:hover .path {
