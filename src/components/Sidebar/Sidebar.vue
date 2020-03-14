@@ -322,7 +322,7 @@ export default {
     mapFavorites(link) {
       if (link.type === 'tag')
         return {
-          total: this.getNumberOfTasksByTag({tagId: link.id, tags: this.tags}).total,
+          total: this.getNumberOfTasksByTag(link.id).total,
         }
 
       return {

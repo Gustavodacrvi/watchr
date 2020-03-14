@@ -406,7 +406,7 @@ export default {
 }
 
 .Heading + .Heading {
-  margin-top: 55px;
+  margin-top: 65px;
 }
 
 .Heading:hover {

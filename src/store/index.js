@@ -129,6 +129,7 @@ const store = new Vuex.Store({
       calendarOrders: null,
       getGmailInbox: false,
       markEmailsAsRead: false,
+      allowOverdue: false,
       
       disablePmFormat: false,
       
@@ -463,7 +464,7 @@ const store = new Vuex.Store({
       if (!moving)
         state.movingTimeout = setTimeout(() => {
           state.moving = false
-        }, 100)
+        }, 200)
       else {
         if (state.movingTimeout)
           clearTimeout(state.movingTimeout)

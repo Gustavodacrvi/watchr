@@ -55,7 +55,7 @@ export default {
     },
     numberOfTasks(tag) {
       return {
-        total: this.getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
+        total: this.getNumberOfTasksByTag(tag.id).total,
       }
     },
     buttonAdd(obj) {
@@ -113,7 +113,7 @@ export default {
           tag.alreadyExistMessage = 'This tag already exist.'
 
           tag.mapSubTagNumbers = tag => ({
-              total: getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
+              total: getNumberOfTasksByTag(tag.id).total,
             })
 
           tag.subList = getTags(tag.id, tag.order || [])

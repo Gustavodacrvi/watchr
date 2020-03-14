@@ -104,12 +104,13 @@ export default {
       return () => true
       if (n === 'Recurring' || n === 'Inbox')
         return () => true
+        
+      if (n === 'Today' && this.hasOverdueTasks)
+        return () => false
 
       if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
         return t => !t.calendar.evening
 
-      if (n === 'Today' && this.hasOverdueTasks)
-        return () => false
 
       const isHeadingTask = t => t.list || t.folder || t.group
 
@@ -154,6 +155,7 @@ export default {
         case 'Upcoming': return this.upcomingHeadings
         case 'Recurring': return this.recurringHeadings
         case 'Today': {
+          console.log
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return heads
         }

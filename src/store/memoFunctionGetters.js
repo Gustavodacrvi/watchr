@@ -35,11 +35,12 @@ export default (memoizeObject) => {
           thisBinding[str] = rootGetters[str]
           const targetKeys = val.deepGetterTouch[str]
           
-          for (const targetStr of targetKeys) {
-            for (const item of thisBinding[str]) {
-              item[targetStr]
+          if (Array.isArray(thisBinding[str]))
+            for (const targetStr of targetKeys) {
+              for (const item of thisBinding[str]) {
+                item[targetStr]
+              }
             }
-          }
         }
 
       }
@@ -57,10 +58,11 @@ export default (memoizeObject) => {
           thisBinding[str] = rootState[split[0]][split[1]]
           const targetKeys = Object.keys(val.deepStateTouch[str])
 
-          for (const targetStr of targetKeys) {
-            for (const item of thisBinding[str])
-              item[targetStr]
-          }
+          if (Array.isArray(thisBinding[str]))
+            for (const targetStr of targetKeys) {
+              for (const item of thisBinding[str])
+                item[targetStr]
+            }
         }
 
       }

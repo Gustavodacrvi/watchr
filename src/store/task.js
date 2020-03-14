@@ -105,18 +105,24 @@ export default {
     
     ...MemoizeGetters({
       isCalendarObjectShowingToday: {
-        getter({}, calendar, date, specific) {
+        deepStateTouch: {
+          'userInfo/allowOverdue': [],
+        },
+        getter({rootState}, calendar, date, specific) {
           if (!calendar) return false
           const c = calendar
   
           if (specific && c.type !== 'specific') return false
           if (c.type === 'someday') return false
           // specific
+          const tod = mom(date, 'Y-M-D')
           if (c.type === 'specific') {
-            return date === c.specific
+            const allowOverdue = rootState.userInfo.allowOverdue
+            if (allowOverdue || specific)
+              return date === c.specific
+            return tod.isSameOrAfter(mom(c.specific, 'Y-M-D'), 'day')
           }
   
-          const tod = mom(date, 'Y-M-D')
           const begins = mom(c.begins, 'Y-M-D')
   
           if (c.ends) {
@@ -218,7 +224,10 @@ export default {
         },
       },
       isTaskOverdue: {
-        getter({getters}, task, date) {
+        deepStateTouch: {
+          'userInfo/allowOverdue': [],
+        },
+        getter({getters, rootState}, task, date) {
           const calendar = task.calendar
 
           let tod = null
@@ -234,6 +243,8 @@ export default {
           
           const c = calendar
           if (c.type === 'specific') {
+            if (!rootState.userInfo.allowOverdue)
+              return false
             const spec = mom(c.specific, 'Y-M-D')
             return spec.isBefore(getTod(), 'day')
           }
@@ -428,6 +439,7 @@ export default {
               obj = {
                 c: t.calendar,
                 t: t.completed,
+                e: t.checked,
                 d: t.deadline,
               }
               break
@@ -666,11 +678,14 @@ export default {
         }
       },
       doesTaskPassExclusiveTags: {
-        getter({}, task, tags, savedTags) {
+        touchGetters: [
+          'tag/tags',
+        ],
+        getter({}, task, tags) {
 
           const foundChild = parent => {
 
-            const childs = savedTags.filter(tag => tag.parent === parent)
+            const childs = this['tag/tags'].filter(tag => tag.parent === parent)
             for (const tag of childs)
               if ((task.tags && task.tags.includes(tag.id)) || foundChild(tag.id))
                 return true
@@ -691,10 +706,13 @@ export default {
         }
       },
       doesTaskPassInclusiveTags: {
-        getter({}, task, tags, savedTags) {
+        touchGetters: [
+          'tag/tags',
+        ],
+        getter({}, task, tags) {
           const foundChild = parent => {
 
-            const childs = savedTags.filter(tag => tag.parent === parent)
+            const childs = this['tag/tags'].filter(tag => tag.parent === parent)
             for (const tag of childs)
               if ((task.tags && task.tags.includes(tag.id)) || foundChild(tag.id))
                 return true
@@ -709,7 +727,6 @@ export default {
         cache(args) {
           return JSON.stringify({
             k: args[0].tags, t: args[1],
-            s: args[2].map(el => ({i: el.id, p: el.parent})),
           })
         }
       },
@@ -751,9 +768,9 @@ export default {
             'tags',
           ],
         },
-        getter({getters}, {tagId, tags}) {
+        getter({getters}, tagId) {
           const ts = this['task/tasks'].filter(
-            task => getters.doesTaskPassInclusiveTags(task, [tagId], tags)
+            task => getters.doesTaskPassInclusiveTags(task, [tagId])
           )
     
           return {
@@ -763,16 +780,21 @@ export default {
             ).length,
           }
         },
+        cache(args) {
+          return args[0]
+        },
       },
       getOverdueTasks: {
         deepGetterTouch: {
           'task/tasks': [
             'calendar',
             'completed',
+            'checked',
+            'deadline',
           ]
         },
         getter({getters}) {
-          return this['task/tasks'].filter(getters.isTaskOverdue)
+          return this['task/tasks'].filter(t => getters.isTaskOverdue(t))
         },
       },
       getAssignedTasksByList: {

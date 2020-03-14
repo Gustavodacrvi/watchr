@@ -111,19 +111,26 @@
                     >
                       <span v-if="logStr && !showCheckDate" class="check-date" ref='check-name'>{{ logStr }}</span>
                     </transition>
-
-                    <Icon v-if="isToday && !isEvening" class="name-icon" icon="star" color="var(--yellow)"/>
-                    <Icon v-else-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)"/>
-                    <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)"/>
-                    <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
-                    <template v-else>
-                      <span v-if="deadlineStr" class="txt-str alert">{{ deadlineStr }}</span>
-                      <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb">{{ calendarStr }}</span>
-                    </template>
+                    
+                    <transition-group
+                      appear
+                      @enter='infoEnter'
+                      @leave='infoLeave'
+                    >
+                      <Icon v-if="isToday && !isEvening" class="name-icon" icon="star" color="var(--yellow)" key='1'/>
+                      <Icon v-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)" key='2'/>
+                      <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)" key='3'/>
+                      <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)" key='4'/>
+                      <template v-else>
+                        <span v-if="deadlineStr" class="txt-str alert" key='5'>{{ deadlineStr }}</span>
+                        <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb" key='6'>{{ calendarStr }}</span>
+                      </template>
+                    </transition-group>
 
                     <div class="parsed-wrapper">
                       <span v-html="parsedName" ref='parsed-name'></span>
                     </div>
+                    
                     <span v-if="timeStr" class="txt-icon tag dark rb">{{ timeStr }}</span>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
@@ -762,10 +769,6 @@ export default {
         links,
       }
     },
-    isOverdue() {
-      if (this.viewName === 'Overdue') return false
-      return false
-    },
     isToday() {
       if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
       return this.isTaskInView(this.item, 'Today')
@@ -1137,7 +1140,6 @@ export default {
 }
 
 .name-icon {
-  margin-right: 8px;
   transform: translateY(.5px);
 }
 
