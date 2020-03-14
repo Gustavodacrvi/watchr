@@ -678,11 +678,14 @@ export default {
         }
       },
       doesTaskPassExclusiveTags: {
-        getter({}, task, tags, savedTags) {
+        touchGetters: [
+          'tag/tags',
+        ],
+        getter({}, task, tags) {
 
           const foundChild = parent => {
 
-            const childs = savedTags.filter(tag => tag.parent === parent)
+            const childs = this['tag/tags'].filter(tag => tag.parent === parent)
             for (const tag of childs)
               if ((task.tags && task.tags.includes(tag.id)) || foundChild(tag.id))
                 return true
@@ -703,10 +706,13 @@ export default {
         }
       },
       doesTaskPassInclusiveTags: {
-        getter({}, task, tags, savedTags) {
+        touchGetters: [
+          'tag/tags',
+        ],
+        getter({}, task, tags) {
           const foundChild = parent => {
 
-            const childs = savedTags.filter(tag => tag.parent === parent)
+            const childs = this['tag/tags'].filter(tag => tag.parent === parent)
             for (const tag of childs)
               if ((task.tags && task.tags.includes(tag.id)) || foundChild(tag.id))
                 return true
@@ -721,7 +727,6 @@ export default {
         cache(args) {
           return JSON.stringify({
             k: args[0].tags, t: args[1],
-            s: args[2].map(el => ({i: el.id, p: el.parent})),
           })
         }
       },
@@ -763,9 +768,9 @@ export default {
             'tags',
           ],
         },
-        getter({getters}, {tagId, tags}) {
+        getter({getters}, tagId) {
           const ts = this['task/tasks'].filter(
-            task => getters.doesTaskPassInclusiveTags(task, [tagId], tags)
+            task => getters.doesTaskPassInclusiveTags(task, [tagId])
           )
     
           return {
@@ -774,6 +779,9 @@ export default {
               task => !getters.isTaskInView(task, "Logbook")
             ).length,
           }
+        },
+        cache(args) {
+          return args[0]
         },
       },
       getOverdueTasks: {

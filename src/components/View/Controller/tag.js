@@ -40,7 +40,7 @@ export default {
     mainFilter() {
       const tag = this.viewTag
       if (tag)
-        return task => this.doesTaskPassInclusiveTags(task, [tag.id], this.tags || [])
+        return task => this.doesTaskPassInclusiveTags(task, [tag.id])
       return () => false
     },
     rootFilter() {
@@ -85,7 +85,7 @@ export default {
           sort: ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate'),
           filter: task => 
             this.isTaskInLogbook(task) &&
-            this.doesTaskPassInclusiveTags(task, [tagId], this.tags, []),
+            this.doesTaskPassInclusiveTags(task, [tagId]),
           configFilterOptions: p => p !== 'pipeCompleted',
         })
       }
