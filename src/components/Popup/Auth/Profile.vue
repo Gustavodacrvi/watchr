@@ -56,9 +56,14 @@
               @input="getGmailInbox = !getGmailInbox"
             />
             <CheckboxApp class="rb"
-              name='Mark converted messages as read.'
+              name='Mark messages as read.'
               :value='markEmailsAsRead'
               @input="markEmailsAsRead = !markEmailsAsRead"
+            />
+            <CheckboxApp class="rb"
+              name='Enable overdue tasks'
+              :value='allowOverdue'
+              @input="allowOverdue = !allowOverdue"
             />
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
@@ -169,6 +174,7 @@ export default {
       manuallyLogTasks: false,
       getGmailInbox: false,
       markEmailsAsRead: false,
+      allowOverdue: false,
 
       folderFilters: false,
       tagFilters: false,
@@ -243,6 +249,7 @@ export default {
         disablePmFormat: !this.pmFormat,
         hidedSections: this.hidedSections || null,
         hidedViews: this.hidedSmartViews || null,
+        allowOverdue: this.allowOverdue || null,
         ungroupTasksInHeadings: this.ungroupTasksInHeadings || null,
         manuallyLogTasks: this.manuallyLogTasks || null,
         markEmailsAsRead: this.markEmailsAsRead || null,
@@ -256,6 +263,7 @@ export default {
       this.manuallyLogTasks = this.userInfo.manuallyLogTasks
       this.markEmailsAsRead = this.userInfo.markEmailsAsRead
       this.getGmailInbox = this.userInfo.getGmailInbox
+      this.allowOverdue = this.userInfo.allowOverdue
       this.pmFormat = this.getPmFormat
       this.goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter') === 'true'
       this.tagFilters = localStorage.getItem('tagFilters') === 'true'
@@ -281,6 +289,8 @@ export default {
       if (this.ungroupTasksInHeadings !== this.userInfo.ungroupTasksInHeadings)
         return true
       if (this.getGmailInbox !== this.userInfo.getGmailInbox)
+        return true
+      if (this.allowOverdue !== this.userInfo.allowOverdue)
         return true
       if (this.markEmailsAsRead !== this.userInfo.markEmailsAsRead)
         return true

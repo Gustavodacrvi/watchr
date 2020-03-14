@@ -105,7 +105,10 @@ export default {
     
     ...MemoizeGetters({
       isCalendarObjectShowingToday: {
-        getter({}, calendar, date, specific) {
+        deepStateTouch: {
+          'userInfo/allowOverdue': [],
+        },
+        getter({rootState}, calendar, date, specific) {
           if (!calendar) return false
           const c = calendar
   
@@ -113,7 +116,10 @@ export default {
           if (c.type === 'someday') return false
           // specific
           if (c.type === 'specific') {
-            return date === c.specific
+            const allowOverdue = rootState.userInfo.allowOverdue
+            if (allowOverdue || specific)
+              return date === c.specific
+            return mom(date, 'Y-M-D').isSameOrAfter(mom(c.specific, 'Y-M-D'), 'day')
           }
   
           const tod = mom(date, 'Y-M-D')
@@ -769,10 +775,12 @@ export default {
           'task/tasks': [
             'calendar',
             'completed',
+            'checked',
+            'deadline',
           ]
         },
         getter({getters}) {
-          return this['task/tasks'].filter(getters.isTaskOverdue)
+          return this['task/tasks'].filter(t => getters.isTaskOverdue(t))
         },
       },
       getAssignedTasksByList: {

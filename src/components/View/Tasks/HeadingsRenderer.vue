@@ -214,7 +214,7 @@ export default {
 
         s.marginBottom = 0
         if (!isFirst)
-          w.marginTop = this.isDesktopDevice ? '55px': '4px'
+          w.marginTop = '65px'
         s.height = '35px'
         s.borderBottom = '1.5px solid var(--light-gray)'
         w.opacity = 1

@@ -129,6 +129,7 @@ const store = new Vuex.Store({
       calendarOrders: null,
       getGmailInbox: false,
       markEmailsAsRead: false,
+      allowOverdue: false,
       
       disablePmFormat: false,
       

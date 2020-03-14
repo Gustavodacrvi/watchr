@@ -112,7 +112,7 @@
                       <span v-if="logStr && !showCheckDate" class="check-date" ref='check-name'>{{ logStr }}</span>
                     </transition>
                     
-                    <transition
+                    <transition-group
                       appear
                       @enter='infoEnter'
                       @leave='infoLeave'
@@ -125,7 +125,7 @@
                         <span v-if="deadlineStr" class="txt-str alert" key='5'>{{ deadlineStr }}</span>
                         <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb" key='6'>{{ calendarStr }}</span>
                       </template>
-                    </transition>
+                    </transition-group>
 
                     <div class="parsed-wrapper">
                       <span v-html="parsedName" ref='parsed-name'></span>
@@ -769,16 +769,12 @@ export default {
         links,
       }
     },
-    isOverdue() {
-      if (this.viewName === 'Overdue') return false
-      return false
-    },
     isToday() {
       if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
       return this.isTaskInView(this.item, 'Today')
     },
     isTaskOverdue() {
-      if (this.viewName === 'Today') return false
+      if (!this.userInfo.allowOverdue || this.viewName === 'Today') return false
       return this.isTaskInView(this.item, 'Overdue')
     },
     isTomorrow() {
