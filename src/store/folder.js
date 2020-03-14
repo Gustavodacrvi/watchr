@@ -4,9 +4,12 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
+import utilsList from '../utils/list'
 import MemoizeGetters from './memoFunctionGetters'
 import { uid, deleteFolder, setFolder, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks } from '../utils/firestore'
 import mom from 'moment'
+
+const TOD_DATE = mom().format('Y-M-D')
 
 export default {
   namespaced: true,
@@ -42,20 +45,41 @@ export default {
         ])
       return []
     },
-    ...MemoizeGetters('folders', {
-      getFolderTaskOrderById({state, getters}, folderId) {
-        const fold = getters.folders.find(f => f.id === folderId)
-        if (fold && fold.tasks)
-          return fold.tasks
-        return []
+    ...MemoizeGetters({
+      getFolderTaskOrderById: {
+        deepGetterTouch: {
+          'folder/folders': [
+            'tasks'
+          ]
+        },
+        getter({}, folderId) {
+          const fold = this['folder/folders'].find(f => f.id === folderId)
+          if (fold && fold.tasks)
+            return fold.tasks
+          return []
+        },
+        cache(args) {
+          return args[0]
+        },
       },
       getListsByFolderId: {
-        react: [
-          'order',
-        ],
-        getter({getters, rootGetters}, {id, lists}) {
-          const fold = getters.folders.find(f => f.id === id)
+        deepGetterTouch: {
+          'folder/sortedFolders': [
+            'order'
+          ],
+          'list/lists': [
+            'completed',
+            'canceled',
+            'folder',
+            'calendar',
+            'group',
+            'assigned',
+          ]
+        },
+        getter({rootGetters}, id) {
+          const fold = this['folder/sortedFolders'].find(f => f.id === id)
           const arr = []
+          const lists = utilsList.filterSidebarLists(rootGetters, this['list/lists'], TOD_DATE)
           for (const l of lists)
             if (l.folder && l.folder === id) arr.push(l)
           let order = fold.order
@@ -63,14 +87,7 @@ export default {
           return rootGetters.checkMissingIdsAndSortArr(order, arr)
         },
         cache(args) {
-          return JSON.stringify({
-            f: args[0].id,
-            l: args[0].lists.map(el => ({
-              i: el.id,
-              f: el.folder,
-              u: el.userId,
-            }))
-          })
+          return args[0]
         },
       },
       getFoldersByName: {
@@ -92,7 +109,7 @@ export default {
           if (ids.includes(f.id)) arr.push(f)
         return arr
       },
-    }, true),
+    }),
     getFavoriteFolders(state, getters) {
       return getters.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: 'var(--txt)'}))
     },
@@ -112,12 +129,12 @@ export default {
 
       b.commit()
     },
-    updateFoldersOrder(c, ids) {
+    updateFoldersOrder({rootState}, ids) {
       const b = fire.batch()
       
       setInfo(b, {
         folders: ids,
-      })
+      }, rootState)
 
       b.commit()
     },
@@ -142,7 +159,7 @@ export default {
 
       const writes = []
 
-      setInfo(b, {lists: ids}, writes)
+      setInfo(b, {lists: ids}, rootState, writes)
       setList(b, {folder: null, group: null,}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)
@@ -164,7 +181,7 @@ export default {
     deleteFolderById({getters, rootState}, {id, lists, tasks}) {
       const b = fire.batch()
 
-      const folderLists = getters.getListsByFolderId({id, lists})
+      const folderLists = getters.getListsByFolderId(id)
       const folderTasks = tasks.filter(t => t.folder === id)
 
       const writes = []

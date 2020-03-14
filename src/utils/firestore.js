@@ -210,7 +210,6 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
         
         if (isNewTask || updatingPersonalTask) { // Create and add task to personal/update.
 
-
           setPersonalTask()
 
           if (!writes)
@@ -800,11 +799,14 @@ export const setPomo = (batch, doc) => {
   }, {merge: true})
   batch.set(pomoDoc(), obj, {merge: true})
 }
-export const setInfo = (batch, info, writes) => {
+export const setInfo = (batch, info, rootState, writes) => {
   const obj = {
     ...info, id: 'info',
     userId: uid(),
   }
+
+  utils.findChangesBetweenObjs(rootState.userInfo, obj)
+  
   if (!writes)
     batch.set(cacheRef(), {
       info: {

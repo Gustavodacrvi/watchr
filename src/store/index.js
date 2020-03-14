@@ -178,44 +178,42 @@ const store = new Vuex.Store({
     toggleClipboardPaste: false,
   },
   getters: {
-    ...Memoize(null, {
-      checkMissingIdsAndSortArr({}, order, arr, property = 'id') {
+    checkMissingIdsAndSortArr: () => (order, arr, property = 'id') => {
 
-        let items = []
-        for (const id of order) {
-          const item = arr.find(el => el[property] === id)
-          if (item) items.push(item)
+      let items = []
+      for (const id of order) {
+        const item = arr.find(el => el[property] === id)
+        if (item) items.push(item)
+      }
+  
+      let notIncluded = []
+      for (const item of arr) {
+        if (!order.includes(item[property]))
+          notIncluded.push(item)
+      }
+  
+      let haveCreationDate = true
+      for (const item of notIncluded) {
+        if (!item.created) {
+          haveCreationDate = false
+          break
         }
+      }
+      if (haveCreationDate)
+        notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
+      items = [...items, ...notIncluded]
     
-        let notIncluded = []
-        for (const item of arr) {
-          if (!order.includes(item[property]))
-            notIncluded.push(item)
+      const ids = new Set()
+      const ordered = []
+      for (const item of items) {
+        if (!ids.has(item[property])) {
+          ids.add(item[property])
+          ordered.push(item)
         }
-    
-        let haveCreationDate = true
-        for (const item of notIncluded) {
-          if (!item.created) {
-            haveCreationDate = false
-            break
-          }
-        }
-        if (haveCreationDate)
-          notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
-        items = [...items, ...notIncluded]
+      }
       
-        const ids = new Set()
-        const ordered = []
-        for (const item of items) {
-          if (!ids.has(item[property])) {
-            ids.add(item[property])
-            ordered.push(item)
-          }
-        }
-        
-        return ordered
-      },
-    }),
+      return ordered
+    },
     isSmartList(state, getters) {
       return getters.sidebarElements.find(el => el.name === state.viewName)
     },
@@ -641,10 +639,10 @@ const store = new Vuex.Store({
         }, {merge: true})
       })
     },
-    setInfo(c, obj) {
+    setInfo({rootState}, obj) {
       const b = fire.batch()
 
-      setInfo(b, obj)
+      setInfo(b, obj, rootState)
 
       b.commit()
     },
@@ -653,15 +651,6 @@ const store = new Vuex.Store({
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
 
-        utils.addIdsToObjectFromKeys(data.tasks)
-        utils.addIdsToObjectFromKeys(data.tags)
-        utils.addIdsToObjectFromKeys(data.folders)
-        utils.addIdsToObjectFromKeys(data.stats)
-        utils.addIdsToObjectFromKeys(data.lists)
-
-        if (data.info && data.info.info)
-          utils.findChangesBetweenObjs(state.userInfo, data.info.info, (key, val) => Vue.set(state.userInfo, key, val))
-        
         setTimeout(() => {
           dispatch('pomo/updateDurations')
         })
@@ -671,7 +660,16 @@ const store = new Vuex.Store({
           utils.updateVuexObject(state.tag, 'tags', data.tags || {})
           utils.updateVuexObject(state.folder, 'folders', data.folders || {})
           utils.updateVuexObject(state.list, 'lists', data.lists || {})
-        } else {
+        } else if (!isFromHere) {
+          if (data.info && data.info.info)
+            utils.findChangesBetweenObjs(state.userInfo, data.info.info, (key, val) => Vue.set(state.userInfo, key, val))
+          
+          utils.addIdsToObjectFromKeys(data.tasks)
+          utils.addIdsToObjectFromKeys(data.tags)
+          utils.addIdsToObjectFromKeys(data.folders)
+          utils.addIdsToObjectFromKeys(data.stats)
+          utils.addIdsToObjectFromKeys(data.lists)
+          
           if (data.stats)
             state.pomo.stats = data.stats.pomo || {}
           if (data.tasks)

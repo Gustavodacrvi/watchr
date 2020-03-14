@@ -1,5 +1,5 @@
 <template>
-  <input :value="str" @input="v => str = v.target.value" class="Input cbd" autocomplete="off" type="text" @keydown="keydown">
+  <input :value="str" @input="v => str = v.target.value" class="Input cbd" autocomplete="off" type="text" @keydown="keydown" @keyup='keyup'>
 </template>
 
 <script>
@@ -26,7 +26,7 @@ export default {
       }, 200)
     },
     keyup({key}) {
-      if (key === 'Control') this.shfit = false
+      if (key === 'Shift') this.shfit = false
     },
     keydown(evt) {
       this.$emit('keydown', evt)

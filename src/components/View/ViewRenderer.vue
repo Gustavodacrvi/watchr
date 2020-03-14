@@ -526,9 +526,9 @@ export default {
                     list: item,
                     ids: fallbackItems,
                   })
-                } else if (item.calendar && item.calendar.specific) {
+                } else if (item.deadline || item.deadline === null) {
                   dispatch('list/saveListsById', {
-                    list: {deadline: item.calendar.specific},
+                    list: {deadline: item.deadline},
                     ids: fallbackItems
                   })
                 } else if (item.calendar || (item.calendar === null)) {
@@ -639,7 +639,6 @@ export default {
       this.pagination = newPage
     },
     selectTag(name) {
-      console.warn('NOT THIS')
       const inc = this.inclusiveTags
       const exc = this.exclusiveTags
       if (!inc.includes(name) && !exc.includes(name)) {

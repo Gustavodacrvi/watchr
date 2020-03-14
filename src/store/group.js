@@ -4,9 +4,13 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
+import utilsList from '../utils/list'
 import MemoizeGetters from './memoFunctionGetters'
 import { uid, deleteGroup, addGroup, setInfo, setTask, batchSetLists,setList, cacheBatchedItems, readComments, addComment, batchSetTasks, deleteComment,setGroup, setGroupInfo } from '../utils/firestore'
+
 import mom from 'moment'
+
+const TOD_DATE = mom().format('Y-M-D')
 
 export default {
   namespaced: true,
@@ -18,6 +22,13 @@ export default {
       const groups = state.groups
       groups.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       return groups
+    },
+    sortedGroups(state, d, {userInfo}, rootGetters) {
+      let order = userInfo.folders
+      if (!order) order = []
+      if (userInfo)
+        return rootGetters.checkMissingIdsAndSortArr(order, state.groups)
+      return []
     },
     getAssigneeIconDrop: (s, getters, rootState) => ({group = null}, assignUser) => {
       const itemGroup = getters.getGroupsById([group])[0]
@@ -60,31 +71,38 @@ export default {
         allowSearch: true,
       }
     },
-    ...MemoizeGetters('groups', {
-      react: [
-        'profiles',
-        'users',
-      ],
+    getFavoriteGroups(state) {
+      return state.groups.filter(f => f.favorite).map(f => ({...f, icon: 'group', color: 'var(--txt)'}))
+    },
+    ...MemoizeGetters({
       getAllNonReadComments: {
-        react: [
-          'comments',
+        touchGetters: [
+          'group/getGroupsById',
+          'group/nonReadCommentsById',
         ],
-        getter({getters}, groupId) {
-          const group = getters.getGroupsById([groupId])[0]
+        getter({}, groupId) {
+          const group = this['group/getGroupsById']([groupId])[0]
           if (group.comments) {
             return Object.keys(group.comments).map(id =>
-              getters.nonReadCommentsById(groupId, id)
+              this['group/nonReadCommentsById'](groupId, id)
             ).flat()
           }
           return []
         },
       },
       nonReadCommentsById: {
-        react: [
-          'comments',
+        touchGetters: [
+          'group/getGroupsById',
         ],
-        getter({getters}, groupId, id) {
-          const group = getters.getGroupsById([groupId])[0]
+        deepStateTouch: {
+          'group/groups': [
+            'profiles',
+            'users',
+            'comments',
+          ]
+        },
+        getter({}, groupId, id) {
+          const group = this['group/getGroupsById']([groupId])[0]
           if (group) {
             const groupComments = group.comments || {}
             const room = groupComments[id]
@@ -102,28 +120,50 @@ export default {
           }
           return []
         },
+      },
+      getGroupTaskOrderById: {
+        deepStateTouch: {
+          'group/groups': [
+            'order',
+          ],
+        },
+        getter({}, groupId) {
+          const gro = this['group/groups'].find(f => f.id === groupId)
+          if (gro && gro.order)
+            return gro.order
+          return []
+        },
         cache(args) {
-          return JSON.stringify(args)
+          return args[0]
         },
       },
-      getGroupTaskOrderById({state}, groupId) {
-        const gro = state.groups.find(f => f.id === groupId)
-        if (gro && gro.order)
-          return gro.order
-        return []
-      },
       getListsByGroupId: {
-        react: [
-          'completed',
-          'canceled',
-          'folder',
-          'calendar',
-          'group',
-          'assigned',
-        ],
-        getter({state, rootGetters}, {id, lists}) {
+        deepStateTouch: {
+          'group/groups': [
+            'listsOrder',
+          ],
+        },
+        deepGetterTouch: {
+          'list/lists': [
+            'completed',
+            'canceled',
+            'folder',
+            'calendar',
+            'group',
+            'assigned',
+          ],
+          'task/allTasks': [
+            'calendar',
+            'completed',
+            'list',
+            'folder',
+            'group',
+          ]
+        },
+        getter({rootGetters}, id) {
           const arr = []
-          const gro = state.groups.find(f => f.id === id)
+          const gro = this['group/groups'].find(f => f.id === id)
+          const lists = utilsList.filterSidebarLists(rootGetters, this['list/lists'], TOD_DATE)
           for (const l of lists)
             if (l.group && l.group === id) arr.push(l)
             
@@ -132,13 +172,9 @@ export default {
           const res = rootGetters.checkMissingIdsAndSortArr(order, arr)
           return res
         },
-      },
-      sortedGroups(state, d, {userInfo}, rootGetters) {
-        let order = userInfo.folders
-        if (!order) order = []
-        if (userInfo)
-          return rootGetters.checkMissingIdsAndSortArr(order, state.groups)
-        return []
+        cache(args) {
+          return args[0]
+        },
       },
       getGroupsByName: {
         react: [
@@ -153,16 +189,18 @@ export default {
           return arr
         },
       },
-      getGroupsById({state}, ids) {
-        const arr = []
-        for (const f of state.groups)
-          if (ids.includes(f.id)) arr.push(f)
-        return arr
+      getGroupsById: {
+        touchState: [
+          'group/groups',
+        ],
+        getter({}, ids) {
+          const arr = []
+          for (const f of this['group/groups'])
+            if (ids.includes(f.id)) arr.push(f)
+          return arr
+        },
       },
     }),
-    getFavoriteGroups(state) {
-      return state.groups.filter(f => f.favorite).map(f => ({...f, icon: 'group', color: 'var(--txt)'}))
-    },
   },
   actions: {
     addGroup({rootState}, gro) {
@@ -214,7 +252,7 @@ export default {
 
       const writes = []
 
-      setInfo(b, {lists: ids}, writes)
+      setInfo(b, {lists: ids}, rootState, writes)
       setList(b, {group: null}, id, rootState, writes)
 
       cacheBatchedItems(b, writes)

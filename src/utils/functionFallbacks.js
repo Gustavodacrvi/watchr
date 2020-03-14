@@ -169,16 +169,16 @@ export default {
       
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(utilsTask.concatArraysRemovingOldEls(scheduleOrder, finalIds), calendarDate, rootState)
 
-      setInfo(b, {calendarOrders}, writes)
+      setInfo(b, {calendarOrders}, writes, rootState)
     },
-    smartOrder(b, writes, {viewName, finalIds}) {
+    smartOrder(b, writes, {viewName, finalIds, rootState}) {
       const obj = {}
       obj[viewName] = {}
       obj[viewName].tasks = finalIds
       
       setInfo(b, {
         viewOrders: obj,
-      }, writes)
+      }, rootState, writes)
     },
     smartViewLists(b, writes, {finalIds, rootState, viewName, rootGetters, listId}) {
       const list = rootGetters['list/getListsById']([listId])[0]

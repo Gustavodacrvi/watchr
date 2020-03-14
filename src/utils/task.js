@@ -6,6 +6,31 @@ import utils from './index'
 import { fd } from '../utils/firestore'
 
 export default {
+  isTaskInLogbook(task) {
+    const { logbook, calendar } = task
+
+    const c = calendar
+
+    if (!c || c.type === 'specific' || c.type === 'someday')
+      return logbook
+    
+    if (c.ends) {
+      if (c.ends.type === 'on date' && TODAY_MOM.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day'))
+        return true
+      else if (c.ends.times === 0)
+        return true
+    }
+  },
+  isTaskCompleted(task, moment, compareDate) {
+    let isCompleted = utils.isItemCompleted(task, moment)
+    if (compareDate) {
+      if (!task.completeDate) return false
+      const taskCompleteDate = mom(task.completeDate, 'Y-M-D')
+      const compare = mom(compareDate, 'Y-M-D')
+      return isCompleted && taskCompleteDate.isSameOrAfter(compare, 'day')
+    }
+    return isCompleted
+  },
   sortTasksByPriority(tasks) {
     const priority = (t1, t2) => {
       const priA = t1.priority

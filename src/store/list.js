@@ -4,6 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from "@/utils/task"
+import utilsList from "@/utils/list"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
 import { listRef, setInfo, uid, listColl, taskRef, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists, setGroup } from '../utils/firestore'
@@ -43,7 +44,7 @@ export default {
       
       return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
-    sortedLists(state, d, {userInfo}, rootGetters) {
+    sortedLists(s, d, {userInfo}, rootGetters) {
       if (userInfo)
         return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, d.lists)
       return []
@@ -58,9 +59,29 @@ export default {
       
       return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
-    ...MemoizeGetters(null, {
-      getTasks({}, tasks, id) {
-        return tasks.filter(el => el.list === id)
+    filteredSidebarLists(s, getters, a, rootGetters) {
+      return utilsList.filterSidebarLists(rootGetters, getters.lists)
+    },
+
+    isListCanceled: () => l => l.canceled,
+    isListSomeday: () => l => l.calendar && l.calendar.type === 'someday',
+    
+    ...MemoizeGetters({
+      getTasks: {
+        deepGetterTouch: {
+          'task/allTasks': [
+            'group',
+            'list',
+            'heading',
+            'folder',
+          ],
+        },
+        getter({}, id) {
+          return this['task/allTasks'].filter(el => el.list === id)
+        },
+        cache(args) {
+          return args[0]
+        },
       },
       isRecurringList: {
         getter({}, list) {
@@ -123,16 +144,6 @@ export default {
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
       },
-      isListCanceled: {
-        getter({}, list) {
-          return list.canceled
-        },
-        cache(args) {
-          return JSON.stringify({
-            c: args[0].canceled,
-          }) 
-        },
-      },
       isListShowingOnDate: {
         getter({}, list, date) {
           if (!utilsTask.hasCalendarBinding(list) || list.calendar.type === 'someday')
@@ -183,14 +194,6 @@ export default {
             date: args[1],
             onlySpecific: args[2],
           })
-        },
-      },
-      isListSomeday: {
-        getter(c, list) {
-          return list.calendar && list.calendar.type === 'someday'
-        },
-        cache(args) {
-          return JSON.stringify({c: args[0].calendar})
         },
       },
       getListCalendarStr: {
@@ -305,77 +308,6 @@ export default {
           return JSON.stringify(args[0].calendar)
         },
       },
-    }),
-    ...MemoizeGetters('lists', {
-      getEndsTodayLists: {
-        react: [
-          'deadline',
-          'completed',
-          'canceled',
-          'assigned',
-        ],
-        getter({getters}, date) {
-          return getters.lists.filter(l => getters.isListLastDeadlineDay(l, date))
-        },
-        cache(args) {
-          return JSON.stringify(args[0])
-        },
-      },
-      getListHeadingsById: {
-        react: [
-          'headings',
-        ],
-        getter({getters}, id) {
-          return getters.lists.find(el => el.id === id).headings
-        },
-      },
-      getLaterLists: {
-        react: [
-          'calendar',
-        ],
-        getter({getters}) {
-          return getters.lists.filter(getters.isLaterList)
-        },
-      },
-      getBeginsTodayLists: {
-        react: [
-          'completed',
-          'canceled',
-          'calendar',
-        ],
-        getter({getters}, date) {
-          return getters.lists.filter(l => getters.isListBeginDay(l, date))
-        },
-        cache(args) {
-          return JSON.stringify(args[0])
-        },
-      },
-      isListAnytime: {
-        getter({}, list) {
-          return !utilsTask.hasCalendarBinding(list)
-        },
-        cache(args) {
-          const t = args[0]
-          return JSON.stringify({
-            l: t.list, f: t.folder, t: t.tags,
-            c: t.calendar,
-          })
-        },
-      },
-      isListOnCalendarView: {
-        getter({getters}, list, date = TOD_DATE) {
-          if (list.deadline === date)
-            return true
-          return getters.isListBeginDay(list, date)
-        },
-        cache(args) {
-          return JSON.stringify({
-            c: args[0].calendar,
-            e: args[0].deadline,
-            d: args[1],
-          })
-        },
-      },
       isListInView: {
         getter({getters, rootState}, list, view) {
           switch (view) {
@@ -437,72 +369,123 @@ export default {
           return JSON.stringify({obj, view})
         },
       },
+      isListAnytime: {
+        getter({}, list) {
+          return !utilsTask.hasCalendarBinding(list)
+        },
+        cache(args) {
+          const t = args[0]
+          return JSON.stringify({
+            l: t.list, f: t.folder, t: t.tags,
+            c: t.calendar,
+          })
+        },
+      },
+      isListOnCalendarView: {
+        getter({getters}, list, date = TOD_DATE) {
+          if (list.deadline === date)
+            return true
+          return getters.isListBeginDay(list, date)
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].calendar,
+            e: args[0].deadline,
+            d: args[1],
+          })
+        },
+      },
+    }),
+    ...MemoizeGetters({
+      getEndsTodayLists: {
+        deepGetterTouch: {
+          'list/lists': [
+            'deadline',
+            'completed',
+            'canceled',
+            'assigned',
+          ]
+        },
+        getter({getters}, date) {
+          return this['list/lists'].filter(l => getters.isListLastDeadlineDay(l, date))
+        },
+        cache(args) {
+          return args[0]
+        },
+      },
+      getListHeadingsById: {
+        deepGetterTouch: {
+          'list/lists': [
+            'headings',
+          ],
+        },
+        getter({}, id) {
+          return this['list/lists'].find(el => el.id === id).headings
+        },
+      },
+      getLaterLists: {
+        deepGetterTouch: {
+          'list/lists': [
+            'calendar',
+          ],
+        },
+        getter({getters}) {
+          return this['list/lists'].filter(getters.isLaterList)
+        },
+      },
+      getBeginsTodayLists: {
+        deepGetterTouch: {
+          'list/lists': [
+            'completed',
+            'canceled',
+            'calendar',
+          ]
+        },
+        getter({getters}, date) {
+          return this['list/lists'].filter(l => getters.isListBeginDay(l, date))
+        },
+        cache(args) {
+          return args[0]
+        },
+      },
       getListsByName: {
-        react: [
-          'name',
-        ],
-        getter({getters}, names) {
+        deepGetterTouch: {
+          'list/lists': [
+            'name',
+          ],
+        },
+        getter({}, names) {
           const arr = []
           for (const n of names) {
-            const list = getters.lists.find(el => el.name === n)
+            const list = this['list/lists'].find(el => el.name === n)
             if (list) arr.push(list)
           }
           return arr
         },
       },
-      getListsById({getters}, ids) {
-        const arr = []
-        for (const id of ids) {
-          let list = getters.allLists.find(el => el.id === id)
-          if (list) arr.push(list)
-        }
-        return arr
-      },
-      getListByName: {
-        react: ['name'],
-        getter({getters}, name) {
-          return getters.lists.find(l => l.name && l.name.trim() === name)
-        },
-      },
-      filterSidebarLists: {
-        react: [
-          'completed',
-          'canceled',
-          'folder',
-          'calendar',
-          'group',
-          'assigned',
+      getListsById: {
+        touchGetters: [
+          'list/allLists',
         ],
-        getter({getters}, order, lists) {
-          return lists.filter(l =>
-              !getters.isListCompleted(l) &&
-              !getters.isListCanceled(l) &&
-              !getters.isListSomeday(l) &&
-              getters.isListShowingOnDate(l, TOD_DATE)
-            )
-        },
-        cache(args) {
-          return JSON.stringify({
-            o: args[0],
-            c: args[1].map(el => ({
-              c: el.completed,
-              ca: el.canceled,
-              f: el.folder,
-              ass: el.assigned,
-              cab: el.calendar,
-              g: el.group
-            }))
-          })
+        getter({}, ids) {
+          const arr = []
+          for (const id of ids) {
+            let list = this['list/allLists'].find(el => el.id === id)
+            if (list) arr.push(list)
+          }
+          return arr
         },
       },
       getAllTasksOrderByList: {
-        react: [
-          'headingsOrder',
-          'headings',
-          'tasks',
-        ],
-        getter({getters, rootGetters}, listId) {
-          const list = getters.lists.find(el => el.id === listId)
+        deepGetterTouch: {
+          'list/lists': [
+            'headingsOrder',
+            'headings',
+            'tasks',
+          ]
+        },
+        getter({rootGetters}, listId) {
+          const list = this['list/lists'].find(el => el.id === listId)
           let ord = (list.tasks && list.tasks.slice()) || []
           
           let headsOrder = list.headingsOrder.slice()
@@ -515,42 +498,67 @@ export default {
           
           return ord
         },
+        cache(args) {
+          return args[0]
+        },
       },
-      pieProgress({getters, state}, tasks, listId, isTaskCompleted) {
-        const list = getters.lists.find(el => el.id === listId)
-        if (list) {
-          const c = list.calendar
-          const ts = getters.getTasks(tasks, listId)
-          const numberOfTasks = ts.length
-          let completedTasks = 0
-          
-          let compareDate = null
-          if (c && c.lastCompleteDate)
-            compareDate = c.lastCompleteDate
-    
-          ts.forEach(el => {
-            if (isTaskCompleted(el, TOD_DATE, compareDate)) completedTasks++
-          })
-          const result = 100 * completedTasks / numberOfTasks
-          if (isNaN(result)) return 0
-          return result
-        }
-        return 0
+      pieProgress: {
+        touchGetters: [
+          'list/getTasks',
+        ],
+        deepGetterTouch: {
+          'list/lists': [
+            'calendar',
+          ],
+          'task/allTasks': [
+            'calendar',
+            'completed',
+            'list',
+            'folder',
+            'group',
+          ]
+        },
+        getter({}, listId) {
+          const list = this['list/lists'].find(el => el.id === listId)
+          if (list) {
+            const c = list.calendar
+            const ts = this['list/getTasks'](listId)
+            const numberOfTasks = ts.length
+            let completedTasks = 0
+            
+            let compareDate = null
+            if (c && c.lastCompleteDate)
+              compareDate = c.lastCompleteDate
+      
+              ts.forEach(el => {
+                if (utilsTask.isTaskCompleted(el, TOD_DATE, compareDate)) completedTasks++
+              })
+            const result = 100 * completedTasks / numberOfTasks
+            if (isNaN(result)) return 0
+            return result
+          }
+          return 0
+        },
+        cache(args) {
+          return args[0]
+        },
       },
       getNumberOfListsByView: {
-        react: [
-          'calendar',
-          'completed',
-          'list',
-          'folder',
-          'deadline',
-          'group',
-          'tags',
-          'assigned',
-          'completeDate',
-        ],
+        deepGetterTouch: {
+          'list/lists': [
+            'calendar',
+            'completed',
+            'list',
+            'folder',
+            'deadline',
+            'group',
+            'tags',
+            'assigned',
+            'completeDate',
+          ]
+        },
         getter({getters}, viewName) {
-          const ts = getters.lists.filter(
+          const ts = this['list/lists'].filter(
             list => getters.isListInView(list, viewName)
           )
 
@@ -569,8 +577,11 @@ export default {
             ).length,
           }
         },
+        cache(args) {
+          return args[0]
+        },
       },
-    }, true),
+    }),
     getFavoriteLists(s, getters) {
       return getters.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))
     },
@@ -762,7 +773,7 @@ export default {
       }, newItemRef.id, rootState, writes)
       setInfo(b, {
         lists: ids,
-      }, writes)
+      }, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -999,14 +1010,14 @@ export default {
   
       b.commit()
     },
-    updateOrder(c, lists) {
+    updateOrder({rootState}, lists) {
       const b = fire.batch()
       
-      setInfo(b, {lists})
+      setInfo(b, {lists}, rootState)
 
       b.commit()
     },
-    updateViewOrder({state}, {view, ids}) {
+    updateViewOrder({rootState}, {view, ids}) {
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
@@ -1014,7 +1025,7 @@ export default {
       
       setInfo(b, {
         viewOrders: obj,
-      })
+      }, rootState)
 
       b.commit()
     },
@@ -1064,7 +1075,7 @@ export default {
       obj[view].tasks = ids
       setInfo(b, {
         viewOrders: obj,
-      }, writes)
+      }, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
@@ -1083,7 +1094,7 @@ export default {
 
       setInfo(b, {calendarOrders}, writes)
 
-      cacheBatchedItems(b, writes)
+      cacheBatchedItems(b, writes, rootState)
 
       b.commit()
     },
@@ -1218,7 +1229,7 @@ export default {
 
       b.commit()
     },
-    updateHeadingsViewOrder({}, {view, ids}) {
+    updateHeadingsViewOrder({rootState}, {view, ids}) {
       const obj = {}
       obj[view] = {}
       obj[view].headings = ids
@@ -1226,7 +1237,7 @@ export default {
       
       setInfo(b, {
         viewOrders: obj,
-      })
+      }, rootState)
 
       b.commit()
     },
@@ -1234,7 +1245,7 @@ export default {
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState, 'headings')
       const b = fire.batch()
 
-      setInfo(b, {calendarOrders})
+      setInfo(b, {calendarOrders}, rootState)
 
       b.commit()
     },

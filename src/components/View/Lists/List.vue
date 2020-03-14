@@ -322,13 +322,13 @@ export default {
       return this.getListDeadlineStr(list, tod.format('Y-M-D'))
     },
     listTasks() {
-      return this.getListTasks(this.tasks, this.item.id)
+      return this.getListTasks(this.item.id)
     },
     listTasksLength() {
       return this.listTasks.length
     },
     getListProgress() {
-      return this.$store.getters['list/pieProgress'](this.$store.getters['task/allTasks'], this.item.id, task => this.$store.getters['task/isTaskInList'](task, 'Logbook'))
+      return this.$store.getters['list/pieProgress'](this.item.id)
     },
   },
   watch: {
