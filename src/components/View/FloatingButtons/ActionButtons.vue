@@ -1,5 +1,8 @@
 <template>
-  <div class="ActionButtons passive" :class="[layout, {moving}]" @click="click">
+  <div class="ActionButtons passive"
+    :class="[layout, {moving}]"
+    @click="click"
+  >
     <span></span>
     <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
       icon='plus'
@@ -14,7 +17,7 @@
 
 import ActButtonVue from './ActButton.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import Sortable from 'sortablejs'
 
@@ -63,14 +66,13 @@ export default {
       const els = path
       for (const e of els)
         if (e.classList && e.classList.contains('add-task-floating-button')) {
-          setTimeout(() => {
-            this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
-          }, 50)
+          this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
           break
         }
     },
   },
   computed: {
+    ...mapState(['buttonTarget']),
     ...mapGetters(['layout', 'isDesktopBreakPoint'])
   },
   watch: {
@@ -95,13 +97,13 @@ export default {
   pointer-events: none;
 }
 
-.ActionButtons .header {
-  transform: translateX(-48px) !important;
+/* .ActionButtons .header {
+  transform: translateX(-18px) !important;
   pointer-events: none;
 }
-
+ */
 .ActionButtons .add-task-floating-button {
-  transform: translateX(48px) !important;
+  transform: translateX(18px) !important;
   pointer-events: all;
 }
 
@@ -109,9 +111,9 @@ export default {
   transform: translateX(-8px) !important;
 }
 
-.ActionButtons.mobile .left-act {
+/* .ActionButtons.mobile .left-act {
   transform: translateX(8px) !important;
-}
+} */
 
 </style>
 

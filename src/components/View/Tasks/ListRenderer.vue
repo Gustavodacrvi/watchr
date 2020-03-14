@@ -236,6 +236,7 @@ export default {
     this.updateView()
   },
   mounted() {
+    this.saveFloatingButtonTarget()
     if (this.header && this.header.name === this.addedHeading) {
       if (this.getItems.length === 0)
         this.addEditComp(0)
@@ -243,6 +244,8 @@ export default {
     }
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
+    if (this.isRoot)
+      window.addEventListener('scroll', this.saveFloatingButtonTarget)
     window.addEventListener('touchmove', this.mousemove)
     if (this.isDesktopDevice) {
       window.addEventListener('keydown', this.keydown)
@@ -255,6 +258,8 @@ export default {
     this.destroySortables()
 
     window.removeEventListener('click', this.windowClick)
+    if (this.isRoot)
+      window.removeEventListener('scroll', this.saveFloatingButtonTarget)
     window.removeEventListener('touchmove', this.mousemove)
     if (this.isDesktopDevice) {
       window.removeEventListener('keydown', this.keydown)
@@ -1116,6 +1121,15 @@ export default {
         this.changedViewName = false
       }
     },
+    saveFloatingButtonTarget() {
+      if (this.isRoot) {
+        const { top, height, left, width } = this.draggableRoot.getBoundingClientRect()
+        this.$store.commit('saveFloatingButtonTarget', {
+          top: (top + height + (this.itemHeight / 2)) + 'px',
+          left: (left + ((width / 2) - (this.isDesktopBreakPoint ? 25 : 50))) + 'px'
+        })
+      }
+    },
   },
   computed: {
     ...mapState({
@@ -1236,6 +1250,11 @@ export default {
     },
   },
   watch: {
+    getItems() {
+      setTimeout(() => {
+        this.saveFloatingButtonTarget()
+      }, 200)
+    },
     viewName() {
       this.deselectAll()
     },
