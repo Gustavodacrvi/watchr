@@ -17,7 +17,20 @@
               class="options"
               tag="div"
             >
-              <div v-for="o in options"
+              <div
+                key="CONTIUE_SEARCH"
+                class="option rb cursor fixed"
+                :class="{active: isDefault, isDesktopDevice}"
+                @click="continueSearch"
+              >
+                <div class="icon-wrapper">
+                  <Icon icon='search' class="icon" color="var(--txt)"/>
+                </div>
+                <span class="name-wrapper">
+                  <span class="name">Continue Search</span>
+                </span>
+              </div>
+              <div v-for="o in searchResults"
                 :key="o.id"
                 class="option rb cursor"
                 :class="{active: isActive(o)}"
@@ -56,10 +69,22 @@ export default {
         name: null,
         icon: null,
       },
-      options: [],
+      searchNumber: 0,
     }
   },
   methods: {
+    goToDefault() {
+      this.active = {
+        name: null,
+        icon: null,
+      }
+    },
+    continueSearch() {
+      if (this.searchResults.length === 0)
+        this.searchNumber = 0
+      else
+        this.searchNumber++
+    },
     enter(el) {
       const height = el.offsetHeight
       const s = el.style
@@ -87,6 +112,56 @@ export default {
       if (!this.payload || !this.payload.allowed)
         return true
       return this.payload.allowed.find(s => s === str)
+    },
+    isActive(el) {
+      return this.active.name === el.name && this.active.icon === el.icon
+    },
+    move(dir) {
+      const { active } = this
+      const options = this.searchResults
+      
+      const i = options.findIndex(this.isActive)
+
+      let ind
+      if (dir === 'up')
+        ind = i - 1 
+      else ind = i + 1
+
+      if (ind === -1)
+        this.goToDefault()
+      else if (options[ind])
+        this.active = options[ind]
+      else
+        this.goToDefault()
+    },
+    keydown({key}) {
+      if (key === 'ArrowUp') {
+        this.move('up')
+      } else if (key === 'ArrowDown') {
+        this.move('down')
+      } else if (key === 'Enter') {
+        if (this.isDefault)
+          this.continueSearch()
+        else
+          this.click(this.active.callback)
+      }
+    }
+  },
+  computed: {
+    ...mapState({
+      groups: state => state.group.groups,
+    }),
+    ...mapGetters({
+      isDesktopDevice: 'isDesktopDevice',
+      sidebarElements: 'sidebarElements',
+      lists: 'list/lists',
+      tags: 'tag/tags',
+      folders: 'folder/folders',
+      isStandAlone: 'isStandAlone',
+      tasks: 'task/tasks',
+    }),
+    isDefault() {
+      return this.active.name === null && this.active.icon === null
     },
     getOptions() {
       const { search, tasks, tags, lists, folders, sidebarElements, groups } = this
@@ -158,49 +233,12 @@ export default {
             callback: () => go('/user?search=' + t.name, t)
           })
 
-      return arr.slice(0, 10)
+      return arr
     },
-    isActive(el) {
-      return this.active.name === el.name && this.active.icon === el.icon
+    searchResults() {
+      const begin = this.searchNumber * 10
+      return this.getOptions.slice(begin, begin + 10)
     },
-    move(dir) {
-      const { options, active } = this
-      
-      const i = options.findIndex(this.isActive)
-
-      let ind
-      if (dir === 'up')
-        ind = i - 1 
-      else ind = i + 1
-
-      if (options[ind])
-        this.active = options[ind]
-    },
-    keydown({key}) {
-      if (this.noActive && this.options[0])
-        this.active = this.options[0]
-      else if (key === 'ArrowUp') {
-        this.move('up')
-      } else if (key === 'ArrowDown') {
-        this.move('down')
-      } else if (key === 'Enter') {
-        this.click(this.active.callback)
-      }
-    }
-  },
-  computed: {
-    ...mapState({
-      groups: state => state.group.groups,
-    }),
-    ...mapGetters({
-      isDesktopDevice: 'isDesktopDevice',
-      sidebarElements: 'sidebarElements',
-      lists: 'list/lists',
-      tags: 'tag/tags',
-      folders: 'folder/folders',
-      isStandAlone: 'isStandAlone',
-      tasks: 'task/tasks',
-    }),
     hasCallback() {
       return this.payload && this.payload.callback
     },
@@ -209,15 +247,7 @@ export default {
         return 'Search task...'
       return 'Search for tags, lists, folders and tasks...'
     },
-    noActive() {
-      return !this.active.name || !this.active.icon
-    },
   },
-  watch: {
-    search() {
-      this.options = this.getOptions()
-    }
-  }
 }
 
 </script>
@@ -278,6 +308,15 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%,-50%);
+}
+
+.fixed {
+  margin-bottom: 16px;
+  height: 35px;
+}
+
+.fixed.isDesktopDevice {
+  height: 25px;
 }
 
 .name-wrapper {
