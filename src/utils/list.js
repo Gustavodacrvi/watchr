@@ -185,6 +185,15 @@ export default {
             })
           },
           {
+            icon: 'layer-group',
+            id: 'açlkjsdffdsla',
+            callback: () => saveCalendarDate({
+              type: 'anytime',
+              editDate: TOD_STR,
+              begins: TOD_STR,
+            })
+          },
+          {
             icon: 'calendar',
             id: 'çljkasdf',
             callback: () => {return {

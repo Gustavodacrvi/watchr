@@ -34,7 +34,7 @@ export default {
       const isEvening = (header && header.id === 'EVENING_SMART_VIEW')
       const c = t.calendar
       if (force || !c) {
-        if (isEvening && c && c.type !== 'specific' && c.type !== 'someday') {
+        if (isEvening && c && c.type !== 'specific' && c.type !== 'someday' && c.type !== 'anytime') {
           c.evening = true
         } else if (force || !c) {
           t.calendar = getSpecificCalendar(specific)
@@ -60,8 +60,13 @@ export default {
       return t
     },
     Anytime(t, force = false) {
-      if (force) {
-        t.calendar = null
+      if (force || !t.calendar) {
+        const m = mom().format('Y-M-D')
+        t.calendar = {
+          type: 'anytime',
+          editDate: m,
+          begins: m,
+        }
       }
       return t
     },

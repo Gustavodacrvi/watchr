@@ -65,6 +65,9 @@ export default {
 
     isListCanceled: () => l => l.canceled,
     isListSomeday: () => l => l.calendar && l.calendar.type === 'someday',
+    isListAnytime: () => l => l.calendar && l.calendar.type === 'anytime',
+    isRecurringList: () => l => l.calendar && l.calendar.type !== 'someday' && l.calendar.type !== 'specific' && l.calendar.type !== 'anytime',
+
     
     ...MemoizeGetters({
       getTasks: {
@@ -83,22 +86,13 @@ export default {
           return args[0]
         },
       },
-      isRecurringList: {
-        getter({}, list) {
-          const c = list.calendar
-          return c && c.type !== 'someday' && c.type !== 'specific'
-        },
-        cache(args) {
-          return JSON.stringify(args[0].calendar)
-        },
-      },
       isListInLogbook: {
-        getter({}, list) {
+        getter({getters}, list) {
           const { logbook, calendar } = list
 
           const c = calendar
 
-          if (!c || c.type === 'specific' || c.type === 'someday')
+          if (!c || !getters.isRecurringList(list))
             return logbook
           
           if (c.ends) {
@@ -116,9 +110,9 @@ export default {
         },
       },
       isListCompleted: {
-        getter({}, list, moment) {
+        getter({getters}, list, moment) {
           const c = list.calendar
-          if (!c || c.type === 'someday' || c.type === 'specific') return list.completed
+          if (!c || !getters.isRecurringList(list)) return list.completed
           
           let tod = mom(moment, 'Y-M-D')
           if (!tod.isValid()) tod = mom(TOD_DATE,' Y-M-D')
@@ -146,7 +140,7 @@ export default {
       },
       isListShowingOnDate: {
         getter({}, list, date) {
-          if (!utilsTask.hasCalendarBinding(list) || list.calendar.type === 'someday')
+          if (!utilsTask.hasCalendarBinding(list) || list.calendar.type === 'someday' || list.calendar.type === 'anytime')
             return true
           
           const c = list.calendar
@@ -285,7 +279,7 @@ export default {
       isListBeginDay: {
         getter({}, list, date = TOD_DATE) {
           const c = list.calendar
-          if (!c || c.type === 'someday')
+          if (!c || c.type === 'someday' || c.type === 'anytime')
             return false
           if (c.type === 'specific')
             return c.specific === date
@@ -367,18 +361,6 @@ export default {
           }
 
           return JSON.stringify({obj, view})
-        },
-      },
-      isListAnytime: {
-        getter({}, list) {
-          return !utilsTask.hasCalendarBinding(list)
-        },
-        cache(args) {
-          const t = args[0]
-          return JSON.stringify({
-            l: t.list, f: t.folder, t: t.tags,
-            c: t.calendar,
-          })
         },
       },
       isListOnCalendarView: {
@@ -807,7 +789,7 @@ export default {
       for (const l of lists) {
         let calendar = l.calendar || null
         let c = calendar
-        if (c && c.type !== 'someday') {
+        if (c && c.type !== 'someday' && c.type !== 'anytime') {
           if (c.type === 'after completion') {
             c.lastCompleteDate = mom().format('Y-M-D')
           }
@@ -837,7 +819,7 @@ export default {
           calendar,
         }
 
-        const isNotRecurringList = !c || (c.type == 'someday' || c.type === 'specific')
+        const isNotRecurringList = !c || (c.type === 'someday' || c.type === 'anytime' || c.type === 'specific')
 
         if (!rootState.userInfo.manuallyLogTasks && isNotRecurringList) {
           obj = {

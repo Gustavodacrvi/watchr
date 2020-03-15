@@ -54,8 +54,8 @@
               @click="task.deadline = ''"
             />
             <Tag v-if="calendarStr"
-              icon="calendar"
-              color="var(--green)"
+              :icon="getCalendarStrIcon"
+              :color="getCalendarStrColor"
               :value="calendarStr"
               @click="removeCalendar"
             />
@@ -842,6 +842,7 @@ export default {
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
+      isRecurringTask: 'task/isRecurringTask',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
       layout: 'layout',
       getTagsById: 'tag/getTagsById',
@@ -863,7 +864,7 @@ export default {
     getCompareDate() {
       if (!this.defaultTask) return null
       const c = this.defaultTask.calendar
-      if (!c || c.type === 'specific' || c.type === 'someday')
+      if (!c || !this.isRecurringTask(this.defaultTask))
         return null
       return momUtils.getNextEventAfterCompletionDate(c).format('Y-M-D')
     },
@@ -878,7 +879,7 @@ export default {
     },
     showEveningIcon() {
       const c = this.task.calendar
-      return c && c.type !== 'someday' && !c.evening
+      return c && c.type !== 'someday' && c.type !== 'anytime' && !c.evening
     },
     keyboardActions() {
       const c = ref => () => this.$refs[ref].click()
@@ -1059,6 +1060,20 @@ export default {
       if (this.task.calendar)
         return utils.parseCalendarObjectToString(this.task.calendar, this.userInfo, true)
       return null
+    },
+    getCalendarStrColor() {
+      switch (this.calendarStr) {
+        case 'Someday': return 'var(--brown)'
+        case 'Anytime': return 'var(--olive)'
+      }
+      return 'var(--green)'
+    },
+    getCalendarStrIcon() {
+      switch (this.calendarStr) {
+        case 'Someday': return 'archive'
+        case 'Anytime': return 'layer-group'
+      }
+      return 'calendar'
     },
     deadlineStr() {
       if (this.task.deadline)

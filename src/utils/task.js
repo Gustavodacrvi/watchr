@@ -11,7 +11,7 @@ export default {
 
     const c = calendar
 
-    if (!c || c.type === 'specific' || c.type === 'someday')
+    if (!c || c.type === 'specific' || c.type === 'someday' || c.type === 'someday' || c.type === 'anytime')
       return logbook
     
     if (c.ends) {

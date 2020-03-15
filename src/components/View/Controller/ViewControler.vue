@@ -117,6 +117,8 @@ export default {
         return this.getSpecificDayCalendarObj(mom().add(1, 'day'), cal)
       if (this.viewName === 'Someday')
         return {type: 'someday'}
+      if (this.viewName === 'Anytime')
+        return {type: 'anytime'}
     },
     slide(num) {
       this.$store.commit('slide', num)
@@ -808,7 +810,7 @@ export default {
         
         sort: this.sortArray,
         order: smartOrder,
-        filter: l => l.calendar && l.calendar.type !== 'someday' && l.calendar.type !== 'specific',
+        filter: this.isRecurringList,
 
         fallbackFunctionData: () => ({
           viewName,

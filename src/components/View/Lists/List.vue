@@ -274,6 +274,7 @@ export default {
       getListTasks: 'list/getTasks',
 
       isListCompleted: 'list/isListCompleted',
+      isRecurringList: 'list/isRecurringList',
       isListSomeday: 'list/isListSomeday',
       isListCanceled: 'list/isListCanceled',
       getListDeadlineStr: 'list/getListDeadlineStr',
@@ -310,7 +311,7 @@ export default {
       if (this.disableCalendarStr)
         return null
       const c = this.item.calendar
-      if (c && c.type !== 'someday' && c.type !== 'specific' && !this.isDesktopBreakPoint)
+      if (c && this.isRecurringList(this.item) && !this.isDesktopBreakPoint)
         return null
       const res = this.getListCalendarStr(this.item, this.userInfo)
       if (res === 'Someday') return null
