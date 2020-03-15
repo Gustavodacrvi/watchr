@@ -65,8 +65,8 @@ export default {
 
     isListCanceled: () => l => l.canceled,
     isListSomeday: () => l => l.calendar && l.calendar.type === 'someday',
-    isListAnytime: () => l => l.calendar && l.calendar.type === 'anytime',
-    isRecurringList: () => l => l.calendar && l.calendar.type !== 'someday' && l.calendar.type !== 'specific' && l.calendar.type !== 'anytime',
+    isListAnytime: () => l => !l.calendar,
+    isRecurringList: () => l => l.calendar && l.calendar.type !== 'someday' && l.calendar.type !== 'specific',
 
     
     ...MemoizeGetters({

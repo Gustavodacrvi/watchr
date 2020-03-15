@@ -55,6 +55,7 @@ import mom from 'moment'
 import { Sortable } from 'sortablejs'
 
 import utils from '@/utils/'
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['list', 'compareDate', 'activeChecklistId'],
@@ -81,8 +82,10 @@ export default {
           return false
         }
       },
+      sort: true,
+      disabled: false,
       direction: 'vertical',
-      delay: this.isDesktopBreakPoint ? 0 : 150,
+      delay: this.isDesktopBreakPoint ? 0 : 50,
       animation: 200,
       handle: '.item-handle',
 
@@ -208,6 +211,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['isDesktopBreakPoint']),
     draggableRoot() {
       return this.$refs['draggable-root']
     },
@@ -236,7 +240,7 @@ export default {
 .Checklist {
   margin: 0;
   padding: 0 8px;
-  transition: margin .15s;
+  min-height: 10px;
 }
 
 .trans-enter, .trans-leave-to {
@@ -254,7 +258,6 @@ export default {
 
 .sortable-ghost {
   background-color: var(--sidebar-color) !important;
-  transition-duration: 0;
   height: 38px;
   padding: 0;
 }

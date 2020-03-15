@@ -111,7 +111,7 @@ export default {
         deepStateTouch: {
           'userInfo/allowOverdue': [],
         },
-        getter({rootState}, calendar, date, specific) {
+        getter({rootState}, calendar, date, specific = false, exact = false) {
           if (!calendar) return false
           const c = calendar
           const allowOverdue = rootState.userInfo.allowOverdue
@@ -121,7 +121,7 @@ export default {
           // specific
           const tod = mom(date, 'Y-M-D')
           if (c.type === 'specific') {
-            if (allowOverdue || specific)
+            if (exact || allowOverdue || specific)
               return date === c.specific
             return tod.isSameOrAfter(mom(c.specific, 'Y-M-D'), 'day')
           }
@@ -197,6 +197,7 @@ export default {
             c: args[0],
             d: args[1],
             s: args[2],
+            ds: args[3],
           }) : ''
         },
       },
@@ -292,7 +293,7 @@ export default {
         },
       },
       isTaskShowingOnDate: {
-        getter({getters}, task, date, onlySpecific) {
+        getter({getters}, task, date, onlySpecific = false, exact = false) {
           if (task.deadline && mom(task.deadline, 'Y-M-D').isBefore(mom(TOM_DATE, 'Y-M-D'), 'day'))
             return false
 
@@ -300,7 +301,7 @@ export default {
             return false
           if (onlySpecific && task.calendar.type !== 'specific') return false
 
-          return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific)
+          return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific, exact)
         },
         cache(args) {
           return JSON.stringify({
@@ -308,6 +309,7 @@ export default {
             deadline: args[0].deadline,
             date: args[1],
             onlySpecific: args[2],
+            ic: args[3],
           })
         }
       },
@@ -391,7 +393,7 @@ export default {
             case 'Deadlines': return task.deadline
             case 'Recurring': return getters.isRecurringTask(task)
             case 'Anytime': return getters.isTaskAnytime(task)
-            case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
+            case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE, false, true)
             case 'Logbook': return getters.isTaskInLogbookView(task)
             case 'Assigned to me': return task.assigned === rootState.user.uid
           }

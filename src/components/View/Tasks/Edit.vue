@@ -1059,19 +1059,31 @@ export default {
     calendarStr() {
       if (this.task.calendar)
         return utils.parseCalendarObjectToString(this.task.calendar, this.userInfo, true)
-      return null
+      return "Inbox"
     },
     getCalendarStrColor() {
+      if (!this.task.calendar)
+        return 'var(--primary)'
+      if (this.isRecurringTask(this.task))
+        return 'white'
       switch (this.calendarStr) {
         case 'Someday': return 'var(--brown)'
         case 'Anytime': return 'var(--olive)'
+        case 'Today': return 'var(--yellow)'
+        case 'Tomorrow': return 'var(--orange)'
       }
       return 'var(--green)'
     },
     getCalendarStrIcon() {
+      if (!this.task.calendar)
+        return 'inbox'
+      if (this.isRecurringTask(this.task))
+        return 'repeat'
       switch (this.calendarStr) {
         case 'Someday': return 'archive'
         case 'Anytime': return 'layer-group'
+        case 'Today': return 'star'
+        case 'Tomorrow': return 'sun'
       }
       return 'calendar'
     },
@@ -1422,7 +1434,7 @@ export default {
 .showTag {
   margin: 10px 0;
   padding: 0 10px;
-  min-height: 30px;
+  min-height: 22px;
   height: auto;
 }
 

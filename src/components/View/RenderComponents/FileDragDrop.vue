@@ -1,6 +1,6 @@
 <template>
   <transition name="trans" appear>
-    <div v-if="dragging && !moving"
+    <div v-if="dragging && !moving && showDragDrop"
       class="FileDragDrop"
 
       @drop.prevent.stop='drop'
@@ -29,6 +29,7 @@ export default {
     return {
       dragging: false,
       dragOverTimeout: null,
+      onDragTimeout: null,
     }
   },
   created() {
@@ -46,7 +47,9 @@ export default {
         this.onDrop(evt.dataTransfer.files)
     },
     onDrag() {
-      setTimeout(() => {
+       setTimeout(() => {
+        if (!this.moving)
+          return;
         this.dragging = true
         if (this.dragOverTimeout)
           clearTimeout(this.dragOverTimeout)
@@ -62,6 +65,17 @@ export default {
   },
   computed: {
     ...mapState(['moving'])
+  },
+  watch: {
+    moving() {
+      this.showDragDrop = false
+      if (this.onDragTimeout || !this.moving)
+        clearTimeout(this.onDragTimeout)
+      if (this.moving)
+        this.onDragTimeout = setTimeout(() => {
+          this.showDragDrop = true
+        }, 100)
+    },
   },
 }
 
