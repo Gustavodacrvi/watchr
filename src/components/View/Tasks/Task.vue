@@ -116,9 +116,10 @@
                       appear
                       @enter='infoEnter'
                       @leave='infoLeave'
+                      tag='span'
                     >
                       <Icon v-if="isToday && !isEvening" class="name-icon" icon="star" color="var(--yellow)" key='1'/>
-                      <Icon v-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)" key='2'/>
+                      <Icon v-else-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)" key='2'/>
                       <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)" key='3'/>
                       <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)" key='4'/>
                       <template v-else>
@@ -502,13 +503,6 @@ export default {
       const logbook = this.isItemLogged
       const arr = [
         {
-          name: 'Pomo this task',
-          icon: 'pomo',
-          callback: () => {
-            this.$store.dispatch('pomo/toggle', {task: this.item, stopToggle: true})
-          },
-        },
-        {
           name: !logbook ? 'Move to logbook' : 'Remove from logbook',
           icon: 'logbook',
           callback: () => {
@@ -770,15 +764,14 @@ export default {
       }
     },
     isToday() {
-      if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
+      if (this.isCalendarView) return false
       return this.isTaskInView(this.item, 'Today')
     },
     isTaskOverdue() {
-      if (this.viewName === 'Today') return false
       return this.isTaskInView(this.item, 'Overdue')
     },
     isTomorrow() {
-      if (this.viewName === 'Tomorrow' || this.viewName === 'Today' || this.viewName === 'Calendar') return false
+      if (this.isCalendarView) return false
       return this.isTaskInView(this.item, 'Tomorrow')
     },
     showIconDrop() {
@@ -827,9 +820,13 @@ export default {
     },
     isEvening() {
       const c = this.item.calendar
-      if (!c || !c.evening || this.viewName === 'Today')
+      if (!c || !c.evening || this.isCalendarView)
         return false
       return true
+    },
+    isCalendarView() {
+      const n = this.viewName
+      return n === 'Today' || n === 'Tomorrow' || n === 'Calendar'
     },
     calendarStr() {
       const {t,c} = this.getTask
@@ -1122,6 +1119,8 @@ export default {
   max-width: 100%;
   position: absolute;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
   text-overflow: ellipsis;
   overflow: hidden;
 }

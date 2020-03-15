@@ -200,11 +200,6 @@ export default {
     onSmartComponentUpdate() {
       return date => this.calendarDate = date
     },
-    viewComponent() {
-      const n = this.viewName
-      if (n === 'Pomodoro') return 'Pomodoro'
-      if (n === 'Statistics') return 'Statistics'
-    },
     disableRootActions() {
       return this.isFixedHeadingsView
     },
