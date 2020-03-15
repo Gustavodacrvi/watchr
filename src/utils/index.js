@@ -133,6 +133,22 @@ export default {
         get: () => spec(tod.clone().add(1, 'month').startOf('month').format('Y-M-D')),
       },
       {
+        match: ' end of month',
+        get: () => spec(tod.clone().endOf('month').format('Y-M-D')),
+      },
+      {
+        match: ' end of week',
+        get: () => spec(tod.clone().endOf('week').format('Y-M-D')),
+      },
+      {
+        match: ' end of year',
+        get: () => spec(tod.clone().endOf('year').format('Y-M-D')),
+      },
+      {
+        match: ' mid month',
+        get: () => spec(tod.clone().month(Math.floor(tod.daysInMonth() / 2)).format('Y-M-D')),
+      },
+      {
         match: ' next year',
         get: () => spec(tod.clone().add(1, 'year').startOf('year').format('Y-M-D')),
       },
