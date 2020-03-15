@@ -1281,6 +1281,13 @@ export default {
                   }, ids)
                 },
                 {
+                  icon: 'layer-group',
+                  id: 'asdffds',
+                  callback: () => this.saveDates({
+                    type: 'anytime',
+                  }, ids)
+                },
+                {
                   icon: 'calendar',
                   id: 'çljkasdf',
                   callback: () => {return {
@@ -1406,6 +1413,13 @@ export default {
                   id: 'açlkjsdffds',
                   callback: () => this.saveDates({
                     type: 'someday',
+                  }, ids)
+                },
+                {
+                  icon: 'layer-group',
+                  id: 'açlkjsdffd',
+                  callback: () => this.saveDates({
+                    type: 'anytime',
                   }, ids)
                 },
                 {

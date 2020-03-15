@@ -511,6 +511,10 @@ export default {
         get: () => cal = get({type: 'someday'})
       },
       {
+        match: / (anytime|any)(?!(\w+))/gi,
+        get: () => cal = get({type: 'anytime'})
+      },
+      {
         match: !disablePmFormat ? /\s(at )?(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/gi : /\s(at )?(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/gi, // match 1am - 12am, 1pm - 12pm
         get: (match, str) => {
           const time = mom(str, format)
@@ -704,6 +708,7 @@ export default {
     const c = obj
 
     if (c.type === 'someday') return "Someday"
+    if (c.type === 'anytime') return "Anytime"
 
     switch (c.type) {
       case 'specific': {
@@ -873,7 +878,7 @@ export default {
   },
   isItemCompleted(item, moment) {
     const c = item.calendar
-    if (!c || c.type === 'someday' || c.type === 'specific') return item.completed
+    if (!c || c.type === 'someday' || c.type === 'anytime' || c.type === 'specific') return item.completed
     
     let tod = mom(moment, 'Y-M-D')
     if (!tod.isValid()) tod = mom()
@@ -923,6 +928,14 @@ export default {
           save('save', {
             calendar: {
               type: 'someday'
+            }
+          })
+          break
+        }
+        case 'A': {
+          save('save', {
+            calendar: {
+              type: 'anytime'
             }
           })
           break

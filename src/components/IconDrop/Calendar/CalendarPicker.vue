@@ -44,6 +44,16 @@
             :active='selectionPos === 3 && isDesktopBreakPoint'
             @click="someday"
           />
+          <Icon v-if="allowSomeday"
+            class="cursor icon-box"
+            width="19px"
+            ref='any'
+            icon="layer-group"
+            title='Anytime'
+            :box='true'
+            :active='selectionPos === 4 && isDesktopBreakPoint'
+            @click="anytime"
+          />
           <Icon v-if="allowBloqued"
             class="cursor icon-box"
             ref='bloq'
@@ -51,7 +61,7 @@
             icon="bloqued"
             title='No date'
             :box='true'
-            :active='selectionPos === 4 && isDesktopBreakPoint'
+            :active='selectionPos === 5 && isDesktopBreakPoint'
             @click="noDate"
           />
           <Icon v-if="allowRepeat"
@@ -61,7 +71,7 @@
             icon="repeat"
             title='Recurring dates'
             :box='true'
-            :active='selectionPos === 5 && isDesktopBreakPoint'
+            :active='selectionPos === 6 && isDesktopBreakPoint'
             @click="$emit('repeat')"
           />
         </div>
@@ -188,8 +198,10 @@ export default {
 
       const getLength = () => Object.keys(obj).length
 
-      if (this.allowSomeday)
+      if (this.allowSomeday) {
         obj[getLength()] = c('som')
+        obj[getLength()] = c('any')
+      }
       
       if (this.allowBloqued)
         obj[getLength()] = c('bloq')
@@ -262,6 +274,17 @@ export default {
       const calendar = {
         time,
         type: 'someday',
+        editDate: mom().format('Y-M-D'),
+        begins: mom().format('Y-M-D'),
+      }
+      this.$emit('select', calendar)
+    },
+    someday() {
+      let time = null
+      if (this.time) time = this.time
+      const calendar = {
+        time,
+        type: 'anytime',
         editDate: mom().format('Y-M-D'),
         begins: mom().format('Y-M-D'),
       }

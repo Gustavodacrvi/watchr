@@ -97,28 +97,31 @@ export default {
     hasTaskBeenCompletedOnDate: () => (t, date) => t.completeDate === date || t.checkDate === date,
     isTaskInLogbookView: (s, getters) => t => getters.isTaskInLogbook(t),
     isTaskSomeday: () => t => t.calendar && t.calendar.type === 'someday',
+    isTaskAnytime: () => t => t.calendar && t.calendar.type === 'anytime',
     isTaskInFolder: () => (t, folderId) => t.folder === folderId,
     isTaskInGroup: () => (t, groupId) => t.group === groupId && !t.list,
     isTaskInList: () => (t, listId) => t.list === listId,
     isTaskInHeading: () => (t, heading) => t.heading === heading.id,
-    isTaskInListRoot: () => (t) => t.list && !t.heading,
+    isTaskInListRoot: () => t => t.list && !t.heading,
+    isTaskInbox: () => t => !t.calendar,
+    isRecurringTask: () => t => t.calendar && t.calendar.type !== 'someday' && t.calendar.type !== 'specific' && t.calendar.type !== 'anytime',
     
     ...MemoizeGetters({
       isCalendarObjectShowingToday: {
         deepStateTouch: {
           'userInfo/allowOverdue': [],
         },
-        getter({rootState}, calendar, date, specific) {
+        getter({rootState}, calendar, date, specific = false, exact = false) {
           if (!calendar) return false
           const c = calendar
           const allowOverdue = rootState.userInfo.allowOverdue
   
           if (specific && c.type !== 'specific') return false
-          if (c.type === 'someday') return false
+          if (c.type === 'someday' || c.type === 'anytime') return false
           // specific
           const tod = mom(date, 'Y-M-D')
           if (c.type === 'specific') {
-            if (allowOverdue || specific)
+            if (exact || allowOverdue || specific)
               return date === c.specific
             return tod.isSameOrAfter(mom(c.specific, 'Y-M-D'), 'day')
           }
@@ -194,6 +197,7 @@ export default {
             c: args[0],
             d: args[1],
             s: args[2],
+            ds: args[3],
           }) : ''
         },
       },
@@ -270,7 +274,7 @@ export default {
           if (!task.calendar) return false
           const c = task.calendar
           if (onlySpecific && c.type !== 'specific') return false
-          if (c.type === 'someday') return false
+          if (c.type === 'someday' || c.type === 'anytime') return false
           // specific
           const first = utilsMoment.getFirstDayOfMonth(mom(initial, 'Y-M-D'))
           const last = utilsMoment.getFirstLastDayOfMonth(mom(initial, 'Y-M-D'))
@@ -289,15 +293,15 @@ export default {
         },
       },
       isTaskShowingOnDate: {
-        getter({getters}, task, date, onlySpecific) {
+        getter({getters}, task, date, onlySpecific = false, exact = false) {
           if (task.deadline && mom(task.deadline, 'Y-M-D').isBefore(mom(TOM_DATE, 'Y-M-D'), 'day'))
             return false
 
-          if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday')
+          if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday' || task.calendar.type === 'anytime')
             return false
           if (onlySpecific && task.calendar.type !== 'specific') return false
 
-          return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific)
+          return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific, exact)
         },
         cache(args) {
           return JSON.stringify({
@@ -305,6 +309,7 @@ export default {
             deadline: args[0].deadline,
             date: args[1],
             onlySpecific: args[2],
+            ic: args[3],
           })
         }
       },
@@ -388,7 +393,7 @@ export default {
             case 'Deadlines': return task.deadline
             case 'Recurring': return getters.isRecurringTask(task)
             case 'Anytime': return getters.isTaskAnytime(task)
-            case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
+            case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE, false, true)
             case 'Logbook': return getters.isTaskInLogbookView(task)
             case 'Assigned to me': return task.assigned === rootState.user.uid
           }
@@ -499,15 +504,6 @@ export default {
           return JSON.stringify(args[0].calendar)
         },
       },
-      isRecurringTask: {
-        getter({}, task) {
-          const c = task.calendar
-          return c && c.type !== 'someday' && c.type !== 'specific'
-        },
-        cache(args) {
-          return JSON.stringify(args[0].calendar)
-        },
-      },
       isTaskDeadlineInOneYear: {
         getter({}, task) {
           if (!task.deadline)
@@ -581,44 +577,6 @@ export default {
         },
         cache(args) {
           return JSON.stringify(args[0].calendar)
-        },
-      },
-      isTaskInbox: {
-        getter({}, task) {
-          return !task.group &&
-          !task.deadline &&
-          !utilsTask.hasCalendarBinding(task) &&
-          !task.list &&
-          !task.folder &&
-          (task.tags && task.tags.length === 0)
-        },
-        cache(args) {
-          const t = args[0]
-          return JSON.stringify({
-            com: t.completed,
-            che: t.checked,
-            cal: t.calendar,
-            gro: t.group,
-            d: t.deadline,
-            lis: t.list,
-            fol: t.folder,
-            tag: t.tags,
-          })
-        },
-      },
-      isTaskAnytime: {
-        getter({}, task) {
-          const hasListOrFolderOrTag = task.list || task.folder || task.group || (task.tags && task.tags.length > 0)
-          return hasListOrFolderOrTag &&
-            !utilsTask.hasCalendarBinding(task)
-        },
-        cache(args) {
-          const t = args[0]
-          return JSON.stringify({
-            l: t.list, f: t.folder, t: t.tags,
-            c: t.calendar,
-            g: t.group,
-          })
         },
       },
       doesTaskPassExclusiveFolders: {
@@ -1189,7 +1147,7 @@ export default {
       for (const t of tasks) {
         let c
         let calendar = c = t.calendar
-        if (c && c.type !== 'someday') {
+        if (c && c.type !== 'someday' && c.type !== 'anytime') {
           if (c.type === 'daily' || c.type === 'after completion' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
             const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
             c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
@@ -1216,7 +1174,7 @@ export default {
           calendar,
         }
 
-        const isNotRecurringTask = !c || (c.type == 'someday' || c.type === 'specific')
+        const isNotRecurringTask = !c || (c.type == 'someday' || c.type == 'anytime' || c.type === 'specific')
 
         const isFromRecurringList = () => {
           if (!t.list)
@@ -1225,7 +1183,7 @@ export default {
           const lists = rootGetters['list/lists']
           const l = lists.find(el => el.id === t.list)
           if (l)
-            return (l.calendar && l.calendar.type !== 'specific' && l.calendar.type !== 'someday')
+            return (l.calendar && l.calendar.type !== 'specific' && l.calendar.type !== 'someday' && l.calendar.type !== 'anytime')
         }
 
         if ((!rootState.userInfo.manuallyLogTasks && !isFromRecurringList()) && isNotRecurringTask) {
@@ -1443,6 +1401,15 @@ export default {
             ids: taskIds,
             task: {
               calendar: {type: 'someday'}
+            }
+          })
+          break
+        }
+        case 'Anytime': {
+          dispatch('saveTasksById', {
+            ids: taskIds,
+            task: {
+              calendar: {type: 'anytime'}
             }
           })
           break

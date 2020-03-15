@@ -14,8 +14,16 @@
       @click="edit"
     >
       <span class="icons cursor" @click.stop="$emit('toggle')">
-        <Icon v-if="!isTaskCompleted" class="icon primary-hover" icon="circle"/>
-        <Icon v-else class="icon primary-hover" icon="circle-check"/>
+        <Icon v-if="!isTaskCompleted"
+          class="icon primary-hover"
+          icon="circle"
+          color='var(--fade)'
+        />
+        <Icon v-else
+          class="icon primary-hover"
+          icon="circle-check"
+          color='var(--fade)'
+        />
       </span>
       <span v-if="!editing" class="name-wrapper">
         <span class="name">
@@ -141,7 +149,7 @@ export default {
 .Subtask {
   position: relative;
   display: flex;
-  transition-duration: .15s;
+  transition: height .15s, background-color .15s;
 }
 
 .name-wrapper {
@@ -149,6 +157,7 @@ export default {
   flex-basis: 100%;
   display: flex;
   align-items: center;
+  user-select: none;
 }
 
 .name {

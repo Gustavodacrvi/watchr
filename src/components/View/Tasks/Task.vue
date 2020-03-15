@@ -569,6 +569,13 @@ export default {
               })
             },
             {
+              icon: 'layer-group',
+              id: 'ds',
+              callback: () => this.saveCalendarDate({
+                type: 'anytime',
+              })
+            },
+            {
               icon: 'calendar',
               id: 'çljkasdf',
               callback: () => {return {
@@ -674,7 +681,7 @@ export default {
       const c = this.item.calendar
       let completed
       
-      if (!c || c.type === 'specific' || c.type === 'someday')
+      if (!c || !this.isRepeatingTask)
         completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
       else {
         const compareDate = utilsMoment.getNextEventAfterCompletionDate(c).format('Y-M-D')
@@ -830,9 +837,9 @@ export default {
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if ((!c || c.type === 'someday') || this.disableCalendarStr) return null
+      if ((!c || c.type === 'someday' || c.type === 'anytime') || this.disableCalendarStr) return null
 
-      if (c.type !== 'someday' && c.type !== 'specific' && !this.isDesktopBreakPoint)
+      if (this.isRepeatingTask && !this.isDesktopBreakPoint)
         return null
 
       const str = utils.parseCalendarObjectToString(c, this.userInfo, false, false)
@@ -866,7 +873,7 @@ export default {
     },
     nextCalEvent() {
       const {t,c} = this.getTask
-      if (!c || c.type === 'someday' || c.type === 'specific')
+      if (!c || !this.isRepeatingTask)
         return null
 
       const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c, true)
