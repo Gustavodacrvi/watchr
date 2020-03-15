@@ -1310,13 +1310,12 @@ export default {
 
       if (!this.isFirstEdit) {
         const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
+        this.toReplace = res.matches
         if (res && res.calendar) {
-          this.toReplace = res.matches
           this.task.calendar = res.calendar
           this.fromDefaultTask = false
           this.fromIconDrop = null
         } else if (!this.fromIconDrop && !this.fromDefaultTask) {
-          this.toReplace = null
           this.fromDefaultTask = false
           this.task.calendar = null
         }

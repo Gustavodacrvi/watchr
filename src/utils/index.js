@@ -118,6 +118,11 @@ export default {
 
     const getWeekSpecific = week => spec(utilsMoment.nextWeekDay(tod, week, 'ddd', true).format('Y-M-D'))
 
+    const parseUserGeneratedDate = (str, forma) => {
+      const date = mom(str.replace(/\//gi, '-').replace(/\./gi, '-'), forma, true)
+      return date.isValid() ? spec(date.format('Y-M-D')) : null
+    }
+
     const specificMatches = [
       {
         match: ' next week',
@@ -158,6 +163,18 @@ export default {
           }
           return null
         },
+      },
+      {
+        match: ' (((0[1-9]|[12][0-9]|30)[-/.]?(0[13-9]|1[012])|31[-/.]?(0[13578]|1[02])|(0[1-9]|1[0-9]|2[0-8])[-/.]?02)[-/.]?[0-9]{4}|29[-/.]?02[-/.]?([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00))',
+        get: (m, str) => parseUserGeneratedDate(str, 'DD-MM-YYYY'),
+      },
+      {
+        match: ' (((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))[-/]?[0-9]{4}|02[-/]?29[-/]?([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00))',
+        get: (m, str) => parseUserGeneratedDate(str, 'MM-DD-YYYY'),
+      },
+      {
+        match: ' ([0-9]{4}[-/]?((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))|([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048])00)[-/]?02[-/]?29)',
+        get: (m, str) => parseUserGeneratedDate(str, 'YYYY-MM-DD'),
       },
       {
         match: '\\s([0-3][0-9])th',
@@ -326,6 +343,34 @@ export default {
         },
       },
       {
+        match: /\severy day/gi,
+        unshift: true,
+        get: (m, str) => {
+          periodic = true
+          cal = {
+            type: 'daily',
+            daily: 1,
+
+            editDate: TOD_STR,
+            begins: TOD_STR,
+          }
+        },
+      },
+      {
+        match: /\severy day after/gi,
+        unshift: true,
+        get: (m, str) => {
+          periodic = true
+          cal = {
+            type: 'after completion',
+            afterCompletion: 1,
+
+            editDate: TOD_STR,
+            begins: TOD_STR,
+          }
+        },
+      },
+      {
         match: / every (\d+) days after/gi,
         unshift: true,
         get: (m, str) => {
@@ -343,23 +388,33 @@ export default {
         },
       },
       {
-        match: /\severy (\d+) weeks( on)? ((Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat),?(\s)?)+/gi,
+        match: /\severy( (\d+) weeks)?( on)? ((Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat),?(\s)?)+/gi,
         unshift: true,
         get: (m, str) => {
           const split = str.split(' ').filter(el => el)
 
           const weeks = parseInt(split[1], 10)
+          const isNumber = !isNaN(weeks)
 
-          split.splice(0, str.includes(' on') ? 4 : 3)
+          let begin = 4
+
+          if (!str.includes(' on'))
+            begin--
+          if (!str.includes(' weeks'))
+            begin--
+          if (!isNumber)
+            begin--
+
+          split.splice(0, begin)
 
           const weekList = split.map(el => el.replace(',', '').slice(0, 2))
 
-          if (weeks && weekList) {
+          if ((weeks || !isNumber) && weekList) {
             periodic = true
             cal = {
               type: 'weekly',
               weekly: {
-                every: weeks,
+                every: !isNumber ? 1 : weeks,
                 days: weekList.map(w => parseInt(mom(w, 'ddd').format('e'), 10)),
               },
               
