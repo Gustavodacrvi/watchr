@@ -111,13 +111,13 @@ export default {
         getter({rootState}, calendar, date, specific) {
           if (!calendar) return false
           const c = calendar
+          const allowOverdue = rootState.userInfo.allowOverdue
   
           if (specific && c.type !== 'specific') return false
           if (c.type === 'someday') return false
           // specific
           const tod = mom(date, 'Y-M-D')
           if (c.type === 'specific') {
-            const allowOverdue = rootState.userInfo.allowOverdue
             if (allowOverdue || specific)
               return date === c.specific
             return tod.isSameOrAfter(mom(c.specific, 'Y-M-D'), 'day')

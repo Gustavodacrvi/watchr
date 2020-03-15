@@ -40,7 +40,6 @@ export default {
     AddHeadingNote: c(import(/* webpackChunkName: "AddHeadingNote" */ './Lists/AddHeadingNote.vue')),
     AddFolder: c(import(/* webpackChunkName: "AddFolder" */ './Folder/AddFolder.vue')),
     Profile: c(import(/* webpackChunkName: "Profile" */ './Auth/Profile.vue')),
-    RecentData: c(import(/* webpackChunkName: "RecentData" */ './Statistics/RecentData.vue')),
     Shortcuts: c(import(/* webpackChunkName: "Shortcuts" */ './Shortcuts.vue')),
     AddGroup: c(import(/* webpackChunkName: "AddGroup" */ './Group/AddGroup.vue')),
     InvitePeople: c(import(/* webpackChunkName: "InvitePeople" */ './Group/InvitePeople.vue')),

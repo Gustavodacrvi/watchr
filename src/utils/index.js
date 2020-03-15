@@ -708,7 +708,7 @@ export default {
     switch (c.type) {
       case 'specific': {
         const date = this.getHumanReadableDate(c.specific)
-        if (date !== 'Today')
+        if (forceShowInfo || date !== 'Today')
           str += date
         break
       }
@@ -959,10 +959,6 @@ export default {
           
     if (isOnAlt && !isOnControl)
       switch (key) {
-        case 'p': {
-          save('pomo')
-          break
-        }
         case 's': {
           p()
           iconDrop({

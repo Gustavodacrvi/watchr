@@ -23,7 +23,6 @@ export const taskRef = id => id ? taskColl().doc(id) : taskColl().doc()
 export const groupRef = id => id ? groupColl().doc(id) : groupColl().doc()
 export const groupInfoRef = groupId => groupRef(groupId).collection('info').doc('info')
 export const groupCacheRef = groupId => groupRef(groupId).collection('groupCache').doc('groupCache')
-export const pomoDoc = () => statsColl().doc('pomo')
 export const listRef = id => id ? listColl().doc(id) : listColl().doc()
 export const folderRef = id => id ? folderColl().doc(id) : folderColl().doc()
 export const tagColl = () => userRef().collection('tags')
@@ -786,18 +785,6 @@ export const setList = (batch, list, id, rootState, writes) => {
 
     }
   }
-}
-export const setPomo = (batch, doc) => {
-  const obj = {
-    ...doc, id: 'pomo',
-    userId: uid(),
-  }
-  batch.set(cacheRef(), {
-    stats: {
-      pomo: obj,
-    },
-  }, {merge: true})
-  batch.set(pomoDoc(), obj, {merge: true})
 }
 export const setInfo = (batch, info, rootState, writes) => {
   const obj = {

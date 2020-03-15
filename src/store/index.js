@@ -44,7 +44,6 @@ import filter from './filter'
 import folder from './folder'
 import group from './group'
 import invites from './invites'
-import pomo from './pomo'
 
 import utils from '@/utils'
 import { userRef, cacheRef, setInfo } from "../utils/firestore"
@@ -73,11 +72,9 @@ const getDefaultInfo = () => ({
       margins: ['DEFAULT_1', 'DEFAULT_2'],
       hidedViews: [
         'Tomorrow',
-        'Pomodoro',
         'Later lists',
         'Recurring',
         'Logged lists',
-        'Statistics',
         'Calendar',
       ],
     }
@@ -94,7 +91,7 @@ if (cal)
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter, folder,
-    pomo, group, invites,
+    group, invites,
   },
   state: {
     lastVersion,
@@ -115,8 +112,6 @@ const store = new Vuex.Store({
       providerData: null,
     },
     userInfo: {
-      pomo: null,
-      
       tags: [],
       lists: [],
       favorites: [],
@@ -306,15 +301,6 @@ const store = new Vuex.Store({
           iconColor: 'var(--red)'
         },
         {
-          name: 'Pomodoro',
-          disableAction: true,
-          descr: `
-            Special smart view that can be used with the Pomodoro timer.
-          `,
-          icon: 'pomo',
-          iconColor: 'var(--dark-red)'
-        },
-        {
           name: 'Calendar',
           disableAction: true,
           descr: `
@@ -346,11 +332,6 @@ const store = new Vuex.Store({
           `,
           icon: 'logged-lists',
           iconColor: 'var(--dark-blue)'
-        },
-        {
-          name: 'Statistics',
-          icon: 'pie',
-          iconColor: 'var(--primary)'
         },
       ]
     },
@@ -655,10 +636,6 @@ const store = new Vuex.Store({
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
 
-        setTimeout(() => {
-          dispatch('pomo/updateDurations')
-        })
-
         if (!state.isFirstSnapshot && !isFromHere) {
           utils.updateVuexObject(state.task, 'tasks', data.tasks || {})
           utils.updateVuexObject(state.tag, 'tags', data.tags || {})
@@ -674,8 +651,6 @@ const store = new Vuex.Store({
           utils.addIdsToObjectFromKeys(data.stats)
           utils.addIdsToObjectFromKeys(data.lists)
           
-          if (data.stats)
-            state.pomo.stats = data.stats.pomo || {}
           if (data.tasks)
             state.task.tasks = data.tasks || {}
           if (data.tags)
@@ -688,18 +663,6 @@ const store = new Vuex.Store({
           state.isFirstSnapshot = false
         }
 
-        if (data.stats) {
-          utils.findChangesBetweenObjs(state.pomo.stats, data.stats.pomo, (key, val) => Vue.set(state.pomo.stats, key, val))
-
-          const info = state.pomo.stats && state.pomo.stats.dates && state.pomo.stats.dates[TOD_STR]
-          if (info) {
-            if (info.completedPomos !== state.pomo.cycles)
-              state.pomo.cycles = info.completedPomos
-    
-            if (state.pomo.cycles === undefined) state.pomo.cycles = 0
-          }
-        }
-        
       }))
       if (userId)
         snapshotsListeners.push(fire.collectionGroup('groupCache')
