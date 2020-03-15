@@ -13,6 +13,9 @@ import ErrorComponent from '../components/Illustrations/ErrorComponent.vue'
 let contextMenuRunned = false
 
 export default {
+  sortListByName(lists, property = 'name') {
+    return lists.slice().sort((a, b) => a[property].toLowerCase().localeCompare(b[property].toLowerCase()))
+  },
   getAutoSchedulerIconDropObject(autoSchedule, saveAutoSchedule, userInfo) {
     return {
       name: 'Auto schedule',

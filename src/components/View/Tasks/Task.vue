@@ -118,6 +118,7 @@
                       @leave='infoLeave'
                       tag='span'
                     >
+                      <Icon v-if="isInbox" class="name-icon" icon="inbox" color="var(--primary)" key='1'/>
                       <Icon v-if="isToday && !isEvening" class="name-icon" icon="star" color="var(--yellow)" key='1'/>
                       <Icon v-else-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)" key='2'/>
                       <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)" key='3'/>
@@ -769,6 +770,11 @@ export default {
         allowSearch: true,
         links,
       }
+    },
+    isInbox() {
+      if (this.viewName === 'Inbox')
+        return false
+      return !this.item.calendar
     },
     isToday() {
       if (this.isCalendarView) return false

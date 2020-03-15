@@ -34,6 +34,7 @@
         </div>
         <component v-else-if="!item.isEdit" :is='comp' :key="item.id" 
           v-bind="$props"
+          :ref='item.id'
 
           :itemHeight='itemHeight'
           :item='item'
@@ -133,7 +134,6 @@
       :comp='comp'
       :editComp='editComp'
       :itemIconDropOptions='itemIconDropOptions'
-      :selectEverythingToggle='selectEverythingToggle'
       :showAllHeadingsItems='showAllHeadingsItems'
       :itemCompletionCompareDate='itemCompletionCompareDate'
       :mainFallbackItem='mainFallbackItem'
@@ -187,7 +187,7 @@ import utils from '@/utils/'
 export default {
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
-  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
+  'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
@@ -264,6 +264,15 @@ export default {
     }
   },
   methods: {
+    forEachItem(callback) {
+      const keys = Object.keys(this.$refs)
+      for (const k of keys)
+        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].$el)
+          callback(this.$refs[k][0])
+    },
+    selectAll() {
+      this.forEachItem(vm => vm.selectItem())
+    },
     appendItem() {
       this.addEditComp(this.nonEditGetItems.length)
     },

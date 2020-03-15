@@ -33,7 +33,6 @@
           :isSmart='isSmart'
           :mainFallbackItem='mainFallbackItem'
           :showAllHeadingsItems='showAllHeadingsItems'
-          :selectEverythingToggle='selectEverythingToggle'
           :itemIconDropOptions='itemIconDropOptions'
           :getItemFirestoreRef='getItemFirestoreRef'
           :disableFallback='disableFallback'
@@ -95,7 +94,7 @@ export default {
     ListRenderer: () => import('./ListRenderer.vue'),
   },
   props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
-  , 'scheduleObject', 'selectEverythingToggle', 'justAddedHeading',
+  , 'scheduleObject', 'justAddedHeading',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {

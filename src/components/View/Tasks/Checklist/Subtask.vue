@@ -25,7 +25,10 @@
           color='var(--fade)'
         />
       </span>
-      <span v-if="!editing" class="name-wrapper">
+      <span v-if="!editing"
+        class="name-wrapper"
+        @click.stop='edit'
+      >
         <span class="name">
           {{ str }}
         </span>

@@ -38,7 +38,7 @@ export default {
     saveHeaderName() {
       return name => {
         if (this.viewList) {
-          if (this.getListsByNames([name])[0])
+          if (this.getListsByName([name])[0])
             this.pushToast({
               name: 'This list already exists!',
               seconds: 4,

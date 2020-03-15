@@ -10,7 +10,6 @@
 
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
-      :selectEverythingToggle='selectEverythingToggle'
 
       :addItem='addTask'
       :showSomedayButton='showSomedayButton'
@@ -64,7 +63,7 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
-    'selectEverythingToggle', 'getCalendarOrderDate', 'updateViewIds',
+    'getCalendarOrderDate', 'updateViewIds',
     'width', 'disableRootActions', 'fallbackFunctionData',
 
     'headingEditOptions', 'taskIconDropOptions', 'filterByAssigned',
@@ -91,6 +90,9 @@ export default {
   methods: {
     addTaskEdit() {
       this.$refs.renderer.appendItem()
+    },
+    selectAll() {
+      this.$refs.renderer.selectAll()
     },
     onAddExistingItem(index, lazyItems, fallbackItem, callback) {
       this.$store.dispatch('pushPopup', {
