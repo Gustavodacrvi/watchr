@@ -44,10 +44,10 @@ export default {
 <style scoped>
 
 .SearchInput {
-  padding: 16px;
+  padding: 14px;
   width: 100%;
   outline: none;
-  font-size: 1.2em;
+  font-size: 1.05em;
   background-color: var(--light-sidebar-color);
 }
 

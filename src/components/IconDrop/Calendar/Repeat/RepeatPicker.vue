@@ -1,143 +1,146 @@
 <template>
   <div class="RepeatPicker" :class="layout">
-    <span>Repeat:   </span>
-    <AuthOptions class='special-options' style="z-index: 3"
-      :options='data.repeatOptions'
-      :active='data.activeRepeatOption'
-      minWidth='200px'
-      @select='v => data.activeRepeatOption = v'
-    />
-    <div class="margin"></div>
-    <div class="special-options" v-if="data.activeRepeatOption === 'After completion'">
-      Repeat
-      <AuthSimpleInput
-        v-model="data.days"
-        width='15px'
-      />
-       days after task completion.
-    </div>
-    <div class="special-options" v-else-if="data.activeRepeatOption === 'Daily'">
-      Every
-      <AuthSimpleInput
-        v-model="data.days"
-        width='15px'
-      />
-       days.
-    </div>
-    <div class="special-options" v-else-if="data.activeRepeatOption === 'Weekly'">
-      Every
-      <AuthSimpleInput
-        v-model="data.days"
-        width='15px'
-      />
-       weeks.
-       <div class="days margin">
-        <span v-for="d of getDays" :key="d"
-          class="option cursor week"
-          :class="{active: isActive(d)}"
-          @click="toggle(d)"
-        >{{ d }}</span>
-      </div>
-    </div>
-    <div class="special-options" v-else-if="data.activeRepeatOption === 'Monthly'">
-      Every
-      <AuthSimpleInput
-        v-model="data.days"
-        width='15px'
-      />
-       months on the
-      <AuthOptions
-        :options='computedMonthDayOptions'
-        :active='data.monthDay'
+    <div class="content">
+      <span>Repeat:   </span>
+      <AuthOptions class='special-options' style="z-index: 3"
+        :options='data.repeatOptions'
+        :active='data.activeRepeatOption'
         minWidth='200px'
-        @select='v => data.monthDay = v'
-      />&nbsp;
-      <AuthOptions
-        :options='data.weekDayOptions'
-        :active='data.weekDay'
-        minWidth='200px'
-        @select='v => data.weekDay = v'
+        @select='v => data.activeRepeatOption = v'
       />
-    </div>
-    <div class="special-options" v-else-if="data.activeRepeatOption === 'Yearly'">
-      Every
-      <AuthSimpleInput
-        v-model="data.days"
-        width='15px'
-      />
-       years on the 
-       <AuthOptions
-        :options='computedMonthDayOptions'
-        :active='data.monthDay'
-        minWidth='200px'
-        @select='v => data.monthDay = v'
-      />&nbsp;
-      <AuthOptions
-        :options='data.weekDayOptions'
-        :active='data.weekDay'
-        minWidth='200px'
-        @select='v => data.weekDay = v'
-      />&nbsp;
-      <div class="days margin">
-        <span v-for="d of data.yearMonthOptions" :key="d"
-          class="option cursor week"
-          :class="{active: isMonthActive(d)}"
-          @click="toggleMonth(d)"
-        >{{ d }}</span>
-      </div>
-    </div>
-    <div class="hr"></div>
-    <div class="extra-options margin">
-      <div class="cont">
-        Begins:
-      </div>
-      <div class="cont">
-        <span class="option rb cursor" @click="getBeginDate">
-          {{ data.begins }}
-        </span>
-      </div>
-    </div>
-    {{data.time}}
-    <div class="extra-options margin">
-      <div class="cont">
-        Time:
-      </div>
-      <div class="cont">
-        <span class="option rb cursor" @click="getTimeInput">
-          {{ getTime }}
-        </span>
-      </div>
-    </div>
-    <div class="extra-options margin">
-      <div class="cont">
-        Ends:
-      </div>
-      <div class="cont">
-        <AuthOptions
-          :options='data.endOptions'
-          :active='data.ends'
-          minWidth='200px'
-          @select='v => data.ends = v'
+      <div class="margin"></div>
+      <div class="special-options" v-if="data.activeRepeatOption === 'After completion'">
+        Repeat
+        <AuthSimpleInput
+          v-model="data.days"
+          width='15px'
         />
-        <template v-if="data.ends === 'After'">
-          <span>&nbsp;</span>
-          <AuthSimpleInput
-            v-model="data.endTimes"
-            width='15px'
+        days after task completion.
+      </div>
+      <div class="special-options" v-else-if="data.activeRepeatOption === 'Daily'">
+        Every
+        <AuthSimpleInput
+          v-model="data.days"
+          width='15px'
+        />
+        days.
+      </div>
+      <div class="special-options" v-else-if="data.activeRepeatOption === 'Weekly'">
+        Every
+        <AuthSimpleInput
+          v-model="data.days"
+          width='15px'
+        />
+        weeks.
+        <div class="days margin">
+          <span v-for="d of getDays" :key="d"
+            class="option cursor week"
+            :class="{active: isActive(d)}"
+            @click="toggle(d)"
+          >{{ d }}</span>
+        </div>
+      </div>
+      <div class="special-options" v-else-if="data.activeRepeatOption === 'Monthly'">
+        Every
+        <AuthSimpleInput
+          v-model="data.days"
+          width='15px'
+        />
+        months on the
+        <AuthOptions
+          :options='computedMonthDayOptions'
+          :active='data.monthDay'
+          minWidth='200px'
+          @select='v => data.monthDay = v'
+        />&nbsp;
+        <AuthOptions
+          :options='data.weekDayOptions'
+          :active='data.weekDay'
+          minWidth='200px'
+          @select='v => data.weekDay = v'
+        />
+      </div>
+      <div class="special-options" v-else-if="data.activeRepeatOption === 'Yearly'">
+        Every
+        <AuthSimpleInput
+          v-model="data.days"
+          width='15px'
+        />
+        years on the 
+        <AuthOptions
+          :options='computedMonthDayOptions'
+          :active='data.monthDay'
+          minWidth='200px'
+          @select='v => data.monthDay = v'
+        />&nbsp;
+        <AuthOptions
+          :options='data.weekDayOptions'
+          :active='data.weekDay'
+          minWidth='200px'
+          @select='v => data.weekDay = v'
+        />&nbsp;
+        <div class="days margin">
+          <span v-for="d of data.yearMonthOptions" :key="d"
+            class="option cursor week"
+            :class="{active: isMonthActive(d)}"
+            @click="toggleMonth(d)"
+          >{{ d }}</span>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="extra-options margin">
+        <div class="cont">
+          Begins:
+        </div>
+        <div class="cont">
+          <span class="option rb cursor" @click="getBeginDate">
+            {{ data.begins }}
+          </span>
+        </div>
+      </div>
+      {{data.time}}
+      <div class="extra-options margin">
+        <div class="cont">
+          Time:
+        </div>
+        <div class="cont">
+          <span class="option rb cursor" @click="getTimeInput">
+            {{ getTime }}
+          </span>
+        </div>
+      </div>
+      <div class="extra-options margin">
+        <div class="cont">
+          Ends:
+        </div>
+        <div class="cont">
+          <AuthOptions
+            :options='data.endOptions'
+            :active='data.ends'
+            minWidth='200px'
+            @select='v => data.ends = v'
           />
-           <span>&nbsp;times</span>
-        </template>
-        <template  class="special-options" v-else-if="data.ends === 'On date'">
-          <span>&nbsp;</span>
-          <div class="option rb cursor"  @click="getEndDate">
-            {{ data.endDate }}
-          </div>
-        </template>
+          <template v-if="data.ends === 'After'">
+            <span>&nbsp;</span>
+            <AuthSimpleInput
+              v-model="data.endTimes"
+              width='15px'
+            />
+            <span>&nbsp;times</span>
+          </template>
+          <template  class="special-options" v-else-if="data.ends === 'On date'">
+            <span>&nbsp;</span>
+            <div class="option rb cursor"  @click="getEndDate">
+              {{ data.endDate }}
+            </div>
+          </template>
+        </div>
       </div>
     </div>
-    <AuthButton class="margin"
+    <ButtonInput class="margin border-radius"
       value='Repeat task'
-      @click="emit"
+      icon='repeat'
+      @click.native="emit"
     />
   </div>
 </template>
@@ -146,7 +149,7 @@
 
 import AuthOptions from "@/components/Auth/Options.vue"
 import AuthSimpleInput from "@/components/Auth/SimpleInput.vue"
-import AuthButton from "@/components/Auth/Button.vue"
+import ButtonInput from "../../Components/Button.vue"
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -158,7 +161,7 @@ export default {
   props: ['content'],
   components: {
     AuthOptions, AuthSimpleInput,
-    AuthButton,
+    ButtonInput,
   },
   data() {
     return {
@@ -439,8 +442,10 @@ export default {
 .RepeatPicker.desktop {
   flex-basis: 450px;
   width: 450px;
+}
+
+.content {
   margin: 12px;
-  padding: 0 12px;
 }
 
 .RepeatPicker.mobile {
@@ -471,7 +476,7 @@ export default {
 .option {
   display: inline-block;
   padding: 6px;
-  border: 1px solid var(--dark);
+  background-color: var(--sidebar-color);
   transition-duration: .2s;
   background-color: none;
 }

@@ -1,14 +1,14 @@
 <template>
   <div class="Options AuthOptions">
-    <span class="element rb cb cursor bd" @click="showing = !showing">{{ active }}</span>
-    <div v-if="showing" class="options-content rb cb bd scroll-thin"
+    <div class="element rb cursor" @click="showing = !showing">{{ active }}</div>
+    <div v-if="showing" class="options-content rb scroll-thin"
       :style="{minWidth}"
     >
-      <span v-for="o in options" :key="o"
+      <div v-for="o in options" :key="o"
         class="element opt cb cursor"
         :class="{active: o === active}"
         @click="select(o)"
-      >{{ o }}</span>
+      >{{ o }}</div>
     </div>
   </div>
 </template>
@@ -73,6 +73,7 @@ export default {
   display: inline-block;
   padding: 6px;
   transition-duration: .2s;
+  background-color: var(--sidebar-color);
 }
 
 .element:hover {
