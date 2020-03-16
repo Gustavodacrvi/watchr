@@ -45,7 +45,7 @@ export default {
   width: 100%;
   outline: none;
   font-size: 1.2em;
-  background-color: var(--dark-light-gray);
+  background-color: var(--light-sidebar-color);
 }
 
 </style>

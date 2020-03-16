@@ -87,25 +87,29 @@
         </div>
       </div>
       <div class="grid">
-        <div class='week-day'>S</div>
-        <div class='week-day'>M</div>
-        <div class='week-day'>T</div>
-        <div class='week-day'>W</div>
-        <div class='week-day'>T</div>
-        <div class='week-day'>F</div>
-        <div class='week-day'>S</div>
+        <div class='week-day' key='s'>S</div>
+        <div class='week-day' key='m'>M</div>
+        <div class='week-day' key='t'>T</div>
+        <div class='week-day' key='w'>W</div>
+        <div class='week-day' key='tu'>T</div>
+        <div class='week-day' key='f'>F</div>
+        <div class='week-day' key='sa'>S</div>
 
         <div v-for="i in firstWeekDayRange" :key="i" class="day dead"></div>
-
         <div v-for="i in daysInMonth" :key="i + 'num'" class='day num'>{{ i }}</div>
       </div>
     </div>
+    <ButtonInput
+      value='Add time'
+      icon='clock'
+    />
   </div>
 </template>
 
 <script>
 
 import SearchInput from '../Components/SearchInput.vue'
+import ButtonInput from '../Components/Button.vue'
 
 import mom from 'moment'
 
@@ -115,6 +119,7 @@ const TOD_STR = TOD.format('Y-M-D')
 export default {
   components: {
     SearchInput,
+    ButtonInput,
   },
   props: ['repeat', 'onlyDates', 'defaultTime', 'initial', 'noTime', 'allowNull'],
   data() {
@@ -233,7 +238,7 @@ export default {
 .num:hover, .num.active {
   background-color: var(--primary);
   user-select: none;
-  color: white;
+  color: var(--dark-void);
 }
 
 </style>
