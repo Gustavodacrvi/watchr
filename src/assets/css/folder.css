@@ -95,6 +95,12 @@
   transform: translateY(-50%);
 }
 
-.sortable-ghost .header {
+.sortable-ghost .icon-wrapper,
+.sortable-ghost .info,
+.sortable-ghost .name-wrapper {
   display: none;
+}
+
+.sortable-ghost .header {
+  background-color: var(--dark-void) !important;
 }

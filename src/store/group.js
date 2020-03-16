@@ -19,7 +19,7 @@ export default {
   },
   getters: {
     sortedGroupsByName(state) {
-      const groups = state.groups
+      const groups = state.groups.slice()
       groups.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       return groups
     },

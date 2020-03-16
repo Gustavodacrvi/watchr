@@ -13,6 +13,102 @@ import ErrorComponent from '../components/Illustrations/ErrorComponent.vue'
 let contextMenuRunned = false
 
 export default {
+  folderOptions(vm, callback) {
+    const links = []
+    const folders = vm.$store.getters['folder/sortedFoldersByName']
+    
+    for (const fold of folders) {
+      links.push({
+        name: fold.name,
+        icon: 'folder',
+        callback: () => callback({
+          folder: fold.id,
+          group: null,
+          list: null,
+          heading: null,
+        }),
+      })
+    }
+    return {
+      allowSearch: true,
+      links,
+    }
+  },
+  tagsOptions(vm, defaultTags, callback, returnIds = false) {
+    const tags = vm.$store.getters['tag/sortedTagsByName']
+    return {
+      onSave: !returnIds ? callback : names => callback(
+        (tags || []).filter(t => names.includes(t.name)).map(el => el.id),
+      ),
+      links: tags.map(t => ({...t, icon: 'tag'})),
+      select: true,
+      selected: defaultTags || [],
+      allowSearch: true,
+    }
+  },
+  groupOptions(vm, callback) {
+    const links = []
+    const groups = vm.$store.getters['group/sortedGroupsByName']
+    
+    for (const gro of groups) {
+      links.push({
+        name: gro.name,
+        icon: 'group',
+        callback: () => callback({
+          folder: null,
+          group: gro.id,
+          list: null,
+          heading: null,
+        }),
+      })
+    }
+    return {
+      allowSearch: true,
+      links,
+    }
+  },
+  listsOptions(vm, callback) {
+    const links = []
+    const lists = vm.$store.getters['list/sortedListsByName']
+    for (const list of lists) {
+      links.push({
+        name: list.name,
+        icon: 'tasks',
+        callback: () => {
+          const arr = [{
+            name: 'List root',
+            callback: () => callback({
+              list: list.id,
+              heading: null,
+              group: null,
+              folder: null,
+            })
+          }]
+          for (const h of list.headings) {
+            arr.push({
+              name: h.name,
+              icon: 'heading',
+              callback: () => callback({
+                list: list.id,
+                heading: h.id,
+                group: null,
+                folder: null,
+              })
+            })
+          }
+          return arr
+        }
+      })
+    }
+    return {
+      allowSearch: true,
+      links,
+    }
+  },
+  
+  sortListByName(lists, property = 'name') {
+    return lists.slice().sort((a, b) => a[property].toLowerCase().localeCompare(b[property].toLowerCase()))
+  },
   getAutoSchedulerIconDropObject(autoSchedule, saveAutoSchedule, userInfo) {
     return {
       name: 'Auto schedule',
@@ -118,6 +214,11 @@ export default {
 
     const getWeekSpecific = week => spec(utilsMoment.nextWeekDay(tod, week, 'ddd', true).format('Y-M-D'))
 
+    const parseUserGeneratedDate = (str, forma) => {
+      const date = mom(str.replace(/\//gi, '-').replace(/\./gi, '-'), forma, true)
+      return date.isValid() ? spec(date.format('Y-M-D')) : null
+    }
+
     const specificMatches = [
       {
         match: ' next week',
@@ -126,6 +227,22 @@ export default {
       {
         match: ' next month',
         get: () => spec(tod.clone().add(1, 'month').startOf('month').format('Y-M-D')),
+      },
+      {
+        match: ' end of month',
+        get: () => spec(tod.clone().endOf('month').format('Y-M-D')),
+      },
+      {
+        match: ' end of week',
+        get: () => spec(tod.clone().endOf('week').format('Y-M-D')),
+      },
+      {
+        match: ' end of year',
+        get: () => spec(tod.clone().endOf('year').format('Y-M-D')),
+      },
+      {
+        match: ' mid month',
+        get: () => spec(tod.clone().month(Math.floor(tod.daysInMonth() / 2)).format('Y-M-D')),
       },
       {
         match: ' next year',
@@ -158,6 +275,18 @@ export default {
           }
           return null
         },
+      },
+      {
+        match: ' (((0[1-9]|[12][0-9]|30)[-/.]?(0[13-9]|1[012])|31[-/.]?(0[13578]|1[02])|(0[1-9]|1[0-9]|2[0-8])[-/.]?02)[-/.]?[0-9]{4}|29[-/.]?02[-/.]?([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00))',
+        get: (m, str) => parseUserGeneratedDate(str, 'DD-MM-YYYY'),
+      },
+      {
+        match: ' (((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))[-/]?[0-9]{4}|02[-/]?29[-/]?([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00))',
+        get: (m, str) => parseUserGeneratedDate(str, 'MM-DD-YYYY'),
+      },
+      {
+        match: ' ([0-9]{4}[-/]?((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))|([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048])00)[-/]?02[-/]?29)',
+        get: (m, str) => parseUserGeneratedDate(str, 'YYYY-MM-DD'),
       },
       {
         match: '\\s([0-3][0-9])th',
@@ -326,6 +455,34 @@ export default {
         },
       },
       {
+        match: /\severy day/gi,
+        unshift: true,
+        get: (m, str) => {
+          periodic = true
+          cal = {
+            type: 'daily',
+            daily: 1,
+
+            editDate: TOD_STR,
+            begins: TOD_STR,
+          }
+        },
+      },
+      {
+        match: /\severy day after/gi,
+        unshift: true,
+        get: (m, str) => {
+          periodic = true
+          cal = {
+            type: 'after completion',
+            afterCompletion: 1,
+
+            editDate: TOD_STR,
+            begins: TOD_STR,
+          }
+        },
+      },
+      {
         match: / every (\d+) days after/gi,
         unshift: true,
         get: (m, str) => {
@@ -343,23 +500,33 @@ export default {
         },
       },
       {
-        match: /\severy (\d+) weeks( on)? ((Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat),?(\s)?)+/gi,
+        match: /\severy( (\d+) weeks)?( on)? ((Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat),?(\s)?)+/gi,
         unshift: true,
         get: (m, str) => {
           const split = str.split(' ').filter(el => el)
 
           const weeks = parseInt(split[1], 10)
+          const isNumber = !isNaN(weeks)
 
-          split.splice(0, str.includes(' on') ? 4 : 3)
+          let begin = 4
+
+          if (!str.includes(' on'))
+            begin--
+          if (!str.includes(' weeks'))
+            begin--
+          if (!isNumber)
+            begin--
+
+          split.splice(0, begin)
 
           const weekList = split.map(el => el.replace(',', '').slice(0, 2))
 
-          if (weeks && weekList) {
+          if ((weeks || !isNumber) && weekList) {
             periodic = true
             cal = {
               type: 'weekly',
               weekly: {
-                every: weeks,
+                every: !isNumber ? 1 : weeks,
                 days: weekList.map(w => parseInt(mom(w, 'ddd').format('e'), 10)),
               },
               
@@ -758,6 +925,7 @@ export default {
     }
 
     if (c.time && allowHours) str += ` at ${this.parseTime(c.time, userInfo)}`
+    if (c.evening) str += ' evening'
 
     if (c.begins && c.begins !== c.editDate && (forceShowInfo || mom(c.begins, 'Y-M-D').isSameOrAfter(mom(), 'day'))) {
       str += `, begins on ${this.getHumanReadableDate(c.begins)}`
@@ -1029,66 +1197,22 @@ export default {
         }
         case "t": {
           p()
-          iconDrop({
-            links: (vm.tags || []).map(t => ({...t, icon: 'tag'})),
-            select: true,
-            onSave: names => save('save', {
-              tags: (vm.tags || []).filter(t => names.includes(t.name)).map(el => el.id),
-            }),
-            selected: [],
-            allowSearch: true,
-          })
+          iconDrop(this.tagsOptions(vm, [], tags => save('save', {tags}), true))
           break
         }
         case "k": {
           p()
-          iconDrop({
-            links: vm.lists.map(t => ({
-              ...t,
-              icon: 'tasks',
-              callback: () => save('save', {
-                list: t.id,
-                folder: null,
-                group: null,
-                heading: null,
-              }),
-            })),
-            allowSearch: true,
-          })
+          iconDrop(this.listsOptions(vm, item => save('save', item)))
           break
         }
         case "f": {
           p()
-          iconDrop({
-            links: vm.folders.map(t => ({
-              ...t,
-              icon: 'tasks',
-              callback: () => save('save', {
-                folder: t.id,
-                list: null,
-                group: null,
-                heading: null,
-              }),
-            })),
-            allowSearch: true,
-          })
+          iconDrop(this.folderOptions(vm, item => save('save', item)))
           break
         }
         case 'g': {
           p()
-          iconDrop({
-            links: vm.groups.map(t => ({
-              ...t,
-              icon: 'group',
-              callback: () => save('save', {
-                folder: null,
-                list: null,
-                group: t.id,
-                heading: null,
-              }),
-            })),
-            allowSearch: true,
-          })
+          iconDrop(this.groupOptions(vm, item => save('save', item)))
           break
         }
       }

@@ -28,6 +28,11 @@ export default {
         return rootGetters.checkMissingIdsAndSortArr(order, d.folders)
       return []
     },
+    sortedFoldersByName(s, getters) {
+      const folders = getters.folders.slice()
+      folders.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      return folders
+    },
     sortedFoldersAndGroups(s, d, state, rootGetters) {
       const {userInfo} = state
       let order = userInfo.folders

@@ -762,6 +762,7 @@ export default {
           if (calendar === undefined) calendar = null
           if (this.isEditingFiles && this.addedFiles.length > 0)
             this.savingTask = true
+          
           this.$emit('save', {
             ...t,
             list: this.listId,
@@ -777,6 +778,7 @@ export default {
                 .then(() => {
                   this.files = []
                   this.addedFiles = []
+                  this.leave(this.$el)
                   solve()
                 })
                 .catch(() => {
@@ -1100,13 +1102,7 @@ export default {
       return this.task.name
     },
     getTags() {
-      return {
-        links: this.tags.map(t => ({...t, icon: 'tag'})),
-        select: true,
-        onSave: names => this.task.tags = names.slice(),
-        selected: this.task.tags || [],
-        allowSearch: true,
-      }
+      return utils.tagsOptions(this, this.task.tags, names => this.task.tags = names.slice())
     },
     tagIds() {
       return this.$store.getters['tag/getTagsByName'](this.task.tags || []).map(el => el.id)
@@ -1310,13 +1306,12 @@ export default {
 
       if (!this.isFirstEdit) {
         const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
+        this.toReplace = res.matches
         if (res && res.calendar) {
-          this.toReplace = res.matches
           this.task.calendar = res.calendar
           this.fromDefaultTask = false
           this.fromIconDrop = null
         } else if (!this.fromIconDrop && !this.fromDefaultTask) {
-          this.toReplace = null
           this.fromDefaultTask = false
           this.task.calendar = null
         }

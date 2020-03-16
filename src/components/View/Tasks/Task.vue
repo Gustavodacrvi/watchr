@@ -118,6 +118,7 @@
                       @leave='infoLeave'
                       tag='span'
                     >
+                      <Icon v-if="isInbox" class="name-icon" icon="inbox" color="var(--primary)" key='1'/>
                       <Icon v-if="isToday && !isEvening" class="name-icon" icon="star" color="var(--yellow)" key='1'/>
                       <Icon v-else-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)" key='2'/>
                       <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)" key='3'/>
@@ -446,7 +447,7 @@ export default {
         this.isEditing = false
     },
     addPriority(pri) {
-      this.$store.dispatch('task/saveTask', {
+      this.saveTaskContent({
         id: this.item.id,
         priority: pri,
       })
@@ -463,7 +464,7 @@ export default {
       })
     },
     saveDate(date) {
-      this.$store.dispatch('task/saveTask', {
+      this.saveTaskContent({
         id: this.item.id,
         calendar: {
           type: 'specific',
@@ -493,6 +494,7 @@ export default {
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
+      getTagsById: 'tag/getTagsById',
     }),
     isItemLogged() {
       return this.isTaskInLogbook(this.item)
@@ -518,16 +520,19 @@ export default {
             {
               icon: 'star',
               id: 'd',
+              color: 'var(--yellow)',
               callback: () => this.saveTaskContent({deadline: mom().format('Y-M-D')}),
             },
             {
               icon: 'sun',
               id: 'çljk',
+              color: 'var(--orange)',
               callback: () => this.saveTaskContent({deadline: mom().add(1, 'day').format('Y-M-D')}),
             },
             {
               icon: 'calendar',
               id: 'çljkasdf',
+              color: 'var(--green)',
               callback: () => ({
                 comp: 'CalendarPicker',
                 content: {
@@ -543,6 +548,7 @@ export default {
             {
               icon: 'bloqued',
               id: 'asdf',
+              color: 'var(--red)',
               callback: () => this.saveTaskContent({deadline: null}),
             },
           ]
@@ -554,30 +560,35 @@ export default {
             {
               icon: 'star',
               id: 'd',
+              color: 'var(--yellow)',
               callback: () => this.saveDate(mom().format('Y-M-D')),
             },
             {
               icon: 'sun',
               id: 'çljk',
+              color: 'var(--orange)',
               callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
-            },
-            {
-              icon: 'archive',
-              id: 'açlkjsdffds',
-              callback: () => this.saveCalendarDate({
-                type: 'someday',
-              })
             },
             {
               icon: 'layer-group',
               id: 'ds',
+              color: 'var(--olive)',
               callback: () => this.saveCalendarDate({
                 type: 'anytime',
               })
             },
             {
+              icon: 'archive',
+              id: 'açlkjsdffds',
+              color: 'var(--brown)',
+              callback: () => this.saveCalendarDate({
+                type: 'someday',
+              })
+            },
+            {
               icon: 'calendar',
               id: 'çljkasdf',
+              color: 'var(--green)',
               callback: () => {return {
                 comp: "CalendarPicker",
                 content: {callback: this.saveCalendarDate}}},
@@ -585,6 +596,7 @@ export default {
             {
               icon: 'bloqued',
               id: 'asdf',
+              color: 'var(--red)',
               callback: () => this.saveCalendarDate(null)
             },
           ]
@@ -625,9 +637,16 @@ export default {
           callback: () => this.copyItem()
         },
         {
+          name: 'Add tags',
+          icon: 'tag',
+          callback: () => utils.tagsOptions(this, this.item.tags, tags => {
+            this.saveTaskContent({tags})
+          }, true)
+        },
+        {
           name: 'Move to list',
           icon: 'tasks',
-          callback: () => this.listOptions
+          callback: () => utils.listsOptions(this, this.saveTaskContent)
         },
         {
           name: 'Convert to list',
@@ -647,7 +666,12 @@ export default {
         {
           name: 'Move to folder',
           icon: 'folder',
-          callback: () => this.folderOptions
+          callback: () => utils.folderOptions(this, this.saveTaskContent)
+        },
+        {
+          name: 'Move to group',
+          icon: 'group',
+          callback: () => utils.groupOptions(this, this.saveTaskContent)
         },
         {
             name: 'Delete task',
@@ -711,64 +735,18 @@ export default {
     haveFiles() {
       return this.item.files && this.item.files.length > 0
     },
+    tagNames() {
+      return this.getTagsById(this.item.tags || []).map(el => el.name)
+    },
     hasTags() {
+      if (this.viewType === 'tag' && this.tagNames.length === 1)
+        return this.tagNames[0] !== this.viewName
       return this.item.tags && this.item.tags.length > 0
     },
-    folderOptions() {
-      const links = []
-      for (const fold of this.savedFolders) {
-        links.push({
-          name: fold.name,
-          icon: 'folder',
-          callback: () => {
-            this.$store.dispatch('task/saveTask', {
-              id: this.item.id,
-              folder: fold.id,
-              group: null,
-              list: null,
-            })
-          }
-        })
-      }
-      return {
-        allowSearch: true,
-        links,
-      }
-    },
-    listOptions() {
-      const moveToList = (obj) => {
-        this.$store.dispatch('task/saveTask', {
-          id: this.item.id,
-          folder: null,
-          group: null,
-          ...obj
-        })
-      }
-      const links = []
-      for (const list of this.savedLists) {
-        links.push({
-          name: list.name,
-          icon: 'tasks',
-          callback: () => {
-            const arr = [{
-              name: 'List root',
-              callback: () => moveToList({list: list.id, heading: null})
-            }]
-            for (const h of list.headings) {
-              arr.push({
-                name: h.name,
-                icon: 'heading',
-                callback: () => moveToList({list: list.id, heading: h.id})
-              })
-            }
-            return arr
-          }
-        })
-      }
-      return {
-        allowSearch: true,
-        links,
-      }
+    isInbox() {
+      if (this.viewName === 'Inbox')
+        return false
+      return !this.item.calendar
     },
     isToday() {
       if (this.isCalendarView) return false
@@ -1001,7 +979,10 @@ export default {
 }
 
 .dark {
-  padding: 6px;
+  padding: 4px;
+  padding-top: 5px;
+  position: relative;
+  top: -1px;
   background-color: var(--sidebar-color);
 }
 
@@ -1110,6 +1091,7 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  padding: 6px 0;
 }
 
 .icon {

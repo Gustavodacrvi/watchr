@@ -28,7 +28,7 @@
     >
       <div v-if="opt && showing"
         class="icon-drop-content shadow cb rb"
-        :class="{overflow: cardOptions && cardOptions.overflow}"
+        :class="{overflow: cardOptions && cardOptions.overflow, isListIcons: getComp === 'ListIcons'}"
       >
         <transition name="fade" appear>
           <component v-if="showingCont"
@@ -230,10 +230,13 @@ export default {
   top: 0;
   width: 0;
   height: 0;
-  padding: 10px 0;
   overflow: hidden;
   transition-duration: .15s;
   z-index: 5;
+}
+
+.isListIcons {
+  padding: 10px 0;
 }
 
 .overflow {

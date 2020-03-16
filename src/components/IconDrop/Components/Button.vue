@@ -1,0 +1,66 @@
+<template>
+  <button class="Button"
+    :class="{isActive}"
+    :style="{backgroundColor: isActive ? primaryColor : ''}"
+    
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
+  >
+    <Icon
+      width='18px'
+      :icon='icon'
+      :color='color'
+    />
+    <span class="value" :style='{color}'>
+      {{ value }}
+    </span>
+  </button>
+</template>
+
+<script>
+
+export default {
+  props: ['value', 'icon', 'defaultColor', 'active'],
+  data() {
+    return {
+      hover: false,
+    }
+  },
+  computed: {
+    isActive() {
+      return this.hover || this.active
+    },
+    primaryColor() {
+      return this.defaultColor || 'var(--primary)'
+    },
+    color() {
+      return this.isActive ? "var(--dark-void)" : (this.defaultColor || "var(--txt)")
+    },
+  },
+}
+
+</script>
+
+<style scoped>
+
+.Button {
+  background-color: var(--dark-light-gray);
+  padding: 12px;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  transition-duration: .2s;;
+}
+
+.Button.isActive {
+  color: var(--dark-void);
+}
+
+.value {
+  margin-left: 8px;
+}
+
+</style>

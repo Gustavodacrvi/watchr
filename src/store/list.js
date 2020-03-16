@@ -44,6 +44,11 @@ export default {
       
       return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
+    sortedListsByName(s, getters) {
+      const lists = getters.lists.slice()
+      lists.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      return lists
+    },
     sortedLists(s, d, {userInfo}, rootGetters) {
       if (userInfo)
         return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, d.lists)

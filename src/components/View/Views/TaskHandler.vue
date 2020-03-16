@@ -10,7 +10,6 @@
 
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
-      :selectEverythingToggle='selectEverythingToggle'
 
       :addItem='addTask'
       :showSomedayButton='showSomedayButton'
@@ -64,7 +63,7 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
-    'selectEverythingToggle', 'getCalendarOrderDate', 'updateViewIds',
+    'getCalendarOrderDate', 'updateViewIds',
     'width', 'disableRootActions', 'fallbackFunctionData',
 
     'headingEditOptions', 'taskIconDropOptions', 'filterByAssigned',
@@ -91,6 +90,9 @@ export default {
   methods: {
     addTaskEdit() {
       this.$refs.renderer.appendItem()
+    },
+    selectAll() {
+      this.$refs.renderer.selectAll()
     },
     onAddExistingItem(index, lazyItems, fallbackItem, callback) {
       this.$store.dispatch('pushPopup', {
@@ -122,18 +124,17 @@ export default {
         newTaskRef: obj.newItemRef,
       }
       this.fixPosition(newObj, this.rootNonFilteredIds, async () => {
-        this.order = newObj.ids.slice()
-
         const b = fire.batch()
         const writes = []
+
+        await this.$store.dispatch('task/addViewTask', {
+          b, ...newObj, writes,
+        })
+        this.order = newObj.ids.slice()
 
         this.updateViewIds(b, writes, {
           finalIds: newObj.ids,
           ...this.getUpdateIdsInfo()
-        })
-
-        await this.$store.dispatch('task/addViewTask', {
-          b, ...newObj, writes,
         })
 
         cacheBatchedItems(b, writes)

@@ -226,13 +226,6 @@ export default {
         this.showingSearch = false
       }, 1000)
     },
-    applySelectedTasks({elId, tasks}) {
-/*       this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', {
-        elIds: [elId],
-        taskIds: tasks,
-        type: elId,
-      }) */
-    },
     onTaskDrop({taskId, elId}) {
       this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', {
         elIds: [elId],
@@ -405,7 +398,7 @@ export default {
       const getOptions = (link, type) => {
         switch (type) {
           case 'list': {
-            return utilsList.listOptions(link)
+            return utilsList.listOptions(this, link)
           }
           case 'tag': {
             return utilsTag.tagOptions(link)

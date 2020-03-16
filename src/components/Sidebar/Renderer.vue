@@ -309,7 +309,7 @@ export default {
       
       s.transition = 'none'
       s.opacity = 1
-      s.height = (this.isDesktopDevice ? 35 : 42) + 'px'
+      s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
       requestAnimationFrame(() => {
         s.transition = 'height .15s, opacity .15s'
         s.opacity = 0
@@ -382,7 +382,7 @@ export default {
 
 <style>
 
-.Renderer .Task {
+.Sidebar-wrapper .Task {
   max-height: 0;
   overflow: hidden !important;
 }

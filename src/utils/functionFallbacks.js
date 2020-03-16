@@ -147,6 +147,12 @@ export default {
       }
       return t
     },
+    ungroupedSmartViewRoot(t, force = false) {
+      if (force && t.calendar) {
+        t.calendar.evening = false
+      }
+      return t
+    },
     listRoot(t, force = false) {
       if (force) {
         t.heading = null

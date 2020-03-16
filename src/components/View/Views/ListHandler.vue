@@ -2,6 +2,7 @@
   <div class="ListHandler">
     <ListRendererVue v-if="!hideList"
       v-bind='$props'
+      ref='renderer'
 
       :items="sortLaseredLists"
       :headings='emptyArr'
@@ -10,7 +11,6 @@
       :addItem='addList'
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
-      :selectEverythingToggle='selectEverythingToggle'
       :itemIconDropOptions='taskIconDropOptions'
       :disableFallback='true'
       :rootFilterFunction='rootFilterFunction'
@@ -52,11 +52,14 @@ export default {
     HandlerMixin,
   ],
   props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday',
-  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'selectEverythingToggle', 'filterByAssigned'],
+  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'filterByAssigned'],
   components: {
     ListRendererVue,
   },
   methods: {
+    selectAll() {
+      this.$refs.renderer.selectAll()
+    },
     allowSomeday() {
       this.$emit('allow-someday')
     },
