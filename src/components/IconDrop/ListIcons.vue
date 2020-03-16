@@ -2,15 +2,14 @@
 <template>
   <div class="ListIcons scroll-thin" :class="[{overflow: links.allowSearch}, deviceLayout]">
     <div class="links" ref='main-content'>
+      <div v-if="links.allowSearch" class="search hide-trans">
+        <SearchInput
+          ref='input'
+          v-model="search"
+        />
       <span v-if="select && allowKeyboard" class="notes">
         Shift + Enter to save
       </span>
-      <div v-if="links.allowSearch" class="search hide-trans">
-        <input class="input"
-          ref='input'
-          :value="search"
-          @input="v => search = v.target.value"
-        >
       </div>
       <transition-group
         @enter='enterItems'
@@ -74,13 +73,13 @@
       </transition-group>
     </div>
     <div v-if="select && links.onSave" class="btn">
-      <div style="height: 30px"></div>
+      <div style="height: 48px"></div>
       <div class="absolute-btn">
         <div class="abs-wrapper">
           <div class="back-layer"></div>
-          <ButtonApp class="abs-btn"
+          <ButtonInput class="abs-btn"
             type='tiny'
-            value='Save'
+            value='Save selected'
             @click='saveSelected'
           />
         </div>
@@ -91,17 +90,17 @@
 
 <script>
 
-import ButtonApp from '@/components/Auth/Button.vue'
 import ProfilePhoto from "@/components/View/RenderComponents/ProfilePhoto.vue"
+import SearchInput from "./Components/SearchInput.vue"
+import ButtonInput from "./Components/Button.vue"
 
 import { mapGetters, mapState } from 'vuex'
-
 
 export default {
   props: ['content', 'allowKeyboard'],
   components: {
-    ButtonApp,
-    ProfilePhoto,
+    SearchInput,
+    ProfilePhoto, ButtonInput,
   },
   data() {
     return {
@@ -120,7 +119,7 @@ export default {
     if (this.allowKeyboard) {
       window.addEventListener('keydown', this.keydown)
       if (this.$refs.input)
-        this.$refs.input.focus()
+        this.$refs.input.focusInput()
     }
   },
   beforeDestroy() {
@@ -228,7 +227,7 @@ export default {
       el.style.height = '0px'
       requestAnimationFrame(() => {
         el.style.opacity = 1
-        el.style.height = '35px'
+        el.style.height = '25px'
         setTimeout(() => done(), 200)
       })
     },
@@ -285,9 +284,7 @@ export default {
   align-items: center;
   transition-duration: .15s;
   white-space: nowrap;
-  height: 22px;
-  border-radius: 4px;
-  margin: 0 10px;
+  height: 26px;
   overflow: hidden;
   position: relative;
 }
@@ -334,7 +331,7 @@ export default {
 .link .link-cont {
   display: flex;
   height: 100%;
-  margin: 0 12px;
+  margin: 0 25px;
   align-items: center;
   justify-content: center;
 }
@@ -351,7 +348,6 @@ export default {
 }
 
 .search {
-  margin: 0 12px;
   margin-bottom: 10px;
   min-width: 250px;
   position: relative;
@@ -391,8 +387,7 @@ export default {
   position: absolute;
   width: 100%;
   left: 0;
-  bottom: -2.5px;
-  padding: 0 10px;
+  bottom: 0px;
 }
 
 .abs-wrapper {
@@ -419,7 +414,7 @@ export default {
   left: 0;
   top: 0;
   display: block;
-  margin-bottom: 6px;
+  transform: translateY(4px);
 }
 
 </style>

@@ -6,7 +6,8 @@
     @mouseenter="hover = true"
     @mouseleave="hover = false"
   >
-    <Icon
+    <Icon v-if="icon"
+      class="icon"
       width='18px'
       :icon='icon'
       :color='color'
@@ -59,8 +60,20 @@ export default {
   color: var(--dark-void);
 }
 
+.icon {
+  transform: translateY(2px);
+}
+
 .value {
   margin-left: 8px;
+  display: flex;
+  align-items: center;
+  transform: translateY(1px);
+}
+
+.border-radius {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 </style>

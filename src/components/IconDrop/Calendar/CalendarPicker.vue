@@ -11,7 +11,7 @@
       <div class="fast-icons">
         <Icon
           class="cursor icon-box"
-          width="22px"
+          width="20px"
           icon="star"
           color='var(--yellow)'
           ref='tod'
@@ -22,7 +22,7 @@
         />
         <Icon
           class="cursor icon-box"
-          width="22px"
+          width="20px"
           icon="sun"
           color='var(--orange)'
           ref='tom'
@@ -33,7 +33,7 @@
         />
         <Icon v-if="allowSomeday"
           class="cursor icon-box"
-          width="22px"
+          width="20px"
           ref='any'
           color='var(--olive)'
           icon="layer-group"
@@ -44,7 +44,7 @@
         />
         <Icon v-if="allowSomeday"
           class="cursor icon-box"
-          width="22px"
+          width="20px"
           ref='som'
           icon="archive"
           color='var(--brown)'
@@ -56,7 +56,7 @@
         <Icon v-if="allowBloqued"
           class="cursor icon-box"
           ref='bloq'
-          width="22px"
+          width="20px"
           icon="bloqued"
           color='var(--red)'
           :active='selectionPos === 5 && isDesktopBreakPoint'
@@ -67,7 +67,7 @@
         <Icon v-if="allowRepeat"
           class="cursor icon-box"
           ref='rep'
-          width="22px"
+          width="20px"
           icon="repeat"
           title='Recurring dates'
           :active='selectionPos === 6 && isDesktopBreakPoint'
@@ -398,6 +398,8 @@ export default {
 
 .CalendarPicker {
   width: 280px;
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 .fast-icons {
@@ -432,7 +434,7 @@ export default {
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: 30px;
+  grid-auto-rows: 25px;
 }
 
 .week-day, .day {
