@@ -113,6 +113,8 @@ import ListHandler from './Views/ListHandler.vue'
 import Defer from '@/mixins/defer'
 import CalendarEvents from './RenderComponents/CalendarEvents.vue'
 
+import ViewRendererLongCalendarPicker from './SmartComponents/LongCalendarPicker.vue'
+
 import { mapGetters, mapState, mapActions, mapMutations } from 'vuex'
 
 import { fire } from '@/store/'
@@ -146,7 +148,7 @@ export default {
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
   components: {
     ListHandler, CalendarEvents,
-    TaskHandler,
+    TaskHandler, ViewRendererLongCalendarPicker,
     Header: HeaderVue,
     ActionButtons: ActionButtonsVue,
     SlimModeNav,
