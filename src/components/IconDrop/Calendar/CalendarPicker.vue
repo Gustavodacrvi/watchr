@@ -96,12 +96,20 @@
         <div class='week-day' key='sa'>S</div>
 
         <div v-for="i in firstWeekDayRange" :key="i" class="day dead"></div>
-        <div v-for="i in daysInMonth" :key="i + 'num'" class='day num'>{{ i }}</div>
+        <div v-for="i in daysInMonth" :key="i + 'num'" class='day num' :class="{active: selectedDay === i}" @click="selectDate(i)">{{ i }}</div>
       </div>
     </div>
     <ButtonInput
-      value='Add time'
+      :value='getTime ? getTime : "Add time"'
       icon='clock'
+      :defaultColor='getTime ? "var(--purple)" : ""'
+      @click.native="addTime"
+    />
+    <ButtonInput
+      value='Save date'
+      icon='calendar'
+      defaultColor='var(--green)'
+      @click.native="saveDate"
     />
   </div>
 </template>
@@ -126,9 +134,23 @@ export default {
     return {
       current: this.initial || TOD_STR,
       selected: this.initial || TOD_STR,
+
+      time: this.defaultTime || null,
     }
   },
   methods: {
+    addTime() {
+      this.$emit("get-time", this.selected)
+    },
+    saveDate() {
+      this.$emit('select', this.calendar || {
+        time: this.item,
+        type: 'specific',
+        editDate: TOD.format('Y-M-D'),
+        specific: this.selectedMoment.format('Y-M-D'),
+        begins: TOD.format('Y-M-D'),
+      })
+    },
     previousMonth() {
       this.current = this.currentMoment.clone().subtract(1, 'month').format('Y-M-D')
     },
@@ -137,6 +159,9 @@ export default {
     },
     resetDate() {
       this.current = this.initial || TOD_STR
+    },
+    selectDate(day) {
+      this.selected = this.selectedMoment.clone().date(day)
     },
   },
   computed: {
@@ -149,8 +174,20 @@ export default {
     allowRepeat() {
       return this.repeat && !this.onlyDates
     },
+
+    getTime() {
+      if (this.time) {
+        if (this.$store.state.userInfo.disablePmFormat)
+          return this.time
+        return mom(this.time, 'H:m').format('h:m A')
+      }
+    },
+
     currentMoment() {
       return mom(this.current, 'Y-M-D')
+    },
+    selectedMoment() {
+      return mom(this.selected, 'Y-M-D')
     },
 
 
@@ -159,6 +196,14 @@ export default {
     },
     daysInMonth() {
       return this.currentMoment.daysInMonth()
+    },
+    selectedDay() {
+      if (
+        !this.currentMoment.isSame(this.selectedMoment, 'month') ||
+        !this.currentMoment.isSame(this.selectedMoment, 'year')
+      )
+        return false
+      return parseInt(this.selectedMoment.format('D'), 10)
     },
 
     currentYear() {
@@ -235,7 +280,7 @@ export default {
   font-size: 1.1em;
 }
 
-.num:hover, .num.active {
+.num:hover, .active {
   background-color: var(--primary);
   user-select: none;
   color: var(--dark-void);
