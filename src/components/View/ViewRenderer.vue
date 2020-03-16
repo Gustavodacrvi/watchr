@@ -1280,17 +1280,17 @@ export default {
                   }, ids),
                 },
                 {
-                  icon: 'archive',
-                  id: 'açlkjsdffds',
-                  callback: () => this.saveDates({
-                    type: 'someday',
-                  }, ids)
-                },
-                {
                   icon: 'layer-group',
                   id: 'asdffds',
                   callback: () => this.saveDates({
                     type: 'anytime',
+                  }, ids)
+                },
+                {
+                  icon: 'archive',
+                  id: 'açlkjsdffds',
+                  callback: () => this.saveDates({
+                    type: 'someday',
                   }, ids)
                 },
                 {
@@ -1418,17 +1418,17 @@ export default {
                   }, ids),
                 },
                 {
-                  icon: 'archive',
-                  id: 'açlkjsdffds',
-                  callback: () => this.saveDates({
-                    type: 'someday',
-                  }, ids)
-                },
-                {
                   icon: 'layer-group',
                   id: 'açlkjsdffd',
                   callback: () => this.saveDates({
                     type: 'anytime',
+                  }, ids)
+                },
+                {
+                  icon: 'archive',
+                  id: 'açlkjsdffds',
+                  callback: () => this.saveDates({
+                    type: 'someday',
                   }, ids)
                 },
                 {

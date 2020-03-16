@@ -28,6 +28,9 @@ export default {
         this.$el.focus()
       }, 50)
     },
+    blur() {
+      this.$el.blur()
+    },
   },
   watch: {
     str() {

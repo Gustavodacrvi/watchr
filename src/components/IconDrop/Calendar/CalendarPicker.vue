@@ -5,7 +5,7 @@
       placeholder='Smart input...'
       ref='input'
       :focus='true'
-      @keydown='keydownInput'
+      @keydown.native='keydownInput'
     />
     <div v-if="!calendar">
       <div class="fast-icons">
@@ -16,7 +16,9 @@
           color='var(--yellow)'
           ref='tod'
           title='Today'
+          :active='selectionPos === 1 && isDesktopBreakPoint'
           :box='true'
+          @click="today"
         />
         <Icon
           class="cursor icon-box"
@@ -26,6 +28,19 @@
           ref='tom'
           title='Tomorrow'
           :box='true'
+          :active='selectionPos === 2 && isDesktopBreakPoint'
+          @click="tomorrow"
+        />
+        <Icon v-if="allowSomeday"
+          class="cursor icon-box"
+          width="22px"
+          ref='any'
+          color='var(--olive)'
+          icon="layer-group"
+          title='Anytime'
+          :active='selectionPos === 3 && isDesktopBreakPoint'
+          :box='true'
+          @click="someday"
         />
         <Icon v-if="allowSomeday"
           class="cursor icon-box"
@@ -35,15 +50,8 @@
           color='var(--brown)'
           title='Someday'
           :box='true'
-        />
-        <Icon v-if="allowSomeday"
-          class="cursor icon-box"
-          width="22px"
-          ref='any'
-          color='var(--olive)'
-          icon="layer-group"
-          title='Anytime'
-          :box='true'
+          :active='selectionPos === 4 && isDesktopBreakPoint'
+          @click="anytime"
         />
         <Icon v-if="allowBloqued"
           class="cursor icon-box"
@@ -51,8 +59,10 @@
           width="22px"
           icon="bloqued"
           color='var(--red)'
+          :active='selectionPos === 5 && isDesktopBreakPoint'
           title='No date'
           :box='true'
+          @click="noDate"
         />
         <Icon v-if="allowRepeat"
           class="cursor icon-box"
@@ -60,7 +70,9 @@
           width="22px"
           icon="repeat"
           title='Recurring dates'
+          :active='selectionPos === 6 && isDesktopBreakPoint'
           :box='true'
+          @click="$emit('repeat')"
         />
       </div>
       <div class="calendar-wrapper">
@@ -167,13 +179,39 @@ export default {
     window.addEventListener('keydown', this.keydown)
 
     if (this.isDesktopBreakPoint)
-      this.$refs.input.focusInput()
+      this.focusName()
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.keydown)
   },
   methods: {
-    keydownInput() {
+    today() {
+      this.saveDate(TOD_STR)
+    },
+    tomorrow() {
+      this.saveDate(mom(TOD_STR, 'Y-M-D').add(1, 'd').format('Y-M-D'))
+    },
+    someday() {
+      this.$emit('select', {
+        time: this.item || null,
+        type: 'someday',
+        editDate: TOD.format('Y-M-D'),
+        begins: TOD.format('Y-M-D'),
+      })
+    },
+    anytime() {
+      this.$emit('select', {
+        time: this.item || null,
+        type: 'anytime',
+        editDate: TOD.format('Y-M-D'),
+        begins: TOD.format('Y-M-D'),
+      })
+    },
+    noDate() {
+      this.$emit('select', null)
+    },
+    
+    keydownInput({key}) {
       if (key === "Enter")
         this.saveDate()
     },
@@ -213,12 +251,12 @@ export default {
     addTime() {
       this.$emit("get-time", this.selected)
     },
-    saveDate() {
+    saveDate(specific = null) {
       this.$emit('select', this.calendar || {
-        time: this.item,
+        time: this.item || null,
         type: 'specific',
         editDate: TOD.format('Y-M-D'),
-        specific: this.selectedMoment.format('Y-M-D'),
+        specific: specific || this.selectedMoment.format('Y-M-D'),
         begins: TOD.format('Y-M-D'),
       })
     },
@@ -233,6 +271,9 @@ export default {
     },
     selectDate(day) {
       this.selected = this.selectedMoment.clone().date(day)
+    },
+    focusName() {
+      this.$refs.input.focusInput()
     },
   },
   computed: {
@@ -322,6 +363,12 @@ export default {
     },
   },
   watch: {
+    selectionPos() {
+      if (this.selectionPos === 0)
+        this.focusName()
+      else
+        this.$refs.input.blur()
+    },
     current() {
       setTimeout(() => this.$emit('calc'), 0)
     },
@@ -413,7 +460,7 @@ export default {
   font-size: 1.1em;
 }
 
-.num:hover, .active {
+.num:hover, .num.active {
   background-color: var(--primary);
   user-select: none;
   color: var(--dark-void);
@@ -429,6 +476,11 @@ export default {
 .calendar-str {
   font-size: 1.1em;
   margin-left: 8px;
+}
+
+.fast-icons {
+  position: relative;
+  z-index: 2;
 }
 
 </style>

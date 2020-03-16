@@ -570,19 +570,19 @@ export default {
               callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
             },
             {
-              icon: 'archive',
-              id: 'açlkjsdffds',
-              color: 'var(--brown)',
-              callback: () => this.saveCalendarDate({
-                type: 'someday',
-              })
-            },
-            {
               icon: 'layer-group',
               id: 'ds',
               color: 'var(--olive)',
               callback: () => this.saveCalendarDate({
                 type: 'anytime',
+              })
+            },
+            {
+              icon: 'archive',
+              id: 'açlkjsdffds',
+              color: 'var(--brown)',
+              callback: () => this.saveCalendarDate({
+                type: 'someday',
               })
             },
             {
