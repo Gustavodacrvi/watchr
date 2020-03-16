@@ -494,6 +494,7 @@ export default {
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
+      getTagsById: 'tag/getTagsById',
     }),
     isItemLogged() {
       return this.isTaskInLogbook(this.item)
@@ -734,7 +735,12 @@ export default {
     haveFiles() {
       return this.item.files && this.item.files.length > 0
     },
+    tagNames() {
+      return this.getTagsById(this.item.tags || []).map(el => el.name)
+    },
     hasTags() {
+      if (this.viewType === 'tag' && this.tagNames.length === 1)
+        return this.tagNames[0] !== this.viewName
       return this.item.tags && this.item.tags.length > 0
     },
     isInbox() {
@@ -973,7 +979,10 @@ export default {
 }
 
 .dark {
-  padding: 6px;
+  padding: 4px;
+  padding-top: 5px;
+  position: relative;
+  top: -1px;
   background-color: var(--sidebar-color);
 }
 
@@ -1082,6 +1091,7 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  padding: 6px 0;
 }
 
 .icon {

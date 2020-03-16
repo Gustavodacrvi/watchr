@@ -89,7 +89,7 @@ export default {
         touchGetters: [
           'tag/tags',
         ],
-        getter({state, getters}, ids) {
+        getter({}, ids) {
           const arr = []
           for (const id of ids) {
             const tag = this['tag/tags'].find(el => el.id === id)

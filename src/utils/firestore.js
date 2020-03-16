@@ -607,6 +607,7 @@ export const setList = (batch, list, id, rootState, writes) => {
 
   const getObj = () => ({
     ...hydratedList, handleFiles: null,
+    filePromiseHandler: null,
     id,
     userId: uid(),
   })

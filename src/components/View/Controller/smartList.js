@@ -17,6 +17,8 @@ export default {
       if (this.viewName === 'Recurring')
         return null
 
+      if (this.ungroupTasksInHeadings)
+        return functionFallbacks.viewPositionFallbacks.ungroupedSmartViewRoot
       return functionFallbacks.viewPositionFallbacks.pureSmartViewRoot
     },
     mainFallbackItem() {

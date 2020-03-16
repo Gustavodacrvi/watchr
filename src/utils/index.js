@@ -925,6 +925,7 @@ export default {
     }
 
     if (c.time && allowHours) str += ` at ${this.parseTime(c.time, userInfo)}`
+    if (c.evening) str += ' evening'
 
     if (c.begins && c.begins !== c.editDate && (forceShowInfo || mom(c.begins, 'Y-M-D').isSameOrAfter(mom(), 'day'))) {
       str += `, begins on ${this.getHumanReadableDate(c.begins)}`

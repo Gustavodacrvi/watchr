@@ -124,18 +124,17 @@ export default {
         newTaskRef: obj.newItemRef,
       }
       this.fixPosition(newObj, this.rootNonFilteredIds, async () => {
-        this.order = newObj.ids.slice()
-
         const b = fire.batch()
         const writes = []
+
+        await this.$store.dispatch('task/addViewTask', {
+          b, ...newObj, writes,
+        })
+        this.order = newObj.ids.slice()
 
         this.updateViewIds(b, writes, {
           finalIds: newObj.ids,
           ...this.getUpdateIdsInfo()
-        })
-
-        await this.$store.dispatch('task/addViewTask', {
-          b, ...newObj, writes,
         })
 
         cacheBatchedItems(b, writes)
