@@ -73,7 +73,7 @@ export default {
       getTagsByName: {
         deepGetterTouch: {
           'tag/tags': [
-            'name'
+            'name',
           ]
         },
         getter({}, names) {

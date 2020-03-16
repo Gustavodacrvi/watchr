@@ -218,12 +218,10 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
 
         } else if (savedGroupTask) { // Move shared task to personal.
 
-          if (!onlySaveFirestore) {
-            const saveGroupTasks = rootState.task.groupTasks
-            rootState.task.groupTasks = {
-              ...saveGroupTasks,
-              [id]: undefined,
-            }
+          const saveGroupTasks = rootState.task.groupTasks
+          rootState.task.groupTasks = {
+            ...saveGroupTasks,
+            [id]: undefined,
           }
 
           deleteGroupTask()

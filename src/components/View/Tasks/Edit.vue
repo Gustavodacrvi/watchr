@@ -1100,13 +1100,7 @@ export default {
       return this.task.name
     },
     getTags() {
-      return {
-        links: this.tags.map(t => ({...t, icon: 'tag'})),
-        select: true,
-        onSave: names => this.task.tags = names.slice(),
-        selected: this.task.tags || [],
-        allowSearch: true,
-      }
+      return utils.tagsOptions(this, this.task.tags, names => this.task.tags = names.slice())
     },
     tagIds() {
       return this.$store.getters['tag/getTagsByName'](this.task.tags || []).map(el => el.id)

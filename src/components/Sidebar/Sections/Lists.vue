@@ -249,7 +249,7 @@ export default {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
         }
-        list.options = utilsList.listOptions(list)
+        list.options = utilsList.listOptions(this, list)
         list.iconClick = () => {
           this.$store.dispatch('list/completeLists', [list])
         }

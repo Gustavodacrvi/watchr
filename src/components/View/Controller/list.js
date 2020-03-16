@@ -305,7 +305,7 @@ export default {
     headerOptions() {
       const list = this.viewList
       if (list)
-        return utilsList.listOptions(list, true)
+        return utilsList.listOptions(this, list, true)
       return null
     },
     headingEditOptions() {

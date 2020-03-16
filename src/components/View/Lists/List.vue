@@ -254,7 +254,7 @@ export default {
     },
 
     async getListOptions() {
-      this.options = await this.getOptions(utilsList.listOptions(this.item))
+      this.options = await this.getOptions(utilsList.listOptions(this, this.item))
       if (this.item.group) {
         this.options.splice(1, 0, {
           name: 'Add comments',

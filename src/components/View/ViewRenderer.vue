@@ -1024,73 +1024,51 @@ export default {
       return this.showingGroupSelection ? utils.sortListByName(this.getGroupsById(this.presentGroups)) : []
     },
     getIconDropOptionsTags() {
-      const arr = []
-      const tags = this.tags
-      for (const t of tags) {
-        arr.push({
-          name: t.name,
-          icon: 'tag',
-          callback: () => this.addTagToTasks(t.id),
-        })
-      }
-      return arr
+      return utils.tagsOptions(this, [], tagIds => {
+            this.$store.dispatch('task/addTagsToTasksById', {
+              ids: this.selectedItems,
+              tagIds,
+            })
+          }, true)
     },
     getIconDropOptionsFolders() {
-      const links = []
-      const folders = this.folders
-      for (const fold of folders) {
-        links.push({
-          name: fold.name,
-          icon: 'folder',
-          callback: () => {
-            if (this.shortcutsType === 'Task')
-              this.$store.dispatch('task/saveTasksById', {
-                ids: this.selectedItems,
-                task: {folder: fold.id, list: null, group: null},
-              })
-            else
-              this.$store.dispatch('list/saveListsById', {
-                ids: this.selectedItems,
-                list: {folder: fold.id, group: null},
-              })
-          },
-        })
-      }
-      return links
+      return utils.folderOptions(this, task => {
+        if (this.shortcutsType === 'Task')
+          this.$store.dispatch('task/saveTasksById', {
+            ids: this.selectedItems,
+            task,
+          })
+        else
+          this.$store.dispatch('list/saveListsById', {
+            ids: this.selectedItems,
+            list: task,
+          })
+      })
+    },
+    getIconDropOptionsGroups() {
+      return utils.groupOptions(this, task => {
+        if (this.shortcutsType === 'Task')
+          this.$store.dispatch('task/saveTasksById', {
+            ids: this.selectedItems,
+            task,
+          })
+        else
+          this.$store.dispatch('list/saveListsById', {
+            ids: this.selectedItems,
+            list: task,
+          })
+      })
     },
     getViewComp() {
       return this.viewComponent || "TaskHandler"
     },
     getIconDropOptionsLists() {
-      const moveToList = (obj) => {
+      return utils.listsOptions(this, task => {
         this.$store.dispatch('task/saveTasksById', {
           ids: this.selectedItems,
-          task: {...obj, folder: null, group: null,},
+          task,
         })
-      }
-      const links = []
-      const lists = this.lists
-      for (const list of lists) {
-        links.push({
-          name: list.name,
-          icon: 'tasks',
-          callback: () => {
-            const arr = [{
-              name: 'List root',
-              callback: () => moveToList({list: list.id, heading: null})
-            }]
-            for (const h of list.headings) {
-              arr.push({
-                name: h.name,
-                icon: 'heading',
-                callback: () => moveToList({list: list.id, heading: h.id})
-              })
-            }
-            return arr
-          },
-        })
-      }
-      return links
+      })
     },
     taskIconDropOptions() {
       const dispatch = this.$store.dispatch
@@ -1229,18 +1207,22 @@ export default {
             {
               name: 'Move to list',
               icon: 'tasks',
-              callback: () => {return {
-                allowSearch: true,
-                links: this.getIconDropOptionsLists,
-              }}
+              callback: () => this.getIconDropOptionsLists
             },
             {
               name: 'Move to folder',
               icon: 'folder',
-              callback: () => {return {
-                allowSearch: true,
-                links: this.getIconDropOptionsFolders,
-              }}
+              callback: () => this.getIconDropOptionsFolders
+            },
+            {
+              name: 'Move to group',
+              icon: 'group',
+              callback: () => this.getIconDropOptionsGroups
+            },
+            {
+              name: 'Add tags',
+              icon: 'tag',
+              callback: () => this.getIconDropOptionsTags
             },
             {
               type: 'optionsList',
@@ -1372,10 +1354,12 @@ export default {
             {
               name: 'Move to folder',
               icon: 'folder',
-              callback: () => {return {
-                allowSearch: true,
-                links: this.getIconDropOptionsFolders,
-              }}
+              callback: () => this.getIconDropOptionsFolders
+            },
+            {
+              name: 'Move to group',
+              icon: 'group',
+              callback: () => this.getIconDropOptionsGroups
             },
             {
               type: 'optionsList',
@@ -1408,6 +1392,7 @@ export default {
                 {
                   icon: 'bloqued',
                   id: 'asdf',
+                  color: 'var(--red)',
                   callback: () => saveDeadline(null),
                 },
               ]
@@ -1456,6 +1441,7 @@ export default {
                 {
                   id: 'No date',
                   icon: 'bloqued',
+                  color: 'var(--red)',
                   callback: () => this.saveDates(null, ids)
                 },
               ]

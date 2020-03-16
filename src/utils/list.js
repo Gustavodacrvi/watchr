@@ -76,7 +76,7 @@ export default {
       },
     ]
   },
-  listOptions: (list, isInListView = false) => ({tasks, getters, dispatch, router}) => {
+  listOptions: (vm, list, isInListView = false) => ({tasks, getters, dispatch, router}) => {
     const listId = list.id
 
     const isTaskInRoot = task => getters['task/isTaskInListRoot'](task)
@@ -133,16 +133,19 @@ export default {
           {
             icon: 'star',
             id: 'd',
+            color: 'var(--yellow)',
             callback: () => saveDeadline(mom().format('Y-M-D')),
           },
           {
             icon: 'sun',
             id: 'çljk',
+            color: 'var(--orange)',
             callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
           },
           {
             icon: 'calendar',
             id: 'çljkasdf',
+            color: 'var(--green)',
             callback: () => ({
               comp: 'CalendarPicker',
               content: {
@@ -157,6 +160,7 @@ export default {
           {
             icon: 'bloqued',
             id: 'asdf',
+            color: 'var(--red)',
             callback: () => saveDeadline(null),
           },
         ]
@@ -168,16 +172,19 @@ export default {
           {
             icon: 'star',
             id: 'd',
+            color: 'var(--yellow)',
             callback: () => saveSpecificDate(mom().format('Y-M-D')),
           },
           {
             icon: 'sun',
             id: 'çljk',
+            color: 'var(--orange)',
             callback: () => saveSpecificDate(mom().add(1, 'day').format('Y-M-D')),
           },
           {
             icon: 'archive',
             id: 'açlkjsdffds',
+            color: 'var(--brown)',
             callback: () => saveCalendarDate({
               type: 'someday',
               editDate: TOD_STR,
@@ -187,6 +194,7 @@ export default {
           {
             icon: 'calendar',
             id: 'çljkasdf',
+            color: 'var(--green)',
             callback: () => {return {
               comp: "CalendarPicker",
               content: {repeat: true, disableDaily: true, callback: saveCalendarDate}}},
@@ -194,6 +202,7 @@ export default {
           {
             id: 'asdf',
             icon: 'bloqued',
+            color: 'var(--red)',
             callback: () => saveCalendarDate(null),
           }
         ]
@@ -202,6 +211,16 @@ export default {
         name: 'Edit list name',
         icon: 'pen',
         callback: () => pop({comp: 'AddList', payload: {...list, editing: true}, naked: true})
+      },
+      {
+        name: 'Move to folder',
+        icon: 'folder',
+        callback: () => utils.folderOptions(vm, saveList)
+      },
+      {
+        name: 'Move to group',
+        icon: 'group',
+        callback: () => utils.groupOptions(vm, saveList)
       },
     ]
     
@@ -240,7 +259,7 @@ export default {
         },
       },
     ]
-    if (getters.isDesktopBreakPointDevice)
+    if (getters.isDesktopBreakPoint)
       moreOptions.push({
         name: "Export as template",
         icon: 'export',

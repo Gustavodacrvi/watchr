@@ -13,6 +13,99 @@ import ErrorComponent from '../components/Illustrations/ErrorComponent.vue'
 let contextMenuRunned = false
 
 export default {
+  folderOptions(vm, callback) {
+    const links = []
+    const folders = vm.$store.getters['folder/sortedFoldersByName']
+    
+    for (const fold of folders) {
+      links.push({
+        name: fold.name,
+        icon: 'folder',
+        callback: () => callback({
+          folder: fold.id,
+          group: null,
+          list: null,
+          heading: null,
+        }),
+      })
+    }
+    return {
+      allowSearch: true,
+      links,
+    }
+  },
+  tagsOptions(vm, defaultTags, callback, returnIds = false) {
+    const tags = vm.$store.getters['tag/sortedTagsByName']
+    return {
+      onSave: !returnIds ? callback : names => callback(
+        (tags || []).filter(t => names.includes(t.name)).map(el => el.id),
+      ),
+      links: tags.map(t => ({...t, icon: 'tag'})),
+      select: true,
+      selected: defaultTags || [],
+      allowSearch: true,
+    }
+  },
+  groupOptions(vm, callback) {
+    const links = []
+    const groups = vm.$store.getters['group/sortedGroupsByName']
+    
+    for (const gro of groups) {
+      links.push({
+        name: gro.name,
+        icon: 'group',
+        callback: () => callback({
+          folder: null,
+          group: gro.id,
+          list: null,
+          heading: null,
+        }),
+      })
+    }
+    return {
+      allowSearch: true,
+      links,
+    }
+  },
+  listsOptions(vm, callback) {
+    const links = []
+    const lists = vm.$store.getters['list/sortedListsByName']
+    for (const list of lists) {
+      links.push({
+        name: list.name,
+        icon: 'tasks',
+        callback: () => {
+          const arr = [{
+            name: 'List root',
+            callback: () => callback({
+              list: list.id,
+              heading: null,
+              group: null,
+              folder: null,
+            })
+          }]
+          for (const h of list.headings) {
+            arr.push({
+              name: h.name,
+              icon: 'heading',
+              callback: () => callback({
+                list: list.id,
+                heading: h.id,
+                group: null,
+                folder: null,
+              })
+            })
+          }
+          return arr
+        }
+      })
+    }
+    return {
+      allowSearch: true,
+      links,
+    }
+  },
+  
   sortListByName(lists, property = 'name') {
     return lists.slice().sort((a, b) => a[property].toLowerCase().localeCompare(b[property].toLowerCase()))
   },
@@ -1103,66 +1196,22 @@ export default {
         }
         case "t": {
           p()
-          iconDrop({
-            links: (vm.tags || []).map(t => ({...t, icon: 'tag'})),
-            select: true,
-            onSave: names => save('save', {
-              tags: (vm.tags || []).filter(t => names.includes(t.name)).map(el => el.id),
-            }),
-            selected: [],
-            allowSearch: true,
-          })
+          iconDrop(this.tagsOptions(vm, [], tags => save('save', {tags}), true))
           break
         }
         case "k": {
           p()
-          iconDrop({
-            links: vm.lists.map(t => ({
-              ...t,
-              icon: 'tasks',
-              callback: () => save('save', {
-                list: t.id,
-                folder: null,
-                group: null,
-                heading: null,
-              }),
-            })),
-            allowSearch: true,
-          })
+          iconDrop(this.listsOptions(vm, item => save('save', item)))
           break
         }
         case "f": {
           p()
-          iconDrop({
-            links: vm.folders.map(t => ({
-              ...t,
-              icon: 'tasks',
-              callback: () => save('save', {
-                folder: t.id,
-                list: null,
-                group: null,
-                heading: null,
-              }),
-            })),
-            allowSearch: true,
-          })
+          iconDrop(this.folderOptions(vm, item => save('save', item)))
           break
         }
         case 'g': {
           p()
-          iconDrop({
-            links: vm.groups.map(t => ({
-              ...t,
-              icon: 'group',
-              callback: () => save('save', {
-                folder: null,
-                list: null,
-                group: t.id,
-                heading: null,
-              }),
-            })),
-            allowSearch: true,
-          })
+          iconDrop(this.groupOptions(vm, item => save('save', item)))
           break
         }
       }

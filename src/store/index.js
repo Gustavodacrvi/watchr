@@ -113,6 +113,7 @@ const store = new Vuex.Store({
     },
     userInfo: {
       tags: [],
+      margins: [],
       lists: [],
       favorites: [],
       filters: [],
