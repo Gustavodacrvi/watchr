@@ -1,7 +1,7 @@
 <template>
   <div class="update">
     <div class="date-wrapper">
-      March 1st, 2020
+      March 16th, 2020
     </div>
     
     <h3><Icon icon='repeat' class='heading-icon' color='var(--green)'/>Advanced Smart Date Input</h3>
@@ -44,8 +44,61 @@
     <h4>Completion times</h4>
     <br>
     <p>Use the "X times" keyword to set the number of times a recurring task should be completed instead of setting a due date.</p>
-    
 
+    <br>
+    <h4>Specific keywords</h4>
+    <br>
+    <p>New specific keywords:</p>
+    <ul style="margin-left: 35px">
+      <br>
+        <li>"Every day" is equivalent to "Every 1 days".</li>
+      <br>
+        <li>"Every Sat, Mon, Thu" is equivalent to "Every 1 weeks on Sat, Mon, Thu".</li>
+      <br>
+        <li>07/12/2020: Sets the date to December 7th, 2020, MM/DD/YYYY, YYYY/MM/DD, DD-MM-YYYY, DD.MM.YYYY also work.</li>
+      <br>
+        <li>End of week: Sets the date to Saturday.</li>
+      <br>
+        <li>End of month: Sets the date to the last day of the current month.</li>
+      <br>
+        <li>End of year: Sets the date to the last day of the current year.</li>
+    </ul>
+    <br>
+    <br>
+    
+    <h3><Icon icon='calendar' class='heading-icon' color='var(--green)'/>New Calendar Picker</h3>
+    <br>
+    <p>Calendar Picker and drop downs redesigned.</p>
+    <br>
+
+    <h3>New Floating Button Behavior</h3>
+    <br>
+    <p>By tapping on the floating button, instead of opening the quick add, an animation will occur and the task adder will be opened at the end of the list.</p>
+    <br>
+    <p>Drag it to the Inbox area for quick add.</p>
+    
+    <br>
+    <h3><Icon icon='layer-group' class='heading-icon' color='var(--olive)'/>New Anytime and Inbox</h3>
+    <br>
+
+    <p>Any task that does not have date(Anytime, Someday, Specific date, Recurring) will be shown on the Inbox.</p>
+    <br>
+
+    <h3><Icon icon='star' class='heading-icon' color='var(--red)'/>Enable Overdue Profile Option</h3>
+    <br>
+    <p>Specific tasks by default won't go to Overdue if not completed on the specific date, it will be shown on the Tomorrow smart view instead, deadlines and recurring dates will still go to Overdue.</p>
+    <br>
+    <h3><Icon icon='tag' class='heading-icon' color='var(--red)'/>Logged Tasks Heading on Tag Views</h3>
+    <br>
+    <p>Logged tasks will be shown on the Tag view inside its heading.</p>
+
+    <br>
+    <h3><Icon icon='logbook' class='heading-icon' color='var(--dark-blue)'/>Landing Page</h3>
+    <br>
+    <p>Started to work on the Landing page, new illustration.</p>
+
+
+    <br>
   </div>
 </template>
 

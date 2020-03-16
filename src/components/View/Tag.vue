@@ -10,7 +10,7 @@
         @mouseenter="hover = true"
         @mouseleave="hover = false"
       >
-        <Icon class="icon" :icon="icon" :color="color" width="12px"/>
+        <Icon class="icon" :icon="icon" :color="color" width="14px"/>
         <span class="name">{{ value }}</span>
         <Icon v-if="extraIcon"
           class="extra-icon"
@@ -121,13 +121,14 @@ export default {
 
 .Tag {
   border: 1px solid var(--light-gray);
+  background-color: var(--dark-gray);
   height: 22px;
   display: inline-flex;
   align-items: center;
-  padding: 1px 8px;
+  padding: 10px 8px;
   position: relative;
   overflow: hidden;
-  border-radius: 125px;
+  border-radius: 6px;
 }
 
 .icon {
@@ -136,8 +137,8 @@ export default {
 }
 
 .name {
-  font-size: .9em;
   transition-duration: .2s;
+  transform: translateY(-1px);
   white-space: nowrap;
 }
 

@@ -192,7 +192,7 @@ export default {
   components: {
     Task, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
-    Illustration: IllustrationVue,
+    Illustration: IllustrationVue, 
   },
   data() {
     return {

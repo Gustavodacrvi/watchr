@@ -175,7 +175,6 @@ export default {
   transform: translateX(-50%);
   white-space: nowrap;
   padding: 12px;
-  font-size: .9em;
   background-color: var(--sidebar-color);
   cursor: initial;
 }
