@@ -1,116 +1,133 @@
 <template>
   <div class="CalendarPicker">
     <SearchInput
+      v-model="smart"
       placeholder='Smart input...'
+      ref='input'
       :focus='true'
+      @keydown='keydownInput'
     />
-    <div class="fast-icons">
-      <Icon
-        class="cursor icon-box"
-        width="22px"
-        icon="star"
-        color='var(--yellow)'
-        ref='tod'
-        title='Today'
-        :box='true'
-      />
-      <Icon
-        class="cursor icon-box"
-        width="22px"
-        icon="sun"
-        color='var(--orange)'
-        ref='tom'
-        title='Tomorrow'
-        :box='true'
-      />
-      <Icon v-if="allowSomeday"
-        class="cursor icon-box"
-        width="22px"
-        ref='som'
-        icon="archive"
-        color='var(--brown)'
-        title='Someday'
-        :box='true'
-      />
-      <Icon v-if="allowSomeday"
-        class="cursor icon-box"
-        width="22px"
-        ref='any'
-        color='var(--olive)'
-        icon="layer-group"
-        title='Anytime'
-        :box='true'
-      />
-      <Icon v-if="allowBloqued"
-        class="cursor icon-box"
-        ref='bloq'
-        width="22px"
-        icon="bloqued"
-        color='var(--red)'
-        title='No date'
-        :box='true'
-      />
-      <Icon v-if="allowRepeat"
-        class="cursor icon-box"
-        ref='rep'
-        width="22px"
-        icon="repeat"
-        title='Recurring dates'
-        :box='true'
-      />
-    </div>
-    <div class="calendar-wrapper">
-      <div class="header">
-        <div class="current-date">
-          {{ currentYear }} {{ currentMonth }}
-        </div>
-        <div class="icons">
-          <Icon
-            class="arrow-left icon cursor primary-hover"
-            icon="tiny-arrow"
-            width="20px"
-            @click="previousMonth"
-          />
-          <Icon
-            class="icon cursor primary-hover"
-            icon="tiny-circle"
-            width="14px"
-            @click="resetDate"
-            style='transform: translateY(-2px)'
-          />
-          <Icon
-            class="arrow-right primary-hover cursor"
-            icon="tiny-arrow"
-            width="20px"
-            @click="nextMonth"
-          />
-        </div>
+    <div v-if="!calendar">
+      <div class="fast-icons">
+        <Icon
+          class="cursor icon-box"
+          width="22px"
+          icon="star"
+          color='var(--yellow)'
+          ref='tod'
+          title='Today'
+          :box='true'
+        />
+        <Icon
+          class="cursor icon-box"
+          width="22px"
+          icon="sun"
+          color='var(--orange)'
+          ref='tom'
+          title='Tomorrow'
+          :box='true'
+        />
+        <Icon v-if="allowSomeday"
+          class="cursor icon-box"
+          width="22px"
+          ref='som'
+          icon="archive"
+          color='var(--brown)'
+          title='Someday'
+          :box='true'
+        />
+        <Icon v-if="allowSomeday"
+          class="cursor icon-box"
+          width="22px"
+          ref='any'
+          color='var(--olive)'
+          icon="layer-group"
+          title='Anytime'
+          :box='true'
+        />
+        <Icon v-if="allowBloqued"
+          class="cursor icon-box"
+          ref='bloq'
+          width="22px"
+          icon="bloqued"
+          color='var(--red)'
+          title='No date'
+          :box='true'
+        />
+        <Icon v-if="allowRepeat"
+          class="cursor icon-box"
+          ref='rep'
+          width="22px"
+          icon="repeat"
+          title='Recurring dates'
+          :box='true'
+        />
       </div>
-      <div class="grid">
-        <div class='week-day' key='s'>S</div>
-        <div class='week-day' key='m'>M</div>
-        <div class='week-day' key='t'>T</div>
-        <div class='week-day' key='w'>W</div>
-        <div class='week-day' key='tu'>T</div>
-        <div class='week-day' key='f'>F</div>
-        <div class='week-day' key='sa'>S</div>
+      <div class="calendar-wrapper">
+        <div class="header">
+          <div class="current-date">
+            {{ currentYear }} {{ currentMonth }}
+          </div>
+          <div class="icons">
+            <Icon
+              class="arrow-left icon cursor primary-hover"
+              icon="tiny-arrow"
+              width="20px"
+              @click="previousMonth"
+            />
+            <Icon
+              class="icon cursor primary-hover"
+              icon="tiny-circle"
+              width="14px"
+              @click="resetDate"
+              style='transform: translateY(-2px)'
+            />
+            <Icon
+              class="arrow-right primary-hover cursor"
+              icon="tiny-arrow"
+              width="20px"
+              @click="nextMonth"
+            />
+          </div>
+        </div>
+        <div class="grid">
+          <div class='week-day' key='s'>S</div>
+          <div class='week-day' key='m'>M</div>
+          <div class='week-day' key='t'>T</div>
+          <div class='week-day' key='w'>W</div>
+          <div class='week-day' key='tu'>T</div>
+          <div class='week-day' key='f'>F</div>
+          <div class='week-day' key='sa'>S</div>
 
-        <div v-for="i in firstWeekDayRange" :key="i" class="day dead"></div>
-        <div v-for="i in daysInMonth" :key="i + 'num'" class='day num' :class="{active: selectedDay === i}" @click="selectDate(i)">{{ i }}</div>
+          <div v-for="i in firstWeekDayRange" :key="i" class="day dead"></div>
+          <div v-for="i in daysInMonth" :key="i + 'num'" class='day num' :class="{active: selectedDay === i}" @click="selectDate(i)">{{ i }}</div>
+        </div>
+      </div>
+      <div class="buttons">
+        <ButtonInput
+          :value='getTime ? getTime : "Add time"'
+          icon='clock'
+          :defaultColor='getTime ? "var(--purple)" : ""'
+          @click.native="addTime"
+        />
+        <ButtonInput
+          value='Save date'
+          icon='calendar'
+          defaultColor='var(--green)'
+          @click.native="saveDate"
+        />
       </div>
     </div>
-    <ButtonInput
-      :value='getTime ? getTime : "Add time"'
-      icon='clock'
-      :defaultColor='getTime ? "var(--purple)" : ""'
-      @click.native="addTime"
-    />
-    <ButtonInput
-      value='Save date'
-      icon='calendar'
-      defaultColor='var(--green)'
-      @click.native="saveDate"
-    />
+    <div v-else class="calendar-str-wrapper">
+      <Icon
+        icon='calendar'
+        color='var(--green)'
+        width='20px'
+      />
+      <span class="calendar-str">
+        {{ calendarStr }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -119,7 +136,11 @@
 import SearchInput from '../Components/SearchInput.vue'
 import ButtonInput from '../Components/Button.vue'
 
+import { mapGetters, mapState } from 'vuex'
+
 import mom from 'moment'
+
+import utils from "@/utils"
 
 const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
@@ -135,10 +156,60 @@ export default {
       current: this.initial || TOD_STR,
       selected: this.initial || TOD_STR,
 
+      calendar: null,
+      smart: '',
+      
       time: this.defaultTime || null,
+      selectionPos: 0,
     }
   },
+  mounted() {
+    window.addEventListener('keydown', this.keydown)
+
+    if (this.isDesktopBreakPoint)
+      this.$refs.input.focusInput()
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.keydown)
+  },
   methods: {
+    keydownInput() {
+      if (key === "Enter")
+        this.saveDate()
+    },
+    keydown(evt) {
+      const { key } = evt
+      const p = () => {
+        evt.stopPropagation()
+        evt.preventDefault()
+      }
+
+      if (key === "ArrowDown") {
+        p()
+
+        if (this.isOnShift)
+          this.selectionPos = Object.keys(this.keyboardActions).length - 1
+        else
+          this.increment(1)
+      } else if (key === 'ArrowUp') {
+        p()
+
+        if (this.isOnShift)
+          this.selectionPos = 0
+        else
+          this.increment(-1)
+      }
+      else if (key === 'Enter') {
+        this.keyboardActions[this.selectionPos]()
+      } else if (key === "Escape") {
+        this.$emit('close')
+      }
+    },
+    increment(inc) {
+      const newIndex = this.selectionPos + inc
+      if (this.keyboardActions[newIndex])
+        this.selectionPos = newIndex
+    },
     addTime() {
       this.$emit("get-time", this.selected)
     },
@@ -165,6 +236,9 @@ export default {
     },
   },
   computed: {
+    ...mapState(['userInfo', 'isOnShift']),
+    ...mapGetters(['isDesktopBreakPoint']),
+    
     allowSomeday() {
       return !this.onlyDates
     },
@@ -175,9 +249,43 @@ export default {
       return this.repeat && !this.onlyDates
     },
 
+    calendarStr() {
+      if (!this.calendar)
+        return null
+      return utils.parseCalendarObjectToString(this.calendar, this.userInfo, true)
+    },
+
+    iconKeyboardActions() {
+      const c = ref => () => this.$refs[ref].click()
+
+      const obj = {
+        0: () => this.focusName(),
+        1: c('tod'),
+        2: c('tom'),
+      }
+
+      const getLength = () => Object.keys(obj).length
+
+      if (this.allowSomeday) {
+        obj[getLength()] = c('som')
+        obj[getLength()] = c('any')
+      }
+      
+      if (this.allowBloqued)
+        obj[getLength()] = c('bloq')
+
+      if (this.allowRepeat)
+        obj[getLength()] = c('rep')
+
+      return obj
+    },
+    keyboardActions() {
+      return this.iconKeyboardActions
+    },
+
     getTime() {
       if (this.time) {
-        if (this.$store.state.userInfo.disablePmFormat)
+        if (this.userInfo.disablePmFormat)
           return this.time
         return mom(this.time, 'H:m').format('h:m A')
       }
@@ -216,6 +324,23 @@ export default {
   watch: {
     current() {
       setTimeout(() => this.$emit('calc'), 0)
+    },
+    calendar() {
+      setTimeout(() => this.$emit('calc'), 0)
+    },
+    smart() {
+      const n = this.smart
+
+      if (!n) {
+        this.calendar = null
+        return;
+      }
+
+      const res = utils.calendarObjNaturalCalendarInput(' ' + n, this.userInfo.disablePmFormat)
+      if (res && res.calendar)
+        this.calendar = res.calendar
+      else
+        this.calendar = null
     },
   }
 }
@@ -269,6 +394,14 @@ export default {
   align-items: center;
 }
 
+.buttons {
+  display: flex;
+}
+
+.buttons .Button {
+  flex-basis: 100%;
+}
+
 .week-day {
   color: var(--fade);
   font-size: .9em;
@@ -284,6 +417,18 @@ export default {
   background-color: var(--primary);
   user-select: none;
   color: var(--dark-void);
+}
+
+.calendar-str-wrapper {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding-left: 18px;
+}
+
+.calendar-str {
+  font-size: 1.1em;
+  margin-left: 8px;
 }
 
 </style>
