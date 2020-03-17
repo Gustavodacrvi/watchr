@@ -68,9 +68,9 @@ export default {
     buttonAdd(obj) {
       this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj}, naked: true})
     },
-    onSortableAdd(f, tagId, ids) {
+    onSortableAdd(f, tagIds, ids) {
       this.$store.dispatch('tag/moveTagToRoot', {
-        tagId, ids,
+        tagIds, ids,
       })
     },
   },
@@ -87,10 +87,8 @@ export default {
       sortedRootTags: 'tag/sortedRootTags',
     }),
     getTags() {
-      const getSubTagsByParentId = this.getSubTagsByParentId
-      const getNumberOfTasksByTag = this.getNumberOfTasksByTag
       const getTags = (parentId, order) => {
-        const tags = parentId ? getSubTagsByParentId(parentId) : this.sortedRootTags
+        const tags = parentId ? this.getSubTagsByParentId(parentId) : this.sortedRootTags
 
         if (tags.length === 0) return []
 
@@ -108,9 +106,9 @@ export default {
           tag.onSubTagAdd = obj => {
             this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj, parent: tag.id}, naked: true})
           }
-          tag.onSubTagSortableAdd = (d, tagId, ids) => {
+          tag.onSubTagSortableAdd = (d, tagIds, ids) => {
             this.$store.dispatch('tag/moveTagBetweenTags', {
-              parent: tag.id, tagId, ids
+              parent: tag.id, tagIds, ids
             })
           }
           tag.inputPlaceholder = 'Subtag name...'
@@ -120,7 +118,7 @@ export default {
           tag.alreadyExistMessage = 'This tag already exist.'
 
           tag.mapSubTagNumbers = tag => ({
-              total: getNumberOfTasksByTag(tag.id).total,
+              total: this.getNumberOfTasksByTag(tag.id).total,
             })
 
           tag.subList = getTags(tag.id, tag.order || [])

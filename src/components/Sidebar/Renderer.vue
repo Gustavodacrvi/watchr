@@ -26,6 +26,7 @@
           :type="type || el.rendererType"
           :existingItems='existingItems'
           :saveItem='saveItem'
+          :adderIcon='adderIcon'
           :alreadyExistMessage='alreadyExistMessage'
 
           :tabindex="i + 1"
@@ -134,7 +135,7 @@ export default {
       onUpdate: evt => {
         setTimeout(() => {
           this.$emit('update', this.getIds())
-        })
+        }, 50)
       },
       onStart: () => {
         this.$store.commit('moving', true)
@@ -155,19 +156,12 @@ export default {
         const {type, ids, indicies, items} = utils.getInfoFromAddSortableEvt(evt)
 
         if (type === 'add-task-floatbutton') {
-          item.dataset.id = 'floating-button'
-          const childs = this.draggableRoot.childNodes
-          let i = 0
-          for (const c of childs) {
-            if (c.dataset.id === 'floating-button') break
-            i++
-          }
-            
-          this.addEdit(i)
+          this.addEdit(indicies[0])
         } else if (type === 'sidebar-element') {
           if (this.onSortableAdd) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
+            this.disableItemEnterTransitionIds = ids.slice()
 
             utils.moveItemsBetweenLists(
               this.sourceVueInstance.items,              
@@ -176,8 +170,9 @@ export default {
             )
 
             this.sourceVueInstance = null
-            this.disableItemEnterTransitionIds = ids
-            // this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
+            setTimeout(() => {
+              this.onSortableAdd(this.folder, ids, this.getIds())
+            })
           }
         }
       },

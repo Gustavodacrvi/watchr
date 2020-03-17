@@ -51,7 +51,10 @@ export default {
         this.$emit('close')
     },
     focus() {
-      this.$refs.input.focus()
+      setTimeout(() => {
+        if (this.$refs.input)
+          this.$refs.input.focus()
+      }, 50)
     },
     go(dire) {
       this.$emit('go', dire)

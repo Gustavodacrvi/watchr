@@ -384,6 +384,19 @@ export const batchSetLists = (batch, list, ids, rootState, rootWrites) => {
     solve()
   })
 }
+export const batchSetTags = (batch, tag, ids, rootState, rootWrites) => {
+  return new Promise(async solve => {
+  
+    const writes = rootWrites || []
+    ids.forEach(id => {
+      setTag(batch, tag, id, rootState, writes)
+    })
+    
+    if (!rootWrites)
+      cacheBatchedItems(batch, writes)
+    solve()
+  })
+}
 
 export const setTag = (batch, tag, id, rootState, writes) => {
   const ref = tagRef(id)
@@ -395,7 +408,7 @@ export const setTag = (batch, tag, id, rootState, writes) => {
   const allTag = rootState.tag.tags
   const tagStore = allTag[ref.id]
   if (tagStore)
-    utils.findChangesBetweenObjs({tagStore, subList: null}, obj)
+    utils.findChangesBetweenObjs(tagStore, obj, undefined, ['subList'])
   else
     rootState.tag.tags = {
       ...allTag,

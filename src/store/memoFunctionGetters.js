@@ -24,6 +24,11 @@ export default (memoizeObject) => {
   for (const k of keys) {
     obj[k] = function(state, getters, rootState, rootGetters) {
       const val = memoizeObject[k]
+
+      const log = (...args) => {
+        if (k === 'getSubTagsByParentId')
+          console.log(...args)
+      }
       
       const thisBinding = {}
       // TOUCH REACTIVE PROPERTIES
@@ -34,10 +39,9 @@ export default (memoizeObject) => {
         for (const str of touchKeys) {
           thisBinding[str] = rootGetters[str]
           const targetKeys = val.deepGetterTouch[str]
-          
           if (Array.isArray(thisBinding[str]))
-            for (const targetStr of targetKeys) {
-              for (const item of thisBinding[str]) {
+          for (const targetStr of targetKeys) {
+            for (const item of thisBinding[str]) {
                 item[targetStr]
               }
             }

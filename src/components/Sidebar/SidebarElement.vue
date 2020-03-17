@@ -93,6 +93,8 @@
           :showColor='true'
           :isSubElement='true'
           :list="subList"
+          :adderIcon='adderIcon'
+          :saveItem='saveItem'
           :onSortableAdd='onSubTagSortableAdd'
 
           :inputPlaceholder='inputPlaceholder'
@@ -128,7 +130,7 @@ export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
-  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned', 'existingItems', 'alreadyExistMessage', 'saveItem'],
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned', 'existingItems', 'alreadyExistMessage', 'saveItem', 'adderIcon'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     AssigneeProfilePhoto,

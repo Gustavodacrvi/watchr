@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { tagColl, tagRef, setInfo, fd, taskRef, setTag, cacheRef, setTask, cacheBatchedItems, deleteTag, batchSetTasks } from '../utils/firestore'
+import { setInfo, fd, setTag, cacheBatchedItems, deleteTag, batchSetTasks, batchSetTags } from '../utils/firestore'
 import mom from 'moment'
 
 const uid = () => {
@@ -42,6 +42,7 @@ export default {
         deepGetterTouch: {
           'tag/tags': [
             'parent',
+            'order',
           ]
         },
         getter({}, parentId) {
@@ -55,9 +56,10 @@ export default {
         deepGetterTouch: {
           'tag/tags': [
             'parent',
+            'order',
           ]
         },
-        getter({state, getters}, id) {
+        getter({}, id) {
           const walk = (parent, tags = []) => {
             const childs = this['tag/tags'].filter(tag => tag.parent === parent)
             tags.push(childs)
@@ -156,24 +158,29 @@ export default {
 
       b.commit()
     },
-    moveTagBetweenTags({commit, rootState}, {tagId, ids, parent}) {
+    moveTagBetweenTags({commit, rootState}, {tagIds, ids, parent}) {
       const b = fire.batch()
 
       const writes = []
 
       setTag(b, {order: ids}, parent, rootState, writes)
-      setTag(b, {parent}, tagId, rootState, writes)
+      batchSetTags(b, {
+        parent,
+      }, tagIds, rootState, writes)
 
       cacheBatchedItems(b, writes)
 
       b.commit()
     },
-    moveTagToRoot({commit, rootState}, {tagId, ids}) {
+    moveTagToRoot({rootState}, {tagIds, ids}) {
       const b = fire.batch()
 
       const writes = []
 
-      setTag(b, {parent: null}, tagId, rootState, writes)
+      batchSetTags(b, {
+        parent: null,
+      }, tagIds, rootState, writes)
+      
       setInfo(b, {tags: ids}, rootState, writes)
 
       cacheBatchedItems(b, writes)

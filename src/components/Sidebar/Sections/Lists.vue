@@ -73,7 +73,7 @@
             :mapString='mapString'
             :saveItem='saveItem'
             adderIcon='progress'
-            :onSortableAdd='(folder, id, ids) => betweenFolders(folder, id, ids, f.comp)'
+            :onSortableAdd='(folder, itemIds, ids) => betweenFolders(folder, id, itemIds, f.comp)'
 
             alreadyExistMessage="This list already exists."
             :existingItems='sortedLists'
@@ -213,9 +213,9 @@ export default {
           folder, id, ids,
         })
     },
-    rootAdd(folder, id, ids) {
+    rootAdd(folder, itemIds, ids) {
       this.$store.dispatch('folder/moveListToRoot', {
-        id, ids,
+        itemIds, ids,
       })
     },
     getFolderIds() {
