@@ -8,6 +8,7 @@
       :enableSort="true"
       :list="getRootLists"
       :active="active"
+      :saveItem='saveItem'
       :viewType="viewType"
       :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
@@ -64,6 +65,7 @@
             :mapNumbers="tasks => tasks"
             :mapHelpIcon='getListIcon'
             :mapString='mapString'
+            :saveItem='saveItem'
             :onSortableAdd='(folder, id, ids) => betweenFolders(folder, id, ids, f.comp)'
 
             alreadyExistMessage="This list already exists."
@@ -141,6 +143,11 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    saveItem({id, name}) {
+      this.$store.dispatch('list/saveList', {
+        id, name,
+      })
+    },
     fallbackItem(folder) {
       return obj => ({...obj, folder})
     },

@@ -25,6 +25,8 @@
           :showColor='showColor'
           :type="type || el.rendererType"
           :existingItems='existingItems'
+          :saveItem='saveItem'
+          :alreadyExistMessage='alreadyExistMessage'
 
           :tabindex="i + 1"
           :active="active"
@@ -74,7 +76,7 @@ export default {
     SidebarElement: SidebarElementVue,
     ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'disableItemAdd', 'fallbackItem', 'isSubElement', 'existingItems', 'alreadyExistMessage', 'addMsg'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'disableItemAdd', 'fallbackItem', 'isSubElement', 'existingItems', 'alreadyExistMessage', 'addMsg', 'saveItem'],
   data() {
     return {
       sortable: null,

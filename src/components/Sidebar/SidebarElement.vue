@@ -42,10 +42,13 @@
             @click="click"
             :style="hoverStyle"
           >
-            {{ getName }}
+            {{ displayName }}
           </span>
           <input v-else
-
+            class='edit-input'
+            ref='editInput'
+            v-model='editModel'
+            @keydown='keydown'
           />
         </div>
         <div class="info">
@@ -125,7 +128,7 @@ export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
-  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned', 'existingItems', 'alreadyExistMessage'],
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned', 'existingItems', 'alreadyExistMessage', 'saveItem'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     AssigneeProfilePhoto,
@@ -283,10 +286,6 @@ export default {
     selectedEmpty() {
       return this.selectedItems.length === 0
     },
-    getName() {
-      if (this.isSmart) return this.name
-      return this.name
-    },
     hoverStyle() {
       return `color: ${this.isActive ? this.iconColor : ''};`
     },
@@ -320,6 +319,7 @@ export default {
 
 </script>
 
+<style scoped src="@/assets/css/sidebarmixin.css"></style>
 
 <style scoped>
 
