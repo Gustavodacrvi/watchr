@@ -1,6 +1,14 @@
 <template>
-  <div class="ItemEdit rb shadow" :class="layout">
+  <div class="ItemEdit rb" :class="layout">
     <div class="wrapper">
+      <div class="icon-wrapper">
+        <Icon class='adder-icon'
+          :icon='adderIcon === "progress" ? "pie" : adderIcon'
+          :width='adderIcon === "progress" ? null : "17px"'
+          :progress='adderIcon === "progress" ? 0 : undefined'
+          color='var(--fade)'
+        />
+      </div>
       <input class="input" ref='input'
         autocomplete="off"
         v-model="name"
@@ -16,7 +24,7 @@
 import { mapState } from 'vuex'
 
 export default {
-  props: ['placeholder'],
+  props: ['placeholder', 'adderIcon'],
   data() {
     return {
       name: '',
@@ -43,7 +51,10 @@ export default {
         this.$emit('close')
     },
     focus() {
-      this.$refs.input.focus()
+      setTimeout(() => {
+        if (this.$refs.input)
+          this.$refs.input.focus()
+      }, 50)
     },
     go(dire) {
       this.$emit('go', dire)
@@ -79,7 +90,7 @@ export default {
 
 .ItemEdit {
   overflow: hidden;
-  background-color: var(--dark);
+  background-color: var(--card);
 }
 
 .slim-sidebar .ItemEdit {
@@ -88,6 +99,7 @@ export default {
 
 .wrapper {
   height: 25px;
+  display: flex;
 }
 
 .mobile .wrapper {
@@ -98,8 +110,21 @@ export default {
   width: 100%;
   height: 100%;
   font-size: 1em;
-  padding-left: 8px;
   outline: none;
+}
+
+.icon-wrapper {
+  position: relative;
+  width: 33.5px;
+  flex-shrink: 0;
+}
+
+.adder-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  margin-top: 1.5px;
 }
 
 </style>

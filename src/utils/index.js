@@ -105,6 +105,69 @@ export default {
       links,
     }
   },
+  moveItemsBetweenLists(source, newList, ids, indicies) {
+    const items = []
+    for (const id of ids) {
+      for (let i = 0;i < source.length;i++) {
+        const t = source[i]
+        if (t.id === id) {
+          items.push(t)
+          source.splice(i, 1)
+          break
+        }
+      }
+    }
+
+    for (let i = 0; i < ids.length;i++) {
+      newList.splice(indicies[i], 0, items[i])
+    }
+  },
+  getInfoFromAddSortableEvt(evt) {
+    const items = evt.items
+    if (items.length === 0) items.push(evt.item)
+    const type = items[0].dataset.type
+    for (let i = 0; i < items.length;i++) {
+      const s = items[i].style
+      s.transitionDuration = 0
+      s.height = '0px'
+      s.overflow = 'hidden'
+      items[i].remove()
+    }
+
+    const repeated = items.map(el => el.dataset.id)
+    const ids = []
+    const set = new Set()
+    for (const id of repeated) {
+      if (!set.has(id)) {
+        ids.push(id)
+        set.add(id)
+      }
+    }
+
+    const oldIndicies = evt.oldIndicies
+    if (oldIndicies.length === 0)
+      oldIndicies.push({
+        multiDragElement: evt.item,
+        index: evt.oldIndex
+      })
+    
+    const indicies = evt.newIndicies.map(el => el.index)
+    if (indicies.length === 0) indicies.push(evt.newIndex)
+    return {type, ids, items, indicies, oldIndicies}
+  },
+  removeSortableItemsOnRemove(items, indicies, root, deSelectItem) {
+    for (let i = 0; i < indicies.length;i++) {
+      const s = items[i].style
+      s.transitionDuration = 0
+      s.transition = 'none'
+      s.height = '0px'
+      s.maxHeight = '0px'
+      s.overflow = 'hidden'
+      root.insertBefore(items[i], root.children[indicies[i]])
+    }
+
+    items.forEach(deSelectItem)
+  },
   
   sortListByName(lists, property = 'name') {
     return lists.slice().sort((a, b) => a[property].toLowerCase().localeCompare(b[property].toLowerCase()))
@@ -980,7 +1043,7 @@ export default {
 
     this.download(list.name + '.json', JSON.stringify(template))
   },
-  bindOptionsToEventListener(node, options, parent, event, translateY) {
+  bindOptionsToEventListener(node, options, vm, event, onSelect = () => {}) {
     node.addEventListener(event ? event : 'contextmenu', evt => {
       evt.preventDefault()
       if (!contextMenuRunned) {
@@ -992,10 +1055,10 @@ export default {
 
         const Constructor = Vue.extend(IconDrop)
         const ins = new Constructor({
-          parent,
+          parent: vm,
           propsData: {
             options, defaultShowing: true, id: 'contextmenu',
-            root: true, hideHandle: true,
+            root: true, hideHandle: true, onSelect,
           }
         })
         const vueEl = document.createElement('div')
@@ -1008,8 +1071,6 @@ export default {
         s.position = 'absolute'
         s.left = x
         s.top = y
-        if (translateY)
-          s.transform = `translateY(${translateY})`
         
         setTimeout(() => contextMenuRunned = false)
       }

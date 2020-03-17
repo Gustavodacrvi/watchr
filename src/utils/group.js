@@ -24,6 +24,7 @@ export default {
       opt.unshift({
         name: "Edit group name",
         icon: 'pen',
+        action: 'EDIT_SIDEBAR',
         callback: () => {dispatch('pushPopup', {
           comp: "AddGroup",
           payload: {

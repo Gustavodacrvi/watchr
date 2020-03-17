@@ -5,6 +5,7 @@
   >
     <div
       class="link-wrapper SidebarElement-link rb DRAG-AND-DROP-EL"
+      ref='link-wrapper'
       :data-type='type'
       :data-id='id'
       :data-smart='isSmart'
@@ -16,7 +17,7 @@
 
         @mouseenter="hover = true"
         @mouseleave="hover = false"
-        @click.stop="linkCallback"
+        @click="linkCallback"
         @touchstart.passive='touchStart'
         @touchmove.passive='touchmove'
         @touchend.passive='touchEnd'
@@ -35,11 +36,20 @@
           />
         </div>
         <div class="name-wrapper">
-          <transition name="name-t">
-            <span key="normal" class="name" @click="click" :style="hoverStyle">
-              {{ getName }}
-            </span>
-          </transition>
+          <span v-if='!editing'
+            key="normal"
+            class="name"
+            @click="click"
+            :style="hoverStyle"
+          >
+            {{ displayName }}
+          </span>
+          <input v-else
+            class='edit-input'
+            ref='editInput'
+            v-model='editModel'
+            @keydown='keydown'
+          />
         </div>
         <div class="info">
           <template v-if="helpIcons">
@@ -83,6 +93,8 @@
           :showColor='true'
           :isSubElement='true'
           :list="subList"
+          :adderIcon='adderIcon'
+          :saveItem='saveItem'
           :onSortableAdd='onSubTagSortableAdd'
 
           :inputPlaceholder='inputPlaceholder'
@@ -107,15 +119,18 @@
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import AssigneeProfilePhoto from "@/components/View/RenderComponents/AssigneeProfilePhoto.vue"
 
+import sidebarmixin from "@/mixins/sidebarmixin.js"
+
 import { mapGetters, mapState, mapActions } from 'vuex'
 
 import utils from '@/utils/'
 
 export default {
+  mixins: [sidebarmixin],
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
-  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned', 'existingItems', 'alreadyExistMessage'],
+  'onItemAdd', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick', 'ignore', 'inputPlaceholder', 'group', 'assigned', 'existingItems', 'alreadyExistMessage', 'saveItem', 'adderIcon'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     AssigneeProfilePhoto,
@@ -141,8 +156,12 @@ export default {
     async bindOptions() {
       if (this.isDesktopDevice) {
         if (this.options) {
-          const el = this.$el.getElementsByClassName('link-wrapper')[0]
-          utils.bindOptionsToEventListener(el, await this.getOptions(this.options), this)
+          utils.bindOptionsToEventListener(this.$refs['link-wrapper'], await this.getOptions(this.options), this, 'contextmenu', obj => {
+            if (obj && obj.action === 'EDIT_SIDEBAR') {
+              this.edit()
+              return false
+            }
+          })
         }
       }
     },
@@ -213,8 +232,7 @@ export default {
       if (this.isDesktopDevice) this.click()
     },
     click() {
-      if (this.callback) this.callback()
-      else if (this.isOnControl && this.selectedEmpty) this.$emit('select')
+      if (this.callback && !this.isOnControl) this.callback()
     },
     clickIcon(evt) {
       if (this.iconClick) {
@@ -263,15 +281,8 @@ export default {
       if (!this.string) return null
       return {...this.string}
     },
-    showSpecialInfo() {
-      return this.hover && !this.isOnControl && !this.selectedEmpty
-    },
     selectedEmpty() {
       return this.selectedItems.length === 0
-    },
-    getName() {
-      if (this.isSmart) return this.name
-      return this.name
     },
     hoverStyle() {
       return `color: ${this.isActive ? this.iconColor : ''};`
@@ -306,6 +317,7 @@ export default {
 
 </script>
 
+<style scoped src="@/assets/css/sidebarmixin.css"></style>
 
 <style scoped>
 
@@ -416,7 +428,6 @@ export default {
   outline: none;
   position: relative;
   user-select: none;
-  transition: background-color .15s, height .3s;
 }
 
 .sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble, .sortable-ghost .toggle-icon, .sortable-ghost .info {
@@ -439,6 +450,10 @@ export default {
   background-color: var(--dark-void) !important;
   transition-duration: 0 !important;
   transition: none !important;
+}
+
+.sortable-selected .link-inner-wrapper {
+  background-color: rgba(87,160,222,.2) !important;
 }
 
 .inf {
@@ -469,26 +484,6 @@ export default {
 #task-on-hover .inf, #task-on-hover .icon, #task-on-hover .name {
   color: white !important;
   stroke: white;
-}
-
-.name-t-enter {
-  opacity: 0;
-  transform: translateY(-25px); 
-}
-
-.name-t-enter-active, .name-t-leave-active {
-  position: absolute;
-  transition-duration: .15s;
-}
-
-.name-t-enter-to, .name-t-leave {
-  transform: translateY(0px);
-  opacity: 1;
-}
-
-.name-t-leave-to {
-  opacity: 0;
-  transform: translateY(25px);
 }
 
 .onHover {

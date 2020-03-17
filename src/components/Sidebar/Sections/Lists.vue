@@ -8,6 +8,7 @@
       :enableSort="true"
       :list="getRootLists"
       :active="active"
+      :saveItem='saveItem'
       :viewType="viewType"
       :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
@@ -16,6 +17,7 @@
       :mapString='mapString'
       :onSortableAdd="rootAdd"
       addMsg='Add list'
+      adderIcon='progress'
 
       alreadyExistMessage="This list already exists."
       :existingItems='sortedLists'
@@ -44,6 +46,11 @@
           :viewType='viewType'
           :listLength='f.list.length'
 
+          :saveItem='f.comp === "Folder" ? saveFolder : saveGroup'
+          :existingItems='f.comp === "Folder" ? sortedFoldersByName : sortedGroupsByName'
+          :alreadyExistMessage="f.comp === 'Folder' ? 'This folder already exists.' : 'This group already exists.'"
+          :type='f.comp === "Folder" ? "folder" : "group"'
+
           :data-id='f.id'
 
           data-type='folder'
@@ -64,7 +71,9 @@
             :mapNumbers="tasks => tasks"
             :mapHelpIcon='getListIcon'
             :mapString='mapString'
-            :onSortableAdd='(folder, id, ids) => betweenFolders(folder, id, ids, f.comp)'
+            :saveItem='saveItem'
+            adderIcon='progress'
+            :onSortableAdd='(folder, itemIds, ids) => betweenFolders(folder, itemIds, ids, f.comp)'
 
             alreadyExistMessage="This list already exists."
             :existingItems='sortedLists'
@@ -141,6 +150,17 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    saveFolder({id, name}) {
+      this.$store.dispatch('folder/saveFolder', {id, name})
+    },
+    saveGroup({id, name}) {
+      this.$store.dispatch('group/saveGroupName', {id, name})
+    },
+    saveItem({id, name}) {
+      this.$store.dispatch('list/saveList', {
+        id, name,
+      })
+    },
     fallbackItem(folder) {
       return obj => ({...obj, folder})
     },
@@ -183,19 +203,19 @@ export default {
       s.opacity = '0'
       h.height = '0'
     },
-    betweenFolders(folder, id, ids, comp) {
+    betweenFolders(folder, itemIds, ids, comp) {
       if (comp === "Group")
         this.$store.dispatch('group/moveListBetweenGroups', {
-          group: folder, id, ids,
+          group: folder, itemIds, ids,
         })
       else
         this.$store.dispatch('folder/moveListBetweenFolders', {
-          folder, id, ids,
+          folder, itemIds, ids,
         })
     },
-    rootAdd(folder, id, ids) {
+    rootAdd(folder, itemIds, ids) {
       this.$store.dispatch('folder/moveListToRoot', {
-        id, ids,
+        itemIds, ids,
       })
     },
     getFolderIds() {
@@ -273,6 +293,8 @@ export default {
       isTaskInView: 'task/isTaskInView',
       pieProgress: 'list/pieProgress',
       getListsByFolderId: 'folder/getListsByFolderId',
+      sortedFoldersByName: 'folder/sortedFoldersByName',
+      sortedGroupsByName: 'group/sortedGroupsByName',
       getListsByGroupId: 'group/getListsByGroupId',
       getLaterLists: 'list/getLaterLists',
       filteredSidebarLists: 'list/filteredSidebarLists',
@@ -326,9 +348,6 @@ export default {
       }
 
       return arr
-    },
-    getLists() {
-      return this.addListOptions(this.sortedLists)
     },
   },
 }
