@@ -23,7 +23,13 @@
         <Icon class="icon" :class="{headerHover}" icon="folder" width='17px'/>
       </span>
       <span class="name-wrapper">
-        <span class="name" key="nam"><b>{{ name }}</b></span>
+        <span v-if="!editing" class="name" key="nam"><b>{{ name }}</b></span>
+        <input v-else
+          class='edit-input'
+          ref='editInput'
+          v-model='editModel'
+          @keydown='keydown'
+        />
       </span>
       <div class="info">
         <transition name='fade-t'>
@@ -58,9 +64,10 @@
 import folderUtils from "@/utils/folder"
 
 import folderMixin from "@/mixins/folder"
+import sidebarmixin from "@/mixins/sidebarmixin"
 
 export default {
-  mixins: [folderMixin],
+  mixins: [folderMixin, sidebarmixin],
   methods: {
     click() {
       this.$router.push('/user?folder=' + this.name)
@@ -86,6 +93,8 @@ export default {
 }
 
 </script>
+
+<style scoped src="@/assets/css/sidebarmixin.css"></style>
 
 <style scoped src="@/assets/css/folder.css">
 </style>

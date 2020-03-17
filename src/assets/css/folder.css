@@ -88,6 +88,10 @@
   align-items: center;
 }
 
+.edit-input {
+  font-weight: bold;
+}
+
 .drop {
   position: absolute;
   right: 6px;

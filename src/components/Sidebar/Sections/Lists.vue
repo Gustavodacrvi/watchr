@@ -46,6 +46,11 @@
           :viewType='viewType'
           :listLength='f.list.length'
 
+          :saveItem='f.comp === "Folder" ? saveFolder : saveGroup'
+          :existingItems='f.comp === "Folder" ? sortedFoldersByName : sortedGroupsByName'
+          :alreadyExistMessage="f.comp === 'Folder' ? 'This folder already exists.' : 'This group already exists.'"
+          :type='f.comp === "Folder" ? "folder" : "group"'
+
           :data-id='f.id'
 
           data-type='folder'
@@ -145,6 +150,12 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    saveFolder({id, name}) {
+      this.$store.dispatch('folder/saveFolder', {id, name})
+    },
+    saveGroup({id, name}) {
+      this.$store.dispatch('group/saveGroup', {id, name})
+    },
     saveItem({id, name}) {
       this.$store.dispatch('list/saveList', {
         id, name,
@@ -282,6 +293,8 @@ export default {
       isTaskInView: 'task/isTaskInView',
       pieProgress: 'list/pieProgress',
       getListsByFolderId: 'folder/getListsByFolderId',
+      sortedFoldersByName: 'folder/sortedFoldersByName',
+      sortedGroupsByName: 'group/sortedGroupsByName',
       getListsByGroupId: 'group/getListsByGroupId',
       getLaterLists: 'list/getLaterLists',
       filteredSidebarLists: 'list/filteredSidebarLists',

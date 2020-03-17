@@ -23,13 +23,19 @@
         <Icon class="icon" :class="{headerHover}" icon="group"/>
       </span>
       <span class="name-wrapper">
-        <span class="name"><b>{{ name }}</b></span>
-        <ProfilePhotos
+        <span v-if="!editing" class="name"><b>{{ name }}</b></span>
+        <input v-else
+          class='edit-input'
+          ref='editInput'
+          v-model='editModel'
+          @keydown='keydown'
+        />
+        <ProfilePhotos v-if="!editing"
           class="photos"
           :group='id'
           @click.native.stop
         />
-        <transition name="fade-t">
+        <transition v-if="!editing" name="fade-t">
           <div v-if="nonReadComments" class="comment-icon">
             <Icon
               icon='comment'
@@ -76,6 +82,7 @@
 <script>
 
 import folderMixin from "@/mixins/folder"
+import sidebarmixin from "@/mixins/sidebarmixin"
 
 import ProfilePhotos from "@/components/View/RenderComponents/GroupProfilePhotos.vue"
 
@@ -83,7 +90,7 @@ import groupUtils from '@/utils/group'
 import { mapGetters } from 'vuex'
 
 export default {
-  mixins: [folderMixin],
+  mixins: [folderMixin, sidebarmixin],
   components: {
     ProfilePhotos,
   },
@@ -120,6 +127,8 @@ export default {
 }
 
 </script>
+
+<style scoped src="@/assets/css/sidebarmixin.css"></style>
 
 <style scoped src="@/assets/css/folder.css">
 </style>

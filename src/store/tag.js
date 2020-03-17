@@ -149,7 +149,7 @@ export default {
         b.commit()
       }
     },
-    saveTag({commit, rootState}, tag) {
+    saveTag({rootState}, tag) {
       const b = fire.batch()
 
       setTag(b, tag, tag.id, rootState)

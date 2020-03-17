@@ -7,7 +7,7 @@ import { mapGetters, mapState, mapActions } from 'vuex'
 import utils from "@/utils"
 
 export default {
-  props: ['viewName', 'viewType', 'listLength', 'name', 'id', 'defaultShowing', 'item'],
+  props: ['viewName', 'viewType', 'listLength', 'name', 'id', 'defaultShowing', 'item', 'existingItems', 'type', 'saveItem', 'alreadyExistMessage'],
   components: {
     IconDrop,
   },
@@ -32,7 +32,12 @@ export default {
     ...mapActions(['getOptions']),
     async bindOptions() {
       if (this.isDesktopBreakPoint && this.options) {
-        utils.bindOptionsToEventListener(this.$refs.header, await this.getOptions(this.options), this)
+        utils.bindOptionsToEventListener(this.$refs.header, await this.getOptions(this.options), this, 'contextmenu', obj => {
+          if (obj && obj.action === 'EDIT_SIDEBAR') {
+            this.edit()
+            return false
+          }
+        })
       }
     },
     contEnter(el) {
