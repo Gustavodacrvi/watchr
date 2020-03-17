@@ -17,7 +17,6 @@
         :icon="icon"
         :title='title'
         :width='icon === "file" ? "16px" : undefined'
-        @click='openOptions'
       />
       <span v-show="content || right">
         <transition
@@ -62,6 +61,7 @@ export default {
     click() {
       if (this.icon === 'file' && this.fileInput)
         this.fileInput.click()
+      else this.openOptions()
     },
     handleFile() {
       const inp = this.fileInput

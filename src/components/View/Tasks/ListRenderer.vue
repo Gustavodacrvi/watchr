@@ -175,9 +175,7 @@ import { uid, setTask } from '@/utils/firestore'
 
 import { mapState, mapGetters } from 'vuex'
 
-import { MultiDrag, Sortable } from 'sortablejs'
-
-Sortable.mount(new MultiDrag())
+import { Sortable } from 'sortablejs'
 
 import mom from 'moment'
 

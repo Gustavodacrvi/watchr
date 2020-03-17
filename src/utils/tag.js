@@ -45,6 +45,7 @@ export default {
       opt.unshift(      {
         name: 'Edit tag',
         icon: 'pen',
+        action: 'EDIT_SIDEBAR',
         callback: () => dispatch('pushPopup', {
             comp: 'AddTag', payload: {...tag, editing: true}, naked: true
           })

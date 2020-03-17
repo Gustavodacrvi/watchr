@@ -5,6 +5,7 @@
   >
     <div
       class="link-wrapper SidebarElement-link rb DRAG-AND-DROP-EL"
+      ref='link-wrapper'
       :data-type='type'
       :data-id='id'
       :data-smart='isSmart'
@@ -35,11 +36,17 @@
           />
         </div>
         <div class="name-wrapper">
-          <transition name="name-t">
-            <span key="normal" class="name" @click="click" :style="hoverStyle">
-              {{ getName }}
-            </span>
-          </transition>
+          <span v-if='!editing'
+            key="normal"
+            class="name"
+            @click="click"
+            :style="hoverStyle"
+          >
+            {{ getName }}
+          </span>
+          <input v-else
+
+          />
         </div>
         <div class="info">
           <template v-if="helpIcons">
@@ -107,11 +114,14 @@
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import AssigneeProfilePhoto from "@/components/View/RenderComponents/AssigneeProfilePhoto.vue"
 
+import sidebarmixin from "@/mixins/sidebarmixin.js"
+
 import { mapGetters, mapState, mapActions } from 'vuex'
 
 import utils from '@/utils/'
 
 export default {
+  mixins: [sidebarmixin],
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   'disableAction', 'id', 'progress', 'helpIcons', 'string', 'fallbackItem', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'getItemRef',
@@ -141,8 +151,12 @@ export default {
     async bindOptions() {
       if (this.isDesktopDevice) {
         if (this.options) {
-          const el = this.$el.getElementsByClassName('link-wrapper')[0]
-          utils.bindOptionsToEventListener(el, await this.getOptions(this.options), this)
+          utils.bindOptionsToEventListener(this.$refs['link-wrapper'], await this.getOptions(this.options), this, 'contextmenu', obj => {
+            if (obj && obj.action === 'EDIT_SIDEBAR') {
+              this.edit()
+              return false
+            }
+          })
         }
       }
     },
@@ -469,26 +483,6 @@ export default {
 #task-on-hover .inf, #task-on-hover .icon, #task-on-hover .name {
   color: white !important;
   stroke: white;
-}
-
-.name-t-enter {
-  opacity: 0;
-  transform: translateY(-25px); 
-}
-
-.name-t-enter-active, .name-t-leave-active {
-  position: absolute;
-  transition-duration: .15s;
-}
-
-.name-t-enter-to, .name-t-leave {
-  transform: translateY(0px);
-  opacity: 1;
-}
-
-.name-t-leave-to {
-  opacity: 0;
-  transform: translateY(25px);
 }
 
 .onHover {

@@ -23,6 +23,10 @@
 
 <script>
 
+import { MultiDrag, Sortable } from 'sortablejs'
+
+Sortable.mount(new MultiDrag())
+
 import UserViewVue from '../components/View/UserView.vue'
 import LoadingComponentVue from '../components/Illustrations/LoadingComponent.vue'
 import ErrorComponentVue from '../components/Illustrations/ErrorComponent.vue'

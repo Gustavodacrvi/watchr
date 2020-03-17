@@ -980,7 +980,7 @@ export default {
 
     this.download(list.name + '.json', JSON.stringify(template))
   },
-  bindOptionsToEventListener(node, options, parent, event, translateY) {
+  bindOptionsToEventListener(node, options, vm, event, onSelect = () => {}) {
     node.addEventListener(event ? event : 'contextmenu', evt => {
       evt.preventDefault()
       if (!contextMenuRunned) {
@@ -992,10 +992,10 @@ export default {
 
         const Constructor = Vue.extend(IconDrop)
         const ins = new Constructor({
-          parent,
+          parent: vm,
           propsData: {
             options, defaultShowing: true, id: 'contextmenu',
-            root: true, hideHandle: true,
+            root: true, hideHandle: true, onSelect,
           }
         })
         const vueEl = document.createElement('div')
@@ -1008,8 +1008,6 @@ export default {
         s.position = 'absolute'
         s.left = x
         s.top = y
-        if (translateY)
-          s.transform = `translateY(${translateY})`
         
         setTimeout(() => contextMenuRunned = false)
       }

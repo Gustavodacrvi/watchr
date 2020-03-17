@@ -34,6 +34,7 @@
           <component v-if="showingCont"
             :is='getComp'
             :content='compContent'
+            :onSelect='onSelect'
             :allowKeyboard='center && isDesktopBreakPoint'
             @close='closeIconDrop'
             @calc='calcStyles'
@@ -56,7 +57,7 @@ import Confirm from './Confirm.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center', 'box', 'active'],
+  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'onSelect', 'root', 'width', 'title', 'center', 'box', 'active'],
   components: {
     ListIcons, CalendarPicker,
     TimePicker, RepeatPicker,

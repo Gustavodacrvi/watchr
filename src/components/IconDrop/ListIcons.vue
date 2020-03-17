@@ -97,7 +97,7 @@ import ButtonInput from "./Components/Button.vue"
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['content', 'allowKeyboard'],
+  props: ['content', 'allowKeyboard', 'onSelect'],
   components: {
     SearchInput,
     ProfilePhoto, ButtonInput,
@@ -188,9 +188,18 @@ export default {
             this.$store.commit('clearSelected')
           }
           if (callback) {
-            const opt = callback(link, this, this.$parent)
-            if (!opt || (opt && opt.then)) close()
-            else this.$emit('update', opt)
+            let cancel = false
+            if (this.onSelect && this.onSelect(link) === false) {
+              cancel = true
+              close()
+            }
+
+            if (!cancel) {
+              const opt = callback(link, this, this.$parent)
+
+              if (!opt || (opt && opt.then)) close()
+              else this.$emit('update', opt)
+            }
           }
         }
       } else {

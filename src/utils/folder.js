@@ -5,6 +5,7 @@ export default {
       {
         name: 'Edit folder',
         icon: 'pen',
+        action: 'EDIT_SIDEBAR',
         callback: () => dispatch('pushPopup', {
           comp: "AddFolder",
           payload: {

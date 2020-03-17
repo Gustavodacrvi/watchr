@@ -210,6 +210,7 @@ export default {
       {
         name: 'Edit list name',
         icon: 'pen',
+        action: 'EDIT_SIDEBAR',
         callback: () => pop({comp: 'AddList', payload: {...list, editing: true}, naked: true})
       },
       {
