@@ -127,6 +127,7 @@ export default {
         const b = fire.batch()
         const writes = []
 
+
         await this.$store.dispatch('task/addViewTask', {
           b, ...newObj, writes,
         })
@@ -138,7 +139,7 @@ export default {
         })
 
         cacheBatchedItems(b, writes)
-        
+
         b.commit()
       })
     },

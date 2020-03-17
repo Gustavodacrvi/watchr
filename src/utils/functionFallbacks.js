@@ -1,9 +1,8 @@
 
 import mom from 'moment'
 
-
 import utilsTask from './task'
-import { setInfo, setTag, setList, setGroup, setFolder, uid } from './firestore'
+import { setInfo, setTag, setList, setGroup, setFolder, uid, saveCalendarOrder } from './firestore'
 
 const isAlreadyOnAnotherList = t => t.list || t.folder || t.group
 const getSpecificCalendar = specific => {
@@ -176,11 +175,8 @@ export default {
     },
   },
   updateOrderFunctions: {
-    calendarOrder(b, writes, {finalIds, calendarDate, rootState, scheduleOrder}) {
-      
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(utilsTask.concatArraysRemovingOldEls(scheduleOrder, finalIds), calendarDate, rootState)
-
-      setInfo(b, {calendarOrders}, writes, rootState)
+    calendarOrder(b, writes, {finalIds, calendarDate, rootState}) {
+      saveCalendarOrder(b, rootState, finalIds, calendarDate, writes)
     },
     smartOrder(b, writes, {viewName, finalIds, rootState}) {
       const obj = {}

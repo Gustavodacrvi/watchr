@@ -5,6 +5,7 @@ import fb from 'firebase/app'
 import Vue from 'vue'
 
 import utils from './index'
+import utilsTask from './task'
 
 import mom from 'moment'
 
@@ -48,6 +49,44 @@ export const inviteRef = (groupId, id) => {
   if (id) return g.doc(id)
   return g.doc()
 }
+export const setInfo = (batch, info, rootState, writes) => {
+  const obj = {
+    ...info, id: 'info',
+    userId: uid(),
+  }
+
+  utils.findChangesBetweenObjs(rootState.userInfo, obj)
+  
+  if (!writes)
+    batch.set(cacheRef(), {
+      info: {
+        info: obj,
+      },
+    }, {merge: true})
+  else if (writes.push)
+    writes.push({
+      collection: 'info',
+      info: obj,
+    })
+  batch.set(
+      userRef().collection('info').doc('info')
+    , obj, {merge: true})
+}
+
+export const saveCalendarOrder = (b, rootState, finalIds, calendarDate, writes) => {
+  const savedOrders = rootState.userInfo.calendarOrders || {}
+  const target = savedOrders[calendarDate] || {}
+
+  const calendarOrders = utilsTask.getUpdatedCalendarOrders(
+    utilsTask.concatArraysRemovingOldEls(target.tasks || [], finalIds),
+    calendarDate,
+    rootState,
+  )
+
+  setInfo(b, {calendarOrders}, rootState, writes)
+
+}
+
 export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
   return new Promise((solve, reject) => {
     const save = () => {
@@ -60,8 +99,10 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
       const savedGroupTask = groupTasks[id]
       const savedIndividualTask = individualTasks[id]
 
+      const oldTask = savedGroupTask || savedIndividualTask 
+
       const hydratedTask = {
-        ...(savedGroupTask || savedIndividualTask || {}),
+        ...(oldTask || {}),
         ...task,
       }
 
@@ -133,6 +174,23 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
             [id]: fd().delete()
           },
         }, {merge: true})
+      }
+
+      const specificDate = task => {
+        if (!task || !task.calendar || task.calendar.type !== 'specific')
+          return null
+        return task.calendar.specific
+      }
+
+      // if the old task does not exist AND the new task is calendar order type, save the order.
+      // if the old task does exist AND the new date is not the same to the old date, save the order.
+      const newDate = specificDate(hydratedTask) // Y-M-D
+      
+      if (newDate && specificDate(oldTask) !== newDate) {
+        console.log(newDate, id)
+
+        saveCalendarOrder(batch, rootState, [id], newDate, writes)
+        
       }
   
       const isNewTask = !savedGroupTask && !savedIndividualTask
@@ -797,29 +855,6 @@ export const setList = (batch, list, id, rootState, writes) => {
 
     }
   }
-}
-export const setInfo = (batch, info, rootState, writes) => {
-  const obj = {
-    ...info, id: 'info',
-    userId: uid(),
-  }
-
-  utils.findChangesBetweenObjs(rootState.userInfo, obj)
-  
-  if (!writes)
-    batch.set(cacheRef(), {
-      info: {
-        info: obj,
-      },
-    }, {merge: true})
-  else if (writes.push)
-    writes.push({
-      collection: 'info',
-      info: obj,
-    })
-  batch.set(
-      userRef().collection('info').doc('info')
-    , obj, {merge: true})
 }
 
 export const deleteTag = (batch, id, rootState, writes) => {

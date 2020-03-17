@@ -1179,21 +1179,6 @@ export default {
       const dispatch = this.$store.dispatch
 
       const date = this.getCalendarOrderDate
-
-      const saveOrder = ids => {
-        this.$store.dispatch('task/saveCalendarOrder', {
-          ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
-          date,
-        })
-      }
-      const onListAddItem = obj => {
-        this.$store.dispatch('list/addListByIndexCalendarOrder', {
-          ...obj,
-          ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
-          date,
-        })
-      }
-      
       if (this.hasEndsTodayLists) {
         const filterFunction = l => this.isListLastDeadlineDay(l, date)
 

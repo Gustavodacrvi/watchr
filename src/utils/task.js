@@ -106,14 +106,16 @@ export default {
     return task.calendar && task.calendar.type !== null
   },
   concatArraysRemovingOldEls(arr, toMerge) {
-    const newArr = [...toMerge, ...arr]
+    const newArr = [...arr,...toMerge]
     const set = new Set()
-    return newArr.filter(id => {
+    const filtered = newArr.filter(id => {
       if (!set.has(id)) {
         set.add(id)
         return true
       }
     })
+    const toEnd = filtered.filter(id => !toMerge.includes(id))
+    return toEnd.concat(toMerge)
   },
   getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
 

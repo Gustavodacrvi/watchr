@@ -960,14 +960,6 @@ export default {
 
       b.commit()
     },
-    saveCalendarOrder({rootState}, {ids, date}) {
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-      const b = fire.batch()
-      
-      setInfo(b, {calendarOrders}, rootState)
-
-      b.commit()
-    },
     convertTasksToListByIndex({rootState}, {tasks, folder, group, order, savedLists, indicies}) {
       const tasksWithConflictingListNames = {}
 
