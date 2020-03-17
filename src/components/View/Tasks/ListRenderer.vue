@@ -638,28 +638,7 @@ export default {
           items.forEach(this.deSelectItem)
         },
         onAdd: (evt, original) => {
-          const items = evt.items
-          if (items.length === 0) items.push(evt.item)
-          const type = items[0].dataset.type
-          for (let i = 0; i < items.length;i++) {
-            const s = items[i].style
-            s.transitionDuration = 0
-            s.height = '0px'
-            s.overflow = 'hidden'
-            items[i].remove()
-          }
-
-          const repeated = items.map(el => el.dataset.id)
-          const ids = []
-          const set = new Set()
-          for (const id of repeated) {
-            if (!set.has(id)) {
-              ids.push(id)
-              set.add(id)
-            }
-          }
-          const indicies = evt.newIndicies.map(el => el.index)
-          if (indicies.length === 0) indicies.push(evt.newIndex)
+          const {type, ids, indicies, items} = utils.getInfoFromAddSortableEvt(evt)
           
           if ((type === 'Task' || type === 'List') && this.comp === 'List') {
             const listIds = this.lazyItems.map(el => el.id)
@@ -669,28 +648,15 @@ export default {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
 
-            let sourceLazyTasks = this.sourceVueInstance.lazyItems
-            const newItems = this.lazyItems
+            utils.moveItemsBetweenLists(
+              this.sourceVueInstance.lazyItems,
+              this.lazyItems,
+              ids, indicies,
+            )
 
-            const tasks = []
-            for (const id of ids) {
-              for (let i = 0;i < sourceLazyTasks.length;i++) {
-                const t = sourceLazyTasks[i]
-                if (t.id === id) {
-                  tasks.push(t)
-                  sourceLazyTasks.splice(i, 1)
-                  break
-                }
-              }
-            }
-
-            for (let i = 0; i < ids.length;i++) {
-              newItems.splice(indicies[i], 0, tasks[i])
-            }
-
+            this.sourceVueInstance = null
             this.disableItemEnterTransitionIds = ids
             this.addToList(this.lazyItems.filter(el => el).map(el => el.id), ids)
-            this.sourceVueInstance = null
           } else {  
             const i = evt.newIndex
             if (this.editMoveType === 'create')

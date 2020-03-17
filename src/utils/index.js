@@ -105,6 +105,48 @@ export default {
       links,
     }
   },
+  moveItemsBetweenLists(source, newList, ids, indicies) {
+    const items = []
+    for (const id of ids) {
+      for (let i = 0;i < source.length;i++) {
+        const t = source[i]
+        if (t.id === id) {
+          items.push(t)
+          source.splice(i, 1)
+          break
+        }
+      }
+    }
+
+    for (let i = 0; i < ids.length;i++) {
+      newList.splice(indicies[i], 0, items[i])
+    }
+  },
+  getInfoFromAddSortableEvt(evt) {
+    const items = evt.items
+    if (items.length === 0) items.push(evt.item)
+    const type = items[0].dataset.type
+    for (let i = 0; i < items.length;i++) {
+      const s = items[i].style
+      s.transitionDuration = 0
+      s.height = '0px'
+      s.overflow = 'hidden'
+      items[i].remove()
+    }
+
+    const repeated = items.map(el => el.dataset.id)
+    const ids = []
+    const set = new Set()
+    for (const id of repeated) {
+      if (!set.has(id)) {
+        ids.push(id)
+        set.add(id)
+      }
+    }
+    const indicies = evt.newIndicies.map(el => el.index)
+    if (indicies.length === 0) indicies.push(evt.newIndex)
+    return {type, ids, items, indicies}
+  },
   
   sortListByName(lists, property = 'name') {
     return lists.slice().sort((a, b) => a[property].toLowerCase().localeCompare(b[property].toLowerCase()))

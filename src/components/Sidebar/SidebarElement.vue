@@ -17,7 +17,7 @@
 
         @mouseenter="hover = true"
         @mouseleave="hover = false"
-        @click.stop="linkCallback"
+        @click="linkCallback"
         @touchstart.passive='touchStart'
         @touchmove.passive='touchmove'
         @touchend.passive='touchEnd'
@@ -230,8 +230,7 @@ export default {
       if (this.isDesktopDevice) this.click()
     },
     click() {
-      if (this.callback) this.callback()
-      else if (this.isOnControl && this.selectedEmpty) this.$emit('select')
+      if (this.callback && !this.isOnControl) this.callback()
     },
     clickIcon(evt) {
       if (this.iconClick) {
@@ -279,9 +278,6 @@ export default {
     getStringObj() {
       if (!this.string) return null
       return {...this.string}
-    },
-    showSpecialInfo() {
-      return this.hover && !this.isOnControl && !this.selectedEmpty
     },
     selectedEmpty() {
       return this.selectedItems.length === 0
@@ -453,6 +449,10 @@ export default {
   background-color: var(--dark-void) !important;
   transition-duration: 0 !important;
   transition: none !important;
+}
+
+.sortable-selected .link-inner-wrapper {
+  background-color: rgba(87,160,222,.2) !important;
 }
 
 .inf {

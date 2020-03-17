@@ -66,6 +66,7 @@ import ItemEdit from './ItemEdit.vue'
 
 import Sortable from 'sortablejs'
 
+import utils from "@/utils"
 import { uid } from '@/utils/firestore'
 
 import mom from 'moment'
@@ -84,8 +85,9 @@ export default {
       hover: false,
       isDragging: false,
 
-      disableItemEnterTransitionId: null,
       items: [],
+      selected: [],
+      disableItemEnterTransitionIds: [],
       sourceVueInstance: null,
       hasEdit: false,
       addedItem: null,
@@ -100,8 +102,12 @@ export default {
     this.sortable = new Sortable(this.draggableRoot, {
       sort: this.enableSort,
       disabled: this.disabled,
+      multiDrag: this.enableSelect,
+      
       animation: 200,
+      multiDragKey: 'CTRL',
       direction: 'vertical',
+
       group: {name: 'sidebar',
         pull: (e) => {
           if (this.isSmart || this.disableItemAdd) return false
@@ -121,7 +127,7 @@ export default {
           if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
-      delay: this.isDesktopDevice ? 15 : 150,
+      delay: this.isDesktopDevice ? 10 : 150,
       handle: '.item-handle',
 
       onUpdate: evt => {
@@ -141,13 +147,9 @@ export default {
         this.$emit('is-moving', false)
       },
       onAdd: evt => {
-        const item = evt.item
-        const type = item.dataset.type
-        const items = evt.items
+        const {type, ids, indicies, items} = utils.getInfoFromAddSortableEvt(evt)
 
-        if (type === 'Task') {
-        }
-        else if (type === 'add-task-floatbutton') {
+        if (type === 'add-task-floatbutton') {
           item.dataset.id = 'floating-button'
           const childs = this.draggableRoot.childNodes
           let i = 0
@@ -162,24 +164,17 @@ export default {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
 
-            let sourceItems = this.sourceVueInstance.items
-            const newItems = this.items
-
-            let sourceItem
-            const i = sourceItems.findIndex(el => el.id === item.dataset.id)
-            if (i > -1)
-              sourceItem = sourceItems.splice(i, 1)[0]
-            
-            this.disableItemEnterTransitionId = item.dataset.id
-            if (sourceItem)
-              newItems.splice(evt.newIndex, 0, sourceItem)
+            utils.moveItemsBetweenLists(
+              this.sourceVueInstance.items,              
+              this.items,
+              ids, indicies,
+            )
 
             this.sourceVueInstance = null
-
-            this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
+            this.disableItemEnterTransitionIds = ids
+            // this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
           }
         }
-        this.draggableRoot.removeChild(item)
       },
       onMove: (t, e) => {
         const isSidebarRenderer = t.to.classList.contains('sidebar-renderer-root')
@@ -289,17 +284,20 @@ export default {
     enter(el) {
       const s = el.style
 
-      let disableTrans
-      if (el.dataset.id === this.disableItemEnterTransitionId) {
-        this.disableItemEnterTransitionId = null
-        disableTrans = true
+      const disableIds = this.disableItemEnterTransitionIds
+      
+      let disableTransition = false
+      if (disableIds.includes(el.dataset.id)) {
+        const i = disableIds.findIndex(id => id === el.dataset.id)
+        disableIds.splice(i, 1)
+        disableTransition = true
       }
       
       s.transitionDuration = 0
       s.opacity = 0
       s.height = '0px'
       requestAnimationFrame(() => {
-        s.transitionDuration = disableTrans ? 0 : '.2s'
+        s.transitionDuration = disableTransition ? 0 : '.2s'
         s.opacity = 1
         s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
         setTimeout(() => {
@@ -343,6 +341,8 @@ export default {
   },
   computed: {
     ...mapState({
+      isOnControl: state => state.isOnControl,
+      
       selectedItems: state => state.selectedItems,
       movingTask: state => state.movingTask,
       moving: state => state.moving,
@@ -350,6 +350,12 @@ export default {
     ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice']),
     nonEditGetItems() {
       return this.items.filter(el => !el.isEdit)
+    },
+    enableSelect() {
+      return !this.isSmart && this.isDesktopDevice && (this.isOnControl || this.isSelecting)
+    },
+    isSelecting() {
+      return this.selected.length > 0
     },
     draggableRoot() {
       return this.$refs['sidebar-renderer-root'].$el
@@ -377,6 +383,13 @@ export default {
         }
         this.items = items.slice()
       }, 250)
+    },
+    enableSelect() {
+      if (this.sortable && this.isDesktopDevice && !this.disabled && this.enableSort) {
+        setTimeout(() => {
+          this.sortable.options.multiDrag = this.enableSelect
+        })
+      }
     },
   }
 }
