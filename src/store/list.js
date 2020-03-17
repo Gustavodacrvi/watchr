@@ -65,7 +65,7 @@ export default {
       return keys.map(k => state.lists[k]).concat(groupKeys.map(k => state.groupLists[k]))
     },
     filteredSidebarLists(s, getters, a, rootGetters) {
-      return utilsList.filterSidebarLists(rootGetters, getters.lists)
+      return utilsList.filterSidebarLists(rootGetters, getters.sortedLists)
     },
 
     isListCanceled: () => l => l.canceled,

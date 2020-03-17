@@ -175,13 +175,15 @@ export default {
 
       b.commit()
     },
-    moveListBetweenFolders({rootState}, {folder, id, ids}) {
+    moveListBetweenFolders({rootState}, {folder, itemIds, ids}) {
       const b = fire.batch()
 
       const writes = []
 
       setFolder(b, {order: ids}, folder, rootState, writes)
-      setList(b, {folder, group: null}, id, rootState, writes)
+      batchSetLists(b, {
+        folder, group: null,
+      }, itemIds, rootState, writes)
 
       cacheBatchedItems(b, writes)
 

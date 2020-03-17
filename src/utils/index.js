@@ -159,7 +159,9 @@ export default {
     for (let i = 0; i < indicies.length;i++) {
       const s = items[i].style
       s.transitionDuration = 0
+      s.transition = 'none'
       s.height = '0px'
+      s.maxHeight = '0px'
       s.overflow = 'hidden'
       root.insertBefore(items[i], root.children[indicies[i]])
     }

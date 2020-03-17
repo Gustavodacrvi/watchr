@@ -172,7 +172,7 @@ export default {
             this.sourceVueInstance = null
             setTimeout(() => {
               this.onSortableAdd(this.folder, ids, this.getIds())
-            })
+            }, 40)
           }
         }
       },
@@ -294,7 +294,7 @@ export default {
       if (!this.mapHelpIcon) return undefined
       return this.mapHelpIcon(el)
     },
-    enter(el) {
+    enter(el, done) {
       const s = el.style
 
       const disableIds = this.disableItemEnterTransitionIds
@@ -315,10 +315,12 @@ export default {
         s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
         setTimeout(() => {
           s.height = 'auto'
+          s.transitionDuration = '.2s'
+          done()
         }, 220)
       })
     },
-    leave(el) {
+    leave(el, done) {
       const s = el.style
       
       s.transition = 'none'
@@ -328,6 +330,8 @@ export default {
         s.transition = 'height .15s, opacity .15s'
         s.opacity = 0
         s.height = '0px'
+
+        setTimeout(done, 160)
       })
     },
     getIcon(el) {

@@ -73,7 +73,7 @@
             :mapString='mapString'
             :saveItem='saveItem'
             adderIcon='progress'
-            :onSortableAdd='(folder, itemIds, ids) => betweenFolders(folder, id, itemIds, f.comp)'
+            :onSortableAdd='(folder, itemIds, ids) => betweenFolders(folder, itemIds, ids, f.comp)'
 
             alreadyExistMessage="This list already exists."
             :existingItems='sortedLists'
@@ -154,7 +154,7 @@ export default {
       this.$store.dispatch('folder/saveFolder', {id, name})
     },
     saveGroup({id, name}) {
-      this.$store.dispatch('group/saveGroup', {id, name})
+      this.$store.dispatch('group/saveGroupName', {id, name})
     },
     saveItem({id, name}) {
       this.$store.dispatch('list/saveList', {
@@ -203,14 +203,14 @@ export default {
       s.opacity = '0'
       h.height = '0'
     },
-    betweenFolders(folder, id, ids, comp) {
+    betweenFolders(folder, itemIds, ids, comp) {
       if (comp === "Group")
         this.$store.dispatch('group/moveListBetweenGroups', {
-          group: folder, id, ids,
+          group: folder, itemIds, ids,
         })
       else
         this.$store.dispatch('folder/moveListBetweenFolders', {
-          folder, id, ids,
+          folder, itemIds, ids,
         })
     },
     rootAdd(folder, itemIds, ids) {
@@ -348,9 +348,6 @@ export default {
       }
 
       return arr
-    },
-    getLists() {
-      return this.addListOptions(this.sortedLists)
     },
   },
 }
