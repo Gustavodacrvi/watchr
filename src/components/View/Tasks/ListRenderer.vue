@@ -610,32 +610,10 @@ export default {
             })
         },
         onRemove: (evt) => {
-          const items = evt.items
+          const {indicies, items, oldIndicies} = utils.getInfoFromAddSortableEvt(evt)
+          utils.removeSortableItemsOnRemove(items, indicies, this.draggableRoot, this.deSelectItem)
 
-          if (items.length === 0) items.push(evt.item)
-          const type = items[0].dataset.type
-          const indicies = evt.oldIndicies.map(el => el.index)
-          if (indicies.length === 0) indicies.push(evt.oldIndex)
-          const root = this.draggableRoot
-
-          const oldIndicies = evt.oldIndicies
-          if (oldIndicies.length === 0)
-            oldIndicies.push({
-              multiDragElement: evt.item,
-              index: evt.oldIndex
-            })
-
-          this.oldRemovedIndicies = oldIndicies
-          
-          for (let i = 0; i < indicies.length;i++) {
-            const s = items[i].style
-            s.transitionDuration = 0
-            s.height = '0px'
-            s.overflow = 'hidden'
-            root.insertBefore(items[i], root.children[indicies[i]])
-          }
-
-          items.forEach(this.deSelectItem)
+          this.oldRemovedIndicies = oldIndicies.slice()
         },
         onAdd: (evt, original) => {
           const {type, ids, indicies, items} = utils.getInfoFromAddSortableEvt(evt)

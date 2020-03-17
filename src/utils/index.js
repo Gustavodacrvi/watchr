@@ -143,9 +143,28 @@ export default {
         set.add(id)
       }
     }
+
+    const oldIndicies = evt.oldIndicies
+    if (oldIndicies.length === 0)
+      oldIndicies.push({
+        multiDragElement: evt.item,
+        index: evt.oldIndex
+      })
+    
     const indicies = evt.newIndicies.map(el => el.index)
     if (indicies.length === 0) indicies.push(evt.newIndex)
-    return {type, ids, items, indicies}
+    return {type, ids, items, indicies, oldIndicies}
+  },
+  removeSortableItemsOnRemove(items, indicies, root, deSelectItem) {
+    for (let i = 0; i < indicies.length;i++) {
+      const s = items[i].style
+      s.transitionDuration = 0
+      s.height = '0px'
+      s.overflow = 'hidden'
+      root.insertBefore(items[i], root.children[indicies[i]])
+    }
+
+    items.forEach(deSelectItem)
   },
   
   sortListByName(lists, property = 'name') {

@@ -88,6 +88,7 @@ export default {
       items: [],
       selected: [],
       disableItemEnterTransitionIds: [],
+      selectedElements: [],
       sourceVueInstance: null,
       hasEdit: false,
       addedItem: null,
@@ -146,6 +147,10 @@ export default {
         this.isDragging = false
         this.$emit('is-moving', false)
       },
+      onRemove: (evt) => {
+        const {indicies, items, oldIndicies} = utils.getInfoFromAddSortableEvt(evt)
+        utils.removeSortableItemsOnRemove(items, indicies, this.draggableRoot, this.deSelectItem)
+      },
       onAdd: evt => {
         const {type, ids, indicies, items} = utils.getInfoFromAddSortableEvt(evt)
 
@@ -198,6 +203,19 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    selectItem(el) {
+      if (!this.selectedElements.includes(el)) {
+        this.selectedElements.push(el)
+        Sortable.utils.select(el)
+      }
+    },
+    deSelectItem(el) {
+      Sortable.utils.deselect(el)
+
+      const i = this.selectedElements.findIndex(el => el === el)
+      if (i > -1)
+        this.selectedElements.splice(i, 1)
+    },
     addItem(name) {
       if (this.getItemRef) {
         if (this.existingItems && this.alreadyExistMessage && this.existingItems.find(el => el.name === name)) {
