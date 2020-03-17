@@ -45,6 +45,7 @@
           @go='moveEdit'
           @add='addItem'
 
+          :adderIcon='adderIcon'
           :placeholder='inputPlaceholder'
           data-id='isEdit'
         />
@@ -76,7 +77,7 @@ export default {
     SidebarElement: SidebarElementVue,
     ItemEdit,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'disableItemAdd', 'fallbackItem', 'isSubElement', 'existingItems', 'alreadyExistMessage', 'addMsg', 'saveItem'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor', 'inputPlaceholder', 'getItemRef', 'disableItemAdd', 'fallbackItem', 'isSubElement', 'adderIcon','existingItems', 'alreadyExistMessage', 'addMsg', 'saveItem'],
   data() {
     return {
       sortable: null,

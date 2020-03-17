@@ -11,6 +11,8 @@
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
       :onSortableAdd="onSortableAdd"
+      adderIcon='tag'
+      :saveItem='saveItem'
 
       alreadyExistMessage="This tag already exists."
       addMsg='Add tag'
@@ -43,6 +45,11 @@ export default {
   },
   props: ['active', 'viewType'],
   methods: {
+    saveItem({id, name}) {
+      this.$store.dispatch('tag/saveTag', {
+        id, name,
+      })
+    },
     getItemRef() {
       return tagRef()
     },

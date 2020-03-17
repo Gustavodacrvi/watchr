@@ -17,6 +17,7 @@
       :mapString='mapString'
       :onSortableAdd="rootAdd"
       addMsg='Add list'
+      adderIcon='progress'
 
       alreadyExistMessage="This list already exists."
       :existingItems='sortedLists'
@@ -66,6 +67,7 @@
             :mapHelpIcon='getListIcon'
             :mapString='mapString'
             :saveItem='saveItem'
+            adderIcon='progress'
             :onSortableAdd='(folder, id, ids) => betweenFolders(folder, id, ids, f.comp)'
 
             alreadyExistMessage="This list already exists."
