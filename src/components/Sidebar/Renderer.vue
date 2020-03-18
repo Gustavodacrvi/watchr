@@ -170,8 +170,9 @@ export default {
             )
 
             this.sourceVueInstance = null
+            const selected = this.selectedItems.slice()
             setTimeout(() => {
-              this.onSortableAdd(this.folder, ids, this.getIds())
+              this.onSortableAdd(this.folder, selected, this.getIds())
             }, 40)
           }
         }
@@ -198,19 +199,6 @@ export default {
     this.sortable.destroy()
   },
   methods: {
-    selectItem(el) {
-      if (!this.selectedElements.includes(el)) {
-        this.selectedElements.push(el)
-        Sortable.utils.select(el)
-      }
-    },
-    deSelectItem(el) {
-      Sortable.utils.deselect(el)
-
-      const i = this.selectedElements.findIndex(el => el === el)
-      if (i > -1)
-        this.selectedElements.splice(i, 1)
-    },
     addItem(name) {
       if (this.getItemRef) {
         if (this.existingItems && this.alreadyExistMessage && this.existingItems.find(el => el.name === name)) {
@@ -359,8 +347,8 @@ export default {
   computed: {
     ...mapState({
       isOnControl: state => state.isOnControl,
-      
       selectedItems: state => state.selectedItems,
+      
       movingTask: state => state.movingTask,
       moving: state => state.moving,
     }),

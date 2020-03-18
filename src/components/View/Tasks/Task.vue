@@ -824,7 +824,7 @@ export default {
 
       const str = utils.parseCalendarObjectToString(c, this.userInfo, false, false)
 
-      if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
+      if ((c.type === 'specific' && this.viewType === 'calendar') || str === this.viewNameValue || (str === 'Today')) return null
 
       return str
     },

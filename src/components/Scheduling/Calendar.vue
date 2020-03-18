@@ -26,7 +26,12 @@
         />
       </div>
     </div>
-    <div class="grid">
+    <div
+      class="grid"
+      ref='grid'
+      
+      data-name='scheduler'
+    >
       <div class='week-day' key='s'>S</div>
       <div class='week-day' key='m'>M</div>
       <div class='week-day' key='t'>T</div>
@@ -36,45 +41,79 @@
       <div class='week-day' key='sa'>S</div>
 
       <div v-for="i in firstWeekDayRange" :key="i" class="day dead">{{ i }}</div>
-      <div v-for="i in daysInMonth" :key="i + 'num'" class='day num' :class="{active: selectedDay === i}" @click="selectDate(i)">
-        <div class="day-wrapper">
-          <span>
-            {{ i }}
-          </span>
-          <span class="centralize"
-            v-if="numberOfTasks"
-          >
-            <Point
-              :date='i'
-              :year='currentYear'
-              :month='currentMonth'
-            />
-          </span>
-        </div>
-      </div>
+      <Date v-for="i in daysInMonth" :key="i"
+        class="day num"
+        :class="{active: selectedDay === i}"
+        :date='i'
+        :allowTaskAdd='allowTaskAdd'
+        :year='currentYear'
+        :month='currentMonthNumber'
+        @click.native="selectDate(i)"
+      />
     </div>
   </div>
 </template>
 
 <script>
 
-import Point from "./Point.vue"
+import { Sortable } from 'sortablejs'
+
+import Date from "./Date.vue"
 
 import mom from 'moment'
+
+import utils from "@/utils/"
+import { mapState } from 'vuex'
 
 const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
 
 export default {
   components: {
-    Point,
+    Date,
   },
-  props: ['value', 'numberOfTasks'],
+  props: ['value', 'allowTaskAdd'],
   data() {
     return {
       current: this.defaultDate || TOD_STR,
       selected: this.defaultDate || TOD_STR,
+
+      sortable: null,
     }
+  },
+  mounted() {
+    if (this.allowTaskAdd) {
+      this.sortable = new Sortable(this.$refs.grid, {
+        group: {
+          name: 'scheduler',
+          pull: (e) => false,
+          put: (j,o,item) => {
+            const d = item.dataset
+            const type = d.type
+            if (type === 'Task') return true
+          },
+        },
+        onAdd: evt => {
+          const {ids, targetElement} = utils.getInfoFromAddSortableEvt(evt, 'Date')
+          this.$store.dispatch('task/saveTasksById', {
+            ids: this.selectedItems.slice(),
+            task: {
+              calendar: {
+                type: 'specific',
+                specific: targetElement.dataset.date,
+
+                editDate: TOD_STR,
+                begins: TOD_STR,
+              }
+            },
+          })
+        },
+      })
+    }
+  },
+  beforeDestroy() {
+    if (this.sortable)
+      this.sortable.destroy()
   },
   methods: {
     selectDate(day) {
@@ -95,6 +134,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(['selectedItems']),
     firstWeekDayRange() {
       return parseInt(this.currentMoment.clone().startOf('month').format('d'), 10)
     },
@@ -114,6 +154,9 @@ export default {
     },
     currentMonth() {
       return this.currentMoment.format('MMM')
+    },
+    currentMonthNumber() {
+      return this.currentMoment.format('M')
     },
     selectedMoment() {
       return mom(this.selected, 'Y-M-D')
@@ -142,6 +185,19 @@ export default {
 
 </script>
 
+<style>
+
+.Calendar .sortable-ghost {
+  height: 0;
+  width: 0;
+  max-height: 0;
+  max-width: 0;
+  visibility: hidden;
+  display: none;
+}
+
+</style>
+
 <style scoped>
 
 .header {
@@ -161,7 +217,7 @@ export default {
 }
 
 .current-date {
-  font-size: 1.2em;
+  font-size: 1.5em;
   color: var(--purple);
 }
 
@@ -171,16 +227,10 @@ export default {
   grid-auto-rows: 36px;
 }
 
-.week-day, .day, .centralize {
+.week-day, .day {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.day-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
 }
 
 .week-day {
@@ -198,7 +248,7 @@ export default {
   color: var(--fade);
 }
 
-.num:hover, .num.active {
+.num:hover, .num.active, .dragover {
   background-color: var(--light-gray);
   color: var(--purple);
   user-select: none;

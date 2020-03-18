@@ -566,9 +566,11 @@ export default {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
+            const sortableRootName = e.el.dataset.name
             
-            if (e.el.dataset.name === 'sidebar-renderer') return true
-            if (e.el.dataset.name === 'folders-root') return true
+            if (sortableRootName === 'sidebar-renderer') return true
+            if (sortableRootName === 'folders-root') return true
+            if (sortableRootName === 'scheduler') return true
             if (d.type === 'Task' && this.comp === "Task") return true
             if (d.type === 'List' && this.comp === 'List') return true
             return false

@@ -1,7 +1,7 @@
 <template>
   <div class="Scheduler">
     <Calendar class="cal"
-      :numberOfTasks='true'
+      :allowTaskAdd='true'
     />
   </div>
 </template>

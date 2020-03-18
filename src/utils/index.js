@@ -122,7 +122,7 @@ export default {
       newList.splice(indicies[i], 0, items[i])
     }
   },
-  getInfoFromAddSortableEvt(evt) {
+  getInfoFromAddSortableEvt(evt, itemClass) {
     const items = evt.items
     if (items.length === 0) items.push(evt.item)
     const type = items[0].dataset.type
@@ -144,6 +144,17 @@ export default {
       }
     }
 
+    let targetElement = null
+    if (itemClass) {
+      targetElement = evt.originalEvent.toElement
+
+      while (true) {
+        if (targetElement && targetElement.classList && targetElement.classList.contains(itemClass))
+         break
+        else targetElement = targetElement.parentNode
+      }
+    }
+
     const oldIndicies = evt.oldIndicies
     if (oldIndicies.length === 0)
       oldIndicies.push({
@@ -153,7 +164,7 @@ export default {
     
     const indicies = evt.newIndicies.map(el => el.index)
     if (indicies.length === 0) indicies.push(evt.newIndex)
-    return {type, ids, items, indicies, oldIndicies}
+    return {type, ids, items, indicies, oldIndicies, targetElement}
   },
   removeSortableItemsOnRemove(items, indicies, root, deSelectItem) {
     for (let i = 0; i < indicies.length;i++) {
