@@ -18,6 +18,7 @@
     :progress='getPieProgress'
     :headings='headings'
     :headingsOrder='headingsOrder'
+    :calendarDate='calendarDate'
     :showAllHeadingsItems='showAllHeadingsItems'
     :rootFallbackItem='rootFallbackItem'
     :getCalendarOrderDate='getCalendarOrderDate'
@@ -36,8 +37,6 @@
     :showHeading='showHeading'
     :itemCompletionCompareDate='itemCompletionCompareDate'
     :configFilterOptions='configFilterOptions'
-    :smartComponent='smartComponent'
-    :onSmartComponentUpdate='onSmartComponentUpdate'
     :viewComponent='viewComponent'
     :isListType='isListType'
     :viewItem='viewItem'
@@ -85,7 +84,6 @@ export default {
   data() {
     return {
       showCompleted: false,
-      calendarDate: null,
 
       headingSchedules: {},
     }
@@ -217,6 +215,7 @@ export default {
     }),
     ...mapMutations(['pushToast']),
     ...mapGetters({
+      calendarDate: 'calendarDate',
       lists: 'list/lists',
       folders: 'folder/folders',
       tags: 'tag/tags',
@@ -309,9 +308,6 @@ export default {
         currentDate.add(1, 'd')
 
       currentDate = currentDate.format('Y-M-D')
-
-      if (viewName === 'Calendar')
-        currentDate = this.calendarDate
 
       let calendarOrder = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
       // const { rootTasks, folderTasks, listTasks } = utilsTask.groupTaskIds()
@@ -1406,6 +1402,8 @@ export default {
         (n === 'Someday' || n === 'Anytime' || n === 'Inbox' || n === 'Assigned to me')
     },
     getCalendarOrderDate() {
+      if (this.calendarDate)
+        return this.calendarDate
       let currentDate = mom()
       const n = this.viewName
       if (n !== 'Tomorrow' && n !== 'Today' && n !== 'Calendar')
@@ -1414,9 +1412,6 @@ export default {
         currentDate.add(1, 'd')
 
       currentDate = currentDate.format('Y-M-D')
-
-      if (n === 'Calendar')
-        currentDate = this.calendarDate
 
       return currentDate
     },

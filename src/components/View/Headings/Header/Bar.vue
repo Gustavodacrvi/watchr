@@ -17,7 +17,7 @@
     <span v-if="!editing || !isEditable"
       class="name"
       @click.stop="editing = true"
-    >{{ viewNameValue }}</span>
+    >{{ getViewName }}</span>
     <input v-else-if="isEditable"
       class="input"
       autocomplete="off"
@@ -56,6 +56,8 @@
 
 import IconDrop from '../../../IconDrop/IconDrop.vue'
 import HeaderSearch from './HeaderSearch.vue'
+
+import utils from '@/utils/'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -124,9 +126,14 @@ export default {
   },
   computed: {
     ...mapState(['selectedItems']),
-    ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor', 'isSmartList']),
+    ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor', 'isSmartList', 'calendarDate']),
     isEditable() {
       return !this.isSmartList && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktopBreakPoint
+    },
+    getViewName() {
+      if (this.calendarDate)
+        return utils.getHumanReadableDate(this.calendarDate)
+      return this.viewNameValue
     },
   },
   watch: {

@@ -40,14 +40,8 @@
         @folder='selectFolder'
         @group='selectGroup'
       />
-      <component v-if='smartComponent'
-        class='component'
-        :is='smartComponent'
-
-        @update='onSmartComponentUpdate'
-      />
       <CalendarEvents
-        :date='getCalendarOrderDate'
+        :date='calendarDate'
       />
       <component v-if="extraListView && defer(3)" :is='extraListView.comp'
         v-bind="{...$props, ...extraListView}"
@@ -142,8 +136,8 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'getCalendarOrderDate', 'viewItem',
-  'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
+  'calendarDate', 'viewItem',
+  'showHeading', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
   components: {
@@ -792,6 +786,7 @@ export default {
       selectedType: state => state.selectedType,
       isEditingComp: state => state.isEditing,
       mainSelection: state => state.mainSelection,
+      scheduling: state => state.scheduling,
 
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
@@ -847,7 +842,7 @@ export default {
       return !this.allViewItemsIds.includes(this.mainSelection)
     },
     showCalendarExtraIcon() {
-      return this.allowCalendar && (this.getCalendarOrderDate || this.viewName === 'Upcoming')
+      return this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming')
     },
     shortcutsType() {
       if (this.selectedItems.length > 0)
@@ -1179,11 +1174,11 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.getCalendarOrderDate)
+        if (this.calendarDate)
           opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(this.autoSchedule, this.saveAutoSchedule, this.userInfo))
 
 
-        if (!this.allowCalendar && (this.getCalendarOrderDate || this.viewName === 'Upcoming'))
+        if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming'))
           opt.push({
             name: 'Show Google Calendar',
             icon: 'calendar',

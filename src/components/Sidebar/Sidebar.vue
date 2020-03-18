@@ -90,7 +90,7 @@
           :getSectionOptions='getSectionOptions'
           :sideIcons='sideIcons'
           @toggle-sidebar='toggleSidebar'
-          @toggle-scheduling='scheduling = !scheduling'
+          @toggle-scheduling='toggleScheduling'
         />
       </div>
     </div>
@@ -115,7 +115,7 @@ import RendererVue from './Renderer.vue'
 import SearchButtonVue from './SearchButton.vue'
 import SidebarFooter from './Components/Footer.vue'
 
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapMutations } from 'vuex'
 
 import utils from '@/utils'
 import utilsList from '@/utils/list'
@@ -159,7 +159,6 @@ export default {
           name: 'Tags',
         },
       ],
-      scheduling: false,
       showing: true,
       sidebarHover: false,
       transRight: true,
@@ -191,6 +190,8 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    ...mapMutations(['toggleScheduling']),
+    
     pointerdown(evt) {
       this.$emit('handle-pointerdown', evt)
     },
@@ -327,6 +328,7 @@ export default {
       userInfo: state => state.userInfo,
       viewName: state => state.viewName,
       viewType: state => state.viewType,
+      scheduling: state => state.scheduling,
     }),
     ...mapGetters({
       tags: 'tag/tags',

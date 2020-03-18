@@ -11,11 +11,15 @@
       >
         <Icon
           :icon='!scheduling ? "calendar-star" : "star"'
-          :color='scheduleHover ? schedulerToggleColor : "var(--txt)"'
+          :color='scheduleHover ? schedulerToggleColor : "var(--fade)"'
         />
-        <span class='schedule-msg'
-          :style='{color: scheduleHover ? schedulerToggleColor : "var(--txt)"}'
-        >{{ !scheduling ? "Scheduler" : "Smart views" }}</span>
+        <span
+          class="schedule-msg"
+          :style='{color: scheduleHover ? schedulerToggleColor : "var(--fade)"}'
+        >
+          <span v-if="scheduling" key="2"> Smart views </span>
+          <span v-else key='s'> Scheduler </span>
+        </span>
       </div>
       <div class="drop" v-if="showIconDropdown">
         <Icon v-for="i in sideIcons" :key='i.icon'
@@ -155,6 +159,7 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 #sidebar-arrow {

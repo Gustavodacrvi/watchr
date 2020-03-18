@@ -34,6 +34,8 @@ import utils from './utils/'
 
 const c = utils.asyncComp
 
+import mom from 'moment'
+
 import { mapGetters, mapState } from 'vuex'
 
 export default {
@@ -176,6 +178,11 @@ export default {
       const atLeastOneUndefined = (viewName === undefined || viewType === undefined)
       let firstNav = false
 
+      const saveTitle = str => {
+          document.getElementById('meta-title')
+            .innerHTML = str  
+        }
+
       if (
         (path === '/user' && atLeastOneUndefined)
       ) {
@@ -183,15 +190,19 @@ export default {
         const view = this.getInitialSmartView
         this.$router.replace(`/user?${view.viewType}=${view.viewName}`)
       }
-      if (saveRoute) {
-        if (viewName && viewType)
-          document.getElementById('meta-title')
-            .innerHTML = `${viewName} - ${viewType.replace(/^[a-z]/, m => m.toUpperCase())}`
+      else if (saveRoute && viewName && viewType) {
+
+        if (viewType !== 'calendar')
+          saveTitle(`${viewName} - ${viewType.replace(/^[a-z]/, m => m.toUpperCase())}`)
+        else {
+          saveTitle(utils.getHumanReadableDate(viewName))
+        }
+        
         this.$store.commit('navigate', {
           viewName, viewType, newRoute: !this.saveHistory || firstNav || !viewName,
         })
         this.saveHistory = true
-      }
+      } else saveTitle('watchr')
     },
     getCalendarEvents() {
       if (typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
@@ -243,7 +254,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift', 'userInfo']),
+    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift', 'userInfo', 'scheduling']),
     ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'getInitialSmartView', 'needsUpdate', 'layout', 'deviceLayout']),
     isReady() {
       return this.$store.state.googleCalendarReady
@@ -291,7 +302,7 @@ export default {
       const isGoingToPopup = to.path === '/popup'
       const isGoingToMenu = to.path === '/menu'
       const notGoingToAnyOfTheTwo = (!isGoingToPopup && !isGoingToMenu)
-      
+
       if (to && !isGoingToPopup && this.$store.getters.isPopupOpened)
         this.closePopup(true)
       this.updateViewType(this.isDesktopBreakPoint || notGoingToAnyOfTheTwo)
