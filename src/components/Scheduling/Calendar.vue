@@ -35,13 +35,30 @@
       <div class='week-day' key='f'>F</div>
       <div class='week-day' key='sa'>S</div>
 
-      <div v-for="i in firstWeekDayRange" :key="i" class="day dead"></div>
-      <div v-for="i in daysInMonth" :key="i + 'num'" class='day num' :class="{active: selectedDay === i}" @click="selectDate(i)">{{ i }}</div>
+      <div v-for="i in firstWeekDayRange" :key="i" class="day dead">{{ i }}</div>
+      <div v-for="i in daysInMonth" :key="i + 'num'" class='day num' :class="{active: selectedDay === i}" @click="selectDate(i)">
+        <div class="day-wrapper">
+          <span>
+            {{ i }}
+          </span>
+          <span class="centralize"
+            v-if="numberOfTasks"
+          >
+            <Point
+              :date='i'
+              :year='currentYear'
+              :month='currentMonth'
+            />
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+
+import Point from "./Point.vue"
 
 import mom from 'moment'
 
@@ -49,7 +66,10 @@ const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
 
 export default {
-  props: ['value'],
+  components: {
+    Point,
+  },
+  props: ['value', 'numberOfTasks'],
   data() {
     return {
       current: this.defaultDate || TOD_STR,
@@ -142,36 +162,46 @@ export default {
 
 .current-date {
   font-size: 1.2em;
-  color: var(--primary);
+  color: var(--purple);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: 25px;
+  grid-auto-rows: 36px;
 }
 
-.week-day, .day {
+.week-day, .day, .centralize {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+.day-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
 .week-day {
   color: var(--fade);
-  font-size: .9em;
+  font-size: 1em;
 }
 
 .day {
   border-radius: 8px;
   transition-duration: .2s;
-  font-size: 1.1em;
+  font-size: 1.05em;
+}
+
+.dead {
+  color: var(--fade);
 }
 
 .num:hover, .num.active {
-  background-color: var(--primary);
+  background-color: var(--light-gray);
+  color: var(--purple);
   user-select: none;
-  color: var(--dark-void);
 }
 
 </style>

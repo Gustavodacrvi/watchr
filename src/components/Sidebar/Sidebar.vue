@@ -78,9 +78,7 @@
               </div>
               <div class='extra-margin' style="height: 300px"></div>
             </div>
-            <div v-else>
-              asdf
-            </div>
+            <Scheduler v-else/>
           </div>
         </transition>
         <SidebarFooter
@@ -117,6 +115,7 @@ import IconDropVue from '../IconDrop/IconDrop.vue'
 import RendererVue from './Renderer.vue'
 import SearchButtonVue from './SearchButton.vue'
 import SidebarFooter from './Components/Footer.vue'
+import Scheduler from './Scheduler.vue'
 
 import { mapGetters, mapState, mapMutations } from 'vuex'
 
@@ -135,7 +134,7 @@ export default {
     SidebarElement: SidebarElementVue,
     IconDrop: IconDropVue,
     Lists: ListsVue, SidebarFooter,
-    Tags: TagsVue,
+    Tags: TagsVue, Scheduler,
     Filters: FiltersVue,
     SidebarRenderer: RendererVue,
     SearchButton: SearchButtonVue,
