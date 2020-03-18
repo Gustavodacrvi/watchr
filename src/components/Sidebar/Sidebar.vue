@@ -12,7 +12,9 @@
         :style="{width}"
       ></div>
       <div class="inner-wrapper">
-        <transition name="bar-trans">
+        <transition
+          name="bar-trans"
+        >
           <div v-if="!isDesktopBreakPoint || showing" class="sidebar-content">
             <div v-if="!isScheduling" class="menus">
               <SidebarRenderer
@@ -81,10 +83,11 @@
             </div>
           </div>
         </transition>
-        <SidebarFooter v-if='!removeFooter'
+        <SidebarFooter
           :class="[layout, {showing}]"
           :showing='showing'
           :style="{width}"
+          :slimMode='slimMode'
           :showIconDropdown='showIconDropdown'
           :scheduling='isScheduling'
           :getSectionOptions='getSectionOptions'
@@ -125,7 +128,7 @@ import utilsGroup from '@/utils/group'
 
 export default {
   props: ['value', 'width', 'sidebarHided', 'pressingHandle',
-    'disableSearch', 'removeHandle', 'removeBacklayer', 'removeFooter',
+    'disableSearch', 'removeHandle', 'removeBacklayer',
     'slimMode',
   ],
   components: {
@@ -635,6 +638,10 @@ export default {
   position: relative;
 }
 
+.slim-sidebar .sidebar-content {
+  min-height: 100%;
+}
+
 .Sidebar {
   height: 100%;
   overflow-y: scroll;
@@ -752,10 +759,12 @@ export default {
 }
 
 .slim-sidebar .margin-wrapper {
-  margin: 0;
-  padding: 12px;
-  max-height: 350px;
-  overflow: auto;
+  padding: 26px;
+  height: 90%;
+  box-sizing: border-box;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: var(--card);
   border-radius: 16px;
   box-shadow: 0 4px 14px rgba(10,10,10,.3);

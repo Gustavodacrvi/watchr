@@ -1,47 +1,49 @@
 <template>
-  <div class="footer">
+  <div class="footer" :class="{slimMode}">
     <div class="inner-footer">
-      <div v-if='isDesktopDevice && showIconDropdown'
-        class="scheduler-toggle passive"
-        :class="{scheduleHover}"
+      <div class="wrapper">
+        <div v-if='isDesktopDevice && showIconDropdown && !slimMode'
+          class="scheduler-toggle passive"
+          :class="{scheduleHover}"
 
-        @mouseenter='scheduleHover = true'
-        @mouseleave='scheduleHover = false'
-        @click='$emit("toggle-scheduling")'
-      >
-        <Icon
-          :icon='!scheduling ? "calendar-star" : "star"'
-          :color='scheduleHover ? schedulerToggleColor : "var(--fade)"'
-        />
-        <span
-          class="schedule-msg"
-          :style='{color: scheduleHover ? schedulerToggleColor : "var(--fade)"}'
+          @mouseenter='scheduleHover = true'
+          @mouseleave='scheduleHover = false'
+          @click='$emit("toggle-scheduling")'
         >
-          <span v-if="scheduling" key="2"> Smart views </span>
-          <span v-else key='s'> Scheduler </span>
-        </span>
-      </div>
-      <div class="drop" v-if="showIconDropdown">
-        <Icon v-for="i in sideIcons" :key='i.icon'
-          class="sect-icon passive cursor remove-highlight primary-hover"
-          :icon='i.icon'
-          
-          :number='i.number'
-          color='var(--fade)'
-          @click="i.callback"
-        />
-        <transition name="icon-t">
-          <IconDrop
-            class="right passive"
-            handle='settings-h'
-            
-            handleColor='var(--fade)'
-            :options="getSectionOptions"
+          <Icon
+            :icon='!scheduling ? "calendar-star" : "star"'
+            :color='scheduleHover ? schedulerToggleColor : "var(--fade)"'
           />
-        </transition>
+          <span
+            class="schedule-msg"
+            :style='{color: scheduleHover ? schedulerToggleColor : "var(--fade)"}'
+          >
+            <span v-if="scheduling" key="2"> Smart views </span>
+            <span v-else key='s'> Scheduler </span>
+          </span>
+        </div>
+        <div class="drop" v-if="showIconDropdown">
+          <Icon v-for="i in sideIcons" :key='i.icon'
+            class="sect-icon passive cursor remove-highlight primary-hover"
+            :icon='i.icon'
+            
+            :number='i.number'
+            color='var(--fade)'
+            @click="i.callback"
+          />
+          <transition name="icon-t">
+            <IconDrop
+              class="right passive"
+              handle='settings-h'
+              
+              handleColor='var(--fade)'
+              :options="getSectionOptions"
+            />
+          </transition>
+        </div>
+        <div></div>
+        <Icon v-if="isDesktopBreakPoint && !slimMode" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="$emit('toggle-sidebar')"/>
       </div>
-      <div></div>
-      <Icon v-if="isDesktopBreakPoint" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="$emit('toggle-sidebar')"/>
     </div>
   </div>
 </template>
@@ -56,7 +58,7 @@ export default {
   components: {
     IconDrop,
   },
-  props: ['showIconDropdown', 'sideIcons', 'showing', 'getSectionOptions', 'scheduling'],
+  props: ['showIconDropdown', 'sideIcons', 'showing', 'getSectionOptions', 'scheduling', 'slimMode'],
   data() {
     return {
       scheduleHover: false,
@@ -80,7 +82,15 @@ export default {
   bottom: 0px;
   height: 40px;
   border: none;
-  padding: 0 25px;
+}
+
+.slimMode {
+  position: sticky;
+  padding: 0;
+  width: calc(100% + (26px * 2)) !important;
+  transform: translateX(-26px);
+  background-color: purple;
+  bottom: -26px;
 }
 
 .sect-icon {
@@ -99,6 +109,12 @@ export default {
   box-shadow: 0 -3px 3px black;
 }
 
+.wrapper {
+  height: 100%;
+  margin: 0 25px;
+  position: relative;
+}
+
 .inner-footer {
   position: relative;
   background-color: none;
@@ -110,6 +126,11 @@ export default {
 .showing .inner-footer {
   background-color: var(--sidebar-color);
   box-shadow: 0 -3px 4px var(--sidebar-color);
+}
+
+.slimMode .inner-footer {
+  background-color: var(--card);
+  box-shadow: 0 -3px 4px var(--card);
 }
 
 .mobile .showing .inner-footer {
@@ -165,12 +186,12 @@ export default {
 #sidebar-arrow {
   position: absolute;
   left: 3px;
-  transform: translateY(5px) rotate(90deg);
+  transform: translateY(12px) rotate(90deg);
   transition: opacity .3s, left .3s, transform .3s;
 }
 
 #sidebar-arrow.hided {
-  transform: translateY(5px) rotate(-90deg);
+  transform: translateY(12px) rotate(-90deg);
 }
 
 </style>

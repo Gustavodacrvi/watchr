@@ -1,14 +1,5 @@
 <template>
   <div class="SlimModeNav" :class="{render}">
-    <div
-      class="active-el rb"
-    >
-      <span
-        class="name"
-        :class="{active}"
-        @click.stop="active = !active"
-      >{{ !scheduling ? viewNameValue : "Smart views" }}</span>
-    </div>
     <transition name="side-t">
       <Sidebar v-if="active"
         ref="side"
@@ -21,7 +12,6 @@
         :disableSearch='true'
         :removeHandle='true'
         :removeBacklayer='true'
-        :removeFooter='true'
       />
     </transition>
   </div>
@@ -44,6 +34,9 @@ export default {
     }
   },
   methods: {
+    open() {
+      this.active = true
+    },
     click(evt) {
       const path = event.path || (event.composedPath && event.composedPath())
       let found = false
@@ -77,68 +70,30 @@ export default {
 <style scoped>
 
 .Sidebar-comp {
-  transform: translateY(50px);
-}
-
-.active-el {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 0;
-  opacity: 0;
-  overflow: hidden;
+  transform: translateY(5px);
+  pointer-events: all;
 }
 
 .SlimModeNav {
-  margin: 0;
-  position: relative;
-  transition: margin .4s;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  margin: 15px 0;
+  box-sizing: border-box;
   transform: translateY(0px);
   z-index: 5000;
+  pointer-events: none;
 }
 
 .SlimModeNav.render {
-  margin-bottom: 5px;
-  transform: translateY(-20px);
-}
-
-.SlimModeNav.render .active-el {
-  height: 35px;
-  opacity: 1;
+  transform: translateY(-5px);
 }
 
 .slim-sidebar {
   position: absolute;
   top: 0;
   width: 100%;
-}
-
-.name {
-  padding: 0 16px;
-  height: 100%;
-  flex-basis: 10px;
-  white-space: nowrap;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 6px;
-  cursor: pointer;
-  transition-duration: .2s;
-  transform: scale(1,1);
-  color: var(--fade);
-  background-color: var(--back-color);
-}
-
-.name:hover, .active {
-  background-color: var(--light-gray);
-}
-
-.icon-wrapper {
-  flex-basis: 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translateY(1.5px);
 }
 
 .side-t-enter, .side-t-leave-to {
@@ -148,7 +103,7 @@ export default {
 }
 
 .side-t-leave, .side-t-enter-to {
-  transform: translateY(50px);
+  transform: translateY(5px);
   opacity: 1;
   transition-duration: .2s;
 }

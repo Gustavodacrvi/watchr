@@ -17,7 +17,16 @@
     <span v-if="!editing || !isEditable"
       class="name"
       @click.stop="editing = true"
-    >{{ getViewName }}</span>
+    >
+      {{ getViewName }}
+      <Icon v-if="calendarDate && scheduling"
+        class="comp-icon primary-hover cursor"
+        icon='calendar-star'
+        color='var(--fade)'
+        width='18px'
+        @click='$emit("open-main-comp")'
+      />
+    </span>
     <input v-else-if="isEditable"
       class="input"
       autocomplete="off"
@@ -125,7 +134,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedItems']),
+    ...mapState(['selectedItems', 'scheduling']),
     ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor', 'isSmartList', 'calendarDate']),
     isEditable() {
       return !this.isSmartList && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktopBreakPoint
@@ -162,6 +171,11 @@ export default {
   position: relative;
   z-index: 2;
   margin-right: 16px;
+}
+
+.comp-icon {
+  margin-left: 8px;
+  transform: translateY(2.5px);
 }
 
 .name {

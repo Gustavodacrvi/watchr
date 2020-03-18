@@ -2,7 +2,9 @@
 <template>
   <div class="ViewRenderer" :class="layout">
     <div class='view-wrapper'>
-      <SlimModeNav v-if='isDesktopBreakPoint'
+      <SlimModeNav
+        ref='mainComp'
+      
         :render='sidebarHided || scheduling'
         :scheduling='scheduling'
         :viewNameValue='viewNameValue'
@@ -40,6 +42,8 @@
         @list='selectList'
         @folder='selectFolder'
         @group='selectGroup'
+
+        @open-main-comp='openMainComp'
       />
       <CalendarEvents
         :date='calendarDate'
@@ -219,6 +223,10 @@ export default {
   methods: {
     ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
+
+    openMainComp() {
+      this.$refs.mainComp.open()
+    },
     addTask() {
       this.$refs.taskHandler.addTaskEdit()
     },
