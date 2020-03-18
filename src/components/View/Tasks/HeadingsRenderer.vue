@@ -116,6 +116,13 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    selectAll() {
+      const keys = Object.keys(this.$refs)
+      keys.forEach(k => {
+        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].selectAll)
+          this.$refs[k][0].selectAll()
+      })
+    },
     getContHeight(h) {
       const l = h.items.length
       if (!this.showAllHeadingsItems)

@@ -55,7 +55,17 @@ export const setInfo = (batch, info, rootState, writes) => {
     userId: uid(),
   }
 
-  utils.findChangesBetweenObjs(rootState.userInfo, obj)
+  utils.findChangesBetweenObjs(rootState.userInfo, obj, (key, val) => {
+    switch (typeof obj[key]) {
+      case 'object': {
+        Vue.set(rootState.userInfo, key, {...rootState.userInfo[key], ...val})
+        break
+      }
+      default: {
+        Vue.set(rootState.userInfo, key, val)
+      }
+    }
+  })
   
   if (!writes)
     batch.set(cacheRef(), {
@@ -453,7 +463,6 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
 
       const newDate = specificDate(hydratedTask) // Y-M-D
       if (newDate && specificDate(oldTask) !== newDate) {
-        console.log(newDate, id)
 
         saveCalendarOrder(batch, rootState, [id], newDate, writes)
         
@@ -466,15 +475,15 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
       }
       
       const newList = getProperty(hydratedTask, 'list')
-      if (newList && getProperty(oldTask) !== newList) {
+      if (newList && getProperty(oldTask, 'list') !== newList) {
         saveListOrder(batch, rootState, [id], newList, writes)
       }
       const newFolder = getProperty(hydratedTask, 'folder')
-      if (newFolder && getProperty(oldTask) !== newFolder) {
+      if (newFolder && getProperty(oldTask, 'folder') !== newFolder) {
         saveFolderOrder(batch, rootState, [id], newFolder, writes)
       }
       const newGroup = getProperty(hydratedTask, 'group')
-      if (newGroup && getProperty(oldTask) !== newGroup) {
+      if (newGroup && getProperty(oldTask, 'group') !== newGroup) {
         saveGroupOrder(batch, rootState, [id], newGroup, writes)
       }
   

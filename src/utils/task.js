@@ -115,7 +115,7 @@ export default {
       }
     })
     const toEnd = filtered.filter(id => !toMerge.includes(id))
-    return toEnd.concat(toMerge)
+    return [...toEnd, ...toMerge]
   },
   getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
 

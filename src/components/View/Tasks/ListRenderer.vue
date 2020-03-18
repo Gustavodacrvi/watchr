@@ -124,6 +124,8 @@
       </div>
     </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
+      ref='headings'
+      
       :viewName='viewName'
       :viewType='viewType'
       :viewNameValue='viewNameValue'
@@ -269,6 +271,8 @@ export default {
           callback(this.$refs[k][0])
     },
     selectAll() {
+      if (this.isRoot)
+        this.$refs.headings.selectAll()
       this.forEachItem(vm => vm.selectItem())
     },
     appendItem() {

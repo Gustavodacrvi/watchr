@@ -177,14 +177,16 @@ export default {
       s.height = 0
       s.opacity = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
-        s.height = this.sublistHeight
-        s.opacity = 1
         setTimeout(() => {
-          s.height = 'auto'
-          s.overflow = 'visible'
-          done()
-        }, 310)
+          s.transitionDuration = '.2s'
+          s.height = this.sublistHeight
+          s.opacity = 1
+          setTimeout(() => {
+            s.height = 'auto'
+            s.overflow = 'visible'
+            done()
+          }, 310)
+        })
       })
     },
     sublistLeave(el, done) {
@@ -192,10 +194,12 @@ export default {
       
       s.height = this.sublistHeight
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
-        s.height = '0px'
-        s.overflow = 'hidden'
-        setTimeout(done, 310)
+        setTimeout(() => {
+          s.transitionDuration = '.2s'
+          s.height = '0px'
+          s.overflow = 'hidden'
+          setTimeout(done, 310)
+        })
       })
     },
     touchStart(e) {

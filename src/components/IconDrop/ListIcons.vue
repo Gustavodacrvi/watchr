@@ -80,7 +80,7 @@
           <ButtonInput class="abs-btn"
             type='tiny'
             value='Save selected'
-            @click='saveSelected'
+            @click.native='saveSelected'
           />
         </div>
       </div>

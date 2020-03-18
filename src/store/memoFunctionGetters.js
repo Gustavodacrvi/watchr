@@ -24,11 +24,6 @@ export default (memoizeObject) => {
   for (const k of keys) {
     obj[k] = function(state, getters, rootState, rootGetters) {
       const val = memoizeObject[k]
-
-      const log = (...args) => {
-        if (k === 'getSubTagsByParentId')
-          console.log(...args)
-      }
       
       const thisBinding = {}
       // TOUCH REACTIVE PROPERTIES

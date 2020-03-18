@@ -98,6 +98,7 @@ export default {
     runTransition() {
       // FLIP
       const target = this.$el.childNodes[1]
+      if (!target) return;
 
       const { top, height, left, width } = document.getElementById('item-renderer-root').getBoundingClientRect()
       const edit = target.getBoundingClientRect()
