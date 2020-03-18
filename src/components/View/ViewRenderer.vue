@@ -3,7 +3,8 @@
   <div class="ViewRenderer" :class="layout">
     <div class='view-wrapper'>
       <SlimModeNav v-if='isDesktopBreakPoint'
-        :render='sidebarHided'
+        :render='sidebarHided || scheduling'
+        :scheduling='scheduling'
         :viewNameValue='viewNameValue'
       />
       <Header

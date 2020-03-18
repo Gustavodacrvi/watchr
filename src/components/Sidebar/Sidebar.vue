@@ -14,7 +14,7 @@
       <div class="inner-wrapper">
         <transition name="bar-trans">
           <div v-if="!isDesktopBreakPoint || showing" class="sidebar-content">
-            <div v-if="!scheduling" class="menus">
+            <div v-if="!isScheduling" class="menus">
               <SidebarRenderer
                 type='list'
                 :isSmart='true'
@@ -86,7 +86,7 @@
           :showing='showing'
           :style="{width}"
           :showIconDropdown='showIconDropdown'
-          :scheduling='scheduling'
+          :scheduling='isScheduling'
           :getSectionOptions='getSectionOptions'
           :sideIcons='sideIcons'
           @toggle-sidebar='toggleSidebar'
@@ -350,6 +350,9 @@ export default {
       favGroups: 'group/getFavoriteGroups',
       favTags: 'tag/getFavoriteTags',
     }),
+    isScheduling() {
+      return !this.slimMode && this.scheduling
+    },
     sidebarHandle() {
       return {
         left: (parseInt(this.width, 10) - 18) + 'px'

@@ -810,8 +810,10 @@ export default {
       return true
     },
     isCalendarView() {
+      if (this.viewType === 'calendar')
+        return true
       const n = this.viewName
-      return n === 'Today' || n === 'Tomorrow' || n === 'Calendar'
+      return n === 'Today' || n === 'Tomorrow'
     },
     calendarStr() {
       const {t,c} = this.getTask

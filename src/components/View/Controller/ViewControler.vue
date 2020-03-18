@@ -303,11 +303,7 @@ export default {
       let groups = Array.from(setOfGroups)
       groups.forEach(f => f.smartViewControllerType = 'group')
 
-      let currentDate = mom()
-      if (viewName === 'Tomorrow')
-        currentDate.add(1, 'd')
-
-      currentDate = currentDate.format('Y-M-D')
+      let currentDate = this.getCalendarOrderDate
 
       let calendarOrder = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
       // const { rootTasks, folderTasks, listTasks } = utilsTask.groupTaskIds()
@@ -630,6 +626,7 @@ export default {
       if (type === 'list') return 'list'
       if (type === 'folder') return 'folder'
       if (type === 'group') return 'group'
+      if (type === 'calendar') return 'calendar'
       return 'tag'
     },
     deadlinesViewHeadings() {
@@ -1428,6 +1425,8 @@ export default {
       return this.userInfo.ungroupTasksInHeadings
     },
     isCalendarOrderViewType() {
+      if (this.viewType === 'calendar')
+        return true
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart && 
         (n === 'Today' || n === 'Tomorrow' || n === 'Calendar')

@@ -7,7 +7,7 @@
         class="name"
         :class="{active}"
         @click.stop="active = !active"
-      >{{ viewNameValue }}</span>
+      >{{ !scheduling ? viewNameValue : "Smart views" }}</span>
     </div>
     <transition name="side-t">
       <Sidebar v-if="active"
@@ -37,7 +37,7 @@ export default {
   components: {
     Sidebar,
   },
-  props: ['render', 'viewNameValue'], 
+  props: ['scheduling', 'render', 'viewNameValue'], 
   data() {
     return {
       active: false,
@@ -98,7 +98,7 @@ export default {
 }
 
 .SlimModeNav.render {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   transform: translateY(-20px);
 }
 
@@ -125,6 +125,7 @@ export default {
   cursor: pointer;
   transition-duration: .2s;
   transform: scale(1,1);
+  color: var(--fade);
   background-color: var(--back-color);
 }
 
