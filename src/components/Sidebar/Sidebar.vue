@@ -12,9 +12,9 @@
         :style="{width}"
       ></div>
       <div class="inner-wrapper">
-        <div>
-          <transition name="bar-trans">
+        <transition name="bar-trans">
           <div v-if="!isDesktopBreakPoint || showing" class="sidebar-content">
+            <div v-if="!scheduling" class="menus">
               <SidebarRenderer
                 type='list'
                 :isSmart='true'
@@ -76,33 +76,22 @@
               </div>
               <div class='extra-margin' style="height: 300px"></div>
             </div>
-          </transition>
-        </div>
-        <div v-if="!removeFooter" class="footer" :class="[layout, {showing}]" :style="{width}">
-          <div class="inner-footer">
-            <div class="drop" v-if="showIconDropdown">
-              <Icon v-for="i in sideIcons" :key='i.icon'
-                class="sect-icon passive cursor remove-highlight primary-hover"
-                :icon='i.icon'
-               
-                :number='i.number'
-                color='var(--fade)'
-                @click="i.callback"
-              />
-              <transition name="icon-t">
-                <IconDrop
-                  class="right passive"
-                  handle='settings-h'
-                 
-                  handleColor='var(--fade)'
-                  :options="getSectionOptions"
-                />
-              </transition>
+            <div v-else>
+              asdf
             </div>
-            <div></div>
-            <Icon v-if="isDesktopBreakPoint" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="toggleSidebar"/>
           </div>
-        </div>
+        </transition>
+        <SidebarFooter v-if='!removeFooter'
+          :class="[layout, {showing}]"
+          :showing='showing'
+          :style="{width}"
+          :showIconDropdown='showIconDropdown'
+          :scheduling='scheduling'
+          :getSectionOptions='getSectionOptions'
+          :sideIcons='sideIcons'
+          @toggle-sidebar='toggleSidebar'
+          @toggle-scheduling='scheduling = !scheduling'
+        />
       </div>
     </div>
     <div v-if="isDesktopBreakPoint && !sidebarHided && !removeHandle"
@@ -124,6 +113,7 @@ import TagsVue from './Sections/Tags.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import RendererVue from './Renderer.vue'
 import SearchButtonVue from './SearchButton.vue'
+import SidebarFooter from './Components/Footer.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -141,7 +131,7 @@ export default {
   components: {
     SidebarElement: SidebarElementVue,
     IconDrop: IconDropVue,
-    Lists: ListsVue,
+    Lists: ListsVue, SidebarFooter,
     Tags: TagsVue,
     Filters: FiltersVue,
     SidebarRenderer: RendererVue,
@@ -169,6 +159,7 @@ export default {
           name: 'Tags',
         },
       ],
+      scheduling: false,
       showing: true,
       sidebarHover: false,
       transRight: true,
@@ -343,6 +334,7 @@ export default {
       layout: 'layout',
       isStandAlone: 'isStandAlone',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
+      isDesktopDevice: 'isDesktopDevice',
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       getNumberOfListsByView: 'list/getNumberOfListsByView',
@@ -665,27 +657,6 @@ export default {
   padding: 0 30px;
 }
 
-.footer {
-  position: absolute;
-  left: 0;
-  bottom: 0px;
-  height: 40px;
-  border: none;
-  padding: 0 25px;
-}
-
-.footer.mobile {
-  bottom: 15px;
-  height: 53px;
-  width: 100%;
-  margin-left: 0;
-  padding: 0;
-}
-
-.mobile .inner-footer {
-  box-shadow: 0 -3px 3px black;
-}
-
 .comp-wrapper {
   overflow: visible;
 }
@@ -753,56 +724,6 @@ export default {
 
 .sectionActive {
   color: var(--primary) !important;
-}
-
-#sidebar-arrow {
-  position: absolute;
-  left: 3px;
-  transform: translateY(5px) rotate(90deg);
-  transition: opacity .3s, left .3s, transform .3s;
-}
-
-#sidebar-arrow.hided {
-  transform: translateY(5px) rotate(-90deg);
-}
-
-.inner-footer {
-  position: relative;
-  background-color: none;
-  box-shadow: none;
-  transition-duration: 0;
-  height: 100%;
-}
-
-.showing .inner-footer {
-  background-color: var(--sidebar-color);
-  box-shadow: 0 -3px 4px var(--sidebar-color);
-}
-
-.sect-icon {
-  margin-right: 12px;
-}
-
-.mobile .showing .inner-footer {
-  background-color: var(--back-color);
-  box-shadow: 0 -3px 4px var(--back-color);
-}
-
-.drop {
-  position: absolute;
-  right: 17px;
-  display: flex;
-  transform: translate(16px, 10px);
-}
-
-.footer.mobile .drop {
-  right: unset;
-  bottom: 24px;
-}
-
-.mobile .drop {
-  right: unset;
-  left: 0;
 }
 
 .bar-trans-enter, .bar-trans-leave-to {
