@@ -4,6 +4,19 @@
       <div class="current-date">
         {{ currentYear }} {{ currentMonth }}
       </div>
+      <div v-if="allowTaskAdd"
+        class="msg"
+      >
+        <span v-if="actionType === 'select'">
+          Select date
+        </span>
+        <span v-else-if="actionType === 'navigate'">
+          Go to date
+        </span>
+        <span v-else-if="actionType === 'schedule'">
+          Schedule items
+        </span>
+      </div>
       <div>
         <Icon
           class="arrow-left icon cursor primary-hover"
@@ -49,6 +62,8 @@
         :year='currentYear'
         :month='currentMonthNumber'
 
+        :actionType='actionType'
+
         @save='saveTaskDates'
         @select="saveDate"
         @click.native="selectDate(i)"
@@ -66,7 +81,8 @@ import Date from "./Date.vue"
 import mom from 'moment'
 
 import utils from "@/utils/"
-import { mapState } from 'vuex'
+
+import { mapState, mapGetters } from 'vuex'
 
 const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
@@ -141,7 +157,27 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedItems']),
+    ...mapState(['selectedItems', 'isOnControl']),
+    hasSelected() {
+      return this.selectedItems.length > 0
+    },
+
+    actionType() {
+      if (this.select) return 'select'
+      if (this.schedule) return 'schedule'
+      if (this.navigate) return 'navigate'
+    },
+
+    select() {
+      return !this.isOnControl && !this.hasSelected || (this.isOnControl && this.hasSelected)
+    },
+    schedule() {
+      return this.hasSelected && !this.isOnControl
+    },
+    navigate() {
+      return !this.hasSelected && this.isOnControl
+    },
+
     firstWeekDayRange() {
       return parseInt(this.currentMoment.clone().startOf('month').format('d'), 10)
     },
@@ -209,6 +245,11 @@ export default {
 </style>
 
 <style scoped>
+
+.msg {
+  color: var(--fade);
+  font-size: .9em;
+}
 
 .header {
   display: flex;

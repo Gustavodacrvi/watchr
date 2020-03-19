@@ -24,7 +24,9 @@
       <span class="centralize"
         v-if="allowTaskAdd"
       >
-        <Point v-bind='$props'/>
+        <Point v-bind='$props'
+          :active='calendarDate === getDate'
+        />
       </span>
     </div>
   </div>  
@@ -34,10 +36,10 @@
 
 import Point from "./Point.vue"
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
-  props: ['date', 'year', 'month', 'allowTaskAdd'],
+  props: ['date', 'year', 'month', 'allowTaskAdd', 'actionType'],
   components: {
     Point,
   },
@@ -48,13 +50,25 @@ export default {
   },
   methods: {
     save() {
-      if (this.selectedItems.length === 0)
-        this.$emit('select', this.getDate)
-      else this.$emit('save', this.getDate)
+      switch (this.actionType) {
+        case 'select': {
+          this.$emit('select', this.getDate)
+          break
+        }
+        case 'save': {
+          this.$emit('save', this.getDate)
+          break
+        }
+        case 'navigate': {
+          this.$router.push(`/user?calendar=${this.getDate}`)
+          break
+        }
+      }
     },
   },
   computed: {
     ...mapState(['selectedItems']),
+    ...mapGetters(['calendarDate']),
     getDate() {
       return `${this.year}-${this.month}-${this.date}`
     },
@@ -75,6 +89,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.activeView {
+  background-color: var(--purple);
+  color: white;
+  user-select: none;
 }
 
 </style>
