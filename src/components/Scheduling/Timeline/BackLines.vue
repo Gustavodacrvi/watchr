@@ -70,16 +70,8 @@ export default {
     },
     format() {
       return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'
-    }
+    },
   },
 }
 
 </script>
-
-<style scoped>
-
-.BackLines {
-  position: relative;
-}
-
-</style>

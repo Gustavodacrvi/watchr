@@ -105,6 +105,7 @@ export default {
     isTaskInListRoot: () => t => t.list && !t.heading,
     isTaskInbox: () => t => !t.calendar,
     isRecurringTask: () => t => t.calendar && t.calendar.type !== 'someday' && t.calendar.type !== 'specific' && t.calendar.type !== 'anytime',
+    hasDurationAndTime: () => t => t.calendar && t.calendar.time && t.taskDuration,
     
     ...MemoizeGetters({
       isCalendarObjectShowingToday: {

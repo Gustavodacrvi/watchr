@@ -9,7 +9,7 @@
     @mousemove="mousemove"
     @mouseleave="mouseleave"
 
-    @click.stop="click"
+    @click="click"
     @pointerup.stop
     @mouseup.stop
     @touchend.stop.passive
@@ -22,6 +22,11 @@
       :hovering='hovering'
       :ghostLine='ghostLine'
     />
+
+    <Cards
+      :date='date'
+      :height='height'
+    />
     
   </div>
 </template>
@@ -29,6 +34,7 @@
 <script>
 
 import BackLines from './BackLines.vue'
+import Cards from './Cards.vue'
 
 import mom from 'moment'
 
@@ -36,7 +42,7 @@ import { mapState } from 'vuex'
 
 export default {
   components: {
-    BackLines,
+    BackLines, Cards,
   },
   props: ['date'],
   data() {
@@ -67,7 +73,10 @@ export default {
 
       }
     },
-    click() {
+    click(evt) {
+      if (this.selectedItems.length > 0) {
+        evt.stopPropagation()
+      }
       if (this.hovering)
         this.hovering = false
       this.$store.commit('clearSelected')
@@ -125,6 +134,7 @@ export default {
 <style scoped>
 
 .Timeline {
+  position: relative;
   margin-top: 50px;
   max-height: 100%;
 }

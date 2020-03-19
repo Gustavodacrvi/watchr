@@ -51,8 +51,6 @@ export default {
   position: sticky;
   top: 0;
   z-index: 1;
-  width: calc(100% + 14px);
-  transform: translateX(-14px);
 
   background-color: var(--sidebar-color);
 }
