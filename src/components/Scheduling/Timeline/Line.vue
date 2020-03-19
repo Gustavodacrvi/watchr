@@ -32,7 +32,6 @@ export default {
   position: relative;
 }
 
-
 .time {
   color: var(--fade);
   position: absolute;
@@ -49,6 +48,10 @@ export default {
   width: 100%;
   transform: translateY(-50%);
   border: 1px solid var(--light-gray);
+}
+
+.active {
+  z-index: 2;
 }
 
 .active .time {

@@ -54,8 +54,8 @@ export default {
   },
   methods: {
     touchstart(evt) {
-      this.y = evt.touches[0].screenY
-      this.x = evt.touches[0].screenX
+      this.y = evt.touches[0].pageY
+      this.x = evt.touches[0].pageX
       this.startTime = new Date()
     },
     move(x, transition) {
@@ -93,11 +93,11 @@ export default {
       s.transform = getTransform()
     },
     touchmove(evt) {
-      const diff = evt.touches[0].screenY - this.y
+      const diff = evt.touches[0].pageY - this.y
 
       this.move(diff)
 
-      this.swipeDiff = evt.touches[0].screenX - this.x
+      this.swipeDiff = evt.touches[0].pageX - this.x
     },
     touchend() {
       const time = new Date() - this.startTime

@@ -93,7 +93,7 @@ export default {
     setInterval(this.getGmailInbox, 300000)
   },
   methods: {
-    toggleScroll() {
+    toggleScroll(evt) {
       const tog = b => this.$store.commit('toggleScroll', b)
 
       tog(true)

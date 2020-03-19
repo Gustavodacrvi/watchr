@@ -1,6 +1,8 @@
 <template>
   <div class="Timeline"
 
+    id='timeline'
+
     @dragenter="dragenter"
     @dragover='dragover'
     @dragleave='dragleave'
@@ -10,22 +12,24 @@
     @mouseleave="mouseleave"
 
     @click="click"
-    @pointerup.stop
-    @mouseup.stop
-    @touchend.stop.passive
+    @pointerup.passive='stopPropagationOnSelectedItems'
+    @mouseup='stopPropagationOnSelectedItems'
+    @touchend.passive='stopPropagationOnSelectedItems'
   >
 
     <BackLines
       :lineHeight='lineHeight'
       :height='height'
-
-      :hovering='hovering'
-      :ghostLine='ghostLine'
     />
 
-    <Cards
+    <Cards :class="{disableEvents: hovering}"
       :date='date'
       :height='height'
+    />
+
+    <DivisionLine v-if="hovering"
+      :active='true'
+      v-bind="ghostLine"
     />
     
   </div>
@@ -34,14 +38,19 @@
 <script>
 
 import BackLines from './BackLines.vue'
+import DivisionLine from './Line.vue'
 import Cards from './Cards.vue'
 
 import mom from 'moment'
 
+import mixin from "@/mixins/scheduler.js"
+
 import { mapState } from 'vuex'
 
 export default {
+  mixins: [mixin],
   components: {
+    DivisionLine,
     BackLines, Cards,
   },
   props: ['date'],
@@ -63,13 +72,17 @@ export default {
     document.removeEventListener('drop', this.windowDrop)
   },
   methods: {
+    stopPropagationOnSelectedItems(evt) {
+      if (this.selectedItems.length > 0)
+        evt.stopPropagation()
+    },
     handleDrag(evt) {
-      const min = this.convertOffsetToMin(evt.offsetY)
+      let min = this.round(5, this.convertOffsetToMin(evt.offsetY))
 
-      if (min >= 0 && min <= 1440 && (Math.trunc(min) % 5 === 0)) {
+      if (min >= 0 && min <= 1440) {
 
         this.ghostLine.top = evt.offsetY + 'px'
-        this.ghostLine.time = mom(`${Math.floor(min / 60)}-${Math.floor(min % 60)}`, 'HH:mm').format(this.format)
+        this.ghostLine.time = mom(`${Math.floor(min / 60)}-${min % 60}`, 'HH:mm').format(this.format)
 
       }
     },
@@ -137,6 +150,10 @@ export default {
   position: relative;
   margin-top: 50px;
   max-height: 100%;
+}
+
+.disableEvents {
+  pointer-events: none;
 }
 
 </style>

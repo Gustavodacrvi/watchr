@@ -2,6 +2,8 @@
   <div class="Sidebar-wrapper"
     :class="[layout, {'scroll-thin': isDesktopBreakPoint, 'slim-sidebar': slimMode}]"
 
+    id='sidebar-scroll'
+
     @mouseenter="sidebarHover = true"
     @mouseleave="sidebarHover = false"
   >
@@ -78,7 +80,10 @@
               </div>
               <div class='extra-margin' style="height: 300px"></div>
             </div>
-            <Scheduler v-else/>
+            <Scheduler
+              @scroll='scroll'
+              v-else
+            />
           </div>
         </transition>
         <SidebarFooter
@@ -100,7 +105,7 @@
       :class="{sidebarHover}"
       :style="sidebarHandle"
 
-      @pointerdown='pointerdown'
+      @pointerdown.prevent='pointerdown'
     ></div>
   </div>
 </template>
@@ -261,6 +266,9 @@ export default {
     },
     toggleSidebar() {
       this.$emit('sidebar')
+    },
+    scroll(num) {
+      this.$el.scrollTop += num
     },
     moveLineToActive() {
       if (this.$el) {
@@ -685,11 +693,12 @@ export default {
 
 .Sidebar-wrapper {
   height: 100%;
+  overflow: scroll;
 }
 
-.Sidebar-wrapper.desktop::-webkit-scrollbar {
+/* .Sidebar-wrapper.desktop::-webkit-scrollbar {
   display: none;
-}
+} */
 
 .Sidebar-wrapper.desktop {
   padding: 0 30px;
