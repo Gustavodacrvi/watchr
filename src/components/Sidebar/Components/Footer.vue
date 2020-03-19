@@ -86,6 +86,7 @@ export default {
   bottom: 0;
   height: 40px;
   border: none;
+  z-index: 100;
 }
 
 .slimMode {

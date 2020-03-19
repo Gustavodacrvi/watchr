@@ -77,12 +77,12 @@ export default {
         evt.stopPropagation()
     },
     handleDrag(evt) {
-      let min = this.round(5, this.convertOffsetToMin(evt.offsetY))
+      let min = this.round(5, this.convertOffsetToMin(evt.offsetY, this.height))
 
       if (min >= 0 && min <= 1440) {
 
         this.ghostLine.top = evt.offsetY + 'px'
-        this.ghostLine.time = mom(`${Math.floor(min / 60)}-${min % 60}`, 'HH:mm').format(this.format)
+        this.ghostLine.time = this.formatMin(min)
 
       }
     },
@@ -98,9 +98,6 @@ export default {
     dragenter(evt) {
       if (this.movingTask)
         evt.preventDefault()
-    },
-    convertOffsetToMin(offset) {
-      return offset * 1440 / this.height
     },
     mousemove(evt) {
       if (this.selectedItems.length > 0) {
@@ -136,9 +133,6 @@ export default {
     timelineData() {
       return this.$el.getBoundingClientRect()
     },
-    format() {
-      return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'
-    }
   },
 }
 

@@ -1,8 +1,9 @@
 <template>
   <div
     class="Card"
+    :class="{drag}"
 
-    :style="{top: top + 'px', drag}"
+    :style="{top: top + 'px'}"
 
     @mousedown.prevent="mousedown"
   >
@@ -11,9 +12,17 @@
       :style="{height: height + 'px'}"
     ></div>
     <div class="card-wrapper shadow"
-      :style="{height: height + 'px', transform: `translateY(${translateY}px)`}"
+      :style="{
+        height: height + 'px',
+        transform: `translateY(${translateY}px)`,
+      }"
     >
-      {{ name }} {{ drag }}
+      <span v-if="drag"
+        class="time"
+      >
+        {{newTime}}
+      </span>
+      {{ name }}
     </div>
   </div>
 </template>
@@ -41,9 +50,6 @@ export default {
     }
   },
   methods: {
-    convertMinToOffset(height, min) {
-      return height * min / 1440
-    },
     getFullMin(str) {
       const split = str.split(':')
       return (parseInt(split[0], 10) * 60) + parseInt(split[1], 10)
@@ -85,6 +91,9 @@ export default {
     getScrollTop() {
       return this.$parent.$parent.$parent.$parent.$el.scrollTop
     },
+    translate(num) {
+      this.translateY = num
+    },
     mousemove(evt) {
       evt.preventDefault()
       const node = document.getElementById('sidebar-scroll')
@@ -102,20 +111,24 @@ export default {
       }
 
       if (this.drag) {
-        const res = this.round(5, y - this.dragStartY)
+        const res = this.convertMinToOffset(
+          this.round(5,
+            this.convertOffsetToMin(y - this.dragStartY, this.timelineHeight)
+          ), this.timelineHeight
+        )
 
         if ((res + this.top <= 0))
-          this.translateY = -this.top
+          this.translate(-this.top)
         else if (res >= this.timelineHeight)
-          this.translateY = this.timelineHeight
+          this.translate(this.timelineHeight)
         else
-          this.translateY = res
+          this.translate(res)
           
       }
     },
     mouseup(evt) {
       this.drag = false
-      this.translateY = 0
+      this.translate(0)
       this.removeScroll()
 
       window.removeEventListener('mousemove', this.mousemove)
@@ -123,11 +136,17 @@ export default {
     },
   },
   computed: {
+    newTime() {
+      return this.formatMin(
+        this.convertOffsetToMin(this.top + this.translateY, this.timelineHeight)
+      )
+    },
+    
     top() {
-      return this.convertMinToOffset(this.timelineHeight, this.getFullTimeMin)
+      return this.convertMinToOffset(this.getFullTimeMin, this.timelineHeight)
     },
     height() {
-      return this.convertMinToOffset(this.timelineHeight, this.getFullDurationMin)
+      return this.convertMinToOffset(this.getFullDurationMin, this.timelineHeight)
     },
     getFullDurationMin() {
       return this.getFullMin(this.duration)
@@ -150,17 +169,19 @@ export default {
   z-index: 1;
 }
 
-.drag, .drag .card-wrapper {
-  z-index: 20 !important;
-  background-color: red !important;
-}
-
 .card-wrapper {
   padding: 12px;
   margin-left: 60px;
   border-radius: 8px;
   background-color: var(--card);
   transition: background-color .2s;
+}
+
+.time {
+  position: absolute;
+  right: calc(100% + 4px);
+  white-space: nowrap;
+  color: var(--purple);
 }
 
 .card-wrapper:hover {
@@ -173,6 +194,10 @@ export default {
   top: 0;
   width: 100%;
   z-index: -1;
+}
+
+.drag {
+  z-index: 2;
 }
 
 </style>
