@@ -22,7 +22,7 @@
             <span v-else key='s'> Scheduler </span>
           </span>
         </div>
-        <div class="drop" v-if="showIconDropdown">
+        <div class="drop" v-if="showIconDropdown && !scheduling">
           <Icon v-for="i in sideIcons" :key='i.icon'
             class="sect-icon passive cursor remove-highlight primary-hover"
             :icon='i.icon'

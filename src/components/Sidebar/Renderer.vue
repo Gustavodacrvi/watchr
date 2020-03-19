@@ -172,7 +172,7 @@ export default {
             this.sourceVueInstance = null
             const selected = this.selectedItems.slice()
             setTimeout(() => {
-              this.onSortableAdd(this.folder, selected, this.getIds())
+              this.onSortableAdd(this.folder, ids.length === 1 ? ids : selected, this.getIds())
             }, 40)
           }
         }

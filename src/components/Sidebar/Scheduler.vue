@@ -1,8 +1,11 @@
 <template>
   <div class="Scheduler">
     <Calendar class="cal"
+      v-model="date"
+    
       :allowTaskAdd='true'
     />
+    {{ date }}
   </div>
 </template>
 
@@ -13,6 +16,11 @@ import Calendar from "@/components/Scheduling/Calendar.vue"
 export default {
   components: {
     Calendar,
+  },
+  data() {
+    return {
+      date: '',
+    }
   },
 }
 

@@ -271,7 +271,7 @@ export default {
           callback(this.$refs[k][0])
     },
     selectAll() {
-      if (this.isRoot)
+      if (this.isRoot && this.$refs.headings)
         this.$refs.headings.selectAll()
       this.forEachItem(vm => vm.selectItem())
     },

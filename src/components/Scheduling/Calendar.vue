@@ -48,6 +48,9 @@
         :allowTaskAdd='allowTaskAdd'
         :year='currentYear'
         :month='currentMonthNumber'
+
+        @save='saveTaskDates'
+        @select="saveDate"
         @click.native="selectDate(i)"
       />
     </div>
@@ -82,6 +85,7 @@ export default {
     }
   },
   mounted() {
+    this.$emit('input', this.selected)
     if (this.allowTaskAdd) {
       this.sortable = new Sortable(this.$refs.grid, {
         group: {
@@ -95,18 +99,7 @@ export default {
         },
         onAdd: evt => {
           const {ids, targetElement} = utils.getInfoFromAddSortableEvt(evt, 'Date')
-          this.$store.dispatch('task/saveTasksById', {
-            ids: this.selectedItems.slice(),
-            task: {
-              calendar: {
-                type: 'specific',
-                specific: targetElement.dataset.date,
-
-                editDate: TOD_STR,
-                begins: TOD_STR,
-              }
-            },
-          })
+          this.saveTaskDates(targetElement.dataset.date, ids)
         },
       })
     }
@@ -116,6 +109,21 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    saveTaskDates(date, ids) {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: (ids && ids.length === 1) ? ids : this.selectedItems.slice(),
+        task: {
+          calendar: {
+            type: 'specific',
+            specific: date,
+
+            editDate: TOD_STR,
+            begins: TOD_STR,
+          }
+        },
+      })
+      this.$store.commit('clearSelected')
+    },
     selectDate(day) {
       this.saveDate(this.currentMoment.clone().date(day).format('Y-M-D'))
     },
@@ -130,7 +138,6 @@ export default {
     },
     saveDate(date) {
       this.selected = date
-      this.$emit('input', date)
     },
   },
   computed: {
@@ -166,6 +173,9 @@ export default {
     },
   },
   watch: {
+    selected() {
+      this.$emit('input', this.selected)
+    },
     current() {
       setTimeout(() => {
         this.$emit('calc')
