@@ -24,7 +24,8 @@
       <span class="centralize"
         v-if="allowTaskAdd"
       >
-        <Point v-bind='$props'
+        <Point
+          :date='getDate'
           :active='calendarDate === getDate'
         />
       </span>

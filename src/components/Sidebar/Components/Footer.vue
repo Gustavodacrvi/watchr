@@ -26,6 +26,7 @@
           <Icon v-for="i in sideIcons" :key='i.icon'
             class="sect-icon passive cursor remove-highlight primary-hover"
             :icon='i.icon'
+            width='16px'
             
             :number='i.number'
             color='var(--fade)'
@@ -33,6 +34,7 @@
           />
           <transition name="icon-t">
             <IconDrop
+              width='16px'
               class="right passive"
               handle='settings-h'
               
@@ -42,7 +44,9 @@
           </transition>
         </div>
         <div></div>
-        <Icon v-if="isDesktopBreakPoint && !slimMode" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="$emit('toggle-sidebar')"/>
+        <Icon v-if="isDesktopBreakPoint && !slimMode"
+          width='16px'
+          icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="$emit('toggle-sidebar')"/>
       </div>
     </div>
   </div>
@@ -79,7 +83,7 @@ export default {
 .footer {
   position: absolute;
   left: 0;
-  bottom: 0px;
+  bottom: 0;
   height: 40px;
   border: none;
 }
@@ -90,7 +94,7 @@ export default {
   width: calc(100% + (26px * 2)) !important;
   transform: translateX(-26px);
   background-color: purple;
-  bottom: -26px;
+  bottom: 0;
 }
 
 .sect-icon {

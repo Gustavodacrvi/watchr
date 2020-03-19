@@ -635,16 +635,43 @@ export default {
 
 .sidebar-content {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .slim-sidebar .sidebar-content {
-  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  box-sizing: border-box;
 }
 
 .Sidebar {
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+
+.margin-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.inner-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.slim-sidebar .inner-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .mobile .margin-wrapper {
@@ -759,6 +786,7 @@ export default {
 
 .slim-sidebar .margin-wrapper {
   padding: 26px;
+  padding-bottom: 0;
   height: 90%;
   box-sizing: border-box;
   position: relative;
