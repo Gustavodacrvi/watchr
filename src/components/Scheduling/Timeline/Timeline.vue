@@ -5,6 +5,14 @@
     @dragover='dragover'
     @dragleave='dragleave'
     @drop='drop'
+
+    @mousemove="mousemove"
+    @mouseleave="mouseleave"
+
+    @click.stop="click"
+    @pointerup.stop
+    @mouseup.stop
+    @touchend.stop.passive
   >
 
     <BackLines
@@ -49,6 +57,22 @@ export default {
     document.removeEventListener('drop', this.windowDrop)
   },
   methods: {
+    handleDrag(evt) {
+      const min = this.convertOffsetToMin(evt.offsetY)
+
+      if (min >= 0 && min <= 1440 && (Math.trunc(min) % 5 === 0)) {
+
+        this.ghostLine.top = evt.offsetY + 'px'
+        this.ghostLine.time = mom(`${Math.floor(min / 60)}-${Math.floor(min % 60)}`, 'HH:mm').format(this.format)
+
+      }
+    },
+    click() {
+      if (this.hovering)
+        this.hovering = false
+      this.$store.commit('clearSelected')
+    },
+    
     dragenter(evt) {
       if (this.movingTask)
         evt.preventDefault()
@@ -56,22 +80,24 @@ export default {
     convertOffsetToMin(offset) {
       return offset * 1440 / this.height
     },
+    mousemove(evt) {
+      if (this.selectedItems.length > 0) {
+        this.hovering = true
+        this.handleDrag(evt)
+      }
+    },
     dragover(evt) {
       this.hovering = true
       if (this.movingTask) {
-        const min = this.convertOffsetToMin(evt.offsetY)
-
-        if (min >= 0 && min <= 1440 && (Math.trunc(min) % 5 === 0)) {
-
-          this.ghostLine.top = evt.offsetY + 'px'
-          this.ghostLine.time = mom(`${Math.floor(min / 60)}-${Math.floor(min % 60)}`, 'HH:mm').format(this.format)
-
-
-        }
+        this.handleDrag(evt)
       }
     },
     dragleave(evt) {
       
+    },
+    mouseleave() {
+      if (!this.movingTask)
+        this.hovering = false
     },
     drop() {
 
@@ -81,7 +107,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['movingTask', 'userInfo']),
+    ...mapState(['movingTask', 'userInfo', 'selectedItems']),
     lineHeight() {
       return this.height / 24
     },
