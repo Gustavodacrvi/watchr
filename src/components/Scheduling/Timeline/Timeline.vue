@@ -1,5 +1,10 @@
 <template>
-  <div class="Timeline">
+  <div class="Timeline"
+
+    @dragenter="dragenter"
+    @dragover='dragover'
+    @pointerleave='pointerleave'
+  >
     <BackLines
       :lineHeight='lineHeight'
       :height='height'
@@ -11,6 +16,8 @@
 
 import BackLines from './BackLines.vue'
 
+import { mapState } from 'vuex'
+
 export default {
   components: {
     BackLines,
@@ -21,7 +28,22 @@ export default {
       height: 1700,
     }
   },
+  methods: {
+    dragenter(evt) {
+      if (this.movingTask)
+        evt.preventDefault()
+    },
+    dragover(evt) {
+      if (this.movingTask) {
+        console.log(evt)
+      }
+    },
+    pointerleave() {
+
+    },
+  },
   computed: {
+    ...mapState(['movingTask']),
     lineHeight() {
       return this.height / 24
     },

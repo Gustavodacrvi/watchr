@@ -4,16 +4,9 @@
     :style="{height: (height + lineHeight) + 'px'}"
   >
 
-    <div v-for="time in lines" :key="time.id"
-      class="time-line"
-
-      :style="{top: time.top}"
-    >
-      <div class="line-wrapper">
-        <div class="line"></div>
-        <div class="time">{{ time.time }}</div>
-      </div>
-    </div>
+    <VisualLines
+      :lines='lines'
+    />
 
   </div>
 </template>
@@ -22,9 +15,15 @@
 
 import mom from 'moment'
 
+import DivisionLine from './Line.vue'
+import VisualLines from './VisualLines.vue'
+
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    DivisionLine, VisualLines,
+  },
   props: ['height', 'lineHeight'],
   computed: {
     ...mapState(['userInfo']),
@@ -77,33 +76,6 @@ export default {
 .BackLines {
   margin-top: 50px;
   position: relative;
-}
-
-.time-line {
-  position: absolute;
-  width: 100%;
-}
-
-.line-wrapper {
-  position: relative;
-}
-
-.time {
-  color: var(--fade);
-  position: absolute;
-  transform: translateY(-55%);
-  display: inline-block;
-  background-color: var(--sidebar-color);
-  padding: 0 8px;
-  padding-left: 0;
-}
-
-.line {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  transform: translateY(-50%);
-  border: 1px solid var(--light-gray);
 }
 
 </style>

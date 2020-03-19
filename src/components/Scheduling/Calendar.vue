@@ -106,7 +106,7 @@ export default {
       this.sortable = new Sortable(this.$refs.grid, {
         group: {
           name: 'scheduler',
-          pull: (e) => false,
+          pull: false,
           put: (j,o,item) => {
             const d = item.dataset
             const type = d.type
@@ -115,7 +115,8 @@ export default {
         },
         onAdd: evt => {
           const {ids, targetElement} = utils.getInfoFromAddSortableEvt(evt, 'Date')
-          this.saveTaskDates(targetElement.dataset.date, ids)
+          if (targetElement)
+            this.saveTaskDates(targetElement.dataset.date, ids)
         },
       })
     }

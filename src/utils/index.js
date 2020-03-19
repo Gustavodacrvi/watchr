@@ -145,13 +145,19 @@ export default {
     }
 
     let targetElement = null
-    if (itemClass) {
+    if (itemClass && evt.originalEvent.toElement) {
       targetElement = evt.originalEvent.toElement
 
       while (true) {
         if (targetElement && targetElement.classList && targetElement.classList.contains(itemClass))
          break
-        else targetElement = targetElement.parentNode
+        else {
+          if (!targetElement.parentNode) {
+            targetElement = null
+            break
+          }
+          targetElement = targetElement.parentNode
+        }
       }
     }
 

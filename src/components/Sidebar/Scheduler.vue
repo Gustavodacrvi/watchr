@@ -19,7 +19,7 @@
 <script>
 
 import Calendar from "@/components/Scheduling/Calendar.vue"
-import Timeline from "@/components/Scheduling/Timeline.vue"
+import Timeline from "@/components/Scheduling/Timeline/Timeline.vue"
 
 export default {
   components: {

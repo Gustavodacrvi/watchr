@@ -570,7 +570,7 @@ export default {
             
             if (sortableRootName === 'sidebar-renderer') return true
             if (sortableRootName === 'folders-root') return true
-            if (sortableRootName === 'scheduler') return true
+            if (sortableRootName === 'scheduler' && this.comp === "Task") return true
             if (d.type === 'Task' && this.comp === "Task") return true
             if (d.type === 'List' && this.comp === 'List') return true
             return false
