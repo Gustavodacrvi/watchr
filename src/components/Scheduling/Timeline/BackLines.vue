@@ -8,6 +8,11 @@
       :lines='lines'
     />
 
+    <DivisionLine v-if="hovering"
+      :active='true'
+      v-bind="ghostLine"
+    />
+
   </div>
 </template>
 
@@ -24,7 +29,7 @@ export default {
   components: {
     DivisionLine, VisualLines,
   },
-  props: ['height', 'lineHeight'],
+  props: ['height', 'lineHeight', 'ghostLine', 'hovering'],
   computed: {
     ...mapState(['userInfo']),
     lines() {
@@ -74,7 +79,6 @@ export default {
 <style scoped>
 
 .BackLines {
-  margin-top: 50px;
   position: relative;
 }
 

@@ -1,6 +1,7 @@
 <template functional>
   <div
     class="time-line"
+    :class="{active: props.active}"
 
     :style="{top: props.top}"
   >
@@ -14,7 +15,7 @@
 <script>
 
 export default {
-  props: ['top', 'time'],
+  props: ['top', 'time', 'active'],
 }
 
 </script>
@@ -24,11 +25,13 @@ export default {
 .time-line {
   position: absolute;
   width: 100%;
+  pointer-events: none;
 }
 
 .line-wrapper {
   position: relative;
 }
+
 
 .time {
   color: var(--fade);
@@ -46,6 +49,14 @@ export default {
   width: 100%;
   transform: translateY(-50%);
   border: 1px solid var(--light-gray);
+}
+
+.active .time {
+  color: var(--purple);
+}
+
+.active .line {
+  border: 1px solid var(--purple);
 }
 
 </style>
