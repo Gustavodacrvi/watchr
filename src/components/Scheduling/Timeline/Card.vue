@@ -84,11 +84,6 @@ export default {
     }
   },
   methods: {
-    getFullMin(str) {
-      const split = str.split(':')
-      return (parseInt(split[0], 10) * 60) + parseInt(split[1], 10)
-    },
-
     bindEventListeners(evt) {
       this.dragStartY = evt.pageY + this.getScrollTop()
 
@@ -147,8 +142,9 @@ export default {
       this.translateY = num
     },
     expand(num) {
-      if (num + this.height <= 25)
-        num = -this.height
+      const min = this.convertMinToOffset(5, this.timelineHeight)
+      if (num + this.height <= min)
+        num = -this.height + min
       else if ((num + this.top + this.height) >= this.timelineHeight)
         num = this.timelineHeight - this.height - this.top
 
@@ -204,12 +200,14 @@ export default {
 
     async saveData() {
       this.dataTime = this.newNonFormatedTime
+      this.dataDuration = this.newHeight
 
       try {
         await this.$store.dispatch('task/saveTask', {
           id: this.task.id,
+          taskDuration: this.dataDuration,
           calendar: {
-            time: this.dataTime
+            time: this.dataTime,
           },
         })
       } catch (arr) {

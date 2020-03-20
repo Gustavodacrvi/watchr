@@ -3,7 +3,7 @@
     class="time-line"
     :class="{active: props.active}"
 
-    :style="{top: props.top}"
+    :style="{top: props.top, '--active-color': props.color || 'var(--purple)'}"
   >
     <div class="line-wrapper">
       <div class="line"></div>
@@ -15,7 +15,7 @@
 <script>
 
 export default {
-  props: ['top', 'time', 'active'],
+  props: ['top', 'time', 'active', 'color'],
 }
 
 </script>
@@ -55,11 +55,11 @@ export default {
 }
 
 .active .time {
-  color: var(--purple);
+  color: var(--active-color);
 }
 
 .active .line {
-  border: 1px solid var(--purple);
+  border: 1px solid var(--active-color);
 }
 
 </style>

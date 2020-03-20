@@ -27,6 +27,12 @@
       :height='height'
     />
 
+    <DivisionLine
+      :active='true'
+      color='var(--red)'
+      v-bind="currentTime"
+    />
+
     <DivisionLine v-if="hovering"
       :active='true'
       v-bind="ghostLine"
@@ -56,7 +62,8 @@ export default {
   props: ['date'],
   data() {
     return {
-      height: 2000,
+      current: mom().format('HH:mm'),
+      height: 3200,
       hovering: false,
 
       ghostLine: {
@@ -66,9 +73,15 @@ export default {
     }
   },
   mounted() {
+    this.inverval = setInterval(() => {
+      this.current = mom(this.current, 'HH:mm').add(1, 'minute').format('HH:mm')
+    }, 60000)
+    
     document.addEventListener('drop', this.windowDrop)
   },
   beforeDestroy() {
+    clearInterval(this.inverval)
+    
     document.removeEventListener('drop', this.windowDrop)
   },
   methods: {
@@ -127,6 +140,15 @@ export default {
   },
   computed: {
     ...mapState(['movingTask', 'userInfo', 'selectedItems']),
+    currentTime() {
+      return {
+        top: this.convertMinToOffset(
+          this.getFullMin(this.current),
+          this.height
+        ) + 'px',
+        time: this.current,
+      }
+    },
     lineHeight() {
       return this.height / 24
     },

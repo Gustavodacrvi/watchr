@@ -22,6 +22,10 @@ export default {
         autoTimeStyleFormat ? this.format : 'HH:mm',
       )
     },
+    getFullMin(str) {
+      const split = str.split(':')
+      return (parseInt(split[0], 10) * 60) + parseInt(split[1], 10)
+    },
     formatTime(time) {
       return mom(time, 'HH:mm').format(this.format)
     },
