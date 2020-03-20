@@ -17,8 +17,13 @@ export default {
     convertMinToOffset(min, height) {
       return height * min / 1440
     },
-    formatMin(min) {
-      return mom(`${Math.floor(min / 60)}-${min % 60}`, 'HH:mm').format(this.format)
+    formatMin(min, autoTimeStyleFormat = true) {
+      return mom(`${Math.floor(min / 60)}-${min % 60}`, 'HH:mm').format(
+        autoTimeStyleFormat ? this.format : 'HH:mm',
+      )
+    },
+    formatTime(time) {
+      return mom(time, 'HH:mm').format(this.format)
     },
   },
   computed: {

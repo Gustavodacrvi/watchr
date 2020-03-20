@@ -34,7 +34,7 @@
       <span v-if="drag || hover"
         class="time"
       >
-        {{newTime}}
+        {{formatedTime}}
       </span>
     </div>
   </div>
@@ -50,7 +50,11 @@ import { mapGetters } from 'vuex'
 
 export default {
   mixins: [mixin],
-  props: ['name', 'timeArr', 'time', 'duration', 'id', 'timelineHeight', 'priority', 'task'],
+  props: ['name', 'timeArr',
+    'time', 'duration',
+    
+    'id', 'timelineHeight', 'priority', 'task'
+  ],
   data() {
     return {
       drag: false,
@@ -59,6 +63,9 @@ export default {
 
       dragStartY: null,
       bounderyTimeout: null,
+
+      dataTime: this.time,
+      dataDuration: this.duration,
 
       timeout: null,
       interval: null,
@@ -86,10 +93,10 @@ export default {
       this.translate(this.translateY + num)
     },
     activateScrolling(scroll) {
-      if (scroll !== this.lastScrollVal || (!this.timeout && !this.interval)) {
+      if (scroll !== this.lastScrollVal || (!this.dataTimeout && !this.interval)) {
         this.removeScroll()
         this.lastScrollVal = scroll
-        this.timeout = setTimeout(() => {
+        this.dataTimeout = setTimeout(() => {
           this.interval = setInterval(() => {
             this.scroll(scroll)
           }, 10)
@@ -101,9 +108,9 @@ export default {
         clearInterval(this.interval)
         this.interval = null
       }
-      if (this.timeout) {
-        clearInterval(this.timeout)
-        this.timeout = null
+      if (this.dataTimeout) {
+        clearInterval(this.dataTimeout)
+        this.dataTimeout = null
       }
     },
     getScrollTop() {
@@ -168,16 +175,27 @@ export default {
     ...mapGetters({
       getTaskStartAndEnd: 'task/getTaskStartAndEnd',
     }),
-    newTime() {
+    newNonFormatedTime() {
       return this.formatMin(
-        this.convertOffsetToMin(this.top + this.translateY, this.timelineHeight)
+        this.convertOffsetToMin(this.top + this.translateY, this.timelineHeight), false,
       )
     },
+    formatedTime() {
+      return this.formatTime(this.newNonFormatedTime)
+    },
+    
     width() {
       return `${100 - (this.getFractionNumber * 15)}%`
     },
+    
     currentCardTimeAndEnd() {
-      const {start, end, id} = this.getTaskStartAndEnd(this.task)
+      const {start, end, id} = this.getTaskStartAndEnd({
+        ...this.task,
+        calendar: {
+          ...this.task.calendar,
+          time: this.newNonFormatedTime || this.time,
+        },
+      })
       return {
         id,
         start: mom(start, 'HH:mm'),
@@ -235,10 +253,10 @@ export default {
       return this.convertMinToOffset(this.getFullDurationMin, this.timelineHeight)
     },
     getFullDurationMin() {
-      return this.getFullMin(this.duration)
+      return this.getFullMin(this.dataDuration)
     },
     getFullTimeMin() {
-      return this.getFullMin(this.time)
+      return this.getFullMin(this.dataTime)
     },
     zIndex() {
       return this.getFractionNumber
@@ -250,6 +268,14 @@ export default {
         'Medium priority': 'var(--yellow)',
         'High priority': 'var(--red)',
       }[this.priority]
+    },
+  },
+  watch: {
+    time() {
+      this.dataTime = this.time
+    },
+    duration() {
+      this.dataDuration = this.duration
     },
   },
 }
