@@ -896,7 +896,7 @@ export default {
             onFoundChange(k, val)
           else {
             if (type === 'object')
-              Vue.set(oldObj, k, {...val, ...oldObj[k]})
+              Vue.set(oldObj, k, {...oldObj[k], ...val})
             else
               Vue.set(oldObj, k, val)
           }

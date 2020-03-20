@@ -23,6 +23,8 @@
         {{newTime}}
       </span>
       {{ name }}
+
+
     </div>
   </div>
 </template>
@@ -33,7 +35,7 @@ import mixin from "@/mixins/scheduler.js"
 
 export default {
   mixins: [mixin],
-  props: ['name', 'time', 'duration', 'id', 'timelineHeight'],
+  props: ['name', 'time', 'duration', 'id', 'timelineHeight', 'priority'],
   data() {
     return {
       drag: false,
@@ -65,7 +67,7 @@ export default {
     },
     scroll(num) {
       this.$parent.$parent.$parent.$emit('scroll', num)
-      this.translateY += num
+      this.translate(this.translateY + num)
     },
     activateScrolling(scroll) {
       if (scroll !== this.lastScrollVal || (!this.timeout && !this.interval)) {
@@ -92,6 +94,11 @@ export default {
       return this.$parent.$parent.$parent.$parent.$el.scrollTop
     },
     translate(num) {
+      if ((num + this.top <= 0))
+        num = -this.top
+      else if (num >= this.timelineHeight)
+        num = this.timelineHeight
+      
       this.translateY = num
     },
     mousemove(evt) {
@@ -117,13 +124,7 @@ export default {
           ), this.timelineHeight
         )
 
-        if ((res + this.top <= 0))
-          this.translate(-this.top)
-        else if (res >= this.timelineHeight)
-          this.translate(this.timelineHeight)
-        else
-          this.translate(res)
-          
+        this.translate(res)
       }
     },
     mouseup(evt) {
@@ -154,6 +155,14 @@ export default {
     getFullTimeMin() {
       return this.getFullMin(this.time)
     },
+
+    priorityColor() {
+      return {
+        'Low priority': 'var(--green)',
+        'Medium priority': 'var(--yellow)',
+        'High priority': 'var(--red)',
+      }[this.priority]
+    },
   },
 }
 
@@ -169,19 +178,23 @@ export default {
   z-index: 1;
 }
 
+.time {
+  position: absolute;
+  right: calc(100% + 4px);
+  white-space: nowrap;
+  display: inline-block;
+  padding: 8px;
+  padding-right: 0;
+  color: var(--purple);
+  background-color: var(--sidebar-color);
+}
+
 .card-wrapper {
   padding: 12px;
   margin-left: 60px;
   border-radius: 8px;
   background-color: var(--card);
   transition: background-color .2s;
-}
-
-.time {
-  position: absolute;
-  right: calc(100% + 4px);
-  white-space: nowrap;
-  color: var(--purple);
 }
 
 .card-wrapper:hover {
@@ -198,6 +211,27 @@ export default {
 
 .drag {
   z-index: 2;
+}
+
+.priority {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  transition-duration: .2s;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.pri-t-enter, .pri-t-leave-to {
+  opacity: 0;
+  width: 0;
+}
+
+.pri-t-leave, .pri-t-enter-to {
+  opacity: 1;
+  width: 5px;
 }
 
 </style>
