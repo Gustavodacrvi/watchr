@@ -63,7 +63,6 @@ export default {
   data() {
     return {
       current: mom().format('HH:mm'),
-      height: 3200,
       hovering: false,
 
       ghostLine: {
@@ -93,7 +92,7 @@ export default {
     handleDrag(evt) {
       let min = this.round(5, this.convertOffsetToMin(evt.offsetY, this.height))
 
-      if (min >= 0 && min <= 1424) {
+      if (min >= 0 && min < 1440) {
 
         this.ghostLine.top = evt.offsetY + 'px'
         this.ghostLine.nonFormatedTime = this.formatMin(min, false)
@@ -105,9 +104,11 @@ export default {
       if (this.selectedItems.length > 0) {
         evt.stopPropagation()
       }
+
+      this.saveSelectedTime()
+      
       if (this.hovering)
         this.hovering = false
-      this.$store.commit('clearSelected')
     },
     
     dragenter(evt) {
@@ -133,6 +134,12 @@ export default {
       if (!this.movingTask)
         this.hovering = false
     },
+    saveSelectedTime(ids) {
+      this.$store.dispatch('task/saveTaskTimelineByIds', {
+        time: this.ghostLine.nonFormatedTime, ids: ids || this.selectedItems.slice(), date: this.date,
+      })
+      this.$store.commit('clearSelected')
+    },
     drop(evt) {
       const res = evt.dataTransfer.getData('text/plain')
       if (!res) return;
@@ -140,18 +147,14 @@ export default {
       if (!obj) return;
       if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
 
-      this.$store.dispatch('task/saveTaskTimelineByIds', {
-        time: this.ghostLine.nonFormatedTime, ids: obj.ids, date: this.date,
-      })
-      this.$store.commit('clearSelected')
-      
+      this.saveSelectedTime(obj.ids)
     },
     windowDrop() {
       this.hovering = false
     },
   },
   computed: {
-    ...mapState(['movingTask', 'userInfo', 'selectedItems']),
+    ...mapState(['movingTask', 'userInfo', 'selectedItems', 'height']),
     currentTime() {
       return {
         top: this.convertMinToOffset(

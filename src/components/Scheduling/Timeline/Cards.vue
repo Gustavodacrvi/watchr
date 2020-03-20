@@ -1,17 +1,22 @@
 <template>
   <div class="Cards">
 
-    <Card v-for='t in getCards' :key="t.id"
-      v-bind="t.task"
-      :duration="t.task.taskDuration"
-      :time="t.task.calendar.time"
-      :collisions='t.collisions'
-      :task='t.task'
+    <transition-group
+      appear
+      name='fade-t'
+    >
+      <Card v-for='t in getCards' :key="t.task.id"
+        v-bind="t.task"
+        :duration="t.task.taskDuration"
+        :time="t.task.calendar.time"
+        :collisions='t.collisions'
+        :task='t.task'
 
-      :timelineHeight='height'
+        :timelineHeight='height'
 
-      @dragging='dragg'
-    />
+        @dragging='dragg'
+      />
+    </transition-group>
     
   </div>
 </template>

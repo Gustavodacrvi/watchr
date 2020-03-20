@@ -1,7 +1,7 @@
 <template>
   <div
     class="Card"
-    :class="{drag, resize}"
+    :class="{drag, resize, disableTransition}"
 
     :style="{top: top + 'px', zIndex}"
 
@@ -75,6 +75,8 @@ export default {
 
       dataTime: this.time,
       dataDuration: this.duration,
+
+      disableTransition: false,
 
       timeout: null,
       interval: null,
@@ -199,6 +201,11 @@ export default {
     },
 
     async saveData() {
+      this.disableTransition = true
+      setTimeout(() => {
+        this.disableTransition = false
+      }, 200)
+      
       this.dataTime = this.newNonFormatedTime
       this.dataDuration = this.newHeight
 
@@ -311,6 +318,11 @@ export default {
   width: 100%;
   position: absolute;
   z-index: 1;
+  transition: top .2s;
+}
+
+.disableTransition {
+  transition: none;
 }
 
 .drag .info {
@@ -355,7 +367,7 @@ export default {
   user-select: none;
 }
 
-.resize .card {
+.resize .card, .drag .card {
   transition: background-color .2s, width .2s;
 }
 

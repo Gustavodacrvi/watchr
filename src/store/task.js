@@ -5,12 +5,13 @@ import fb from 'firebase/app'
 import Vue from 'vue'
 
 import utils from '../utils'
+import timeline from '../utils/timeline'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
 import { uid, fd, setInfo, folderRef, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, setGroup } from '../utils/firestore'
 
-import mom from 'moment'
+import mom, { duration } from 'moment'
 
 const TODAY_MOM = mom()
 
@@ -932,10 +933,26 @@ export default {
 
       items.forEach(t => {
         let calendar = getters.getSpecificDayCalendarObj(date)
+        let taskDuration = t.taskDuration || '00:15'
         calendar.time = time
+
+        const height = rootState.height
+
+        const timeOffset = timeline.convertMinToOffset(
+          timeline.getFullMin(time), height
+        )
+        const durationOffset = timeline.convertMinToOffset(
+          timeline.getFullMin(taskDuration), height
+        )
+
+        if ((timeOffset + durationOffset) >= height) {
+          calendar.time = timeline.formatMin(
+            timeline.convertOffsetToMin(height - durationOffset, height), false
+            )
+        }
         
         setTask(b, {
-          calendar, taskDuration: '00:15',
+          calendar, taskDuration,
         }, rootState, t.id, writes)
       })
 
