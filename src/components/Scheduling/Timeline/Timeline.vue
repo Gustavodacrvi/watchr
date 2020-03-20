@@ -69,6 +69,7 @@ export default {
       ghostLine: {
         top: 0,
         time: '00:00',
+        nonFormatedTime: '00:00',
       },
     }
   },
@@ -92,9 +93,10 @@ export default {
     handleDrag(evt) {
       let min = this.round(5, this.convertOffsetToMin(evt.offsetY, this.height))
 
-      if (min >= 0 && min <= 1440) {
+      if (min >= 0 && min <= 1424) {
 
         this.ghostLine.top = evt.offsetY + 'px'
+        this.ghostLine.nonFormatedTime = this.formatMin(min, false)
         this.ghostLine.time = this.formatMin(min)
 
       }
@@ -131,8 +133,18 @@ export default {
       if (!this.movingTask)
         this.hovering = false
     },
-    drop() {
+    drop(evt) {
+      const res = evt.dataTransfer.getData('text/plain')
+      if (!res) return;
+      const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
+      if (!obj) return;
+      if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
 
+      this.$store.dispatch('task/saveTaskTimelineByIds', {
+        time: this.ghostLine.nonFormatedTime, ids: obj.ids, date: this.date,
+      })
+      this.$store.commit('clearSelected')
+      
     },
     windowDrop() {
       this.hovering = false

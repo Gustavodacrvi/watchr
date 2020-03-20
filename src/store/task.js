@@ -924,6 +924,25 @@ export default {
 
       return b.commit()
     },
+    saveTaskTimelineByIds({rootState, getters}, {ids, time, date}) {
+      const writes = []
+      const b = fire.batch()
+
+      const items = getters.getTasksById(ids)
+
+      items.forEach(t => {
+        let calendar = getters.getSpecificDayCalendarObj(date)
+        calendar.time = time
+        
+        setTask(b, {
+          calendar, taskDuration: '00:15',
+        }, rootState, t.id, writes)
+      })
+
+      cacheBatchedItems(b, writes)
+
+      return b.commit()
+    },
     async addTask({rootState}, obj) {
       const b = fire.batch()
 
