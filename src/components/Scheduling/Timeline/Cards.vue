@@ -83,6 +83,7 @@ export default {
         return this.getTaskStartAndEnd(
           this.dragging.id === t.id ? {
             ...t,
+            taskDuration: this.dragging.taskDuration,
             calendar: {
               ...t.calendar,
               time: this.dragging.time,

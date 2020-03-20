@@ -1,7 +1,7 @@
 <template>
   <div
     class="Card"
-    :class="{drag}"
+    :class="{drag, resize}"
 
     :style="{top: top + 'px', zIndex}"
 
@@ -13,11 +13,11 @@
     <div class="card-wrapper">
       <div v-if="drag && translateY"
         class="card fake"
-        :style="{height: height + 'px', width}"
+        :style="{height: computedHeight + 'px', width}"
       ></div>
       <div class="card shadow"
         :style="{
-          height: height + 'px',
+          height: computedHeight + 'px',
           width,
           transform: `translateY(${translateY}px)`,
         }"
@@ -33,6 +33,10 @@
             {{newFormatedEnd}}
           </span>
         </span>
+
+        <div class="resize" :style="{width}"
+          @mousedown.prevent.stop='resizeMousedown'
+        ></div>
 
         <transition name="pri-t">
           <div v-if="priority" class="priority" :style="{backgroundColor: priorityColor}"></div>
@@ -61,8 +65,10 @@ export default {
   data() {
     return {
       drag: false,
+      resize: false,
 
       translateY: 0,
+      expandY: 0,
 
       dragStartY: null,
       bounderyTimeout: null,
@@ -83,17 +89,30 @@ export default {
       return (parseInt(split[0], 10) * 60) + parseInt(split[1], 10)
     },
 
-    mousedown(evt) {
-      this.drag = true
+    bindEventListeners(evt) {
       this.dragStartY = evt.pageY + this.getScrollTop()
 
       window.addEventListener('mousemove', this.mousemove)
       window.addEventListener('mouseup', this.mouseup)
-      
+    },
+    mousedown(evt) {
+      this.drag = true
+      this.resize = false
+
+      this.bindEventListeners(evt)      
+    },
+    resizeMousedown(evt) {
+      this.drag = false
+      this.resize = true
+
+      this.bindEventListeners(evt)      
     },
     scroll(num) {
       this.$parent.$parent.$parent.$emit('scroll', num)
-      this.translate(this.translateY + num)
+
+      if (this.drag)
+        this.translate(this.translateY + num)
+      else this.expand(this.expandY + num)
     },
     activateScrolling(scroll) {
       if (scroll !== this.lastScrollVal || (!this.dataTimeout && !this.interval)) {
@@ -120,16 +139,24 @@ export default {
       return this.$parent.$parent.$parent.$parent.$el.scrollTop
     },
     translate(num) {
-      if ((num + this.top <= 0))
+      if (num + this.top <= 0)
         num = -this.top
-      else if (num >= this.timelineHeight)
-        num = this.timelineHeight
-      
+      else if ((num + this.top + this.height) >= this.timelineHeight)
+        num = this.timelineHeight - this.height - this.top
+
       this.translateY = num
+    },
+    expand(num) {
+      if (num + this.height <= 25)
+        num = -this.height
+      else if ((num + this.top + this.height) >= this.timelineHeight)
+        num = this.timelineHeight - this.height - this.top
+
+      this.expandY = num
     },
     mousemove(evt) {
       evt.preventDefault()
-        if (this.drag) {
+      if (this.drag || this.resize) {
         const node = document.getElementById('sidebar-scroll')
 
         const y = evt.pageY + this.getScrollTop()
@@ -150,19 +177,26 @@ export default {
           ), this.timelineHeight
         )
 
-        this.translate(res)
+        if (this.drag)
+          this.translate(res)
+        else this.expand(res)
         
         this.$emit('dragging', {
           id: this.task.id,
           time: this.newNonFormatedTime,
+          taskDuration: this.newHeight,
         })
       }
     },
     mouseup(evt) {
       this.drag = false
+      this.resize = false
       this.removeScroll()
       this.saveData()
+      this.$emit('dragging', null)
+      
       this.translate(0)
+      this.expand(0)
 
       window.removeEventListener('mousemove', this.mousemove)
       window.removeEventListener('mouseup', this.mouseup)
@@ -190,6 +224,11 @@ export default {
     newNonFormatedTime() {
       return this.formatMin(
         this.convertOffsetToMin(this.top + this.translateY, this.timelineHeight), false,
+      )
+    },
+    newHeight() {
+      return this.formatMin(
+        this.convertOffsetToMin(this.computedHeight, this.timelineHeight), false
       )
     },
     newFormatedEnd() {
@@ -229,6 +268,9 @@ export default {
     
     top() {
       return this.convertMinToOffset(this.getFullTimeMin, this.timelineHeight)
+    },
+    computedHeight() {
+      return this.height + this.expandY
     },
     height() {
       return this.convertMinToOffset(this.getFullDurationMin, this.timelineHeight)
@@ -298,11 +340,12 @@ export default {
 
 .card-wrapper {
   position: relative;
+  box-sizing: border-box;
   margin-left: 60px;
 }
 
 .card {
-  padding: 12px;
+  padding: 8px;
   position: absolute;
   right: 0;
   width: 100%;
@@ -310,13 +353,31 @@ export default {
   border-radius: 8px;
   background-color: var(--card);
   border: 1px solid var(--sidebar-color);
-  transition: background-color .2s, width .2s;
+  transition: background-color .2s, width .2s, height .2s;
   user-select: none;
+}
+
+.resize .card {
+  transition: background-color .2s, width .2s;
+}
+
+.resize {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 10px;
+  cursor: n-resize;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 .card:hover {
   background-color: var(--light-gray);
   cursor: grab;
+}
+
+.card:active {
+  cursor: grabbing;
 }
 
 .fake {
@@ -327,7 +388,7 @@ export default {
   z-index: -1;
 }
 
-.drag {
+.drag, .resize {
   z-index: 10000 !important;
 }
 

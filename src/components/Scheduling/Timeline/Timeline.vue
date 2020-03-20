@@ -56,7 +56,7 @@ export default {
   props: ['date'],
   data() {
     return {
-      height: 1700,
+      height: 2000,
       hovering: false,
 
       ghostLine: {
