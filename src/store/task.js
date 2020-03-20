@@ -706,7 +706,7 @@ export default {
       },
 
 
-            getEndsTodayTasks: {
+      getEndsTodayTasks: {
         deepGetterTouch: {
           'task/tasks': [
             'completed',
@@ -719,6 +719,29 @@ export default {
         },
         cache(args) {
           return args[0]
+        },
+      },
+      getTaskStartAndEnd: {
+        getter({}, task) {
+          const split = task.taskDuration.split(':') // HH:mm
+          const start = task.calendar.time // HH:mm
+  
+          return {
+            start,
+            id: task.id,
+            end: mom(start, 'HH:mm')
+              .add(parseInt(split[0], 10), 'hour')
+              .add(parseInt(split[1], 10), 'minute')
+              .format('HH:mm'),
+          }
+        },
+        cache(args) {
+          const t = args[0]
+          return JSON.stringify({
+            time: t.taskDuration,
+            id: t.id,
+            start: t.calendar.time,
+          })
         },
       },
       getNumberOfTasksByTag: {

@@ -5,6 +5,8 @@
       v-bind="t"
       :duration="t.taskDuration"
       :time="t.calendar.time"
+      :timeArr='timeArr'
+      :task='t'
 
       :timelineHeight='height'
     />
@@ -15,6 +17,8 @@
 <script>
 
 import { mapGetters } from 'vuex'
+
+import mom from 'moment'
 
 import Card from './Card.vue'
 
@@ -28,12 +32,16 @@ export default {
       storeTasks: 'task/tasks',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
       hasDurationAndTime: 'task/hasDurationAndTime',
+      getTaskStartAndEnd: 'task/getTaskStartAndEnd',
     }),
 
     hasDurationAndTimeTasks() {
       return this.tasks.filter(
         t => this.hasDurationAndTime(t)
       )
+    },
+    timeArr() {
+      return this.tasks.map(this.getTaskStartAndEnd)
     },
     tasks() {
       return this.storeTasks.filter(

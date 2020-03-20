@@ -36,7 +36,10 @@ export default {
         if (isEvening && c && c.type !== 'specific' && c.type !== 'someday' && c.type !== 'anytime') {
           c.evening = true
         } else if (force || !c) {
-          t.calendar = getSpecificCalendar(specific)
+          const newCal = getSpecificCalendar(specific)
+          if (c)
+            t.calendar = {...c, ...newCal}
+          else t.calendar = newCal
         }
       }
       return t
