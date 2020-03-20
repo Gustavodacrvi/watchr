@@ -22,20 +22,23 @@
           transform: `translateY(${translateY}px)`,
         }"
       >
-        <span class="name">
-          {{ name }}
+        <span class="info-wrapper">
+          <span class="name">
+            <span class="name">
+              {{ name }}
+            </span>
+          </span>
+          <span class="info">
+            {{formatedTime}} -
+            {{newFormatedEnd}}
+          </span>
         </span>
 
         <transition name="pri-t">
           <div v-if="priority" class="priority" :style="{backgroundColor: priorityColor}"></div>
         </transition>
-      </div>
 
-      <span v-if="drag || hover"
-        class="time"
-      >
-        {{formatedTime}}
-      </span>
+      </div>
     </div>
   </div>
 </template>
@@ -50,7 +53,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   mixins: [mixin],
-  props: ['name', 'timeArr',
+  props: ['name', 'collisions',
     'time', 'duration',
     
     'id', 'timelineHeight', 'priority', 'task'
@@ -126,21 +129,21 @@ export default {
     },
     mousemove(evt) {
       evt.preventDefault()
-      const node = document.getElementById('sidebar-scroll')
+        if (this.drag) {
+        const node = document.getElementById('sidebar-scroll')
 
-      const y = evt.pageY + this.getScrollTop()
+        const y = evt.pageY + this.getScrollTop()
 
-      const boundery = 60
+        const boundery = 60
 
-      if (((node.offsetHeight + this.getScrollTop()) - y) < boundery) {
-        this.activateScrolling(10)
-      } else if (evt.pageY < boundery) {
-        this.activateScrolling(-10)
-      } else {
-        this.removeScroll()
-      }
+        if (((node.offsetHeight + this.getScrollTop()) - y) < boundery) {
+          this.activateScrolling(10)
+        } else if (evt.pageY < boundery) {
+          this.activateScrolling(-10)
+        } else {
+          this.removeScroll()
+        }
 
-      if (this.drag) {
         const res = this.convertMinToOffset(
           this.round(5,
             this.convertOffsetToMin(y - this.dragStartY, this.timelineHeight)
@@ -148,27 +151,36 @@ export default {
         )
 
         this.translate(res)
+        
+        this.$emit('dragging', {
+          id: this.task.id,
+          time: this.newNonFormatedTime,
+        })
       }
     },
     mouseup(evt) {
       this.drag = false
-      this.translate(0)
       this.removeScroll()
+      this.saveData()
+      this.translate(0)
 
       window.removeEventListener('mousemove', this.mousemove)
       window.removeEventListener('mouseup', this.mouseup)
     },
 
-    comesBeforeThan(testId) {
-      const arr = this.timeArr
-      const cardId = this.currentCardTimeAndEnd.id
-      
-      for (const {id} of arr)
-        if (id === cardId)
-          return true
-        else if (id === testId)
-          return false
+    async saveData() {
+      this.dataTime = this.newNonFormatedTime
 
+      try {
+        await this.$store.dispatch('task/saveTask', {
+          id: this.task.id,
+          calendar: {
+            time: this.dataTime
+          },
+        })
+      } catch (arr) {
+        this.dataTime = this.time
+      }
     },
   },
   computed: {
@@ -180,12 +192,22 @@ export default {
         this.convertOffsetToMin(this.top + this.translateY, this.timelineHeight), false,
       )
     },
+    newFormatedEnd() {
+      const split = this.dataDuration.split(':')
+
+      return this.formatTime(
+        mom(this.newNonFormatedTime, 'HH:mm')
+        .add(parseInt(split[0], 10), 'hour')
+        .add(parseInt(split[1], 10), 'minute')
+        .format('HH:mm')
+      )
+    },
     formatedTime() {
       return this.formatTime(this.newNonFormatedTime)
     },
     
     width() {
-      return `${100 - (this.getFractionNumber * 15)}%`
+      return `${100 - (this.collisions * 15)}%`
     },
     
     currentCardTimeAndEnd() {
@@ -204,47 +226,6 @@ export default {
         strEnd: end,
       }
     },
-    getFractionNumber() {
-      const {start, end, strStart, strEnd, id} = this.currentCardTimeAndEnd // MOMENTJS
-
-      return this.timeArr.reduce((total, taskProperties) => {
-        if (taskProperties.id === id)
-          return total
-        
-        const test = {
-          end: mom(taskProperties.end, 'HH:mm'),
-          start: mom(taskProperties.start, 'HH:mm'),
-        }
-
-        const log = moment => {
-          console.log(moment.format('HH:mm'))
-        }
-        
-
-        if (
-          start.isBefore(test.end, 'minute') &&
-          start.isAfter(test.start, 'minute')
-        )
-          return total + 1
-
-        if (
-          taskProperties.start === strStart &&
-          end.isBefore(test.end)
-        )
-          return total + 1
-
-        if (
-          taskProperties.start === strStart &&
-          taskProperties.end === strEnd &&
-          this.comesBeforeThan(taskProperties.id)
-        )
-          return total + 1
-
-        return total
-
-
-      }, 0)
-    },
     
     top() {
       return this.convertMinToOffset(this.getFullTimeMin, this.timelineHeight)
@@ -259,7 +240,7 @@ export default {
       return this.getFullMin(this.dataTime)
     },
     zIndex() {
-      return this.getFractionNumber
+      return this.collisions
     },
 
     priorityColor() {
@@ -292,16 +273,27 @@ export default {
   z-index: 1;
 }
 
-.time {
-  position: absolute;
-  top: -5px;
-  right: calc(100% + 4px);
-  white-space: nowrap;
-  display: inline-block;
-  padding: 8px;
-  padding-right: 0;
+.drag .info {
   color: var(--purple);
-  background-color: var(--sidebar-color);
+}
+
+.info {
+  font-size: .9em;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+.name {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.info-wrapper {
+  display: flex;
+  justify-content: space-between;
 }
 
 .card-wrapper {
@@ -337,14 +329,6 @@ export default {
 
 .drag {
   z-index: 10000 !important;
-}
-
-.name {
-  display: block;
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .priority {
