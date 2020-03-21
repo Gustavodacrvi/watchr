@@ -294,10 +294,7 @@ export default {
                 comp: 'ColorPicker',
                 content: {
                   color: list.color,
-                  callback: console.log,
-                },
-                cardOptions: {
-                  overflow: true,
+                  callback: this.listsaveList,
                 },
               },
             },

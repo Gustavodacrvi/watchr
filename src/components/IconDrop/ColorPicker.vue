@@ -27,52 +27,54 @@ export default {
   methods: {
     noColor() {
       this.callback({color: null})
+      this.$emit('close')
     },
     select({color}) {
       this.callback({color})
+      this.$emit('close')
     },
   },
   computed: {
     colors() {
       return [
         {
-          color: 'var(--red)',
+          color: '#DE5757',
           name: 'Red',
         },
         {
-          color: 'var(--dark-red)',
+          color: '#ea3a34',
           name: 'Dark Red',
         },
         {
-          color: 'var(--dark-blue)',
+          color: '#5f5abe',
           name: 'Dark Blue',
         },
         {
-          color: 'var(--yellow)',
+          color: '#FFE366',
           name: 'Yellow',
         },
         {
-          color: 'var(--brown)',
+          color: '#daa85d',
           name: 'Brown',
         },
         {
-          color: 'var(--olive)',
+          color: '#4fe39e',
           name: 'Olive',
         },
         {
-          color: 'var(--purple)',
+          color: '#a160eb',
           name: 'Purple',
         },
         {
-          color: 'var(--dark-purple)',
+          color: '#914dff',
           name: 'Dark Purple',
         },
         {
-          color: 'var(--green)',
+          color: '#57DE5B',
           name: 'Green',
         },
         {
-          color: 'var(--orange)',
+          color: '#FFA166',
           name: 'Orange',
         },
       ]
