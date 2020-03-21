@@ -34,6 +34,7 @@
           <component v-if="showingCont"
             :is='getComp'
             :content='compContent'
+            v-bind="compContent"
             :onSelect='onSelect'
             :allowKeyboard='center && isDesktopBreakPoint'
             @close='closeIconDrop'
@@ -49,6 +50,7 @@
 <script>
 
 import ListIcons from './ListIcons.vue'
+import ColorPicker from './ColorPicker.vue'
 import CalendarPicker from './Calendar.vue'
 import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
 import TimePicker from './Calendar/TimePicker.vue'
@@ -61,7 +63,7 @@ export default {
   components: {
     ListIcons, CalendarPicker,
     TimePicker, RepeatPicker,
-    Confirm,
+    Confirm, ColorPicker,
   },
   data() {
     return {
@@ -69,7 +71,7 @@ export default {
       showing: this.defaultShowing,
       justClosed: false,
       showingCont: this.defaultShowing,
-      cardOptions: null,
+      cardOptions: this.options.cardOptions,
     }
   },
   mounted() {

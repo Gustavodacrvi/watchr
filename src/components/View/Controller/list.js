@@ -286,6 +286,21 @@ export default {
                 })),
               },
             },
+            {
+              icon: 'tint',
+              title: 'List color',
+              color: list.color,
+              options: {
+                comp: 'ColorPicker',
+                content: {
+                  color: list.color,
+                  callback: console.log,
+                },
+                cardOptions: {
+                  overflow: true,
+                },
+              },
+            },
           ]
         }
     },

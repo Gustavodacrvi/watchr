@@ -2,7 +2,7 @@
   <div class="Icon" :class="{box, active}">
     <span
       class="icon remove-highlight"
-      :style="{width: getWidth, color}"
+      :style="{width: getWidth, color: getColor}"
       @click="iconClick"
 
       @mouseenter='iconEnter'
@@ -51,7 +51,7 @@ import ActualIcon from './Icon.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'file', 'title', 'number', 'box', 'active'],
+  props: ['icon', 'width', 'color', 'progress', 'file', 'title', 'number', 'box', 'active', 'hover'],
   components: {
     ActualIcon,
   },
@@ -59,13 +59,16 @@ export default {
     return {
       showingTitle: false,
       timeoutTitle: null,
+      iconHover: false,
     }
   },
   methods: {
     iconEnter() {
+      this.iconHover = true
       this.timeoutTitle = setTimeout(() => this.showingTitle = true, 500)
     },
     iconLeave() {
+      this.iconHover = false
       clearTimeout(this.timeoutTitle)
       this.showingTitle = false
     },
@@ -97,6 +100,9 @@ export default {
     ...mapGetters(['isDesktopDevice']),
     getProgress() {
       return 18.5 * this.progress / 100
+    },
+    getColor() {
+      return this.iconHover && this.hover ? this.hover : this.color
     },
     fileInput() {
       return this.$refs['file']

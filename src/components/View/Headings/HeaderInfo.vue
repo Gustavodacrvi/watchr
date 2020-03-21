@@ -16,6 +16,7 @@
         class="icon faded"
         :icon="icon"
         :title='title'
+        :color='color'
         :width='icon === "file" ? "16px" : undefined'
       />
       <span v-show="content || right">
@@ -46,7 +47,7 @@
 <script>
 
 export default {
-  props: ['content', 'right', 'icon', 'options', 'title', 'number'],
+  props: ['content', 'right', 'icon', 'options', 'title', 'number', 'color'],
   data() {
     return {
       hover: false,
