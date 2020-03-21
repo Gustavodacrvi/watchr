@@ -1,8 +1,6 @@
 
 import { mapGetters, mapState } from "vuex"
 
-import utilsTask from '@/utils/task'
-import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 export default {

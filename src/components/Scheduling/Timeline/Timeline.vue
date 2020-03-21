@@ -27,7 +27,7 @@
       :height='height'
     />
 
-    <DivisionLine
+    <DivisionLine v-if='showRedLine'
       :active='true'
       color='var(--red)'
       v-bind="currentTime"
@@ -48,6 +48,8 @@ import DivisionLine from './Line.vue'
 import Cards from './Cards.vue'
 
 import mom from 'moment'
+
+const TOD_STR = mom().format('HH:mm')
 
 import mixin from "@/mixins/scheduler.js"
 
@@ -73,18 +75,28 @@ export default {
     }
   },
   mounted() {
-    this.inverval = setInterval(() => {
-      this.current = mom(this.current, 'HH:mm').add(1, 'minute').format('HH:mm')
-    }, 60000)
-    
+    this.activateRedLine()
     document.addEventListener('drop', this.windowDrop)
   },
   beforeDestroy() {
-    clearInterval(this.inverval)
+    this.destroyRedLine()
     
     document.removeEventListener('drop', this.windowDrop)
   },
   methods: {
+    activateRedLine() {
+      this.destroyRedLine()
+      if (this.showRedLine) {
+        this.inverval = setInterval(() => {
+          this.current = mom(this.current, 'HH:mm').add(1, 'minute').format('HH:mm')
+        }, 60000)
+      }
+    },
+    destroyRedLine() {
+      if (this.inverval)
+        clearInterval(this.inverval)
+    },
+    
     stopPropagationOnSelectedItems(evt) {
       if (this.selectedItems.length > 0)
         evt.stopPropagation()
@@ -155,6 +167,9 @@ export default {
   },
   computed: {
     ...mapState(['movingTask', 'userInfo', 'selectedItems', 'height']),
+    showRedLine() {
+      return this.current === TOD_STR
+    },
     currentTime() {
       return {
         top: this.convertMinToOffset(
@@ -169,6 +184,11 @@ export default {
     },
     timelineData() {
       return this.$el.getBoundingClientRect()
+    },
+  },
+  watch: {
+    date() {
+      this.activateRedLine()
     },
   },
 }

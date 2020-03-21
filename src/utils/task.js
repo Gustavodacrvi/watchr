@@ -3,9 +3,251 @@ import mom from 'moment'
 import utilsMoment from './moment'
 import utils from './index'
 
+const TOD_DATE = mom().format('Y-M-D')
+
 import { fd } from '../utils/firestore'
 
 export default {
+  taskOptions(task, vm) {
+
+    const dispatch = vm.$store.dispatch
+    const commit = vm.$store.commit
+    const getters = vm.$store.getters
+    const state = vm.$store.state
+
+    const savedLists = getters['list/sortedLists']
+    const userInfo = state.userInfo
+
+    const itemGroup = state.group.groups.find(f => f.id === task.group)
+    const isGroupOwner = (itemGroup && itemGroup.userId === userInfo.userId)
+
+    const logbook = getters['task/isTaskInLogbook'](task)
+    const saveTaskContent = obj => {
+      dispatch('task/saveTask', {
+        id: task.id,
+        ...obj,
+      })
+    }
+    const assignUser = assigned => saveTaskContent(assigned)
+
+    const commentsPopup = () => {
+      dispatch('pushPopup', {
+        comp: "Comments",
+        payload: {
+          groupId: task.group,
+          id: task.id,
+        },
+      })
+    }
+    
+    const saveCalendarDate = calendar => saveTaskContent({calendar})
+
+    const saveDate = date => {
+      saveTaskContent({
+        id: task.id,
+        calendar: {
+          type: 'specific',
+          time: null,
+          editDate: TOD_DATE,
+          begins: TOD_DATE,
+
+          specific: date,
+        },
+      })
+    }
+
+    const copyItem = () => dispatch('task/copyTask', task)
+
+    const addPriority = priority => saveTaskContent({priority})
+    
+    const arr = [
+      {
+        name: !logbook ? 'Move to logbook' : 'Remove from logbook',
+        icon: 'logbook',
+        callback: () => {
+          if (!logbook)
+            dispatch('task/logTasks', [task.id])
+          else dispatch('task/unlogTasks', [task.id])
+        }
+      },
+      {
+        type: 'optionsList',
+        name: 'Deadline',
+        options: [
+          {
+            icon: 'star',
+            id: 'd',
+            color: 'var(--yellow)',
+            callback: () => saveTaskContent({deadline: mom().format('Y-M-D')}),
+          },
+          {
+            icon: 'sun',
+            id: 'çljk',
+            color: 'var(--orange)',
+            callback: () => saveTaskContent({deadline: mom().add(1, 'day').format('Y-M-D')}),
+          },
+          {
+            icon: 'calendar',
+            id: 'çljkasdf',
+            color: 'var(--green)',
+            callback: () => ({
+              comp: 'CalendarPicker',
+              content: {
+                onlyDates: true,
+                noTime: true,
+                allowNull: true,
+                callback: ({specific}) => {saveTaskContent({
+                  deadline: specific,
+                })}
+              }
+            })
+          },
+          {
+            icon: 'bloqued',
+            id: 'asdf',
+            color: 'var(--red)',
+            callback: () => saveTaskContent({deadline: null}),
+          },
+        ]
+      },
+      {
+        type: 'optionsList',
+        name: 'Defer',
+        options: [
+          {
+            icon: 'star',
+            id: 'd',
+            color: 'var(--yellow)',
+            callback: () => saveDate(mom().format('Y-M-D')),
+          },
+          {
+            icon: 'sun',
+            id: 'çljk',
+            color: 'var(--orange)',
+            callback: () => saveDate(mom().add(1, 'day').format('Y-M-D')),
+          },
+          {
+            icon: 'layer-group',
+            id: 'ds',
+            color: 'var(--olive)',
+            callback: () => saveCalendarDate({
+              type: 'anytime',
+            })
+          },
+          {
+            icon: 'archive',
+            id: 'açlkjsdffds',
+            color: 'var(--brown)',
+            callback: () => saveCalendarDate({
+              type: 'someday',
+            })
+          },
+          {
+            icon: 'calendar',
+            id: 'çljkasdf',
+            color: 'var(--green)',
+            callback: () => {return {
+              comp: "CalendarPicker",
+              content: {callback: saveCalendarDate}}},
+          },
+          {
+            icon: 'bloqued',
+            id: 'asdf',
+            color: 'var(--red)',
+            callback: () => saveCalendarDate(null)
+          },
+        ]
+      },
+      {
+        type: 'optionsList',
+        name: 'Priority',
+        options: [
+          {
+            icon: 'priority',
+            id: 'd',
+            color: 'var(--fade)',
+            callback: () => addPriority('')
+          },
+          {
+            icon: 'priority',
+            id: 'f',
+            color: 'var(--green)',
+            callback: () => addPriority('Low priority')
+          },
+          {
+            icon: 'priority',
+            id: 'j',
+            color: 'var(--yellow)',
+            callback: () => addPriority('Medium priority')
+          },
+          {
+            icon: 'priority',
+            id: 'l',
+            color: 'var(--red)',
+            callback: () => addPriority('High priority')
+          },
+        ],
+      },
+      {
+        name: 'Copy task',
+        icon: 'copy',
+        callback: copyItem,
+      },
+      {
+        name: 'Add tags',
+        icon: 'tag',
+        callback: () => utils.tagsOptions(vm, task.tags, tags => {
+          saveTaskContent({tags})
+        }, true)
+      },
+      {
+        name: 'Move to list',
+        icon: 'tasks',
+        callback: () => utils.listsOptions(vm, saveTaskContent)
+      },
+      {
+        name: 'Convert to list',
+        icon: 'tasks',
+        callback: () => {
+          const existingList = savedLists.find(l => l.name === task.name)
+          if (existingList)
+            commit('pushToast', {
+              name: 'There is already another list with this name.',
+              seconds: 3,
+              type: 'error',
+            })
+          else
+            dispatch('task/convertToList', {task: task, savedLists})
+        }
+      },
+      {
+        name: 'Move to folder',
+        icon: 'folder',
+        callback: () => utils.folderOptions(vm, saveTaskContent)
+      },
+      {
+        name: 'Move to group',
+        icon: 'group',
+        callback: () => utils.groupOptions(vm, saveTaskContent)
+      },
+      {
+          name: 'Delete task',
+          icon: 'trash',
+          important: true,
+          callback: () => dispatch('task/deleteTasks', [task.id])
+        },
+    ]
+    if (task.group) {
+      arr.splice(1, 0, {
+        name: 'Add comments',
+        icon: 'comment',
+        callback: commentsPopup,
+      })
+      if (isGroupOwner)
+        arr.splice(2, 0, getters['group/getAssigneeIconDrop'](task, uid => assignUser(uid)))
+    }
+    return arr
+  },
   isTaskInLogbook(task) {
     const { logbook, calendar } = task
 

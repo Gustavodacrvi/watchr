@@ -5,7 +5,12 @@
     mode="out-in"
     tag="span"
   >
-    <Icon v-if="props.re && !props.se" class="tra-icon cursor remove-highlight" key="0"
+    <Icon v-if="animation || (props.co && !props.se && !props.so)" class="tra-icon cursor remove-highlight" key="3"
+      icon="box-check-filled"
+      :color='props.color'
+      width="13px"
+    />
+    <Icon v-else-if="props.re && !props.se" class="tra-icon cursor remove-highlight" key="0"
       icon="repeat"
       :color='props.color'
       width="15px"
@@ -17,11 +22,6 @@
     />
     <Icon v-else-if="props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="2"
       icon="box-close"
-      :color='props.color'
-      width="13px"
-    />
-    <Icon v-else-if="props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="3"
-      icon="box-check-filled"
       :color='props.color'
       width="13px"
     />
@@ -61,7 +61,7 @@
 <script>
 
 export default {
-  props: ['co', 'so', 'ca', 're', 'ac', 'se', 'color'],
+  props: ['co', 'so', 'ca', 're', 'ac', 'se', 'color', 'animation'],
 }
 
 </script>

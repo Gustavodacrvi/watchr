@@ -53,6 +53,9 @@ import mixin from "@/mixins/scheduler.js"
 
 import mom from 'moment'
 
+import utils from '@/utils/'
+import utilsTask from '@/utils/task'
+
 import { mapGetters } from 'vuex'
 
 export default {
@@ -85,7 +88,14 @@ export default {
       hover: false,
     }
   },
+  mounted() {
+    if (this.isDesktopDevice)
+      this.bindContextMenu(this.options)
+  },
   methods: {
+    bindContextMenu(options) {
+      utils.bindOptionsToEventListener(this.$el, options, this)
+    },
     bindEventListeners(evt) {
       this.dragStartY = evt.pageY + this.getScrollTop()
 
@@ -226,6 +236,9 @@ export default {
     ...mapGetters({
       getTaskStartAndEnd: 'task/getTaskStartAndEnd',
     }),
+    options() {
+      return utilsTask.taskOptions(this.task, this)
+    },
     newNonFormatedTime() {
       return this.formatMin(
         this.convertOffsetToMin(this.top + this.translateY, this.timelineHeight), false,
@@ -299,6 +312,9 @@ export default {
     },
   },
   watch: {
+    options() {
+      this.bindContextMenu(this.options)
+    },
     time() {
       this.dataTime = this.time
     },
@@ -336,6 +352,7 @@ export default {
 }
 
 .name {
+  font-size: .9em;
   display: block;
   width: 100%;
   white-space: nowrap;
@@ -355,7 +372,7 @@ export default {
 }
 
 .card {
-  padding: 8px;
+  padding: 4px;
   position: absolute;
   right: 0;
   width: 100%;

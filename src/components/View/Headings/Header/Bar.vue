@@ -19,9 +19,9 @@
       @click.stop="editing = true"
     >
       {{ getViewName }}
-      <Icon v-if="calendarDate && scheduling"
+      <Icon v-if="scheduling || calendarDate"
         class="comp-icon primary-hover cursor"
-        icon='calendar-star'
+        :icon='scheduling ? "star" : "calendar-star"'
         color='var(--fade)'
         width='18px'
         @click='$emit("open-main-comp")'

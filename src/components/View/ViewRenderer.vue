@@ -7,7 +7,7 @@
       
         :render='sidebarHided || scheduling'
         :scheduling='scheduling'
-        :viewNameValue='viewNameValue'
+        :viewName='viewName'
       />
       <Header
         v-bind="$props"

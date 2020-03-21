@@ -1,10 +1,15 @@
 <template>
   <div class="SlimModeNav" :class="{render}">
     <transition name="side-t">
-      <Sidebar v-if="active"
+      <component v-if="active"
+        :is='getComp'
+
+        :date='calendarDate'
+        :mainView='true'
+      
         ref="side"
         class="Sidebar-comp"
-        :value='viewNameValue'
+        :value='viewName'
         width='100%'
         :slimMode='true'
         :sidebarHided='false'
@@ -22,12 +27,14 @@
 import { mapGetters } from 'vuex'
 
 import Sidebar from "@/components/Sidebar/Sidebar.vue"
+import Scheduler from '@/components/Sidebar/Scheduler.vue'
 
 export default {
   components: {
     Sidebar,
+    Scheduler,
   },
-  props: ['scheduling', 'render', 'viewNameValue'], 
+  props: ['scheduling', 'render', 'viewName'], 
   data() {
     return {
       active: false,
@@ -45,12 +52,16 @@ export default {
           found = true
           break
         }
+
       if (!found)
         this.active = false
     },
   },
   computed: {
-    ...mapGetters(['getIcon']),
+    ...mapGetters(['calendarDate']),
+    getComp() {
+      return this.scheduling ? 'Sidebar' : 'Scheduler'
+    },
   },
   watch: {
     active() {
@@ -59,7 +70,7 @@ export default {
       else
         window.removeEventListener('click', this.click)
     },
-    getIcon() {
+    viewName() {
       this.active = false
     },
   },
