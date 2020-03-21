@@ -1,7 +1,7 @@
 <template>
   <div
     class="Card"
-    :class="{drag, resize, disableTransition}"
+    :class="{task: !isCalendarEvent, drag, resize, color, disableTransition}"
 
     :style="{top: top + 'px', zIndex}"
 
@@ -20,6 +20,7 @@
           height: computedHeight + 'px',
           width,
           transform: `translateY(${translateY}px)`,
+          backgroundColor: color,
         }"
       >
         <span class="info-wrapper">
@@ -62,6 +63,8 @@ export default {
   mixins: [mixin],
   props: ['name', 'collisions',
     'time', 'duration',
+
+    'start', 'end', 'color',
     
     'id', 'timelineHeight', 'priority', 'task'
   ],
@@ -94,7 +97,8 @@ export default {
   },
   methods: {
     bindContextMenu(options) {
-      utils.bindOptionsToEventListener(this.$el, options, this)
+      if (!this.isCalendarEvent)
+        utils.bindOptionsToEventListener(this.$el, options, this)
     },
     bindEventListeners(evt) {
       this.dragStartY = evt.pageY + this.getScrollTop()
@@ -103,16 +107,20 @@ export default {
       window.addEventListener('mouseup', this.mouseup)
     },
     mousedown(evt) {
-      this.drag = true
-      this.resize = false
-
-      this.bindEventListeners(evt)      
+      if (!this.isCalendarEvent) {
+        this.drag = true
+        this.resize = false
+  
+        this.bindEventListeners(evt)      
+      }
     },
     resizeMousedown(evt) {
-      this.drag = false
-      this.resize = true
-
-      this.bindEventListeners(evt)      
+      if (!this.isCalendarEvent) {
+        this.drag = false
+        this.resize = true
+  
+        this.bindEventListeners(evt)      
+      }
     },
     scroll(num) {
       this.$parent.$parent.$parent.$emit('scroll', num)
@@ -190,7 +198,7 @@ export default {
         else this.expand(res)
         
         this.$emit('dragging', {
-          id: this.task.id,
+          id: this.id,
           time: this.newNonFormatedTime,
           taskDuration: this.newHeight,
         })
@@ -221,7 +229,7 @@ export default {
 
       try {
         await this.$store.dispatch('task/saveTask', {
-          id: this.task.id,
+          id: this.id,
           taskDuration: this.dataDuration,
           calendar: {
             time: this.dataTime,
@@ -236,13 +244,20 @@ export default {
     ...mapGetters({
       getTaskStartAndEnd: 'task/getTaskStartAndEnd',
     }),
+    isCalendarEvent() {
+      return !this.dataTime && !this.dataDuration
+    },
+    
     getCollisions() {
-      return this.collisions.find(el => this.task.id === el.target).collisions
+      return this.collisions.find(el => this.id === el.target).collisions
     },
     options() {
-      return utilsTask.taskOptions(this.task, this)
+      return this.isCalendarEvent ? [] : utilsTask.taskOptions(this.task, this)
     },
     newNonFormatedTime() {
+      if (this.isCalendarEvent)
+        return this.start
+
       const res = this.formatMin(
         this.convertOffsetToMin(this.top + this.translateY, this.timelineHeight), false,
       )
@@ -256,6 +271,8 @@ export default {
       )
     },
     newFormatedEnd() {
+      if (this.isCalendarEvent)
+        return this.end
       const split = this.dataDuration.split(':')
 
       return this.formatTime(
@@ -300,10 +317,20 @@ export default {
       return this.convertMinToOffset(this.getFullDurationMin, this.timelineHeight)
     },
     getFullDurationMin() {
-      return this.getFullMin(this.dataDuration)
+      if (!this.isCalendarEvent)
+        return this.getFullMin(this.dataDuration)
+      
+      const split = this.start.split(':')
+      
+      return this.getFullMin(
+            mom(this.end, 'HH:mm')
+              .subtract(parseInt(split[0], 10), 'hour')
+              .subtract(parseInt(split[1], 10), 'minute')
+              .format('HH:mm')
+      )
     },
     getFullTimeMin() {
-      return this.getFullMin(this.dataTime)
+      return this.getFullMin(!this.isCalendarEvent ? this.dataTime : this.start)
     },
     zIndex() {
       return this.getCollisions
@@ -352,13 +379,13 @@ export default {
 }
 
 .info {
-  font-size: .9em;
+  font-size: .95em;
   flex-shrink: 0;
   margin-left: 6px;
 }
 
 .name {
-  font-size: .9em;
+  font-size: .95em;
   display: block;
   width: 100%;
   white-space: nowrap;
@@ -404,7 +431,7 @@ export default {
   border-bottom-right-radius: 6px;
 }
 
-.card:hover {
+.task .card:hover {
   background-color: var(--light-gray);
   cursor: grab;
 }
@@ -446,6 +473,12 @@ export default {
   width: 5px;
 }
 
+.color .card {
+  box-shadow: none;
+  color: white;
+  cursor: unset;
+}
+
 .mainView {
   background-color: var(--card);
 }
@@ -456,7 +489,7 @@ export default {
   background-color: var(--dark-light-gray);
 }
 
-.mainView .card:hover {
+.mainView .task .card:hover {
   background-color: var(--light-gray);
 }
 

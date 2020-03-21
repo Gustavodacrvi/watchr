@@ -1,6 +1,5 @@
 <template>
   <div class="Cards">
-
     <transition-group
       appear
       name='fade-t'
@@ -17,13 +16,20 @@
         @dragging='dragg'
       />
     </transition-group>
+
+    <Card v-for="t in eventsTimeArr" :key="t.id"
+      v-bind="t"
+
+      :collisions='collisions'
+      :timelineHeight='height'
+    />
     
   </div>
 </template>
 
 <script>
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import mom from 'moment'
 
@@ -55,11 +61,12 @@ export default {
     },
   },
   computed: {
+    ...mapState(['viewEvents', 'allowCalendar']),
     ...mapGetters({
       storeTasks: 'task/tasks',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
       hasDurationAndTime: 'task/hasDurationAndTime',
-      getTaskStartAndEnd: 'task/getTaskStartAndEnd',
+      getItemStartAndEnd: 'task/getItemStartAndEnd',
     }),
 
     hasDurationAndTimeTasks() {
@@ -67,12 +74,12 @@ export default {
         t => this.hasDurationAndTime(t)
       )
     },
-    timeArr() {
+    tasksTimeArr() {
       return this.tasks.map(t => {
         if (!this.dragging)
-          return this.getTaskStartAndEnd(t)
+          return this.getItemStartAndEnd(t)
         
-        return this.getTaskStartAndEnd(
+        return this.getItemStartAndEnd(
           this.dragging.id === t.id ? {
             ...t,
             taskDuration: this.dragging.taskDuration,
@@ -82,6 +89,21 @@ export default {
             },
           } : t)
       })
+    },
+    eventsTimeArr() {
+      return this.allowCalendar ? this.viewEvents.map(obj =>
+        obj.items.map(o => ({
+          id: o.id,
+          name: o.name,
+          color: o.color || obj.color || '',
+
+          start: o.start,
+          end: o.end,
+        }))
+      ).flat() : []
+    },
+    timeArr() {
+      return [...this.tasksTimeArr, ...this.eventsTimeArr]
     },
     collisions() {
       const arr = this.shallowCollisions

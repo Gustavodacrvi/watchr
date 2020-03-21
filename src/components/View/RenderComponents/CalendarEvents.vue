@@ -24,10 +24,10 @@
             :href="item.htmlLink"
             target="_blank"
           >
-            <span v-if="item.start && item.end" class="info" :style="{color: item.color || cal.color}">
-              {{item.start}} - {{item.end}}&nbsp;
+            <span v-if="item.formatedStart && item.formatedEnd" class="info" :style="{color: item.color || cal.color}">
+              {{item.formatedStart}} - {{item.formatedEnd}}&nbsp;
             </span>
-            <span v-if="item.start && item.end" class="name">
+            <span v-if="item.formatedStart && item.formatedEnd" class="name">
               {{item.name}}
             </span>
             <span v-else class="name" :style="{color: item.color || cal.color}">

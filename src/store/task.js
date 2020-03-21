@@ -722,14 +722,14 @@ export default {
           return args[0]
         },
       },
-      getTaskStartAndEnd: {
-        getter({}, task) {
-          const split = task.taskDuration.split(':') // HH:mm
-          const start = task.calendar.time // HH:mm
+      getItemStartAndEnd: {
+        getter({}, item) {
+          const split = item.taskDuration.split(':') // HH:mm
+          const start = item.calendar.time // HH:mm
   
           return {
             start,
-            id: task.id,
+            id: item.id,
             end: mom(start, 'HH:mm')
               .add(parseInt(split[0], 10), 'hour')
               .add(parseInt(split[1], 10), 'minute')

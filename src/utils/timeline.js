@@ -71,8 +71,10 @@ export default {
                   name: el.summary,
                   color: (colors[el.colorId] && colors[el.colorId].background) || '',
                   htmlLink: el.htmlLink,
-                  start: el.start.dateTime ? mom(el.start.dateTime).format(getFormat) : null,
-                  end: el.end.dateTime ? mom(el.end.dateTime).format(getFormat) : null,
+                  start: el.start.dateTime ? mom(el.start.dateTime).format('HH:mm') : null,
+                  end: el.end.dateTime ? mom(el.end.dateTime).format('HH:mm') : null,
+                  formatedStart: el.start.dateTime ? mom(el.start.dateTime).format(getFormat) : null,
+                  formatedEnd: el.end.dateTime ? mom(el.end.dateTime).format(getFormat) : null,
                 })),
               }
               if (!calendar.primary)
