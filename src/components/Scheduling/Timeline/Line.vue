@@ -62,4 +62,8 @@ export default {
   border: 1px solid var(--active-color);
 }
 
+.mainView .time {
+  background-color: var(--card);
+}
+
 </style>

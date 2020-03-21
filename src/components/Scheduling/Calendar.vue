@@ -94,8 +94,8 @@ export default {
   props: ['value', 'allowTaskAdd'],
   data() {
     return {
-      current: this.defaultDate || TOD_STR,
-      selected: this.defaultDate || TOD_STR,
+      current: this.value || TOD_STR,
+      selected: this.value || TOD_STR,
 
       sortable: null,
     }

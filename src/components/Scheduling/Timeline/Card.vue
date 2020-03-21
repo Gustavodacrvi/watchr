@@ -440,4 +440,18 @@ export default {
   width: 5px;
 }
 
+.mainView {
+  background-color: var(--card);
+}
+
+.mainView .card {
+  box-shadow: 0 4px 6px rgba(20,20,20,.3);
+  border: 1px solid var(--card);
+  background-color: var(--dark-light-gray);
+}
+
+.mainView .card:hover {
+  background-color: var(--light-gray);
+}
+
 </style>

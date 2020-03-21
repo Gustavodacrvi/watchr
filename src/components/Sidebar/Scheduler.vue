@@ -1,17 +1,17 @@
 <template>
-  <div class="Scheduler scroll-thin" :class="{mainView}">
+  <div class="Scheduler scroll-thin" :class="{mainView, shadow: mainView}">
     <div class="content">
       <div
         class="cal"
         ref='cal'
       >
         <Calendar
-          v-model="date"
+          v-model="current"
         
           :allowTaskAdd='true'
         />
       </div>
-      <Timeline :date='date'/>
+      <Timeline :date='current'/>
     </div>
   </div>
 </template>
@@ -26,6 +26,11 @@ export default {
   components: {
     Calendar, Timeline,
   },
+  data() {
+    return {
+      current: this.date,
+    }
+  },
 }
 
 </script>
@@ -38,7 +43,6 @@ export default {
 }
 
 .mainView {
-  background-color: var(--sidebar-color);
   padding: 26px;
   border-radius: 8px;
 }
@@ -52,8 +56,11 @@ export default {
 .cal {
   top: 0;
   z-index: 1;
-
   background-color: var(--sidebar-color);
+}
+
+.mainView, .mainView .cal {
+  background-color: var(--card);
 }
 
 </style>
