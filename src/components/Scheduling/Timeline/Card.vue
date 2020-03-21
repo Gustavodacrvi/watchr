@@ -236,13 +236,19 @@ export default {
     ...mapGetters({
       getTaskStartAndEnd: 'task/getTaskStartAndEnd',
     }),
+    getCollisions() {
+      return this.collisions.find(el => this.task.id === el.target).collisions
+    },
     options() {
       return utilsTask.taskOptions(this.task, this)
     },
     newNonFormatedTime() {
-      return this.formatMin(
+      const res = this.formatMin(
         this.convertOffsetToMin(this.top + this.translateY, this.timelineHeight), false,
       )
+      if (res === '00:04')
+        return '00:05'
+      return res
     },
     newHeight() {
       return this.formatMin(
@@ -264,7 +270,7 @@ export default {
     },
     
     width() {
-      return `${100 - (this.collisions * 15)}%`
+      return `${100 - (this.getCollisions * 15)}%`
     },
     
     currentCardTimeAndEnd() {
@@ -300,7 +306,7 @@ export default {
       return this.getFullMin(this.dataTime)
     },
     zIndex() {
-      return this.collisions
+      return this.getCollisions
     },
 
     priorityColor() {
@@ -377,7 +383,7 @@ export default {
   right: 0;
   width: 100%;
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: var(--card);
   border: 1px solid var(--sidebar-color);
   transition: background-color .2s, width .2s, height .2s;
@@ -394,8 +400,8 @@ export default {
   left: 0;
   height: 10px;
   cursor: n-resize;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 
 .card:hover {
@@ -426,8 +432,8 @@ export default {
   height: 100%;
   width: 5px;
   transition-duration: .2s;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
 }
 
 .pri-t-enter, .pri-t-leave-to {

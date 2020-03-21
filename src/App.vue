@@ -37,6 +37,7 @@ const c = utils.asyncComp
 import mom from 'moment'
 
 import { mapGetters, mapState } from 'vuex'
+import timeline from './utils/timeline'
 
 export default {
   components: {
@@ -204,16 +205,21 @@ export default {
         this.saveHistory = true
       } else saveTitle('watchr')
     },
-    getCalendarEvents() {
-      if (typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
-        gapi.client.calendar.calendarList.list().then(res => {
-          this.$store.commit('saveCalendarList', res.result.items)
-        })
-        gapi.client.calendar.colors.get().then(res => {
-          this.$store.commit('saveCalendarColorIds', res.result.event)
-        })
+    
+    async getCalendarList() {
+      if (this.allowCalendar && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
+        let res = await gapi.client.calendar.calendarList.list()
+        this.$store.commit('saveCalendarList', res.result.items)
+        
+        res = await gapi.client.calendar.colors.get()
+        this.$store.commit('saveCalendarColorIds', res.result.event)
       }
+      return;
     },
+    async getCalendarEvents() {
+      this.$store.commit('saveViewEvents', await timeline.getEvents(this, this.calendarDate))
+    },
+    
     async getGmailInbox() {
       if (this.userInfo.getGmailInbox && typeof gapi !== 'undefined' && gapi.client && gapi.client.gmail) {
         const res = await gapi.client.gmail.users.threads.list({
@@ -254,8 +260,8 @@ export default {
     },
   },
   computed: {
-    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift', 'userInfo', 'scheduling']),
-    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'getInitialSmartView', 'needsUpdate', 'layout', 'deviceLayout']),
+    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos', 'isOnShift', 'userInfo', 'scheduling', 'allowCalendar']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'getInitialSmartView', 'calendarDate', 'needsUpdate', 'layout', 'deviceLayout']),
     isReady() {
       return this.$store.state.googleCalendarReady
     },
@@ -309,7 +315,15 @@ export default {
 
       this.lastRouteCameFromMenu = from.path === '/menu'
     },
-    isReady() {
+    async allowCalendar() {
+      await this.getCalendarList()
+      await this.getCalendarEvents()
+    },
+    async isReady() {
+      await this.getCalendarList()
+      await this.getCalendarEvents()
+    },
+    async getCalendarEvents() {
       this.getCalendarEvents()
     },
     isGmailReady() {

@@ -9,10 +9,12 @@ export default {
   methods: {
     ...timeline,
     round(num, toRound) {
-      while ((Math.floor(toRound) % num) !== 0) {
-        toRound = Math.floor(toRound) - 1
-      }
-      return Math.floor(toRound)
+      const round = Math.floor(toRound)
+      const rest = round % num
+      
+      if (rest === 0)
+        return toRound
+      return round - rest
     },
     formatTime(time) {
       return mom(time, 'HH:mm').format(this.format)

@@ -5,12 +5,12 @@
       appear
       name='fade-t'
     >
-      <Card v-for='t in getCards' :key="t.task.id"
-        v-bind="t.task"
-        :duration="t.task.taskDuration"
-        :time="t.task.calendar.time"
-        :collisions='t.collisions'
-        :task='t.task'
+      <Card v-for='t in hasDurationAndTimeTasks' :key="t.id"
+        v-bind="t"
+        :duration="t.taskDuration"
+        :time="t.calendar.time"
+        :collisions='collisions'
+        :task='t'
 
         :timelineHeight='height'
 
@@ -67,19 +67,6 @@ export default {
         t => this.hasDurationAndTime(t)
       )
     },
-    getCards() {
-      const tasks = this.hasDurationAndTimeTasks
-      const collisions = this.collisions
-      const cards = []
-
-      for (let i = 0;i < tasks.length;i++)
-        cards.push({
-          task: tasks[i],
-          collisions: collisions[i]
-        })
-      
-      return cards
-    },
     timeArr() {
       return this.tasks.map(t => {
         if (!this.dragging)
@@ -106,8 +93,17 @@ export default {
           return next.ids.length === 0 ? tot : getTotal(next) + tot
         }, 0) + ids.length
       }
+
+      const totals = arr.map(getTotal)
+      let final = []
+
+      for (let i = 0;i < arr.length;i++)
+        final.push({
+          target: arr[i].target,
+          collisions: totals[i],
+        })
       
-      return arr.map(getTotal)
+      return final
     },
     shallowCollisions() {
       const arr = this.timeArr

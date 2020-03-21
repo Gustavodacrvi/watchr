@@ -173,7 +173,10 @@ const store = new Vuex.Store({
 
     googleCalendarReady: false,
     gmailReady: false,
+
     calendarList: [],
+    viewEvents: [],
+    
     calendarColorIds: {},
 
     isFirstSnapshot: true,
@@ -448,6 +451,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    saveViewEvents(state, arr) {
+      state.viewEvents = arr
+    },
     toggleScheduling(state) {
       state.scheduling = !state.scheduling
       localStorage.setItem('sidebarScheduling', state.scheduling)

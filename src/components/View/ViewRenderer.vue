@@ -45,9 +45,7 @@
 
         @open-main-comp='openMainComp'
       />
-      <CalendarEvents
-        :date='calendarDate'
-      />
+      <CalendarEvents/>
       <component v-if="extraListView && defer(3)" :is='extraListView.comp'
         v-bind="{...$props, ...extraListView}"
         ref='extraView'

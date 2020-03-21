@@ -106,7 +106,7 @@ export default {
 
       if (min >= 0 && min < 1440) {
 
-        this.ghostLine.top = evt.offsetY + 'px'
+        this.ghostLine.top = this.convertMinToOffset(min, this.height) + 'px'
         this.ghostLine.nonFormatedTime = this.formatMin(min, false)
         this.ghostLine.time = this.formatMin(min)
 
