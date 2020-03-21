@@ -15,6 +15,7 @@ import sort from '@/assets/icons/sort.svg'
 import tag from '@/assets/icons/tag.svg'
 import sortName from '@/assets/icons/sort-name.svg'
 import priority from '@/assets/icons/priority.svg'
+import tint from '@/assets/icons/tint.svg'
 import menu from '@/assets/icons/menu.svg'
 import tasks from '@/assets/icons/tasks.svg'
 import pen from '@/assets/icons/pen.svg'
@@ -81,7 +82,7 @@ const icons = {
   envelope, deadline, sleep, repeat, box, file,
   folder, heart, close, filter, magic, clock,
   pie, check, group, message, crown, play,
-  comment, logbook, moon,
+  comment, logbook, moon, tint,
   "later-lists": laterLists,
   "logged-lists": loggedLists,
   "faded-logged-lists": fadedLoggedLists,
