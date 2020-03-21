@@ -122,6 +122,7 @@ export default {
       for (let i = 0;i < arr.length;i++)
         final.push({
           target: arr[i].target,
+          color: arr[i].color,
           collisions: totals[i],
         })
       
@@ -131,13 +132,14 @@ export default {
       const arr = this.timeArr
 
       return arr.map(target => {
-        const {start: strStart, end: strEnd, id} = target
+        const {start: strStart, end: strEnd, id, color} = target
 
         const start = mom(target.start, 'HH:mm')
         const end = mom(target.end, 'HH:mm')
 
         return {
           target: id,
+          color,
           ids: arr.reduce((ids, taskProperties) => {
             const tryCollide = () => {
               if (taskProperties.id === id)

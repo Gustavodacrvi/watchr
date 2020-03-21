@@ -1,5 +1,5 @@
 <template>
-  <div class="Icon" :class="{box, active}">
+  <div class="Icon" :class="{box, active}" :style="{backgroundColor: getBoxColor}">
     <span
       class="icon remove-highlight"
       :style="{width: getWidth, color: getColor}"
@@ -51,7 +51,7 @@ import ActualIcon from './Icon.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'file', 'title', 'number', 'box', 'active', 'hover'],
+  props: ['icon', 'width', 'color', 'progress', 'file', 'title', 'number', 'box', 'active', 'hover', 'boxColor'],
   components: {
     ActualIcon,
   },
@@ -101,6 +101,10 @@ export default {
     getProgress() {
       return 18.5 * this.progress / 100
     },
+    getBoxColor() {
+      const color = this.boxColor || 'var(--light-gray)'
+      return this.iconHover || this.active ? color : ''
+    },
     getColor() {
       return this.iconHover && this.hover ? this.hover : this.color
     },
@@ -149,10 +153,6 @@ export default {
 
 .box .icon {
   transform: translateY(1px);
-}
-
-.box:hover, .active {
-  background-color: var(--light-gray);
 }
 
 .counter {

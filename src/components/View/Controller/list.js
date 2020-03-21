@@ -124,6 +124,14 @@ export default {
         for (const h of headings) {
           const pipedFilter = task => this.isTaskInHeading(task, h)
 
+          const save = obj => {
+            this.$store.dispatch('list/saveHeading', {
+              listId: viewList.id,
+              headingId: h.id,
+              heading: obj,
+            })
+          }
+          
           arr.push({
             name: h.name,
             id: h.id,
@@ -132,13 +140,22 @@ export default {
             notes: h.notes,
             calendarStr: true,
 
-            onEdit: tasks => name => {
-              this.$store.dispatch('list/saveHeadingName', {
-                name,
-                listId: viewList.id,
-                headingId: h.id,
-              })
-            },
+            color: h.color,
+            icons: [
+              {
+                icon: 'tint',
+                color: h.color,
+                options: {
+                  comp: 'ColorPicker',
+                  content: {
+                    color: h.color,
+                    callback: save,
+                  },
+                },
+              },
+            ],
+
+            onEdit: tasks => name => save({name}),
             sort: this.sortArray,
             order: h.tasks,
             filter: pipedFilter,
@@ -152,11 +169,7 @@ export default {
             fallbackItem: functionFallbacks.viewPositionFallbacks.listHeading,
             updateViewIds: functionFallbacks.updateOrderFunctions.listHeading,
 
-            saveNotes: notes => {
-              this.$store.dispatch('list/saveHeadingNotes', {
-                listId: viewList.id, notes, heading: h.id,
-              })
-            },
+            saveNotes: notes => save({notes}),
           })
         }
       }

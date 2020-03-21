@@ -723,12 +723,40 @@ export default {
         },
       },
       getItemStartAndEnd: {
+        deepStateTouch: {
+          'group/groups': [
+            'color'
+          ]
+        },
+        deepGetterTouch: {
+          'folder/folders': [
+            'color',
+          ],
+          'list/lists': [
+            'color',
+          ],
+        },
         getter({}, item) {
           const split = item.taskDuration.split(':') // HH:mm
           const start = item.calendar.time // HH:mm
-  
+
+          let color
+          if (item.folder)
+             color = (this['folder/folders'].find(el => el.id === item.folder) || {}).color
+          else if (item.group)
+             color = (this['group/groups'].find(el => el.id === item.group) || {}).color
+          else if (item.list) {
+            const list = (this['list/lists'].find(el => el.id === item.list) || {})
+
+            if (!item.heading)
+              color = list.color
+            else {
+              color = (list.headings.find(el => el.id === item.heading) || {}).color
+            }
+          }
+          
           return {
-            start,
+            start, color,
             id: item.id,
             end: mom(start, 'HH:mm')
               .add(parseInt(split[0], 10), 'hour')
@@ -739,9 +767,13 @@ export default {
         cache(args) {
           const t = args[0]
           return JSON.stringify({
-            time: t.taskDuration,
-            id: t.id,
-            start: t.calendar.time,
+            t: t.taskDuration,
+            l: t.list,
+            h: t.heading,
+            g: t.group,
+            f: t.folder,
+            i: t.id,
+            s: t.calendar.time,
           })
         },
       },

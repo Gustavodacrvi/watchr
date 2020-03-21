@@ -1107,13 +1107,13 @@ export default {
 
       b.commit()
     },
-    saveHeadingName({getters, rootState}, {listId, headingId, name}) {
+    saveHeading({getters, rootState}, {listId, headingId, heading}) {
       const list = getters.getListsById([listId])[0]
       const b = fire.batch()
       
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === headingId)
-      heads[i].name = name
+      heads[i] = {...heads[i], ...heading}
 
       setList(b, {headings: heads}, listId, rootState)
 

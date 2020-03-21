@@ -1,7 +1,7 @@
 <template>
   <div
     class="Card"
-    :class="{task: !isCalendarEvent, drag, resize, color, disableTransition}"
+    :class="{task: !isCalendarEvent, drag, resize, color: getColor, disableTransition}"
 
     :style="{top: top + 'px', zIndex}"
 
@@ -20,7 +20,7 @@
           height: computedHeight + 'px',
           width,
           transform: `translateY(${translateY}px)`,
-          backgroundColor: color,
+          backgroundColor: getColor,
         }"
       >
         <span class="info-wrapper">
@@ -248,8 +248,14 @@ export default {
       return !this.dataTime && !this.dataDuration
     },
     
+    findCollisions() {
+      return this.collisions.find(el => this.id === el.target)
+    },
     getCollisions() {
-      return this.collisions.find(el => this.id === el.target).collisions
+      return this.findCollisions.collisions
+    },
+    getColor() {
+      return this.color || this.findCollisions.color
     },
     options() {
       return this.isCalendarEvent ? [] : utilsTask.taskOptions(this.task, this)
@@ -372,10 +378,6 @@ export default {
 
 .disableTransition {
   transition: none;
-}
-
-.drag .info {
-  color: var(--purple);
 }
 
 .info {

@@ -61,11 +61,11 @@ export default {
           {
             icon: 'tint',
             title: 'Group color',
-            color: gro.color,
+            color: group.color,
             options: {
               comp: 'ColorPicker',
               content: {
-                color: gro.color,
+                color: group.color,
                 callback: save,
               },
             },

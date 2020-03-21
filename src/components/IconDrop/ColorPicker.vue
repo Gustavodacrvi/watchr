@@ -3,6 +3,7 @@
     <div
       class="color"
       title="Remove color"
+      
       @click="noColor"
     >
       <Icon class="bloqued"
@@ -13,6 +14,8 @@
     <div v-for="c in colors" :key="c.color"
       class="color"
       :title="c.name"
+      :class="{active: c.color === color}"
+      
       @click="select(c)"
     >
       <div class="fill" :style="{backgroundColor: c.color}"></div>
@@ -109,7 +112,7 @@ export default {
   border-radius: 1000px;
 }
 
-.color:hover {
+.color:hover, .active {
   background-color: var(--extra-light-gray);
   cursor: pointer;
 }
