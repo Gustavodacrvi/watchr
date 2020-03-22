@@ -314,7 +314,7 @@ export default {
       }
 
       const res = utils.calendarObjNaturalCalendarInput(' ' + n, this.userInfo.disablePmFormat)
-      if (res && res.calendar)
+      if (res)
         this.calendar = res.calendar
       else
         this.calendar = null

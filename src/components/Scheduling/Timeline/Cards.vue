@@ -10,6 +10,7 @@
         :time="t.calendar.time"
         :collisions='collisions'
         :task='t'
+        :mainView='mainView'
 
         :timelineHeight='height'
 
@@ -19,6 +20,7 @@
 
     <Card v-for="t in eventsTimeArr" :key="t.id"
       v-bind="t"
+      :mainView='mainView'
 
       :collisions='collisions'
       :timelineHeight='height'
@@ -39,7 +41,7 @@ export default {
   components: {
     Card,
   },
-  props: ['date', 'height'],
+  props: ['date', 'height', 'mainView'],
   data() {
     return {
       dragging: null,

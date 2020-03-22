@@ -184,7 +184,7 @@ const store = new Vuex.Store({
     clipboardTask: null,
     toggleClipboardPaste: false,
 
-    height: 6200, // timeline height
+    height: 6000, // timeline height
   },
   getters: {
     calendarDate(state) {

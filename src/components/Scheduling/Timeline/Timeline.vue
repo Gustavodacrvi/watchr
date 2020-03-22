@@ -25,6 +25,8 @@
     <Cards :class="{disableEvents: hovering}"
       :date='date'
       :height='height'
+
+      :mainView='mainView'
     />
 
     <DivisionLine v-if='showRedLine'
@@ -61,7 +63,7 @@ export default {
     DivisionLine,
     BackLines, Cards,
   },
-  props: ['date'],
+  props: ['date', 'mainView'],
   data() {
     return {
       current: mom().format('HH:mm'),

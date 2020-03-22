@@ -79,6 +79,7 @@
           autocomplete="off"
           type="text"
           ref='input'
+          :style="{color: getHeadingColor}"
 
           :value="edit"
           @input="v => edit = v.target.value"
@@ -502,7 +503,6 @@ export default {
   font-size: 1.17em;
   outline: none;
   background-color: transparent;
-  color: var(--primary);
   font-weight: bold;
   padding-left: 6px;
 }

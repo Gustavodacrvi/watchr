@@ -700,6 +700,7 @@ export default {
         completedFire: null,
         completeDate: null,
         completed: false,
+        canceled: false,
         checked: false,
         checkDate: null,
         fullCheckDate: null,

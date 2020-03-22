@@ -131,7 +131,7 @@ export default {
     ListIcons,
     ListEdit, CommentCounter,
   },
-  props: ['item', 'changingViewName', 'itemHeight'],
+  props: ['item', 'itemHeight'],
   data() {
     return {
       isEditing: false,
@@ -181,7 +181,7 @@ export default {
         this.doneTransition = false
         const s = cont.style
 
-        if (!(this.changingViewName && !this.isDesktopBreakPoint)) {
+        if (this.isDesktopBreakPoint) {
           s.transitionDuration = '0s'
           s.opacity = 0
           s.height = 0

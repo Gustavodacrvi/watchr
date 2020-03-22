@@ -65,6 +65,7 @@ export default {
     'time', 'duration',
 
     'start', 'end', 'color',
+    'mainView',
     
     'id', 'timelineHeight', 'priority', 'task'
   ],
@@ -123,11 +124,11 @@ export default {
       }
     },
     scroll(num) {
-      this.$parent.$parent.$parent.$emit('scroll', num)
+      this.getScrollingElement.scrollTop += num
 
       if (this.drag)
         this.translate(this.translateY + num)
-      else this.expand(this.expandY + num)
+      else if (this.resize) this.expand(this.expandY + num)
     },
     activateScrolling(scroll) {
       if (scroll !== this.lastScrollVal || (!this.dataTimeout && !this.interval)) {
@@ -151,7 +152,8 @@ export default {
       }
     },
     getScrollTop() {
-      return this.$parent.$parent.$parent.$parent.$el.scrollTop
+      console.log(this.getScrollingElement)
+      return this.getScrollingElement.scrollTop
     },
     translate(num) {
       if (num + this.top <= 0)
@@ -174,41 +176,46 @@ export default {
       evt.preventDefault()
       if (this.drag || this.resize) {
         const node = document.getElementById('sidebar-scroll')
+        
+        const pageY = evt.pageY
+        const scrollTop = this.getScrollTop()
 
-        const y = evt.pageY + this.getScrollTop()
+        const y = pageY + scrollTop
 
         const boundery = 60
 
-        if (((node.offsetHeight + this.getScrollTop()) - y) < boundery) {
+        if (((node.offsetHeight + scrollTop) - y) < boundery) {
           this.activateScrolling(10)
-        } else if (evt.pageY < boundery) {
+        } else if (pageY < boundery) {
           this.activateScrolling(-10)
         } else {
           this.removeScroll()
         }
 
-        const res = this.convertMinToOffset(
-          this.round(5,
-            this.convertOffsetToMin(y - this.dragStartY, this.timelineHeight)
-          ), this.timelineHeight
-        )
-
-        if (this.drag)
-          this.translate(res)
-        else this.expand(res)
-        
-        this.$emit('dragging', {
-          id: this.id,
-          time: this.newNonFormatedTime,
-          taskDuration: this.newHeight,
-        })
+        if (!this.interval) {
+          const res = this.convertMinToOffset(
+            this.round(5,
+              this.convertOffsetToMin(y - this.dragStartY, this.timelineHeight)
+            ), this.timelineHeight
+          )
+  
+          if (this.drag)
+            this.translate(res)
+          else if (this.resize) this.expand(res)
+          
+          this.$emit('dragging', {
+            id: this.id,
+            time: this.newNonFormatedTime,
+            taskDuration: this.newHeight,
+          })
+        }
       }
     },
     mouseup(evt) {
       this.drag = false
       this.resize = false
-      this.removeScroll()
       this.saveData()
+      this.removeScroll()
       this.$emit('dragging', null)
       
       this.translate(0)
@@ -251,6 +258,11 @@ export default {
     findCollisions() {
       return this.collisions.find(el => this.id === el.target)
     },
+    getScrollingElement() {
+      if (this.mainView)
+        return this.$parent.$parent.$parent.$parent.$el
+      return this.$parent.$parent.$parent.$parent.$parent.$el
+    },
     getCollisions() {
       return this.findCollisions.collisions
     },
@@ -269,12 +281,16 @@ export default {
       )
       if (res === '00:04')
         return '00:05'
+      
       return res
     },
     newHeight() {
-      return this.formatMin(
-        this.convertOffsetToMin(this.computedHeight, this.timelineHeight), false
-      )
+      return this.formatMin(this.newNonFormatedMin, false)
+    },
+    newNonFormatedMin() {
+      return this.round(5, 
+          this.convertOffsetToMin(this.computedHeight, this.timelineHeight)
+        )
     },
     newFormatedEnd() {
       if (this.isCalendarEvent)
@@ -283,9 +299,7 @@ export default {
 
       return this.formatTime(
         mom(this.newNonFormatedTime, 'HH:mm')
-        .add(parseInt(split[0], 10), 'hour')
-        .add(parseInt(split[1], 10), 'minute')
-        .format('HH:mm')
+        .add(this.newNonFormatedMin, 'minute')
       )
     },
     formatedTime() {
@@ -336,7 +350,9 @@ export default {
       )
     },
     getFullTimeMin() {
-      return this.getFullMin(!this.isCalendarEvent ? this.dataTime : this.start)
+      return this.round(5,
+        this.getFullMin(!this.isCalendarEvent ? this.dataTime : this.start)
+      )
     },
     zIndex() {
       return this.getCollisions

@@ -762,7 +762,7 @@ export default {
           if (calendar === undefined) calendar = null
           if (this.isEditingFiles && this.addedFiles.length > 0)
             this.savingTask = true
-          
+
           this.$emit('save', {
             ...t,
             list: this.listId,

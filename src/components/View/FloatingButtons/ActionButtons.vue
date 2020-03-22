@@ -76,6 +76,7 @@ export default {
       onStart: () => {
         this.moving = true
       },
+      onMove: evt => evt.to !== this.$el,
       onEnd: () => {
         if (this.inboxHover)
           this.openQuickAdd()

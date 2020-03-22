@@ -211,7 +211,7 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
@@ -393,7 +393,7 @@ export default {
           this.doneTransition = true
           done()
         }, 300)
-        if (!(this.changingViewName && !this.isDesktopDevice)) {
+        if (!(!this.isDesktopDevice)) {
           s.transitionDuration = '0s'
           s.opacity = 0
           s.height = 0

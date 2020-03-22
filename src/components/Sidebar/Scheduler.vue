@@ -11,7 +11,10 @@
           :allowTaskAdd='true'
         />
       </div>
-      <Timeline :date='current'/>
+      <Timeline
+        :date='current'
+        :mainView='mainView'
+      />
     </div>
   </div>
 </template>

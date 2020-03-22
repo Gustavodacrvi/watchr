@@ -140,7 +140,6 @@ export default {
       this.events = await timeline.getEvents(this, this.getDate)
     },
     getViewEvents() {
-      console.log(3)
       this.events = this.viewEvents
     },
     toggleEvents() {

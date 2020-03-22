@@ -48,7 +48,6 @@
           :viewName='viewName'
           :viewType='viewType'
           :rootHeadings='getLazyHeadingsIds'
-          :rootChanging='isChangingViewName'
           :headingFilterFunction='h.filterFunction'
           :headingFallbackItem='h.fallbackItem'
           :disableCalendarStr='h.disableCalendarStr'
@@ -93,7 +92,7 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
+  props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
   , 'scheduleObject', 'justAddedHeading',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
@@ -233,7 +232,7 @@ export default {
       })
     },
     leave(el, done) {
-      if (this.isChangingViewName || !this.isDesktopBreakPoint)
+      if (!this.isDesktopBreakPoint)
         return done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style

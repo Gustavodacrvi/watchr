@@ -1235,16 +1235,19 @@ export default {
                 {
                   icon: 'star',
                   id: 'd',
+                  color: 'var(--yellow)',
                   callback: () => saveDeadline(mom().format('Y-M-D')),
                 },
                 {
                   icon: 'sun',
                   id: 'çljk',
+                  color: 'var(--orange)',
                   callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
                 },
                 {
                   icon: 'calendar',
                   id: 'çljkasdf',
+                  color: 'var(--green)',
                   callback: () => ({
                     comp: 'CalendarPicker',
                     content: {
@@ -1259,6 +1262,7 @@ export default {
                 {
                   icon: 'bloqued',
                   id: 'asdf',
+                  color: 'var(--red)',
                   callback: () => saveDeadline(null),
                 },
               ]
@@ -1270,6 +1274,7 @@ export default {
                 {
                   icon: 'star',
                   id: 'd',
+                  color: 'var(--yellow)',
                   callback: () => this.saveDates({
                     type: 'specific',
                     specific: mom().format('Y-M-D'),
@@ -1278,6 +1283,7 @@ export default {
                 {
                   icon: 'sun',
                   id: 'çljk',
+                  color: 'var(--orange)',
                   callback: () => this.saveDates({
                     type: 'specific',
                     specific: mom().add(1, 'day').format('Y-M-D'),
@@ -1286,6 +1292,7 @@ export default {
                 {
                   icon: 'layer-group',
                   id: 'asdffds',
+                  color: 'var(--olive)',
                   callback: () => this.saveDates({
                     type: 'anytime',
                   }, ids)
@@ -1293,6 +1300,7 @@ export default {
                 {
                   icon: 'archive',
                   id: 'açlkjsdffds',
+                  color: 'var(--brown)',
                   callback: () => this.saveDates({
                     type: 'someday',
                   }, ids)
@@ -1300,12 +1308,14 @@ export default {
                 {
                   icon: 'calendar',
                   id: 'çljkasdf',
+                  color: 'var(--green)',
                   callback: () => {return {
                     comp: "CalendarPicker",
                     content: {callback: date => this.saveDates(date, ids)}}},
                 },
                 {
                   id: 'No date',
+                  color: 'var(--red)',
                   icon: 'bloqued',
                   callback: () => this.saveDates(null, ids)
                 },
@@ -1372,16 +1382,19 @@ export default {
                 {
                   icon: 'star',
                   id: 'd',
+                  color: 'var(--yellow)',
                   callback: () => saveDeadline(mom().format('Y-M-D')),
                 },
                 {
                   icon: 'sun',
                   id: 'çljk',
+                  color: 'var(--orange)',
                   callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
                 },
                 {
                   icon: 'calendar',
                   id: 'çljkasdf',
+                  color: 'var(--green)',
                   callback: () => ({
                     comp: 'CalendarPicker',
                     content: {
@@ -1408,6 +1421,7 @@ export default {
                 {
                   icon: 'star',
                   id: 'd',
+                  color: 'var(--yellow)',
                   callback: () => this.saveDates({
                     type: 'specific',
                     specific: mom().format('Y-M-D'),
@@ -1416,6 +1430,7 @@ export default {
                 {
                   icon: 'sun',
                   id: 'çljk',
+                  color: 'var(--orange)',
                   callback: () => this.saveDates({
                     type: 'specific',
                     specific: mom().add(1, 'day').format('Y-M-D'),
@@ -1424,6 +1439,7 @@ export default {
                 {
                   icon: 'layer-group',
                   id: 'açlkjsdffd',
+                  color: 'var(--olive)',
                   callback: () => this.saveDates({
                     type: 'anytime',
                   }, ids)
@@ -1431,6 +1447,7 @@ export default {
                 {
                   icon: 'archive',
                   id: 'açlkjsdffds',
+                  color: 'var(--brown)',
                   callback: () => this.saveDates({
                     type: 'someday',
                   }, ids)
@@ -1438,6 +1455,7 @@ export default {
                 {
                   icon: 'calendar',
                   id: 'çljkasdf',
+                  color: 'var(--green)',
                   callback: () => {return {
                     comp: "CalendarPicker",
                     content: {callback: date => this.saveDates(date, ids)}}},
