@@ -1,8 +1,8 @@
 <template>
-  <div class="Icon" :class="{box, active}">
+  <div class="Icon" :class="{box, active}" :style="{backgroundColor: getBoxColor}">
     <span
       class="icon remove-highlight"
-      :style="{width: getWidth, color}"
+      :style="{width: getWidth, color: getColor}"
       @click="iconClick"
 
       @mouseenter='iconEnter'
@@ -51,7 +51,7 @@ import ActualIcon from './Icon.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'file', 'title', 'number', 'box', 'active'],
+  props: ['icon', 'width', 'color', 'progress', 'file', 'title', 'number', 'box', 'active', 'hover', 'boxColor'],
   components: {
     ActualIcon,
   },
@@ -59,13 +59,16 @@ export default {
     return {
       showingTitle: false,
       timeoutTitle: null,
+      iconHover: false,
     }
   },
   methods: {
     iconEnter() {
+      this.iconHover = true
       this.timeoutTitle = setTimeout(() => this.showingTitle = true, 500)
     },
     iconLeave() {
+      this.iconHover = false
       clearTimeout(this.timeoutTitle)
       this.showingTitle = false
     },
@@ -97,6 +100,13 @@ export default {
     ...mapGetters(['isDesktopDevice']),
     getProgress() {
       return 18.5 * this.progress / 100
+    },
+    getBoxColor() {
+      const color = this.boxColor || 'var(--light-gray)'
+      return this.iconHover || this.active ? color : ''
+    },
+    getColor() {
+      return this.iconHover && this.hover ? this.hover : this.color
     },
     fileInput() {
       return this.$refs['file']
@@ -143,10 +153,6 @@ export default {
 
 .box .icon {
   transform: translateY(1px);
-}
-
-.box:hover, .active {
-  background-color: var(--light-gray);
 }
 
 .counter {
@@ -222,13 +228,13 @@ export default {
 .title-trans-enter, .title-trans-leave-to {
   opacity: 0;
   transform: translate(-50%, 25px);
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .title-trans-leave, .title-trans-enter-to {
   opacity: 1;
   transform: translate(-50%, 0px);
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 </style>

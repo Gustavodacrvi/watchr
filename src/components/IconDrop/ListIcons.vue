@@ -62,7 +62,7 @@
           ><div class="division-line hide-trans"></div></div>
           <div v-else-if="l.type === 'button'" :key="l.name">
             <div class="btn">
-              <ButtonApp
+              <ButtonInput
                 type='tiny'
                 :value='l.name'
                 @click='linkCallback(l.callback, l)'
@@ -80,7 +80,7 @@
           <ButtonInput class="abs-btn"
             type='tiny'
             value='Save selected'
-            @click='saveSelected'
+            @click.native='saveSelected'
           />
         </div>
       </div>
@@ -291,7 +291,7 @@ export default {
 .link {
   display: flex;
   align-items: center;
-  transition-duration: .15s;
+  transition-duration: .2s;
   white-space: nowrap;
   height: 26px;
   overflow: hidden;
@@ -365,7 +365,7 @@ export default {
 .header-link {
   margin: 8px 20px;
   width: 160px;
-  transition: opacity .15s;
+  transition: opacity .2s;
 }
 
 .input {

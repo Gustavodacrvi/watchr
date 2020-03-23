@@ -57,6 +57,20 @@ export default {
           group: group.id,
           room: group.id,
         } : undefined,
+        icons: [
+          {
+            icon: 'tint',
+            title: 'Group color',
+            color: group.color,
+            options: {
+              comp: 'ColorPicker',
+              content: {
+                color: group.color,
+                callback: save,
+              },
+            },
+          },
+        ],
         notes: {
           name: group.notes || null,
           save: notes => {

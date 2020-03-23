@@ -1,6 +1,8 @@
 <template>
   <div class="Sidebar-wrapper"
-    :class="[layout, {'scroll-thin': isDesktopBreakPoint, 'slim-sidebar': slimMode}]"
+    :class="[layout, {'scroll-thin': isDesktopBreakPoint, 'slim-sidebar': slimMode, showing}]"
+
+    id='sidebar-scroll'
 
     @mouseenter="sidebarHover = true"
     @mouseleave="sidebarHover = false"
@@ -12,97 +14,94 @@
         :style="{width}"
       ></div>
       <div class="inner-wrapper">
-        <div>
-          <transition name="bar-trans">
+        <transition
+          name="bar-trans"
+        >
           <div v-if="!isDesktopBreakPoint || showing" class="sidebar-content">
-              <SidebarRenderer
-                type='list'
-                :isSmart='true'
-                :enableSort='true'
-                :disabled='false'
-                :disableSelection='true'
-                :showColor='true'
-                :list='getLinksOrdered'
-                :active='value'
-                :onTaskDrop='onTaskDrop'
-                :viewType='viewType'
+            <transition
+              :name='isScheduling ? "mr": "ml"'
+            >
+              <div v-if="!isScheduling" class="menus">
+                <SidebarRenderer
+                  type='list'
+                  :isSmart='true'
+                  :enableSort='true'
+                  :disabled='false'
+                  :disableSelection='true'
+                  :showColor='true'
+                  :list='getLinksOrdered'
+                  :active='value'
+                  :onTaskDrop='onTaskDrop'
+                  :viewType='viewType'
 
-                :mapNumbers='numberOfTasks'
-                @update='update'
-              />
-              <div v-if='showFavorites' style="margin-top: 25px"></div>
-              <SidebarRenderer v-if="showFavorites"
-                :enableSort='true'
-                :disabled='false'
-                :disableItemAdd='true'
-                :isSmart='false'
-                :disableSelection='true'
-                :list='getFavoritesRenderList'
-                :active='value'
-                :viewType='viewType'
-
-                :mapNumbers='mapFavorites'
-                :mapProgress='mapProgress'
-                @update='updateFavorites'
-              />
-              <div v-if="!isSingleSection" class="header">
-                <div v-for="(s,i) in notHidedSections" :key="s.name"
-                  class="option section-option"
-                  :class="{sectionActive: s.name === section}"
-                  :tabindex="i + 1 + links.length"
-                  @click="moveLine(i)"
-                  :data-section="s.name"
-                >{{ s.name }}
-                </div>
-                <div class="line section-line"></div>
-              </div>
-              <div v-else style="margin-top: 25px"></div>
-              <div class="comp-wrapper">
-                <transition name="sect-trans"
-                  @leave="leave"
-                  @enter="enter"
-                >
-                  <component
-                    class="component sidebar-section floating-btn-container"
-                    :is="section"
-                    :active="value"
-                    :viewType='viewType'
-                    :viewName='viewName'
-                    :showDefered='showDefered'
-                    :showRepeat='showRepeat'
-                    :data-transindex="getSidebarIndex(section)"
-                  />
-                </transition>
-              </div>
-              <div class='extra-margin' style="height: 300px"></div>
-            </div>
-          </transition>
-        </div>
-        <div v-if="!removeFooter" class="footer" :class="[layout, {showing}]" :style="{width}">
-          <div class="inner-footer">
-            <div class="drop" v-if="showIconDropdown">
-              <Icon v-for="i in sideIcons" :key='i.icon'
-                class="sect-icon passive cursor remove-highlight primary-hover"
-                :icon='i.icon'
-               
-                :number='i.number'
-                color='var(--fade)'
-                @click="i.callback"
-              />
-              <transition name="icon-t">
-                <IconDrop
-                  class="right passive"
-                  handle='settings-h'
-                 
-                  handleColor='var(--fade)'
-                  :options="getSectionOptions"
+                  :mapNumbers='numberOfTasks'
+                  @update='update'
                 />
-              </transition>
-            </div>
-            <div></div>
-            <Icon v-if="isDesktopBreakPoint" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="toggleSidebar"/>
+                <div v-if='showFavorites' style="margin-top: 25px"></div>
+                <SidebarRenderer v-if="showFavorites"
+                  :enableSort='true'
+                  :disabled='false'
+                  :disableItemAdd='true'
+                  :isSmart='false'
+                  :disableSelection='true'
+                  :list='getFavoritesRenderList'
+                  :active='value'
+                  :viewType='viewType'
+
+                  :mapNumbers='mapFavorites'
+                  :mapProgress='mapProgress'
+                  @update='updateFavorites'
+                />
+                <div v-if="!isSingleSection" class="header">
+                  <div v-for="(s,i) in notHidedSections" :key="s.name"
+                    class="option section-option"
+                    :class="{sectionActive: s.name === section}"
+                    :tabindex="i + 1 + links.length"
+                    @click="moveLine(i)"
+                    :data-section="s.name"
+                  >{{ s.name }}
+                  </div>
+                  <div class="line section-line"></div>
+                </div>
+                <div v-else style="margin-top: 25px"></div>
+                <div class="comp-wrapper">
+                  <transition name="sect-trans"
+                    @leave="leave"
+                    @enter="enter"
+                  >
+                    <component
+                      class="component sidebar-section floating-btn-container"
+                      :is="section"
+                      :active="value"
+                      :viewType='viewType'
+                      :viewName='viewName'
+                      :showDefered='showDefered'
+                      :showRepeat='showRepeat'
+                      :data-transindex="getSidebarIndex(section)"
+                    />
+                  </transition>
+                </div>
+                <div class='extra-margin' style="height: 300px"></div>
+              </div>
+              <Scheduler
+                @scroll='scroll'
+                v-else
+              />
+            </transition>
           </div>
-        </div>
+        </transition>
+        <SidebarFooter
+          :class="[layout]"
+          :render='showing'
+          :style="{width}"
+          :slimMode='slimMode'
+          :showIconDropdown='showIconDropdown'
+          :scheduling='isScheduling'
+          :getSectionOptions='getSectionOptions'
+          :sideIcons='sideIcons'
+          @toggle-sidebar='toggleSidebar'
+          @toggle-scheduling='toggleScheduling'
+        />
       </div>
     </div>
     <div v-if="isDesktopBreakPoint && !sidebarHided && !removeHandle"
@@ -110,7 +109,7 @@
       :class="{sidebarHover}"
       :style="sidebarHandle"
 
-      @pointerdown='pointerdown'
+      @pointerdown.prevent='pointerdown'
     ></div>
   </div>
 </template>
@@ -124,8 +123,10 @@ import TagsVue from './Sections/Tags.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import RendererVue from './Renderer.vue'
 import SearchButtonVue from './SearchButton.vue'
+import SidebarFooter from './Components/Footer.vue'
+import Scheduler from './Scheduler.vue'
 
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapMutations } from 'vuex'
 
 import utils from '@/utils'
 import utilsList from '@/utils/list'
@@ -135,14 +136,14 @@ import utilsGroup from '@/utils/group'
 
 export default {
   props: ['value', 'width', 'sidebarHided', 'pressingHandle',
-    'disableSearch', 'removeHandle', 'removeBacklayer', 'removeFooter',
+    'disableSearch', 'removeHandle', 'removeBacklayer',
     'slimMode',
   ],
   components: {
     SidebarElement: SidebarElementVue,
     IconDrop: IconDropVue,
-    Lists: ListsVue,
-    Tags: TagsVue,
+    Lists: ListsVue, SidebarFooter,
+    Tags: TagsVue, Scheduler,
     Filters: FiltersVue,
     SidebarRenderer: RendererVue,
     SearchButton: SearchButtonVue,
@@ -200,6 +201,8 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    ...mapMutations(['toggleScheduling']),
+    
     pointerdown(evt) {
       this.$emit('handle-pointerdown', evt)
     },
@@ -250,7 +253,7 @@ export default {
         el.classList.add('to-left')
       }
       requestAnimationFrame(() => {
-        el.style.transitionDuration = '.15s'
+        el.style.transitionDuration = '.2s'
         el.classList.remove('to-right')
         el.classList.remove('to-left')
       })
@@ -267,6 +270,9 @@ export default {
     },
     toggleSidebar() {
       this.$emit('sidebar')
+    },
+    scroll(num) {
+      this.$el.scrollTop += num
     },
     moveLineToActive() {
       if (this.$el) {
@@ -336,6 +342,7 @@ export default {
       userInfo: state => state.userInfo,
       viewName: state => state.viewName,
       viewType: state => state.viewType,
+      scheduling: state => state.scheduling,
     }),
     ...mapGetters({
       tags: 'tag/tags',
@@ -343,6 +350,7 @@ export default {
       layout: 'layout',
       isStandAlone: 'isStandAlone',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
+      isDesktopDevice: 'isDesktopDevice',
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       getNumberOfListsByView: 'list/getNumberOfListsByView',
@@ -356,6 +364,9 @@ export default {
       favGroups: 'group/getFavoriteGroups',
       favTags: 'tag/getFavoriteTags',
     }),
+    isScheduling() {
+      return !this.slimMode && this.scheduling
+    },
     sidebarHandle() {
       return {
         left: (parseInt(this.width, 10) - 18) + 'px'
@@ -636,12 +647,43 @@ export default {
 
 .sidebar-content {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.slim-sidebar .sidebar-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  box-sizing: border-box;
 }
 
 .Sidebar {
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+
+.margin-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.inner-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.slim-sidebar .inner-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .mobile .margin-wrapper {
@@ -657,33 +699,12 @@ export default {
   height: 100%;
 }
 
-.Sidebar-wrapper.desktop::-webkit-scrollbar {
-  display: none;
+.Sidebar-wrapper.showing {
+  overflow: auto;
 }
 
 .Sidebar-wrapper.desktop {
   padding: 0 30px;
-}
-
-.footer {
-  position: absolute;
-  left: 0;
-  bottom: 0px;
-  height: 40px;
-  border: none;
-  padding: 0 25px;
-}
-
-.footer.mobile {
-  bottom: 15px;
-  height: 53px;
-  width: 100%;
-  margin-left: 0;
-  padding: 0;
-}
-
-.mobile .inner-footer {
-  box-shadow: 0 -3px 3px black;
 }
 
 .comp-wrapper {
@@ -719,7 +740,7 @@ export default {
   background-color: var(--primary);
   width: 100px;
   height: 2px;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .pressingHandle {
@@ -732,7 +753,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .15s;
+  transition-duration: .2s;
   cursor: pointer;
   color: var(--fade);
   outline: none;
@@ -753,56 +774,6 @@ export default {
 
 .sectionActive {
   color: var(--primary) !important;
-}
-
-#sidebar-arrow {
-  position: absolute;
-  left: 3px;
-  transform: translateY(5px) rotate(90deg);
-  transition: opacity .3s, left .3s, transform .3s;
-}
-
-#sidebar-arrow.hided {
-  transform: translateY(5px) rotate(-90deg);
-}
-
-.inner-footer {
-  position: relative;
-  background-color: none;
-  box-shadow: none;
-  transition-duration: 0;
-  height: 100%;
-}
-
-.showing .inner-footer {
-  background-color: var(--sidebar-color);
-  box-shadow: 0 -3px 4px var(--sidebar-color);
-}
-
-.sect-icon {
-  margin-right: 12px;
-}
-
-.mobile .showing .inner-footer {
-  background-color: var(--back-color);
-  box-shadow: 0 -3px 4px var(--back-color);
-}
-
-.drop {
-  position: absolute;
-  right: 17px;
-  display: flex;
-  transform: translate(16px, 10px);
-}
-
-.footer.mobile .drop {
-  right: unset;
-  bottom: 24px;
-}
-
-.mobile .drop {
-  right: unset;
-  left: 0;
 }
 
 .bar-trans-enter, .bar-trans-leave-to {
@@ -826,10 +797,13 @@ export default {
 }
 
 .slim-sidebar .margin-wrapper {
-  margin: 0;
-  padding: 12px;
-  max-height: 350px;
-  overflow: auto;
+  padding: 26px;
+  padding-bottom: 0;
+  height: 90%;
+  box-sizing: border-box;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: var(--card);
   border-radius: 16px;
   box-shadow: 0 4px 14px rgba(10,10,10,.3);
@@ -862,12 +836,12 @@ export default {
 
 .icon-t-enter, .icon-t-leave-to {
   opacity: 0 !important;
-  transition-duration: .15s !important;
+  transition-duration: .2s !important;
 }
 
 .icon-t-leave, .icon-t-enter-to {
   opacity: 1 !important;
-  transition-duration: .15s !important;
+  transition-duration: .2s !important;
 }
 
 .search-t-enter, .search-t-leave-to {
@@ -880,6 +854,27 @@ export default {
   opacity: 1;
   height: 35px;
   transition: height .3s, opacity .3s;
+}
+
+.mr-enter-active, .mr-leave-active, .ml-enter-active, .ml-leave-active {
+  transition-duration: .3s;
+  position: absolute;
+  width: 100%;
+}
+
+.mr-enter, .ml-leave {
+  transform: translateX(100px);
+  opacity: 0;
+}
+
+.mr-enter-to, .mr-leave, .ml-enter, .ml-leave-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.mr-leave, .ml-enter {
+  transform: translateX(-100px);
+  opacity: 0;
 }
 
 </style>

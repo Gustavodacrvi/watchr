@@ -48,7 +48,6 @@
           :viewName='viewName'
           :viewType='viewType'
           :rootHeadings='getLazyHeadingsIds'
-          :rootChanging='isChangingViewName'
           :headingFilterFunction='h.filterFunction'
           :headingFallbackItem='h.fallbackItem'
           :disableCalendarStr='h.disableCalendarStr'
@@ -93,7 +92,7 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
+  props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
   , 'scheduleObject', 'justAddedHeading',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
@@ -116,6 +115,13 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    selectAll() {
+      const keys = Object.keys(this.$refs)
+      keys.forEach(k => {
+        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].selectAll)
+          this.$refs[k][0].selectAll()
+      })
+    },
     getContHeight(h) {
       const l = h.items.length
       if (!this.showAllHeadingsItems)
@@ -226,7 +232,7 @@ export default {
       })
     },
     leave(el, done) {
-      if (this.isChangingViewName || !this.isDesktopBreakPoint)
+      if (!this.isDesktopBreakPoint)
         return done()
       const w = el.style
       const s = el.getElementsByClassName('header-wrapper')[0].style

@@ -33,6 +33,19 @@
               />
               <h3 class="name" :class="{hasIcon}" :style="{color: getHeadingColor}">{{ name }}</h3>
             </span>
+            <template v-if="icons">
+              <span v-for="i in icons" :key="i.name">
+                <Icon
+                  class="hover primary-hover cursor"
+                  :color='i.color'
+                  :hover='i.color'
+                  :icon='i.icon'
+                  :box='true'
+                  boxColor='var(--sidebar-color)'
+                  @click="openOptions(i.options)"
+                />
+              </span>
+            </template>
           </div>
           <div v-else class="header">
             <div>
@@ -66,6 +79,7 @@
           autocomplete="off"
           type="text"
           ref='input'
+          :style="{color: getHeadingColor}"
 
           :value="edit"
           @input="v => edit = v.target.value"
@@ -96,7 +110,7 @@ export default {
   mixins: [
     Defer(),
   ],
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon', 'nonFiltered', 'autoSchedule'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon', 'nonFiltered', 'autoSchedule', 'icons'],
   components: {
     CalendarEvents,
     EditHeading: EditVue,
@@ -125,6 +139,9 @@ export default {
     }
   },
   methods: {
+    openOptions(opt) {
+      this.$store.commit('pushIconDrop', opt)
+    },
     keydown({key}) {
       if (key === "Enter")
         this.checkText()
@@ -218,7 +235,7 @@ export default {
       }
     },
     openMobileOptions() {
-      window.navigator.vibrate(100)
+      window.navigator.vibrate(20)
       this.$store.commit('pushIconDrop', this.options(this.nonFiltered, this.autoSchedule))
     },
     touchStart(e) {
@@ -432,7 +449,13 @@ export default {
   height: 35px;
   opacity: 1;
   z-index: 50;
-  cursor: text;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  transition: background-color .2s;
+}
+
+.header-wrapper:hover {
+  background-color: var(--dark-light-gray);
 }
 
 .notRendering {
@@ -451,12 +474,14 @@ export default {
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 
 .name {
   display: inline-block;
   margin: 0;
+  user-select: none;
   color: var(--primary);
 }
 
@@ -465,16 +490,19 @@ export default {
 }
 
 .input-wrapper {
-  height: 50px;
+  height: 35px;
   display: flex;
   align-items: center;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  background-color: var(--dark-light-gray);
   border-bottom: 1.5px solid var(--light-gray);
 }
 
 .input {
   font-size: 1.17em;
   outline: none;
-  color: var(--primary);
+  background-color: transparent;
   font-weight: bold;
   padding-left: 6px;
 }

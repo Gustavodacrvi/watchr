@@ -126,7 +126,7 @@ export default {
     },
     configFilterOptions() {
       const n = this.viewName
-      if (n === 'Logbook')
+      if (n === 'Logbook' || this.viewType === 'Search')
         return pipe => pipe !== 'pipeCanceled' && pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
       if (n === 'Recurring' || n === 'Later lists')
         return pipe => pipe !== 'pipeSomeday' && pipe !== 'pipeCompleted'
@@ -152,6 +152,8 @@ export default {
       return null
     },
     headings() {
+      if (this.viewType === 'search')
+        return this.searchHeadings
       const heads = this.getListHeadingsByView
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadings
@@ -193,14 +195,6 @@ export default {
     },
     icon() {
       return this.isSmart ? this.$store.getters.getIcon : null
-    },
-    smartComponent() {
-      if (this.viewName === 'Calendar')
-        return 'ViewRendererLongCalendarPicker'
-      return null
-    },
-    onSmartComponentUpdate() {
-      return date => this.calendarDate = date
     },
     disableRootActions() {
       return this.isFixedHeadingsView

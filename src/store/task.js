@@ -5,12 +5,13 @@ import fb from 'firebase/app'
 import Vue from 'vue'
 
 import utils from '../utils'
+import timeline from '../utils/timeline'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
 import { uid, fd, setInfo, folderRef, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList, setGroup } from '../utils/firestore'
 
-import mom from 'moment'
+import mom, { duration } from 'moment'
 
 const TODAY_MOM = mom()
 
@@ -105,6 +106,7 @@ export default {
     isTaskInListRoot: () => t => t.list && !t.heading,
     isTaskInbox: () => t => !t.calendar,
     isRecurringTask: () => t => t.calendar && t.calendar.type !== 'someday' && t.calendar.type !== 'specific' && t.calendar.type !== 'anytime',
+    hasDurationAndTime: () => t => t.calendar && t.calendar.time && t.taskDuration,
     
     ...MemoizeGetters({
       isCalendarObjectShowingToday: {
@@ -705,7 +707,7 @@ export default {
       },
 
 
-            getEndsTodayTasks: {
+      getEndsTodayTasks: {
         deepGetterTouch: {
           'task/tasks': [
             'completed',
@@ -718,6 +720,64 @@ export default {
         },
         cache(args) {
           return args[0]
+        },
+      },
+      getItemStartAndEnd: {
+        deepStateTouch: {
+          'group/groups': [
+            'color'
+          ]
+        },
+        deepGetterTouch: {
+          'folder/folders': [
+            'color',
+          ],
+          'list/lists': [
+            'color',
+            'headings',
+          ],
+        },
+        getter({}, item) {
+          const split = item.taskDuration.split(':') // HH:mm
+          const start = item.calendar.time // HH:mm
+
+          let color
+          if (item.folder)
+             color = (this['folder/folders'].find(el => el.id === item.folder) || {}).color
+          else if (item.group)
+             color = (this['group/groups'].find(el => el.id === item.group) || {}).color
+          else if (item.list) {
+            const list = (this['list/lists'].find(el => el.id === item.list) || {})
+
+            if (!item.heading)
+              color = list.color
+            else {
+              color = (list.headings.find(el => el.id === item.heading) || {}).color
+              if (!color)
+                color = list.color
+            }
+          }
+          
+          return {
+            start, color,
+            id: item.id,
+            end: mom(start, 'HH:mm')
+              .add(parseInt(split[0], 10), 'hour')
+              .add(parseInt(split[1], 10), 'minute')
+              .format('HH:mm'),
+          }
+        },
+        cache(args) {
+          const t = args[0]
+          return JSON.stringify({
+            t: t.taskDuration,
+            l: t.list,
+            h: t.heading,
+            g: t.group,
+            f: t.folder,
+            i: t.id,
+            s: t.calendar.time,
+          })
         },
       },
       getNumberOfTasksByTag: {
@@ -900,6 +960,41 @@ export default {
 
       return b.commit()
     },
+    saveTaskTimelineByIds({rootState, getters}, {ids, time, date}) {
+      const writes = []
+      const b = fire.batch()
+
+      const items = getters.getTasksById(ids)
+
+      items.forEach(t => {
+        let calendar = getters.getSpecificDayCalendarObj(date)
+        let taskDuration = t.taskDuration || '00:15'
+        calendar.time = time
+
+        const height = rootState.height
+
+        const timeOffset = timeline.convertMinToOffset(
+          timeline.getFullMin(time), height
+        )
+        const durationOffset = timeline.convertMinToOffset(
+          timeline.getFullMin(taskDuration), height
+        )
+
+        if ((timeOffset + durationOffset) >= height) {
+          calendar.time = timeline.formatMin(
+            timeline.convertOffsetToMin(height - durationOffset, height), false
+            )
+        }
+        
+        setTask(b, {
+          calendar, taskDuration,
+        }, rootState, t.id, writes)
+      })
+
+      cacheBatchedItems(b, writes)
+
+      return b.commit()
+    },
     async addTask({rootState}, obj) {
       const b = fire.batch()
 
@@ -957,14 +1052,6 @@ export default {
           [date]: {schedule},
         }
       }, rootState)
-
-      b.commit()
-    },
-    saveCalendarOrder({rootState}, {ids, date}) {
-      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-      const b = fire.batch()
-      
-      setInfo(b, {calendarOrders}, rootState)
 
       b.commit()
     },
@@ -1131,6 +1218,7 @@ export default {
         completedFire: null,
         completeDate: null,
         completed: false,
+        canceled: false,
         checked: false,
         checkDate: null,
         fullCheckDate: null,

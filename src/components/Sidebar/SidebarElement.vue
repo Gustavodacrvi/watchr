@@ -166,7 +166,7 @@ export default {
       }
     },
     async openMobileOptions() {
-      window.navigator.vibrate(100)
+      window.navigator.vibrate(20)
       this.$store.commit('pushIconDrop', await this.getOptions(this.options))
     },
     sublistEnter(el, done) {
@@ -177,14 +177,16 @@ export default {
       s.height = 0
       s.opacity = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
-        s.height = this.sublistHeight
-        s.opacity = 1
         setTimeout(() => {
-          s.height = 'auto'
-          s.overflow = 'visible'
-          done()
-        }, 310)
+          s.transitionDuration = '.2s'
+          s.height = this.sublistHeight
+          s.opacity = 1
+          setTimeout(() => {
+            s.height = 'auto'
+            s.overflow = 'visible'
+            done()
+          }, 310)
+        })
       })
     },
     sublistLeave(el, done) {
@@ -192,10 +194,12 @@ export default {
       
       s.height = this.sublistHeight
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
-        s.height = '0px'
-        s.overflow = 'hidden'
-        setTimeout(done, 310)
+        setTimeout(() => {
+          s.transitionDuration = '.2s'
+          s.height = '0px'
+          s.overflow = 'hidden'
+          setTimeout(done, 310)
+        })
       })
     },
     touchStart(e) {
@@ -379,7 +383,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  transition-duration: .15s;
+  transition-duration: .2s;
   transform: translateY(0px);
 }
 
@@ -389,7 +393,7 @@ export default {
   left: 50%;
   transform: translate(-50%,-50%) !important;
   margin-top: 1.5px;
-  transition: color .15s;
+  transition: color .2s;
 }
 
 .Folder .SidebarElement {
@@ -399,7 +403,7 @@ export default {
 .link-wrapper {
   height: 25px;
   position: relative;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .mobile.hasSubList .link-inner-wrapper {

@@ -17,7 +17,7 @@ export default {
   components: {
     AuthButton,
   },
-  props: ['content'], 
+  props: ['content'],
   methods: {
     callback() {
       if (this.content.callback) {

@@ -18,6 +18,7 @@
     :progress='getPieProgress'
     :headings='headings'
     :headingsOrder='headingsOrder'
+    :calendarDate='calendarDate'
     :showAllHeadingsItems='showAllHeadingsItems'
     :rootFallbackItem='rootFallbackItem'
     :getCalendarOrderDate='getCalendarOrderDate'
@@ -36,8 +37,6 @@
     :showHeading='showHeading'
     :itemCompletionCompareDate='itemCompletionCompareDate'
     :configFilterOptions='configFilterOptions'
-    :smartComponent='smartComponent'
-    :onSmartComponentUpdate='onSmartComponentUpdate'
     :viewComponent='viewComponent'
     :isListType='isListType'
     :viewItem='viewItem'
@@ -85,7 +84,6 @@ export default {
   data() {
     return {
       showCompleted: false,
-      calendarDate: null,
 
       headingSchedules: {},
     }
@@ -217,6 +215,7 @@ export default {
     }),
     ...mapMutations(['pushToast']),
     ...mapGetters({
+      calendarDate: 'calendarDate',
       lists: 'list/lists',
       folders: 'folder/folders',
       tags: 'tag/tags',
@@ -304,14 +303,7 @@ export default {
       let groups = Array.from(setOfGroups)
       groups.forEach(f => f.smartViewControllerType = 'group')
 
-      let currentDate = mom()
-      if (viewName === 'Tomorrow')
-        currentDate.add(1, 'd')
-
-      currentDate = currentDate.format('Y-M-D')
-
-      if (viewName === 'Calendar')
-        currentDate = this.calendarDate
+      let currentDate = this.getCalendarOrderDate
 
       let calendarOrder = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
       // const { rootTasks, folderTasks, listTasks } = utilsTask.groupTaskIds()
@@ -634,6 +626,7 @@ export default {
       if (type === 'list') return 'list'
       if (type === 'folder') return 'folder'
       if (type === 'group') return 'group'
+      if (type === 'calendar') return 'calendar'
       return 'tag'
     },
     deadlinesViewHeadings() {
@@ -1179,21 +1172,6 @@ export default {
       const dispatch = this.$store.dispatch
 
       const date = this.getCalendarOrderDate
-
-      const saveOrder = ids => {
-        this.$store.dispatch('task/saveCalendarOrder', {
-          ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, ids),
-          date,
-        })
-      }
-      const onListAddItem = obj => {
-        this.$store.dispatch('list/addListByIndexCalendarOrder', {
-          ...obj,
-          ids: utilsTask.concatArraysRemovingOldEls(itemsOrder, obj.ids),
-          date,
-        })
-      }
-      
       if (this.hasEndsTodayLists) {
         const filterFunction = l => this.isListLastDeadlineDay(l, date)
 
@@ -1349,6 +1327,26 @@ export default {
       
       return arr
     },
+    searchHeadings() {
+      return [
+        {
+          name: 'Logbook tasks',
+          id: 'logbook tasks',
+          disableSortableMount: true,
+          logStr: true,
+          log: true,
+          icon: 'logbook',
+          color: 'var(--dark-blue)',
+
+          options: this.getLogbookOptions(),
+          sort: ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate'),
+          filter: task => 
+            this.isTaskInLogbook(task) &&
+            this.doesTaskIncludeText(task, this.viewName),
+          configFilterOptions: p => p !== 'pipeCompleted',
+        }
+      ]
+    },
     smartOrderListHeadings() {
 
       const viewName = this.viewName
@@ -1421,6 +1419,8 @@ export default {
         (n === 'Someday' || n === 'Anytime' || n === 'Inbox' || n === 'Assigned to me')
     },
     getCalendarOrderDate() {
+      if (this.calendarDate)
+        return this.calendarDate
       let currentDate = mom()
       const n = this.viewName
       if (n !== 'Tomorrow' && n !== 'Today' && n !== 'Calendar')
@@ -1429,9 +1429,6 @@ export default {
         currentDate.add(1, 'd')
 
       currentDate = currentDate.format('Y-M-D')
-
-      if (n === 'Calendar')
-        currentDate = this.calendarDate
 
       return currentDate
     },
@@ -1448,6 +1445,8 @@ export default {
       return this.userInfo.ungroupTasksInHeadings
     },
     isCalendarOrderViewType() {
+      if (this.viewType === 'calendar')
+        return true
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart && 
         (n === 'Today' || n === 'Tomorrow' || n === 'Calendar')

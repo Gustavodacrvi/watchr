@@ -38,7 +38,6 @@
 
           :itemHeight='itemHeight'
           :item='item'
-          :changingViewName='isChangingViewName'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
@@ -124,11 +123,12 @@
       </div>
     </div>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
+      ref='headings'
+      
       :viewName='viewName'
       :viewType='viewType'
       :viewNameValue='viewNameValue'
       :headings='getHeadings'
-      :isChangingViewName='isChangingViewName'
       :headingEditOptions='headingEditOptions'
       :isSmart='isSmart'
       :comp='comp'
@@ -184,7 +184,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
-  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 'width', 'disableCalendarStr',
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
@@ -196,15 +196,11 @@ export default {
     return {
       showingMoreItems: false,
       lazyItems: [],
-      lazyItemsSetTimeouts: [],
-      lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
       selectedElements: [],
       disableItemEnterTransitionIds: [],
       droppedIds: [],
-      changedViewName: true,
       waitingUpdateTimeout: null,
-      changingViewName: false,
 
       addedItem: null,
       edit: null,
@@ -217,6 +213,8 @@ export default {
       lastButtonElement: null,
       editMoveType: 'add',
       headingsItemsIds: [],
+      lazyItemsSetTimeouts: [],
+      lazyHeadingsSetTimeouts: [],
       oldRemovedIndicies: [],
       cameFromAnotherTab: false,
       cameFromAnotherTabIndex: null,
@@ -231,9 +229,10 @@ export default {
     }
   },
   created() {
-    if (!this.isRoot)
-      this.changedViewName = false
-    this.updateView()
+    this.updateItems()
+    if (this.isRoot) {
+      this.updateHeadings()
+    }
   },
   mounted() {
     if (this.header && this.header.name === this.addedHeading) {
@@ -269,6 +268,8 @@ export default {
           callback(this.$refs[k][0])
     },
     selectAll() {
+      if (this.isRoot && this.$refs.headings)
+        this.$refs.headings.selectAll()
       this.forEachItem(vm => vm.selectItem())
     },
     appendItem() {
@@ -302,7 +303,7 @@ export default {
           return offsetTop
         }
 
-        const listLength = this.sliceItems.length
+        const listLength = this.lazyItems.length
         const thresold = 1
         const itemHeight = this.itemHeight
         const mousePos = evt.pageY - getOffsetTop(draggableRoot)
@@ -482,7 +483,6 @@ export default {
       const i = this.lazyItems.findIndex(el => el.isEdit)
       if (i > -1) {
         this.lazyItems.splice(i, 1)
-        this.hasEdit = false
         this.edit = null
       }
     },
@@ -494,7 +494,6 @@ export default {
         propsData,
       }
       this.lazyItems.splice(index, 0, edit)
-      this.hasEdit = true
       this.edit = {...edit}
     },
     addEditComp(index) {
@@ -562,9 +561,11 @@ export default {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
+            const sortableRootName = e.el.dataset.name
             
-            if (e.el.dataset.name === 'sidebar-renderer') return true
-            if (e.el.dataset.name === 'folders-root') return true
+            if (sortableRootName === 'sidebar-renderer') return true
+            if (sortableRootName === 'folders-root') return true
+            if (sortableRootName === 'scheduler' && this.comp === "Task") return true
             if (d.type === 'Task' && this.comp === "Task") return true
             if (d.type === 'List' && this.comp === 'List') return true
             return false
@@ -798,7 +799,7 @@ export default {
           }
           
           if (!this.isDesktopDevice)
-            window.navigator.vibrate(100)
+            window.navigator.vibrate(20)
         },
         onChange: evt => {
           const item = evt.item
@@ -831,61 +832,6 @@ export default {
         obj.fallbackOnBody = true
       }
       this.sortable = new Sortable(this.draggableRoot, obj)
-    },
-    slowlyAddItems(items) {
-      return new Promise(solve => {
-        this.lazyItems = []
-        let i = 0
-        const length = items.length
-
-        const timeout = this.isDesktopDevice ? 15 : length * 5
-        
-        const add = item => {
-          this.lazyItems.push(item)
-          if ((i + 1) !== length)
-            this.lazyItemsSetTimeouts.push(setTimeout(() => {
-              i++
-              const t = items[i]
-              if (t) add(t)
-            }, timeout))
-          else solve()
-        }
-        const t = items[0]
-        if (t) add(t)
-        else solve()
-      })
-    },
-    slowlyAddHeadings(headings) {
-      return new Promise(solve => {
-        this.isAddingHeadings = true
-        this.lazyHeadings = []
-        let i = 0
-        const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(this.filterHeading)
-        const length = headinsgWithItems.length
-        let timeout = this.isDesktopDevice ? 80 : 230
-
-        if (length < 5) timeout = 175
-        
-        const add = (head) => {
-          this.lazyHeadings.push(head)
-          if ((i + 1) !== length)
-            this.lazyHeadingsSetTimeouts.push(setTimeout(() => {
-              i++
-              const h = headinsgWithItems[i]
-              if (h) add(h)
-            }, timeout))
-          else {
-            this.isAddingHeadings = false
-            solve()
-          }
-        }
-        const h = headinsgWithItems[0]
-        if (h) add(h)
-        else {
-          this.isAddingHeadings = false 
-          solve()
-        }
-      })
     },
     addHeading(name, ...args) {
       if (name) {
@@ -1047,30 +993,89 @@ export default {
         }
       }
     },
-    clearLazySettimeout() {
-      for (const set of this.lazyItemsSetTimeouts)
-        clearTimeout(set)
-      for (const set of this.lazyHeadingsSetTimeouts)
-        clearTimeout(set)
-      this.lazyItemsSetTimeouts = []
-      this.lazyHeadingsSetTimeouts = []
-    },
-    updateView() {
-      this.changedViewName = true
-      this.clearLazySettimeout()
-      
-      if (this.isDesktopDevice)
-        Promise.all([
-          this.slowlyAddHeadings(this.headings),
-          this.slowlyAddItems(this.items),
-        ]).then(() => {
-          this.changedViewName = false
-        })
-      else {
-        this.lazyItems = this.items.slice()
-        this.lazyHeadings = this.headings.slice()
-        this.changedViewName = false
+    clearHeadingsTimeout() {
+      if (this.lazyHeadingsSetTimeouts.length > 0) {
+        this.lazyHeadingsSetTimeouts.forEach(clearTimeout)
+        this.lazyHeadingsSetTimeouts = []
       }
+    },
+    clearItemsTimeout() {
+      if (this.lazyItemsSetTimeouts.length > 0) {
+        this.lazyItemsSetTimeouts.forEach(clearTimeout)
+        this.lazyItemsSetTimeouts = []
+      }
+    },
+    spliceNewItems(addedItems, lazyArrStr, timeoutProperty, timeout) {
+      if (addedItems.length === 0)
+        return;
+      
+      let i = 0
+      const splice = ({index, item}) => {
+        this[lazyArrStr].splice(index, 0, item)
+        if ((i + 1) !== addedItems.length)
+          this[timeoutProperty].push(
+            setTimeout(() => {
+              i++
+              if (addedItems[i])
+                splice(addedItems[i])
+            }, timeout)
+          )
+      }
+
+      splice(addedItems[0])
+      
+    },
+    updateChangedItems(sliceComputedStr, lazyArrStr, timeoutProperty, timeout) {
+      const newItems = this[sliceComputedStr]
+
+      const has = item => this[lazyArrStr].some(el => el.id === item.id)
+      
+      const finalItems = []
+      const addedItems = []
+
+      newItems.forEach((el, index) => {
+        if (has(el))
+          finalItems.push(el)
+        else {
+          addedItems.push({
+            item: el,
+            index,
+          })
+        }
+      })
+
+      this[lazyArrStr] = finalItems
+
+      this.spliceNewItems(addedItems, lazyArrStr, timeoutProperty, timeout)
+    },
+    updateHeadings() {
+      this.clearHeadingsTimeout()
+      this.updateChangedItems('slicedHeadings', 'lazyHeadings', 'lazyHeadingsSetTimeouts', this.isDesktopDevice ? 80 : 230)
+    },
+    updateItems() {
+      this.clearItemsTimeout()
+      let foundEdit
+      if (this.hasEdit && this.addedItem && this.edit) {
+        const oldEditIndex = this.lazyItems.findIndex(el => el.isEdit)
+        if (oldEditIndex > -1) {
+          foundEdit = true
+          this.lazyItems.splice(oldEditIndex, 1)
+        }
+      }
+
+      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 5 : length * 5)
+
+      if (foundEdit) {
+        const itemIndex = this.lazyItems.findIndex(el => el.id === this.addedItem)
+        if (itemIndex > -1) {
+          this.lazyItems.splice(itemIndex + 1, 0, this.edit)
+        }
+      }
+
+      const removedEls = this.selectedElements.filter(el => el && !this.lazyItems.find(t => t.id === el.dataset.id))
+      for (const el of removedEls)
+        this.deSelectItem(el)
+
     },
   },
   computed: {
@@ -1101,6 +1106,13 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    slicedHeadings() {
+      return this.showEmptyHeadings ? this.headings.slice() : this.headings.filter(this.filterHeading)
+    },
+    slicedItems() {
+      if (this.isRoot || this.showAllHeadingsItems) return this.items
+      return this.showingMoreItems ? this.items : this.items.slice(0, this.hasEdit ? 4 : 3)
+    },
     rootId() {
       if (this.isRoot && this.comp === "Task")
         return {id: `item-renderer-root`}
@@ -1123,14 +1135,11 @@ export default {
     getMainSelectionIndex() {
       return this.lazyItems.findIndex(i => i.id === this.mainSelection)
     },
-    isChangingViewName() {
-      return this.changingViewName || this.rootChanging
-    },
     isElementFromAnotherTabHovering() {
       return this.cameFromAnotherTab && this.cameFromAnotherTabHTMLElement === this.draggableRoot
     },
     getItems() {
-      const items = this.sliceItems.filter(el => el)
+      const items = this.lazyItems.filter(el => el)
       if (!this.isElementFromAnotherTabHovering)
         return items
 
@@ -1139,24 +1148,20 @@ export default {
       })
       return items
     },
-    sliceItems() {
-      if (this.isRoot || this.showAllHeadingsItems) return this.lazyItems
-      return this.showingMoreItems ? this.lazyItems : this.lazyItems.slice(0, this.hasEdit ? 4 : 3)
-    },
     nonEditGetItems() {
       return this.getItems.filter(el => !el.isEdit)
     },
-    nonEditLazyTasks() {
-      return this.lazyItems.filter(el => !el.isEdit)
+    nonEditItems() {
+      return this.items.filter(el => !el.isEdit)
     },
     computedShowSomedayButton() {
       return this.isRoot & this.showSomedayButton && this.getItems.filter(el => !el.isEdit).length > 0
     },
     showMoreItemsMessage() {
-      return `Show ${this.nonEditLazyTasks.length - 3} more items...`
+      return `Show ${this.items.length - 3} more items...`
     },
     showMoreItemsButton() {
-      return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditLazyTasks.length > 3
+      return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditItems.length > 3
     },
     getHeadings() {
       return this.lazyHeadings.filter(this.filterHeading)
@@ -1210,62 +1215,21 @@ export default {
         this.add(task, this.getMainSelectionIndex + 1, true)
       }
     },
-    items(newArr) {
-      if (this.waitingUpdateTimeout) {
-        clearTimeout(this.waitingUpdateTimeout)
-        this.waitingUpdateTimeout = null
-      }
-      
-      
-      const items = newArr.slice()
-      
-      this.waitingUpdateTimeout = setTimeout(() => {
-  
-        if (!this.changedViewName) {
-          this.clearLazySettimeout()
-
-          if (this.hasEdit && this.addedItem && this.edit) {
-            const oldEditIndex = this.lazyItems.findIndex(el => el.isEdit)
-            if (oldEditIndex > -1)
-              this.lazyItems.splice(oldEditIndex, 1)
-            const itemIndex = items.findIndex(el => el.id === this.addedItem)
-            if (itemIndex > -1) {
-              items.splice(itemIndex + 1, 0, this.edit)
-            }
-          }
-
-          this.lazyItems = items.slice()
-          const ts = this.lazyItems
-          const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))
-          for (const el of removedEls)
-            this.deSelectItem(el)
-
-          setTimeout(() => {
-            this.focusToggle = !this.focusToggle
-          })
-        }
-      }, 100)
+    lazyItems() {
+      this.hasEdit = this.lazyItems.some(el => el.isEdit)
+    },
+    items() {
+      this.updateItems()
+    },
+    showMoreItemsButton() {
+      this.updateItems()
     },
     headings(newArr) {
       if (this.isRoot) {
-        setTimeout(() => {
-          if (!this.changedViewName) {
-            this.lazyHeadings = newArr.slice()
-          }
-        })
+        this.updateHeadings()
       }
     },
-    getCalendarOrderDate() {
-      this.changingViewName = true
-      setTimeout(() => this.changingViewName = false, 2000)
-    },
     viewName() {
-      this.changingViewName = true
-      setTimeout(() => this.changingViewName = false, 2000)
-      
-      this.numberOfTimeoutUpdates = 0
-      this.updateView()
-
       if (this.sortable)
         this.sortable.options.disabled = this.disableSortableMount
     },
@@ -1294,7 +1258,7 @@ export default {
   top: 0;
   justify-content: center;
   align-items: center;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .cameFromAnotherTab-ghost {

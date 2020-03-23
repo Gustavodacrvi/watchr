@@ -8,11 +8,9 @@ import vuetify from '@/plugins/vuetify'
 import Icon from "@/components/Icons/IconWrapper.vue"
 
 import VueWorker from 'vue-worker'
-import vueSmoothScroll from 'vue2-smooth-scroll'
 
 Vue.component('Icon', Icon)
 
-Vue.use(vueSmoothScroll)
 Vue.use(VueWorker, '$worker')
 
 Vue.config.productionTip = false

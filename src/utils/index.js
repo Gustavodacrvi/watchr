@@ -122,7 +122,7 @@ export default {
       newList.splice(indicies[i], 0, items[i])
     }
   },
-  getInfoFromAddSortableEvt(evt) {
+  getInfoFromAddSortableEvt(evt, itemClass) {
     const items = evt.items
     if (items.length === 0) items.push(evt.item)
     const type = items[0].dataset.type
@@ -144,6 +144,23 @@ export default {
       }
     }
 
+    let targetElement = null
+    if (itemClass && evt.originalEvent.toElement) {
+      targetElement = evt.originalEvent.toElement
+
+      while (true) {
+        if (targetElement && targetElement.classList && targetElement.classList.contains(itemClass))
+         break
+        else {
+          if (!targetElement.parentNode) {
+            targetElement = null
+            break
+          }
+          targetElement = targetElement.parentNode
+        }
+      }
+    }
+
     const oldIndicies = evt.oldIndicies
     if (oldIndicies.length === 0)
       oldIndicies.push({
@@ -153,7 +170,7 @@ export default {
     
     const indicies = evt.newIndicies.map(el => el.index)
     if (indicies.length === 0) indicies.push(evt.newIndex)
-    return {type, ids, items, indicies, oldIndicies}
+    return {type, ids, items, indicies, oldIndicies, targetElement}
   },
   removeSortableItemsOnRemove(items, indicies, root, deSelectItem) {
     for (let i = 0; i < indicies.length;i++) {
@@ -200,6 +217,37 @@ export default {
 
     const formatTime = time => mom(time, 'HH:mm').format(userInfo.disablePmFormat ? 'HH:mm' : 'LT')
 
+    return {
+      comp: 'InfoList',
+      content: {
+        links: [
+          {
+            name: 'Test 1',
+            info: 'Info 1 Info 1 Info 1 Info 1 Info 1',
+            icon: {
+              color: 'blue',
+              name: 'calendar-star',
+            },
+          },
+          {
+            name: 'Test 2',
+            info: 'Info 2 Info 2 Info 2 Info 2 Info 2',
+            icon: {
+              color: 'yellow',
+              name: 'star',
+            },
+          },
+          {
+            name: 'Test 3',
+            info: 'Info 3 Info 3 Info 3 Info 3 Info 3',
+            icon: {
+              color: 'purple',
+              name: 'sun',
+            },
+          },
+        ],
+      }
+    }
     return [
       {
         name: `${'Start from:'} <span class="fade">${formatTime(time)}</span>`,
@@ -877,8 +925,16 @@ export default {
         if (change) {
           if (onFoundChange)
             onFoundChange(k, val)
-          else
-            Vue.set(oldObj, k, val)
+          else {
+            if (type === 'object') {
+              if (val && Array.isArray(val))
+                Vue.set(oldObj, k, val)
+              else if (val)
+                Vue.set(oldObj, k, {...oldObj[k], ...val})
+              else Vue.set(oldObj, k, null)
+            } else
+              Vue.set(oldObj, k, val)
+          }
         }
       }
     }

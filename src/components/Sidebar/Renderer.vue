@@ -141,7 +141,7 @@ export default {
         this.$store.commit('moving', true)
         this.isDragging = true
         this.$emit('is-moving', true)
-        window.navigator.vibrate(100)
+        window.navigator.vibrate(20)
       },
       onEnd: () => {
         this.$store.commit('moving', false)
@@ -170,8 +170,9 @@ export default {
             )
 
             this.sourceVueInstance = null
+            const selected = this.selectedItems.slice()
             setTimeout(() => {
-              this.onSortableAdd(this.folder, ids, this.getIds())
+              this.onSortableAdd(this.folder, ids.length === 1 ? ids : selected, this.getIds())
             }, 40)
           }
         }
@@ -198,19 +199,6 @@ export default {
     this.sortable.destroy()
   },
   methods: {
-    selectItem(el) {
-      if (!this.selectedElements.includes(el)) {
-        this.selectedElements.push(el)
-        Sortable.utils.select(el)
-      }
-    },
-    deSelectItem(el) {
-      Sortable.utils.deselect(el)
-
-      const i = this.selectedElements.findIndex(el => el === el)
-      if (i > -1)
-        this.selectedElements.splice(i, 1)
-    },
     addItem(name) {
       if (this.getItemRef) {
         if (this.existingItems && this.alreadyExistMessage && this.existingItems.find(el => el.name === name)) {
@@ -327,7 +315,7 @@ export default {
       s.opacity = 1
       s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
       requestAnimationFrame(() => {
-        s.transition = 'height .15s, opacity .15s'
+        s.transition = 'height .2s, opacity .2s'
         s.opacity = 0
         s.height = '0px'
 
@@ -359,8 +347,8 @@ export default {
   computed: {
     ...mapState({
       isOnControl: state => state.isOnControl,
-      
       selectedItems: state => state.selectedItems,
+      
       movingTask: state => state.movingTask,
       moving: state => state.moving,
     }),

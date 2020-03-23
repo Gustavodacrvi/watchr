@@ -118,7 +118,7 @@ export default {
 
 .options {
   display: flex;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .fade {

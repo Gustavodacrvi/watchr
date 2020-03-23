@@ -17,7 +17,16 @@
     <span v-if="!editing || !isEditable"
       class="name"
       @click.stop="editing = true"
-    >{{ viewNameValue }}</span>
+    >
+      {{ getViewName }}
+      <Icon v-if="scheduling || calendarDate"
+        class="comp-icon primary-hover cursor"
+        :icon='scheduling ? "star" : "calendar-star"'
+        color='var(--fade)'
+        width='18px'
+        @click='$emit("open-main-comp")'
+      />
+    </span>
     <input v-else-if="isEditable"
       class="input"
       autocomplete="off"
@@ -56,6 +65,8 @@
 
 import IconDrop from '../../../IconDrop/IconDrop.vue'
 import HeaderSearch from './HeaderSearch.vue'
+
+import utils from '@/utils/'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -98,7 +109,7 @@ export default {
         s.width = '0px'
         s.transitionDuration = '.0s'
         setTimeout(() => {
-          s.transitionDuration = '.15s'
+          s.transitionDuration = '.2s'
           s.width = inp.offsetWidth + 'px'
           s.opacity = '1'
         })
@@ -123,10 +134,15 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedItems']),
-    ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor', 'isSmartList']),
+    ...mapState(['selectedItems', 'scheduling']),
+    ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor', 'isSmartList', 'calendarDate']),
     isEditable() {
       return !this.isSmartList && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktopBreakPoint
+    },
+    getViewName() {
+      if (this.calendarDate)
+        return utils.getHumanReadableDate(this.calendarDate)
+      return this.viewNameValue
     },
   },
   watch: {
@@ -155,6 +171,11 @@ export default {
   position: relative;
   z-index: 2;
   margin-right: 16px;
+}
+
+.comp-icon {
+  margin-left: 8px;
+  transform: translateY(2.5px);
 }
 
 .name {

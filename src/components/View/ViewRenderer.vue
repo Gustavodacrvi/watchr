@@ -2,9 +2,12 @@
 <template>
   <div class="ViewRenderer" :class="layout">
     <div class='view-wrapper'>
-      <SlimModeNav v-if='isDesktopBreakPoint'
-        :render='sidebarHided'
-        :viewNameValue='viewNameValue'
+      <SlimModeNav
+        ref='mainComp'
+      
+        :render='sidebarHided || scheduling'
+        :scheduling='scheduling'
+        :viewName='viewName'
       />
       <Header
         v-bind="$props"
@@ -39,16 +42,10 @@
         @list='selectList'
         @folder='selectFolder'
         @group='selectGroup'
-      />
-      <component v-if='smartComponent'
-        class='component'
-        :is='smartComponent'
 
-        @update='onSmartComponentUpdate'
+        @open-main-comp='openMainComp'
       />
-      <CalendarEvents
-        :date='getCalendarOrderDate'
-      />
+      <CalendarEvents/>
       <component v-if="extraListView && defer(3)" :is='extraListView.comp'
         v-bind="{...$props, ...extraListView}"
         ref='extraView'
@@ -142,8 +139,8 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'getCalendarOrderDate', 'viewItem',
-  'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
+  'calendarDate', 'viewItem',
+  'showHeading', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
   components: {
@@ -224,6 +221,10 @@ export default {
   methods: {
     ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
+
+    openMainComp() {
+      this.$refs.mainComp.open()
+    },
     addTask() {
       this.$refs.taskHandler.addTaskEdit()
     },
@@ -744,8 +745,14 @@ export default {
       this.updateIds(tasks.map(el => el.id))
     },
     sortByDate() {
-      const tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
-      this.updateIds(tasks.map(el => el.id))
+      this.updateIds(
+        utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice()).map(el => el.id)
+      )
+    },
+    sortBySchedule() {
+      this.updateIds(
+        utilsTask.sortTasksByScheduleTime(this.rootNonFiltered.slice()).map(el => el.id)
+      )
     },
     sortByDurationLong() {
       let tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
@@ -792,6 +799,7 @@ export default {
       selectedType: state => state.selectedType,
       isEditingComp: state => state.isEditing,
       mainSelection: state => state.mainSelection,
+      scheduling: state => state.scheduling,
 
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
@@ -847,7 +855,7 @@ export default {
       return !this.allViewItemsIds.includes(this.mainSelection)
     },
     showCalendarExtraIcon() {
-      return this.allowCalendar && (this.getCalendarOrderDate || this.viewName === 'Upcoming')
+      return this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming')
     },
     shortcutsType() {
       if (this.selectedItems.length > 0)
@@ -1126,6 +1134,11 @@ export default {
                 callback: () => this.sortByDate(),
               },
               {
+                name: 'Sort by schedule time',
+                icon: 'calendar-star',
+                callback: () => this.sortBySchedule(),
+              },
+              {
                 name: 'Sort by duration(long to short)',
                 icon: 'magic',
                 callback: () => this.sortByDurationLong()
@@ -1179,11 +1192,11 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.getCalendarOrderDate)
+        if (this.calendarDate)
           opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(this.autoSchedule, this.saveAutoSchedule, this.userInfo))
 
 
-        if (!this.allowCalendar && (this.getCalendarOrderDate || this.viewName === 'Upcoming'))
+        if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming'))
           opt.push({
             name: 'Show Google Calendar',
             icon: 'calendar',
@@ -1233,16 +1246,19 @@ export default {
                 {
                   icon: 'star',
                   id: 'd',
+                  color: 'var(--yellow)',
                   callback: () => saveDeadline(mom().format('Y-M-D')),
                 },
                 {
                   icon: 'sun',
                   id: 'çljk',
+                  color: 'var(--orange)',
                   callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
                 },
                 {
                   icon: 'calendar',
                   id: 'çljkasdf',
+                  color: 'var(--green)',
                   callback: () => ({
                     comp: 'CalendarPicker',
                     content: {
@@ -1257,6 +1273,7 @@ export default {
                 {
                   icon: 'bloqued',
                   id: 'asdf',
+                  color: 'var(--red)',
                   callback: () => saveDeadline(null),
                 },
               ]
@@ -1268,6 +1285,7 @@ export default {
                 {
                   icon: 'star',
                   id: 'd',
+                  color: 'var(--yellow)',
                   callback: () => this.saveDates({
                     type: 'specific',
                     specific: mom().format('Y-M-D'),
@@ -1276,6 +1294,7 @@ export default {
                 {
                   icon: 'sun',
                   id: 'çljk',
+                  color: 'var(--orange)',
                   callback: () => this.saveDates({
                     type: 'specific',
                     specific: mom().add(1, 'day').format('Y-M-D'),
@@ -1284,6 +1303,7 @@ export default {
                 {
                   icon: 'layer-group',
                   id: 'asdffds',
+                  color: 'var(--olive)',
                   callback: () => this.saveDates({
                     type: 'anytime',
                   }, ids)
@@ -1291,6 +1311,7 @@ export default {
                 {
                   icon: 'archive',
                   id: 'açlkjsdffds',
+                  color: 'var(--brown)',
                   callback: () => this.saveDates({
                     type: 'someday',
                   }, ids)
@@ -1298,12 +1319,14 @@ export default {
                 {
                   icon: 'calendar',
                   id: 'çljkasdf',
+                  color: 'var(--green)',
                   callback: () => {return {
                     comp: "CalendarPicker",
                     content: {callback: date => this.saveDates(date, ids)}}},
                 },
                 {
                   id: 'No date',
+                  color: 'var(--red)',
                   icon: 'bloqued',
                   callback: () => this.saveDates(null, ids)
                 },
@@ -1370,16 +1393,19 @@ export default {
                 {
                   icon: 'star',
                   id: 'd',
+                  color: 'var(--yellow)',
                   callback: () => saveDeadline(mom().format('Y-M-D')),
                 },
                 {
                   icon: 'sun',
                   id: 'çljk',
+                  color: 'var(--orange)',
                   callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
                 },
                 {
                   icon: 'calendar',
                   id: 'çljkasdf',
+                  color: 'var(--green)',
                   callback: () => ({
                     comp: 'CalendarPicker',
                     content: {
@@ -1406,6 +1432,7 @@ export default {
                 {
                   icon: 'star',
                   id: 'd',
+                  color: 'var(--yellow)',
                   callback: () => this.saveDates({
                     type: 'specific',
                     specific: mom().format('Y-M-D'),
@@ -1414,6 +1441,7 @@ export default {
                 {
                   icon: 'sun',
                   id: 'çljk',
+                  color: 'var(--orange)',
                   callback: () => this.saveDates({
                     type: 'specific',
                     specific: mom().add(1, 'day').format('Y-M-D'),
@@ -1422,6 +1450,7 @@ export default {
                 {
                   icon: 'layer-group',
                   id: 'açlkjsdffd',
+                  color: 'var(--olive)',
                   callback: () => this.saveDates({
                     type: 'anytime',
                   }, ids)
@@ -1429,6 +1458,7 @@ export default {
                 {
                   icon: 'archive',
                   id: 'açlkjsdffds',
+                  color: 'var(--brown)',
                   callback: () => this.saveDates({
                     type: 'someday',
                   }, ids)
@@ -1436,6 +1466,7 @@ export default {
                 {
                   icon: 'calendar',
                   id: 'çljkasdf',
+                  color: 'var(--green)',
                   callback: () => {return {
                     comp: "CalendarPicker",
                     content: {callback: date => this.saveDates(date, ids)}}},
@@ -1547,7 +1578,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 55px;
+  margin: 0 85px;
   min-height: 100%;
   position: relative;
   display: flex;

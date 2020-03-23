@@ -76,6 +76,7 @@ export default {
       onStart: () => {
         this.moving = true
       },
+      onMove: evt => evt.to !== this.$el,
       onEnd: () => {
         if (this.inboxHover)
           this.openQuickAdd()
@@ -98,6 +99,7 @@ export default {
     runTransition() {
       // FLIP
       const target = this.$el.childNodes[1]
+      if (!target) return;
 
       const { top, height, left, width } = document.getElementById('item-renderer-root').getBoundingClientRect()
       const edit = target.getBoundingClientRect()
@@ -121,7 +123,7 @@ export default {
       s.transform = 'translate(0px, 0px) scale(1,1)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = this.isDesktopBreakPoint ? '.2s' : '.15s'
+        s.transitionDuration = this.isDesktopBreakPoint ? '.2s' : '.2s'
         s.transitionTimingFunction = 'ease-out'
 
         s.transform = `translate(${xDiff}px, ${yDiff}px) scale(.95,.95)`
@@ -212,7 +214,7 @@ export default {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
-  transition: opacity .15s;
+  transition: opacity .2s;
   opacity: 1;
   pointer-events: none;
 }

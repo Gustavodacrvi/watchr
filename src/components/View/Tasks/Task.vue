@@ -89,6 +89,7 @@
                   :ac='isItemSelected'
                   :ca='canceled'
                   :so='isSomeday'
+                  :animation='completeAnimation'
                 />
               </div>
               <div class="text"
@@ -125,7 +126,9 @@
                       <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)" key='4'/>
                       <template v-else>
                         <span v-if="deadlineStr" class="txt-str alert" key='5'>{{ deadlineStr }}</span>
-                        <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb" key='6'>{{ calendarStr }}</span>
+                        <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb" key='6'>
+                          {{ calendarStr }}
+                        </span>
                       </template>
                     </transition-group>
 
@@ -141,7 +144,7 @@
                     width="8px"
                     :progress='checklistPieProgress'/>
                     <span v-if="!isDesktopBreakPoint && nonReadComments" class="comment-icon">
-                      <Icon
+                      <Icon class='str-icon'
                         icon='comment'
                         width="14px"
                       />
@@ -210,7 +213,7 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
@@ -261,9 +264,9 @@ export default {
         co.transform = 'translateX(-27px)'
         this.deselectItem()
         requestAnimationFrame(() => {
-          c.transitionDuration = '.15s'
-          co.transitionDuration = '.15s'
-          inf.transitionDuration = '.15s'
+          c.transitionDuration = '.2s'
+          co.transitionDuration = '.2s'
+          inf.transitionDuration = '.2s'
           c.opacity = .25
           inf.opacity = 1
           co.transform = 'translateX(0px)'
@@ -287,9 +290,9 @@ export default {
         inf.opacity = 1
         co.transform = 'translateX(0px)'
         requestAnimationFrame(() => {
-          c.transitionDuration = '.15s'
-          co.transitionDuration = '.15s'
-          inf.transitionDuration = '.15s'
+          c.transitionDuration = '.2s'
+          co.transitionDuration = '.2s'
+          inf.transitionDuration = '.2s'
           c.opacity = 0
           inf.opacity = 0
           co.transform = 'translateX(-27px)'
@@ -298,7 +301,7 @@ export default {
           }, 152)
         })
       } else {
-        el.style.transitionDuration = '.15s'
+        el.style.transitionDuration = '.2s'
       }
     },
     editCancel() {
@@ -340,10 +343,10 @@ export default {
 
       const hideTask = () => {
         if (cn) {
-          cn.transitionDuration = '.15s'
+          cn.transitionDuration = '.2s'
           cn.opacity = 0
         }
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
@@ -392,7 +395,7 @@ export default {
           this.doneTransition = true
           done()
         }, 300)
-        if (!(this.changingViewName && !this.isDesktopDevice)) {
+        if (!(!this.isDesktopDevice)) {
           s.transitionDuration = '0s'
           s.opacity = 0
           s.height = 0
@@ -404,10 +407,10 @@ export default {
           
           requestAnimationFrame(() => {
             if (cn) {
-              cn.transitionDuration = disableTransition ? 0 : '.15s'
+              cn.transitionDuration = disableTransition ? 0 : '.2s'
               cn.opacity = 1
             }
-            s.transitionDuration = disableTransition ? 0 : '.15s'
+            s.transitionDuration = disableTransition ? 0 : '.2s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
             s.minHeight = this.itemHeight + 'px'
@@ -446,34 +449,9 @@ export default {
       if (!obj.handleFiles || force)
         this.isEditing = false
     },
-    addPriority(pri) {
-      this.saveTaskContent({
-        id: this.item.id,
-        priority: pri,
-      })
-    },
-    saveCalendarDate(calendar) {
-      this.$store.dispatch('task/saveTasksById', {
-        ids: [this.item.id],
-        task: {calendar},
-      })
-    },
     assignUser(uid) {
       this.saveTaskContent({
         assigned: uid,
-      })
-    },
-    saveDate(date) {
-      this.saveTaskContent({
-        id: this.item.id,
-        calendar: {
-          type: 'specific',
-          time: null,
-          editDate: TOD_DATE,
-          begins: TOD_DATE,
-
-          specific: date,
-        },
       })
     },
   },
@@ -500,196 +478,7 @@ export default {
       return this.isTaskInLogbook(this.item)
     },
     options() {
-      const {c,t} = this.getTask
-      const dispatch = this.$store.dispatch
-      const logbook = this.isItemLogged
-      const arr = [
-        {
-          name: !logbook ? 'Move to logbook' : 'Remove from logbook',
-          icon: 'logbook',
-          callback: () => {
-            if (!logbook)
-              this.$store.dispatch('task/logTasks', [this.item.id])
-            else this.$store.dispatch('task/unlogTasks', [this.item.id])
-          }
-        },
-        {
-          type: 'optionsList',
-          name: 'Deadline',
-          options: [
-            {
-              icon: 'star',
-              id: 'd',
-              color: 'var(--yellow)',
-              callback: () => this.saveTaskContent({deadline: mom().format('Y-M-D')}),
-            },
-            {
-              icon: 'sun',
-              id: 'çljk',
-              color: 'var(--orange)',
-              callback: () => this.saveTaskContent({deadline: mom().add(1, 'day').format('Y-M-D')}),
-            },
-            {
-              icon: 'calendar',
-              id: 'çljkasdf',
-              color: 'var(--green)',
-              callback: () => ({
-                comp: 'CalendarPicker',
-                content: {
-                  onlyDates: true,
-                  noTime: true,
-                  allowNull: true,
-                  callback: ({specific}) => {this.saveTaskContent({
-                    deadline: specific,
-                  })}
-                }
-              })
-            },
-            {
-              icon: 'bloqued',
-              id: 'asdf',
-              color: 'var(--red)',
-              callback: () => this.saveTaskContent({deadline: null}),
-            },
-          ]
-        },
-        {
-          type: 'optionsList',
-          name: 'Defer',
-          options: [
-            {
-              icon: 'star',
-              id: 'd',
-              color: 'var(--yellow)',
-              callback: () => this.saveDate(mom().format('Y-M-D')),
-            },
-            {
-              icon: 'sun',
-              id: 'çljk',
-              color: 'var(--orange)',
-              callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
-            },
-            {
-              icon: 'layer-group',
-              id: 'ds',
-              color: 'var(--olive)',
-              callback: () => this.saveCalendarDate({
-                type: 'anytime',
-              })
-            },
-            {
-              icon: 'archive',
-              id: 'açlkjsdffds',
-              color: 'var(--brown)',
-              callback: () => this.saveCalendarDate({
-                type: 'someday',
-              })
-            },
-            {
-              icon: 'calendar',
-              id: 'çljkasdf',
-              color: 'var(--green)',
-              callback: () => {return {
-                comp: "CalendarPicker",
-                content: {callback: this.saveCalendarDate}}},
-            },
-            {
-              icon: 'bloqued',
-              id: 'asdf',
-              color: 'var(--red)',
-              callback: () => this.saveCalendarDate(null)
-            },
-          ]
-        },
-        {
-          type: 'optionsList',
-          name: 'Priority',
-          options: [
-            {
-              icon: 'priority',
-              id: 'd',
-              color: 'var(--fade)',
-              callback: () => this.addPriority('')
-            },
-            {
-              icon: 'priority',
-              id: 'f',
-              color: 'var(--green)',
-              callback: () => this.addPriority('Low priority')
-            },
-            {
-              icon: 'priority',
-              id: 'j',
-              color: 'var(--yellow)',
-              callback: () => this.addPriority('Medium priority')
-            },
-            {
-              icon: 'priority',
-              id: 'l',
-              color: 'var(--red)',
-              callback: () => this.addPriority('High priority')
-            },
-          ],
-        },
-        {
-          name: 'Copy task',
-          icon: 'copy',
-          callback: () => this.copyItem()
-        },
-        {
-          name: 'Add tags',
-          icon: 'tag',
-          callback: () => utils.tagsOptions(this, this.item.tags, tags => {
-            this.saveTaskContent({tags})
-          }, true)
-        },
-        {
-          name: 'Move to list',
-          icon: 'tasks',
-          callback: () => utils.listsOptions(this, this.saveTaskContent)
-        },
-        {
-          name: 'Convert to list',
-          icon: 'tasks',
-          callback: () => {
-            const existingList = this.savedLists.find(l => l.name === this.item.name)
-            if (existingList)
-              this.$store.commit('pushToast', {
-                name: 'There is already another list with this name.',
-                seconds: 3,
-                type: 'error',
-              })
-            else
-              dispatch('task/convertToList', {task: this.item, savedLists: this.savedLists})
-          }
-        },
-        {
-          name: 'Move to folder',
-          icon: 'folder',
-          callback: () => utils.folderOptions(this, this.saveTaskContent)
-        },
-        {
-          name: 'Move to group',
-          icon: 'group',
-          callback: () => utils.groupOptions(this, this.saveTaskContent)
-        },
-        {
-            name: 'Delete task',
-            icon: 'trash',
-            important: true,
-            callback: () => dispatch('task/deleteTasks', [this.item.id])
-          },
-      ]
-      if (this.item.group) {
-        arr.splice(1, 0, {
-          name: 'Add comments',
-          icon: 'comment',
-          callback: this.commentsPopup,
-        })
-        if (this.isGroupOwner)
-          arr.splice(2, 0, this.assignUserProfiles)
-      }
-      return arr
+      return utilsTask.taskOptions(this.item, this)
     },
     isRepeatingTask() {
       return this.isRecurringTask(this.item)
@@ -810,8 +599,10 @@ export default {
       return true
     },
     isCalendarView() {
+      if (this.viewType === 'calendar')
+        return true
       const n = this.viewName
-      return n === 'Today' || n === 'Tomorrow' || n === 'Calendar'
+      return n === 'Today' || n === 'Tomorrow'
     },
     calendarStr() {
       const {t,c} = this.getTask
@@ -822,7 +613,7 @@ export default {
 
       const str = utils.parseCalendarObjectToString(c, this.userInfo, false, false)
 
-      if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
+      if ((c.type === 'specific' && this.viewType === 'calendar') || str === this.viewNameValue || (str === 'Today')) return null
 
       return str
     },
@@ -921,7 +712,7 @@ export default {
   position: relative;
   min-height: 38px;
   z-index: 5;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .mobile .cont-wrapper {
@@ -957,7 +748,7 @@ export default {
   border-radius: 100px;
   border: 0px solid transparent;
   background-color: var(--txt);
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .schedule.mobile {
@@ -1002,6 +793,10 @@ export default {
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
   background-color: var(--light-gray);
+}
+
+.str-icon {
+  margin-right: 2px;
 }
 
 .isItemMainSelection .cont-wrapper {
@@ -1146,6 +941,8 @@ export default {
 .txt-str {
   margin-right: 9px;
   font-size: .75em;
+  display: inline-flex;
+  align-items: center;
 }
 
 .task-tag {

@@ -24,10 +24,10 @@
             :href="item.htmlLink"
             target="_blank"
           >
-            <span v-if="item.start && item.end" class="info" :style="{color: item.color || cal.color}">
-              {{item.start}} - {{item.end}}&nbsp;
+            <span v-if="item.formatedStart && item.formatedEnd" class="info" :style="{color: item.color || cal.color}">
+              {{item.formatedStart}} - {{item.formatedEnd}}&nbsp;
             </span>
-            <span v-if="item.start && item.end" class="name">
+            <span v-if="item.formatedStart && item.formatedEnd" class="name">
               {{item.name}}
             </span>
             <span v-else class="name" :style="{color: item.color || cal.color}">
@@ -44,7 +44,9 @@
 
 import mom from 'moment'
 
-import { mapState } from 'vuex'
+import timeline from '@/utils/timeline'
+
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   props: ['date'],
@@ -57,19 +59,6 @@ export default {
     this.getEvents()
   },
   methods: {
-    getIsoString(date, end = false) {
-      date = mom(date, 'Y-M-D')
-      if (!end) {
-        date.hour(0)
-        date.minute(0)
-        date.second(0)
-      } else {
-        date.hour(23)
-        date.minute(59)
-        date.second(59)
-      }
-      return date.toISOString()
-    },
     enter(el, done) {
       const s = el.style
 
@@ -122,7 +111,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.height = '25px'
         s.opacity = 1
 
@@ -138,7 +127,7 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.height = 0
         s.opacity = 0
 
@@ -147,86 +136,46 @@ export default {
 
     },
     
-    getEvents() {
-      if (this.date && typeof gapi !== "undefined" && gapi.client && gapi.client.calendar) {
-        this.events = []
-        const promises = []
-        const list = this.calendarList
-        
-        if (list) {
-          for (const calendar of list) {
-            promises.push(gapi.client.calendar.events.list({
-              calendarId: calendar.id,
-              timeMax: this.getFinal,
-              timeMin: this.getInit,
-              singleEvents: true,
-              orderBy: 'startTime',
-            }))
-          }
-          Promise.all(promises).then(responses => {
-            for (let i = 0; i < list.length;i++) {
-              const res = responses[i]
-              const calendar = list[i]
-              
-              // console.log(calendar.backgroundColor)
-              // console.log(res.result.items[0])
-              const colors = this.calendarColorIds
-              const obj = {
-                id: calendar.id,
-                name: calendar.summary,
-                primary: calendar.primary,
-                color: calendar.backgroundColor,
-                items: res.result.items.map(el => ({
-                  id: el.id,
-                  name: el.summary,
-                  color: (colors[el.colorId] && colors[el.colorId].background) || '',
-                  htmlLink: el.htmlLink,
-                  start: el.start.dateTime ? mom(el.start.dateTime).format(this.getFormat) : null,
-                  end: el.end.dateTime ? mom(el.end.dateTime).format(this.getFormat) : null,
-                })),
-              }
-              if (!calendar.primary)
-                this.events.push(obj)
-              else this.events.unshift(obj)
-            }
-          })
-        }
-      }
+    async getEvents() {
+      this.events = await timeline.getEvents(this, this.getDate)
+    },
+    getViewEvents() {
+      this.events = this.viewEvents
     },
     toggleEvents() {
-      if (this.date && this.allowCalendar)
-        this.getEvents()
-      else this.events = []
+      if (this.getDate && this.allowCalendar) {
+        
+        this.date ? this.getEvents() : this.getViewEvents()
+        
+      } else this.events = []
     },
   },
   // colorId
   computed: {
-    ...mapState(['userInfo', 'calendarList', 'allowCalendar', 'calendarColorIds']),
+    ...mapState(['userInfo', 'calendarList', 'allowCalendar', 'calendarColorIds', 'viewEvents']),
+    ...mapGetters(['calendarDate']),
     getHeight() {
       return (this.getCalendars.reduce((tot, cal) => {
         return cal.primary ? tot + (cal.items.length * 25) : tot + ((cal.items.length * 25) + 33)}, 0) + 24) + 'px'
     },
-    getInit() {
-      if (Array.isArray(this.date))
-        return this.getIsoString(this.date[0])
+    getDate() {
+      if (Array.isArray(this.getDate))
+        return this.getDate[0]
       else
-        return this.getIsoString(this.date)
+        return this.getDate
+    },
+    getDate() {
+      return this.date || this.calendarDate
     },
     getCalendars() {
       return this.events.filter(el => el.items.length > 0)
-    },
-    getFinal() {
-      if (Array.isArray(this.date))
-        return this.getIsoString(this.date[1], true)
-      else
-        return this.getIsoString(this.date, true)
     },
     getFormat() {
       return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'
     },
   },
   watch: {
-    date() {
+    getDate() {
       this.toggleEvents()
     },
     allowCalendar() {

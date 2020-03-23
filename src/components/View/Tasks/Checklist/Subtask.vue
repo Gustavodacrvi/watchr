@@ -152,7 +152,7 @@ export default {
 .Subtask {
   position: relative;
   display: flex;
-  transition: height .15s, background-color .15s;
+  transition: height .2s, background-color .2s;
 }
 
 .name-wrapper {
@@ -170,7 +170,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: opacity .15s;
+  transition: opacity .2s;
 }
 
 .line-wrapper {
@@ -215,7 +215,7 @@ export default {
 }
 
 .delete {
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .delete:hover {
@@ -232,7 +232,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity .15s;
+  transition: opacity .2s;
 }
 
 .input {

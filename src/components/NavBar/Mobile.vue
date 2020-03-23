@@ -73,7 +73,7 @@ export default {
 }
 
 .Icon {
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .msg {

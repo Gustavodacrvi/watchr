@@ -16,6 +16,7 @@
         class="icon faded"
         :icon="icon"
         :title='title'
+        :color='color'
         :width='icon === "file" ? "16px" : undefined'
       />
       <span v-show="content || right">
@@ -46,7 +47,7 @@
 <script>
 
 export default {
-  props: ['content', 'right', 'icon', 'options', 'title', 'number'],
+  props: ['content', 'right', 'icon', 'options', 'title', 'number', 'color'],
   data() {
     return {
       hover: false,
@@ -89,7 +90,7 @@ export default {
       s.overflow = 'hidden'
       s.padding = '0'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.height = '28px'
         s.padding = '0 8px'
         s.minWidth = '28px'
@@ -105,7 +106,7 @@ export default {
     },
     leave(el, done) {
       const s = el.style
-      s.transitionDuration = '.15s'
+      s.transitionDuration = '.2s'
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'

@@ -97,6 +97,28 @@ export default {
     headingsOptions() {
       return []
     },
+    headerInfo() {
+      const folder = this.viewFolder
+      if (!folder)
+        return undefined
+      
+      return {
+        icons: [
+          {
+            icon: 'tint',
+            title: 'Folder color',
+            color: folder.color,
+            options: {
+              comp: 'ColorPicker',
+              content: {
+                color: folder.color,
+                callback: this.foldersaveFolder,
+              },
+            },
+          },
+        ],
+      }
+    },
     headerOptions() {
       const fold = this.viewFolder
       if (fold)

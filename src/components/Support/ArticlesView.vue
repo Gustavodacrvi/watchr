@@ -37,8 +37,8 @@ export default {
       s.margin = 0
       s.opacity = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
-        title.style.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
+        title.style.transitionDuration = '.2s'
         s.height = height
         title.style.margin = '8px 0'
         s.marginBottom = '35px'

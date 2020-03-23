@@ -14,7 +14,7 @@
       :class="{pressingHandle}"
       :style="[navObj, {width: getNavWidth}]"
     >
-      <Sidebar class="Sidebar"
+      <Sidebar
         :value="viewName"
         :pressingHandle='pressingHandle'
         :view-type="viewType"
@@ -102,7 +102,7 @@ export default {
     pointerup() {
       this.pressingHandle = false
     },
-    getScrollTop() {
+    getScrollTop(evt) {
       this.scrollTop = window.scrollY
     },
     toggleSidebar() {

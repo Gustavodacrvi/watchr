@@ -7,7 +7,10 @@ import utilsTask from '../utils/task'
 
 import mom from 'moment'
 
-const TOD_STR = mom().format('Y-M-D')
+const TOD = mom()
+
+const TOD_STR = TOD.format('Y-M-D')
+const TOM_STR = TOD.clone().add(1, 'd').format('Y-M-D')
 
 Vue.use(Vuex)
 
@@ -75,16 +78,19 @@ const getDefaultInfo = () => ({
         'Later lists',
         'Recurring',
         'Logged lists',
-        'Calendar',
       ],
     }
   },
 })
 
+const isDesktopDevice = window.screen.width >= MINIMUM_DESKTOP_SCREEN_WIDTH
+
 
 let allowCalendar = true
+let scheduling = localStorage.getItem('sidebarScheduling') === 'true'
 
 const cal = localStorage.getItem('allowCalendar')
+
 if (cal)
   allowCalendar = cal === 'true'
 
@@ -142,6 +148,7 @@ const store = new Vuex.Store({
     authState: false,
     fileURL: null,
     firstFireLoad: false,
+    scheduling: scheduling && isDesktopDevice,
     isDraggingOverSidebarElement: false,
     toasts: [],
     toggleTaskCompletion: [],
@@ -166,15 +173,37 @@ const store = new Vuex.Store({
 
     googleCalendarReady: false,
     gmailReady: false,
+
     calendarList: [],
+    viewEvents: [],
+    
     calendarColorIds: {},
 
     isFirstSnapshot: true,
 
     clipboardTask: null,
     toggleClipboardPaste: false,
+
+    desktopHeight: 6000, // timeline height
+    mobileHeight: 4000,
   },
   getters: {
+    height(state, getters) {
+      if (getters.isDesktopDevice)
+        return state.desktopHeight
+      else return state.mobileHeight
+    },
+    calendarDate(state) {
+      const n = state.viewName
+
+      switch (n) {
+        case "Today": return TOD_STR
+        case "Tomorrow": return TOM_STR
+      }
+      
+      if (state.viewType === 'calendar')
+        return state.viewName
+    },
     checkMissingIdsAndSortArr: () => (order, arr, property = 'id') => {
 
       let items = []
@@ -302,15 +331,6 @@ const store = new Vuex.Store({
           iconColor: 'var(--red)'
         },
         {
-          name: 'Calendar',
-          disableAction: true,
-          descr: `
-            The Calendar gives you more control over the calendar date, instead of grouping the tasks in headings like on Upcoming, it shows only one date at a time and has a date picker.
-          `,
-          icon: 'calendar-star',
-          iconColor: 'var(--purple)'
-        },
-        {
           name: 'Logbook',
           descr: `
             When completing a task, you can log it, logged tasks aren't shown inside lists or folders, the Logbook groups the tasks using its log date.
@@ -337,22 +357,39 @@ const store = new Vuex.Store({
       ]
     },
     getIcon(state, getters) {
-      if (state.viewType === 'tag') return 'tag'      
-      if (state.viewType === 'search') return 'search'
-      if (state.viewType === 'folder') return 'folder'
-      if (state.viewType === 'group') return 'group'
+      const n = state.viewName
+      
+      if (state.viewType === 'calendar') {
+        if (n === TOD_STR) return 'star'
+        else if (n === TOM_STR) return 'sun'
+        return 'calendar-star'
+      }
+
+      if (state.viewType !== 'list' && !getters.isSmartList)
+        return state.viewType
+
       if (!getters.isSmartList)
         return 'tasks'
-      return getters.sidebarElements.find(el => el.name === state.viewName).icon
+      
+      return getters.sidebarElements.find(el => el.name === n).icon
     },
     getIconColor(state, getters) {
       const t = state.viewType
+      const n = state.viewName
+
+      if (t === 'calendar') {
+        if (n === TOD_STR) return 'var(--yellow)'
+        else if (n === TOM_STR) return 'var(--orange)'
+        return 'var(--purple)'
+      }
+      
       if (t === 'folder' || t === 'group' || t === 'search') return ''
       if (t === 'tag')
         return 'var(--red)'
       if (!getters.isSmartList) 
           return 'var(--primary)'
-      return getters.sidebarElements.find(el => el.name === state.viewName).iconColor
+      
+      return getters.sidebarElements.find(el => el.name === n).iconColor
     },
     fallbackSelected(state) {
       if (state.selectedItems.length > 0)
@@ -363,7 +400,7 @@ const store = new Vuex.Store({
       return state.windowWidth >= MINIMUM_DESKTOP_SCREEN_WIDTH
     },
     isDesktopDevice() {
-      return window.screen.width >= MINIMUM_DESKTOP_SCREEN_WIDTH
+      return isDesktopDevice
     },
     layout(s, getters) {
       return getters.isDesktopBreakPoint ? 'desktop' : 'mobile'
@@ -420,6 +457,13 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    saveViewEvents(state, arr) {
+      state.viewEvents = arr
+    },
+    toggleScheduling(state) {
+      state.scheduling = !state.scheduling
+      localStorage.setItem('sidebarScheduling', state.scheduling)
+    },
     toggleSidebarElementHover(state, bool) {
       state.isDraggingOverSidebarElement = bool
     },
@@ -632,11 +676,11 @@ const store = new Vuex.Store({
 
       b.commit()
     },
-    getData({state, dispatch}, userId) {
+    getData({state, dispatch, getters}, userId) {
       snapshotsListeners.push(cacheRef().onSnapshot(snap => {
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
-
+        
         if (!state.isFirstSnapshot && !isFromHere) {
           utils.updateVuexObject(state.task, 'tasks', data.tasks || {})
           utils.updateVuexObject(state.tag, 'tags', data.tags || {})

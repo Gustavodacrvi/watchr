@@ -98,12 +98,12 @@ export default {
 
 .state-enter, .state-leave-to {
   opacity: 0;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .state-leave, .state-enter-to {
   opacity: 1;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 </style>

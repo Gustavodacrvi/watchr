@@ -97,7 +97,7 @@ export default {
   display: flex;
   align-items: center;
   height: 30px;
-  transition-duration: .15s;
+  transition-duration: .2s;
   position: relative;
 }
 

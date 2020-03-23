@@ -1,6 +1,7 @@
 
 import list from './list'
 import smartList from './smartList'
+import calendar from './calendar'
 import tag from './tag'
 import folder from './folder'
 import group from './group'
@@ -19,6 +20,7 @@ export default [
   addPrefix(list, 'list'),
   addPrefix(group, 'group'),
   addPrefix(smartList, 'smartList'),
+  addPrefix(calendar, 'calendar'),
   addPrefix(tag, 'tag'),
   addPrefix(folder, 'folder'),
 ]
