@@ -291,9 +291,9 @@ export default {
 }
 
 .day {
-  border-radius: 8px;
+  border-radius: 6px;
   transition-duration: .2s;
-  font-size: 1.05em;
+  font-size: 1.15em;
 }
 
 .dead {

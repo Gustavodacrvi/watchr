@@ -159,7 +159,7 @@ export default {
 }
 
 .view-t-enter-active, .view-t-leave-active {
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .view-t-enter, .view-t-leave-to {
@@ -188,7 +188,7 @@ export default {
 
 .path-link {
   color: var(--fade);
-  transition-duration: .15s;
+  transition-duration: .2s;
   cursor: pointer;
 }
 
@@ -208,14 +208,14 @@ export default {
 .path-t-enter, .path-t-leave-to {
   opacity: 0;
   transform: translateY(10px);
-  transition-duration: .15s;
+  transition-duration: .2s;
   transition-timing-function: ease-out;
 }
 
 .path-t-leave, .path-t-enter-to {
   opacity: 1;
   transform: translateY(0);
-  transition-duration: .15s;
+  transition-duration: .2s;
   transition-timing-function: ease-in;
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="SlimModeNav" :class="{render}">
+  <div class="SlimModeNav" :class="{render, mobile: !isDesktopDevice}">
     <transition name="side-t">
       <component v-if="active"
         :is='getComp'
@@ -17,6 +17,8 @@
         :disableSearch='true'
         :removeHandle='true'
         :removeBacklayer='true'
+
+        @close='close'
       />
     </transition>
   </div>
@@ -41,6 +43,9 @@ export default {
     }
   },
   methods: {
+    close() {
+      this.active = false
+    },
     open() {
       this.active = true
     },
@@ -54,11 +59,11 @@ export default {
         }
 
       if (!found)
-        this.active = false
+        this.close()
     },
   },
   computed: {
-    ...mapGetters(['calendarDate']),
+    ...mapGetters(['calendarDate', 'isDesktopDevice']),
     getComp() {
       return this.scheduling ? 'Sidebar' : 'Scheduler'
     },
@@ -71,7 +76,7 @@ export default {
         window.removeEventListener('click', this.click)
     },
     viewName() {
-      this.active = false
+      this.close()
     },
   },
 }
@@ -117,6 +122,10 @@ export default {
   transform: translateY(5px);
   opacity: 1;
   transition-duration: .2s;
+}
+
+.mobile {
+  margin-top: -12px;
 }
 
 </style>

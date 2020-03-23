@@ -745,8 +745,14 @@ export default {
       this.updateIds(tasks.map(el => el.id))
     },
     sortByDate() {
-      const tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
-      this.updateIds(tasks.map(el => el.id))
+      this.updateIds(
+        utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice()).map(el => el.id)
+      )
+    },
+    sortBySchedule() {
+      this.updateIds(
+        utilsTask.sortTasksByScheduleTime(this.rootNonFiltered.slice()).map(el => el.id)
+      )
     },
     sortByDurationLong() {
       let tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
@@ -1126,6 +1132,11 @@ export default {
                 name: 'Sort by creation date',
                 icon: 'calendar',
                 callback: () => this.sortByDate(),
+              },
+              {
+                name: 'Sort by schedule time',
+                icon: 'calendar-star',
+                callback: () => this.sortBySchedule(),
               },
               {
                 name: 'Sort by duration(long to short)',
@@ -1567,7 +1578,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 55px;
+  margin: 0 85px;
   min-height: 100%;
   position: relative;
   display: flex;

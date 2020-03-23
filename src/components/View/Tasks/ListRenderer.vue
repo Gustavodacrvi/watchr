@@ -799,7 +799,7 @@ export default {
           }
           
           if (!this.isDesktopDevice)
-            window.navigator.vibrate(100)
+            window.navigator.vibrate(20)
         },
         onChange: evt => {
           const item = evt.item
@@ -1063,7 +1063,7 @@ export default {
         }
       }
 
-      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 15 : length * 5)
+      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 5 : length * 5)
 
       if (foundEdit) {
         const itemIndex = this.lazyItems.findIndex(el => el.id === this.addedItem)
@@ -1258,7 +1258,7 @@ export default {
   top: 0;
   justify-content: center;
   align-items: center;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .cameFromAnotherTab-ghost {

@@ -1327,6 +1327,26 @@ export default {
       
       return arr
     },
+    searchHeadings() {
+      return [
+        {
+          name: 'Logbook tasks',
+          id: 'logbook tasks',
+          disableSortableMount: true,
+          logStr: true,
+          log: true,
+          icon: 'logbook',
+          color: 'var(--dark-blue)',
+
+          options: this.getLogbookOptions(),
+          sort: ([], tasks) => utilsTask.sortTasksByTaskDate(tasks, 'fullLogDate'),
+          filter: task => 
+            this.isTaskInLogbook(task) &&
+            this.doesTaskIncludeText(task, this.viewName),
+          configFilterOptions: p => p !== 'pipeCompleted',
+        }
+      ]
+    },
     smartOrderListHeadings() {
 
       const viewName = this.viewName

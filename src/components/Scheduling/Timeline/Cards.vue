@@ -1,22 +1,18 @@
 <template>
   <div class="Cards">
-    <transition-group
-      appear
-      name='fade-t'
-    >
-      <Card v-for='t in hasDurationAndTimeTasks' :key="t.id"
-        v-bind="t"
-        :duration="t.taskDuration"
-        :time="t.calendar.time"
-        :collisions='collisions'
-        :task='t'
-        :mainView='mainView'
+    <Card v-for='t in hasDurationAndTimeTasks' :key="t.id"
+      v-bind="t"
+      :duration="t.taskDuration"
+      :time="t.calendar.time"
+      :collisions='collisions'
+      :task='t'
+      :mainView='mainView'
 
-        :timelineHeight='height'
+      :timelineHeight='height'
 
-        @dragging='dragg'
-      />
-    </transition-group>
+      @dragging='dragg'
+      @scroll='v => $emit("scroll", v)'
+    />
 
     <Card v-for="t in eventsTimeArr" :key="t.id"
       v-bind="t"
@@ -111,10 +107,18 @@ export default {
       const arr = this.shallowCollisions
 
       const getTotal = ({target, ids}) => {
+        let alreadyTouched = []
+        
         return ids.reduce((tot, id) => {
           const next = arr.find(col => col.target === id)
 
-          return next.ids.length === 0 ? tot : getTotal(next) + tot
+          if (next.ids.filter(i => !alreadyTouched.includes(i))) {
+            return tot
+          } else {
+            alreadyTouched = [...alreadyTouched, ...next.ids]
+            return getTotal(next) + tot
+          }
+
         }, 0) + ids.length
       }
 

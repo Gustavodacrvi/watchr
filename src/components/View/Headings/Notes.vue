@@ -88,7 +88,7 @@ export default {
       s.marginTop = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.height = height
         s.opacity = 1
         s.marginTop = this.heading ? 0 : '10px'
@@ -101,7 +101,7 @@ export default {
     leave(el, done) {
       const s = el.style
 
-      s.transitionDuration = '.15s'
+      s.transitionDuration = '.2s'
       s.height = 0
       s.minHeight = 0
       s.opacity = 0

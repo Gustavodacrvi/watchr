@@ -734,6 +734,7 @@ export default {
           ],
           'list/lists': [
             'color',
+            'headings',
           ],
         },
         getter({}, item) {
@@ -752,6 +753,8 @@ export default {
               color = list.color
             else {
               color = (list.headings.find(el => el.id === item.heading) || {}).color
+              if (!color)
+                color = list.color
             }
           }
           

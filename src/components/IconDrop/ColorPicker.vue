@@ -49,7 +49,11 @@ export default {
           name: 'Dark Red',
         },
         {
-          color: '#5f5abe',
+          color: '#5f8dc4',
+          name: 'Light Blue',
+        },
+        {
+          color: '#4842bd',
           name: 'Dark Blue',
         },
         {
@@ -57,28 +61,44 @@ export default {
           name: 'Yellow',
         },
         {
-          color: '#daa85d',
+          color: '#d29437',
           name: 'Brown',
-        },
-        {
-          color: '#4fe39e',
-          name: 'Olive',
         },
         {
           color: '#a160eb',
           name: 'Purple',
         },
         {
-          color: '#914dff',
+          color: '#7b29ff',
           name: 'Dark Purple',
+        },
+        {
+          color: '#E67C73',
+          name: 'Flamingo',
         },
         {
           color: '#57DE5B',
           name: 'Green',
         },
         {
+          color: '#4fe39e',
+          name: 'Olive',
+        },
+        {
+          color: '#33B679',
+          name: 'Sage',
+        },
+        {
           color: '#FFA166',
           name: 'Orange',
+        },
+        {
+          color: '#F4511E',
+          name: 'Tangerine',
+        },
+        {
+          color: '#616161',
+          name: 'Graphine',
         },
       ]
     },

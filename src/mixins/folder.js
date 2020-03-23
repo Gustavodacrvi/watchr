@@ -49,7 +49,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.height = this.getItemContHeight
         s.opacity = 1
 
@@ -59,7 +59,7 @@ export default {
       })
     },
     async openMobileOptions() {
-      window.navigator.vibrate(100)
+      window.navigator.vibrate(20)
       this.$store.commit('pushIconDrop', await this.getOptions(this.options))
     },
     touchEnd(e) {
@@ -99,7 +99,7 @@ export default {
       s.opacity = 1
       
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.height = '0px'
         s.overflow = 'visible'
         s.opacity = 0

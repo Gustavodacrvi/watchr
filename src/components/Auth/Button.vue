@@ -64,7 +64,7 @@ export default {
   border-radius: 10px;
   font-size: 1.01em;
   cursor: pointer;
-  transition-duration: .15s;
+  transition-duration: .2s;
   outline: none;
   overflow: hidden;
   position: relative;
@@ -97,7 +97,7 @@ export default {
   width: unset;
   padding: 6px;
   color: var(--fade);
-  transition-duration: .15s;
+  transition-duration: .2s;
   transform: scale(1,1);
 }
 
@@ -108,7 +108,7 @@ export default {
   margin-top: 12px;
   margin-left: 6px;
   width: unset;
-  transition-duration: .15s;
+  transition-duration: .2s;
   color: var(--fade);
 }
 

@@ -235,7 +235,7 @@ export default {
       }
     },
     openMobileOptions() {
-      window.navigator.vibrate(100)
+      window.navigator.vibrate(20)
       this.$store.commit('pushIconDrop', this.options(this.nonFiltered, this.autoSchedule))
     },
     touchStart(e) {

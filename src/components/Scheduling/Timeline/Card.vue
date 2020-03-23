@@ -6,6 +6,8 @@
     :style="{top: top + 'px', zIndex}"
 
     @mousedown.prevent="mousedown"
+    @touchstart='touchstart'
+    @touchmove='elementTouchmove'
 
     @mouseenter="hover = true"
     @mouseleave="hover = false"
@@ -16,16 +18,30 @@
         :style="{height: computedHeight + 'px', width}"
       ></div>
       <div class="card shadow"
+        ref='card'
         :style="{
           height: computedHeight + 'px',
           width,
           transform: `translateY(${translateY}px)`,
-          backgroundColor: getColor,
         }"
       >
         <span class="info-wrapper">
           <span class="name">
             <span class="name">
+              <span v-if="!isCalendarEvent"
+                class="icon-wrapper"
+
+                @mousedown.stop
+                @click.stop='completeTask'
+                @contextmenu.stop.prevent='cancelTask'
+              >
+                <Icon
+                  icon='box'
+                  :color='priorityColor'
+                  :box='true'
+                  width='11px'
+                />
+              </span>
               {{ name }}
             </span>
           </span>
@@ -35,13 +51,20 @@
           </span>
         </span>
 
-        <div class="resize" :style="{width}"
+        <div v-if="isDesktopDevice" class="resize" :style="{width}"
           @mousedown.prevent.stop='resizeMousedown'
         ></div>
 
         <transition name="pri-t">
-          <div v-if="priority" class="priority" :style="{backgroundColor: priorityColor}"></div>
+          <div class="priority" :style="{backgroundColor: getColor}"></div>
         </transition>
+
+        <div
+          class="card-back-color"
+          :style="{backgroundColor: getColor}"
+        >
+
+        </div>
 
       </div>
     </div>
@@ -78,6 +101,7 @@ export default {
       expandY: 0,
 
       dragStartY: null,
+      dragStartX: null,
       bounderyTimeout: null,
 
       dataTime: this.time,
@@ -90,6 +114,10 @@ export default {
 
       lastScrollVal: null,
       hover: false,
+
+      cancelTouchMove: false,
+      enableTimeout: null,
+      dragTime: 0,
     }
   },
   mounted() {
@@ -97,6 +125,66 @@ export default {
       this.bindContextMenu(this.options)
   },
   methods: {
+    touchstart(evt) {
+      if (!this.isCalendarEvent) {
+        this.drag = false
+        this.resize = false
+        this.cancelTouchMove = false
+
+        this.dragStartY = evt.touches[0].pageY + this.getScrollTop()
+        this.dragStartX = evt.touches[0].pageX
+        this.dragTime = new Date()
+
+        this.vibrationTimeout = setTimeout(() => {
+          window.navigator.vibrate(20)
+          this.drag = true
+        }, 400)
+
+        window.addEventListener('touchmove', this.touchmove)
+        window.addEventListener('touchend', this.touchend)
+      }
+    },
+    elementTouchmove(evt) {
+      if (this.drag) evt.preventDefault()
+    },
+    touchmove(evt) {
+      const touch = evt.changedTouches[0]
+
+      const waited = (new Date() - this.dragTime) > 200
+      const movedTooFar = (Math.abs(touch.pageY - (this.dragStartY + this.getScrollTop())) > 20) ||
+                          (Math.abs(touch.pageX - this.dragStartX) > 20)
+
+      const cancelEvent = movedTooFar && !waited
+      if (cancelEvent) {
+        clearTimeout(this.vibrationTimeout)
+        this.cancelTouchMove = true
+      } else if (waited && !this.cancelTouchMove) {
+        evt.preventDefault()
+        this.handleMove(touch)
+      }
+
+    },
+    touchend() {
+      if (!this.cancelTouchMove) {
+        this.drag = false
+        this.resize = false
+        this.saveData()
+        this.removeScroll()
+        this.$emit('dragging', null)
+        
+        this.translate(0)
+        this.expand(0)
+
+      }
+      window.removeEventListener('touchmove', this.touchmove)
+      window.removeEventListener('touchend', this.touchend)
+    },
+    completeTask() {
+      this.$store.dispatch('task/completeTasks', [this.task])
+    },
+    cancelTask() {
+      this.$store.dispatch('task/cancelTasks', [this.task.id])
+    },
     bindContextMenu(options) {
       if (!this.isCalendarEvent)
         utils.bindOptionsToEventListener(this.$el, options, this)
@@ -104,7 +192,7 @@ export default {
     bindEventListeners(evt) {
       this.dragStartY = evt.pageY + this.getScrollTop()
 
-      window.addEventListener('mousemove', this.mousemove)
+      window.addEventListener('mousemove', this.handleMove)
       window.addEventListener('mouseup', this.mouseup)
     },
     mousedown(evt) {
@@ -124,7 +212,7 @@ export default {
       }
     },
     scroll(num) {
-      this.getScrollingElement.scrollTop += num
+      this.$emit('scroll', num)
 
       if (this.drag)
         this.translate(this.translateY + num)
@@ -152,7 +240,6 @@ export default {
       }
     },
     getScrollTop() {
-      console.log(this.getScrollingElement)
       return this.getScrollingElement.scrollTop
     },
     translate(num) {
@@ -172,8 +259,8 @@ export default {
 
       this.expandY = num
     },
-    mousemove(evt) {
-      evt.preventDefault()
+    handleMove(evt) {
+      if (evt.preventDefault) evt.preventDefault()
       if (this.drag || this.resize) {
         const node = document.getElementById('sidebar-scroll')
         
@@ -221,7 +308,7 @@ export default {
       this.translate(0)
       this.expand(0)
 
-      window.removeEventListener('mousemove', this.mousemove)
+      window.removeEventListener('mousemove', this.handleMove)
       window.removeEventListener('mouseup', this.mouseup)
     },
 
@@ -250,6 +337,7 @@ export default {
   computed: {
     ...mapGetters({
       getTaskStartAndEnd: 'task/getTaskStartAndEnd',
+      isDesktopDevice: 'isDesktopDevice',
     }),
     isCalendarEvent() {
       return !this.dataTime && !this.dataDuration
@@ -259,15 +347,15 @@ export default {
       return this.collisions.find(el => this.id === el.target)
     },
     getScrollingElement() {
-      if (this.mainView)
+      if (!this.mainView)
         return this.$parent.$parent.$parent.$parent.$el
-      return this.$parent.$parent.$parent.$parent.$parent.$el
+      return this.$parent.$parent.$parent.$el
     },
     getCollisions() {
       return this.findCollisions.collisions
     },
     getColor() {
-      return this.color || this.findCollisions.color
+      return this.color || this.findCollisions.color || 'var(--extra-light-gray)'
     },
     options() {
       return this.isCalendarEvent ? [] : utilsTask.taskOptions(this.task, this)
@@ -389,11 +477,17 @@ export default {
   width: 100%;
   position: absolute;
   z-index: 1;
-  transition: top .2s;
+  transform: scale(1,1);
+  transition: top .2s, transform .3s;
+}
+
+.drag {
+  transition: top .2s, transform .3s;
+  transform: scale(1.05, 1.05);
 }
 
 .disableTransition {
-  transition: none;
+  transition: transform .3s;
 }
 
 .info {
@@ -409,6 +503,11 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.icon-wrapper {
+  padding: 12px 2px;
+  cursor: pointer;
 }
 
 .info-wrapper {
@@ -429,10 +528,15 @@ export default {
   width: 100%;
   box-sizing: border-box;
   border-radius: 6px;
-  background-color: var(--card);
+  /* background-color: var(--card); */
   border: 1px solid var(--sidebar-color);
-  transition: background-color .2s, width .2s, height .2s;
+  box-shadow: 0 0px 0px transparent;
+  transition: background-color .2s, width .2s, height .2s, box-shadow .3s;
   user-select: none;
+}
+
+.drag .card {
+  box-shadow: 0 4px 14px rgba(10,10,10,.3) !important;
 }
 
 .resize .card, .drag .card {
@@ -450,7 +554,7 @@ export default {
 }
 
 .task .card:hover {
-  background-color: var(--light-gray);
+  /* background-color: var(--light-gray); */
   cursor: grab;
 }
 
@@ -497,18 +601,28 @@ export default {
   cursor: unset;
 }
 
+.card-back-color {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  border-radius: 6px;
+  opacity: .4;
+  transition-duration: .2s;
+}
+
+.card:hover .card-back-color {
+  opacity: 1;
+}
+
 .mainView {
   background-color: var(--card);
 }
 
 .mainView .card {
-  box-shadow: 0 4px 6px rgba(20,20,20,.3);
   border: 1px solid var(--card);
-  background-color: var(--dark-light-gray);
-}
-
-.mainView .task .card:hover {
-  background-color: var(--light-gray);
 }
 
 </style>

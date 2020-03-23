@@ -87,7 +87,7 @@ export default {
       s.margin = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
 
         s.height = '25px'
         s.opacity = 1
@@ -101,7 +101,7 @@ export default {
       
       const s = el.style
 
-      s.transitionDuration = '.15s'
+      s.transitionDuration = '.2s'
 
       s.height = 0
       s.width = 0
@@ -121,7 +121,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
 
         s.height = '22px'
         s.margin = '10px 0'
@@ -134,7 +134,7 @@ export default {
     tagsLeave(el, done) {
       const s = el.style
       
-      s.transitionDuration = '.15s'
+      s.transitionDuration = '.2s'
 
       s.height = 0
       s.opacity = 0

@@ -1,8 +1,8 @@
 <template>
-  <div class="footer" :class="{slimMode}">
+  <div class="footer" :class="{slimMode, showing}">
     <div class="inner-footer">
       <div class="wrapper">
-        <div v-if='isDesktopDevice && showIconDropdown && !slimMode'
+        <div v-if='showing && isDesktopDevice && showIconDropdown && !slimMode'
           class="scheduler-toggle passive"
           :class="{scheduleHover}"
 
@@ -22,7 +22,7 @@
             <span v-else key='s'> Scheduler </span>
           </span>
         </div>
-        <div class="drop" v-if="showIconDropdown && !scheduling">
+        <div class="drop" v-if="showIconDropdown && showing && !scheduling">
           <Icon v-for="i in sideIcons" :key='i.icon'
             class="sect-icon passive cursor remove-highlight primary-hover"
             :icon='i.icon'
@@ -43,7 +43,6 @@
             />
           </transition>
         </div>
-        <div></div>
         <Icon v-if="isDesktopBreakPoint && !slimMode"
           width='16px'
           icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="$emit('toggle-sidebar')"/>
@@ -62,16 +61,32 @@ export default {
   components: {
     IconDrop,
   },
-  props: ['showIconDropdown', 'sideIcons', 'showing', 'getSectionOptions', 'scheduling', 'slimMode'],
+  props: ['showIconDropdown', 'sideIcons', 'render', 'getSectionOptions', 'scheduling', 'slimMode'],
   data() {
     return {
+      showing: this.render,
       scheduleHover: false,
+      timeout: null,
     }
   },
   computed: {
     ...mapGetters(['isDesktopDevice', 'isDesktopBreakPoint']),
     schedulerToggleColor() {
       return this.scheduling ? 'var(--yellow)' : 'var(--purple)'
+    },
+  },
+  watch: {
+    render() {
+      if (this.timeout) {
+        clearTimeout(this.timeout)
+        this.timeout = null
+      }
+      if (this.render)
+        this.timeout = setTimeout(() => {
+          this.showing = true
+        }, 500)
+      else
+        this.showing = false
     },
   },
 }
@@ -110,10 +125,6 @@ export default {
   padding: 0;
 }
 
-.mobile .inner-footer {
-  box-shadow: 0 -3px 3px black;
-}
-
 .wrapper {
   height: 100%;
   margin: 0 25px;
@@ -128,19 +139,16 @@ export default {
   height: 100%;
 }
 
-.showing .inner-footer {
+.footer.showing .inner-footer {
   background-color: var(--sidebar-color);
-  box-shadow: 0 -3px 4px var(--sidebar-color);
 }
 
 .slimMode .inner-footer {
   background-color: var(--card);
-  box-shadow: 0 -3px 4px var(--card);
 }
 
-.mobile .showing .inner-footer {
+.mobile .footer.showing .inner-footer {
   background-color: var(--back-color);
-  box-shadow: 0 -3px 4px var(--back-color);
 }
 
 

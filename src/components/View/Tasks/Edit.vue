@@ -635,7 +635,7 @@ export default {
         const y = this.isDesktopBreakPoint ? -2 : 4
         t.transform = `translate(27px, ${y}px)`
         requestAnimationFrame(() => {
-          t.transitionDuration = '.15s'
+          t.transitionDuration = '.2s'
           t.transform = `translate(0px, ${y}px)`
         })
       }
@@ -644,7 +644,7 @@ export default {
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       s.margin = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         if (height < 36)
           s.height = '35px'
         else
@@ -670,7 +670,7 @@ export default {
         const y = this.isDesktopBreakPoint ? -2 : 4
         t.transform = `translate(0px, ${y}px)`
         requestAnimationFrame(() => {
-          t.transitionDuration = '.15s'
+          t.transitionDuration = '.2s'
           t.transform = `translate(27px, ${y}px)`
         })
       }
@@ -679,7 +679,7 @@ export default {
       s.height = el.offsetHeight + 'px'
       requestAnimationFrame(() => {
         this.show = false
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'
@@ -1072,8 +1072,9 @@ export default {
         case 'Someday': return 'var(--brown)'
         case 'Anytime': return 'var(--olive)'
         case 'Today': return 'var(--yellow)'
-        case 'Tomorrow': return 'var(--orange)'
       }
+      if (this.calendarStr.includes('Tomorrow'))
+        return 'var(--orange)'
       return 'var(--green)'
     },
     getCalendarStrIcon() {
@@ -1085,8 +1086,9 @@ export default {
         case 'Someday': return 'archive'
         case 'Anytime': return 'layer-group'
         case 'Today': return 'star'
-        case 'Tomorrow': return 'sun'
       }
+      if (this.calendarStr.includes('Tomorrow'))
+        return 'sun'
       return 'calendar'
     },
     deadlineStr() {
@@ -1383,7 +1385,7 @@ export default {
 }
 
 .edit-wrapper {
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .hide {
@@ -1404,7 +1406,7 @@ export default {
   float: left;
   z-index: 5;
   position: relative;
-  transition-duration: .15s;
+  transition-duration: .2s;
   display: flex;
   flex-wrap: wrap;
 }

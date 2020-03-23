@@ -5,7 +5,6 @@
 
     @dragenter="dragenter"
     @dragover='dragover'
-    @dragleave='dragleave'
     @drop='drop'
 
     @mousemove="mousemove"
@@ -27,6 +26,7 @@
       :height='height'
 
       :mainView='mainView'
+      @scroll='v => $emit("scroll", v)'
     />
 
     <DivisionLine v-if='showRedLine'
@@ -55,7 +55,7 @@ const TOD_STR = mom().format('HH:mm')
 
 import mixin from "@/mixins/scheduler.js"
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   mixins: [mixin],
@@ -141,9 +141,6 @@ export default {
         this.handleDrag(evt)
       }
     },
-    dragleave(evt) {
-      
-    },
     mouseleave() {
       if (!this.movingTask)
         this.hovering = false
@@ -168,7 +165,8 @@ export default {
     },
   },
   computed: {
-    ...mapState(['movingTask', 'userInfo', 'selectedItems', 'height']),
+    ...mapState(['movingTask', 'userInfo', 'selectedItems']),
+    ...mapGetters(['height']),
     showRedLine() {
       return this.current === TOD_STR
     },
@@ -201,8 +199,8 @@ export default {
 
 .Timeline {
   position: relative;
-  margin-top: 50px;
   max-height: 100%;
+  margin-top: 10px;
 }
 
 .disableEvents {

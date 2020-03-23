@@ -141,7 +141,7 @@ export default {
         this.$store.commit('moving', true)
         this.isDragging = true
         this.$emit('is-moving', true)
-        window.navigator.vibrate(100)
+        window.navigator.vibrate(20)
       },
       onEnd: () => {
         this.$store.commit('moving', false)
@@ -315,7 +315,7 @@ export default {
       s.opacity = 1
       s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
       requestAnimationFrame(() => {
-        s.transition = 'height .15s, opacity .15s'
+        s.transition = 'height .2s, opacity .2s'
         s.opacity = 0
         s.height = '0px'
 

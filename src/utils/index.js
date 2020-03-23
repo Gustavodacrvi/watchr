@@ -217,6 +217,37 @@ export default {
 
     const formatTime = time => mom(time, 'HH:mm').format(userInfo.disablePmFormat ? 'HH:mm' : 'LT')
 
+    return {
+      comp: 'InfoList',
+      content: {
+        links: [
+          {
+            name: 'Test 1',
+            info: 'Info 1 Info 1 Info 1 Info 1 Info 1',
+            icon: {
+              color: 'blue',
+              name: 'calendar-star',
+            },
+          },
+          {
+            name: 'Test 2',
+            info: 'Info 2 Info 2 Info 2 Info 2 Info 2',
+            icon: {
+              color: 'yellow',
+              name: 'star',
+            },
+          },
+          {
+            name: 'Test 3',
+            info: 'Info 3 Info 3 Info 3 Info 3 Info 3',
+            icon: {
+              color: 'purple',
+              name: 'sun',
+            },
+          },
+        ],
+      }
+    }
     return [
       {
         name: `${'Start from:'} <span class="fade">${formatTime(time)}</span>`,

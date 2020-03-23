@@ -5,7 +5,7 @@
     mode="out-in"
     tag="span"
   >
-    <Icon v-if="animation || (props.co && !props.se && !props.so)" class="tra-icon cursor remove-highlight" key="3"
+    <Icon v-if="props.animation || (props.co && !props.se && !props.so)" class="tra-icon cursor remove-highlight" key="3"
       icon="box-check-filled"
       :color='props.color'
       width="13px"

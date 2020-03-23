@@ -965,6 +965,8 @@ export default {
       b.commit()
     },
     saveListsById({rootState}, {list, ids}) {
+      if (!ids) return null
+      
       const b = fire.batch()
 
       const writes = []

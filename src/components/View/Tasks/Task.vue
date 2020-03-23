@@ -126,7 +126,9 @@
                       <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)" key='4'/>
                       <template v-else>
                         <span v-if="deadlineStr" class="txt-str alert" key='5'>{{ deadlineStr }}</span>
-                        <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb" key='6'>{{ calendarStr }}</span>
+                        <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb" key='6'>
+                          {{ calendarStr }}
+                        </span>
                       </template>
                     </transition-group>
 
@@ -142,7 +144,7 @@
                     width="8px"
                     :progress='checklistPieProgress'/>
                     <span v-if="!isDesktopBreakPoint && nonReadComments" class="comment-icon">
-                      <Icon
+                      <Icon class='str-icon'
                         icon='comment'
                         width="14px"
                       />
@@ -262,9 +264,9 @@ export default {
         co.transform = 'translateX(-27px)'
         this.deselectItem()
         requestAnimationFrame(() => {
-          c.transitionDuration = '.15s'
-          co.transitionDuration = '.15s'
-          inf.transitionDuration = '.15s'
+          c.transitionDuration = '.2s'
+          co.transitionDuration = '.2s'
+          inf.transitionDuration = '.2s'
           c.opacity = .25
           inf.opacity = 1
           co.transform = 'translateX(0px)'
@@ -288,9 +290,9 @@ export default {
         inf.opacity = 1
         co.transform = 'translateX(0px)'
         requestAnimationFrame(() => {
-          c.transitionDuration = '.15s'
-          co.transitionDuration = '.15s'
-          inf.transitionDuration = '.15s'
+          c.transitionDuration = '.2s'
+          co.transitionDuration = '.2s'
+          inf.transitionDuration = '.2s'
           c.opacity = 0
           inf.opacity = 0
           co.transform = 'translateX(-27px)'
@@ -299,7 +301,7 @@ export default {
           }, 152)
         })
       } else {
-        el.style.transitionDuration = '.15s'
+        el.style.transitionDuration = '.2s'
       }
     },
     editCancel() {
@@ -341,10 +343,10 @@ export default {
 
       const hideTask = () => {
         if (cn) {
-          cn.transitionDuration = '.15s'
+          cn.transitionDuration = '.2s'
           cn.opacity = 0
         }
-        s.transitionDuration = '.15s'
+        s.transitionDuration = '.2s'
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
@@ -405,10 +407,10 @@ export default {
           
           requestAnimationFrame(() => {
             if (cn) {
-              cn.transitionDuration = disableTransition ? 0 : '.15s'
+              cn.transitionDuration = disableTransition ? 0 : '.2s'
               cn.opacity = 1
             }
-            s.transitionDuration = disableTransition ? 0 : '.15s'
+            s.transitionDuration = disableTransition ? 0 : '.2s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
             s.minHeight = this.itemHeight + 'px'
@@ -710,7 +712,7 @@ export default {
   position: relative;
   min-height: 38px;
   z-index: 5;
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .mobile .cont-wrapper {
@@ -746,7 +748,7 @@ export default {
   border-radius: 100px;
   border: 0px solid transparent;
   background-color: var(--txt);
-  transition-duration: .15s;
+  transition-duration: .2s;
 }
 
 .schedule.mobile {
@@ -791,6 +793,10 @@ export default {
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
   background-color: var(--light-gray);
+}
+
+.str-icon {
+  margin-right: 2px;
 }
 
 .isItemMainSelection .cont-wrapper {
@@ -935,6 +941,8 @@ export default {
 .txt-str {
   margin-right: 9px;
   font-size: .75em;
+  display: inline-flex;
+  align-items: center;
 }
 
 .task-tag {

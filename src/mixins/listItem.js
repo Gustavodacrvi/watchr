@@ -64,23 +64,25 @@ export default {
     infoEnter(el) {
       const s = el.style
 
-      const {width} = el.getBoundingClientRect()
-      s.transitionDuration = 0
-      s.width = 0
-      s.opacity = 0
-      s.marginRight = 0
-
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
-        s.width = width + 'px'
-        s.marginRight = '8px'
-        s.opacity = 1
+        const {width} = el.getBoundingClientRect()
+        s.transitionDuration = 0
+        s.width = 0
+        s.opacity = 0
+        s.marginRight = 0
+  
+        requestAnimationFrame(() => {
+          s.transitionDuration = '.2s'
+          s.width = width + 'px'
+          s.marginRight = '8px'
+          s.opacity = 1
+        })
       })
     },
     infoLeave(el) {
       const s = el.style
 
-      s.transitionDuration = '.15s'
+      s.transitionDuration = '.2s'
       s.width = 0
       s.marginRight = 0
       s.opacity = 0
@@ -203,7 +205,7 @@ export default {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
     vibrate() {
-      window.navigator.vibrate(100)
+      window.navigator.vibrate(20)
     },
     openMobileOptions() {
       this.vibrate()

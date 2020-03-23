@@ -305,6 +305,7 @@ export default {
     tasks.sort(priority)
     return tasks
   },
+
   sortTasksByDuration(tasks, order) {
     let num = 1
     if (order !== 'long') num = -1
@@ -324,6 +325,23 @@ export default {
       if (m2.isBefore(m1, 'minute')) return -num
     }
     tasks.sort(calc)
+    return tasks
+  },
+  sortTasksByScheduleTime(tasks) {
+    tasks.sort((t1, t2) => {
+      const time = t => t.calendar && t.calendar.time 
+      
+      if (!time(t1) && !time(t2)) return 0
+      if (time(t1) && !time(t2)) return -1
+      if (!time(t1) && time(t2)) return 1
+
+      const m1 = mom(time(t1), 'HH:mm')
+      const m2 = mom(time(t2), 'HH:mm')
+
+      if (m1.isSame(m2, 'minute')) return 0
+      if (m1.isBefore(m2, 'minute')) return -1
+      if (m1.isAfter(m2, 'minute')) return 1
+    })
     return tasks
   },
   sortTasksByTaskDate(tasks, str) {

@@ -184,9 +184,15 @@ const store = new Vuex.Store({
     clipboardTask: null,
     toggleClipboardPaste: false,
 
-    height: 6000, // timeline height
+    desktopHeight: 6000, // timeline height
+    mobileHeight: 4000,
   },
   getters: {
+    height(state, getters) {
+      if (getters.isDesktopDevice)
+        return state.desktopHeight
+      else return state.mobileHeight
+    },
     calendarDate(state) {
       const n = state.viewName
 
@@ -670,11 +676,11 @@ const store = new Vuex.Store({
 
       b.commit()
     },
-    getData({state, dispatch}, userId) {
+    getData({state, dispatch, getters}, userId) {
       snapshotsListeners.push(cacheRef().onSnapshot(snap => {
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
-
+        
         if (!state.isFirstSnapshot && !isFromHere) {
           utils.updateVuexObject(state.task, 'tasks', data.tasks || {})
           utils.updateVuexObject(state.tag, 'tags', data.tags || {})
