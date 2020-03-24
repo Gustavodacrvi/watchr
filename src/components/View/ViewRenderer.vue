@@ -611,11 +611,11 @@ export default {
         task: {assigned},
       })
     },
-    saveAutoSchedule(info) {
-      if (!this.fallbackSelected || this.fallbackSelected.length === 0)
-        this.$refs.taskHandler.applyAutoSchedule(info)
+    saveAutoSchedule({obj, calendarDate}) {
+      if (this.selectedItems.length === 0)
+        this.$refs.taskHandler.applyAutoSchedule(obj, calendarDate || this.calendarDate)
       else if (this.shortcutsType === 'Task')
-        this.autoScheduleItems(this, info, this.fallbackSelectedTasks)
+        this.autoScheduleItems(this, calendarDate || this.calendarDate, obj, this.getTasksById(this.selectedItems))
     },
 
     selectPagination(newPage) {
@@ -1473,7 +1473,7 @@ export default {
         },
       ]
       if (this.calendarDate)
-        opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(this.saveAutoSchedule, this.userInfo))
+        opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(obj => this.saveAutoSchedule({obj}), this.userInfo))
 
 
       if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming')) {

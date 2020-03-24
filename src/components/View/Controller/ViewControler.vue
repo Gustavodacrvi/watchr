@@ -193,6 +193,7 @@ export default {
         calendarEvents: o.calendarEvents ? o.calendarEvents : date,
         showHeading: true,
         dateType: true,
+        calendarDate: date,
 
         sort: o.sort ? o.sort : this.sortArray,
         order: o.order ? o.order : this.getCalendarOrderByDate(date),

@@ -104,7 +104,7 @@ export default {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
 
-      const toggleSelect = this.toggleSelect()
+      const toggleSelect = this.toggleSelect
 
       const hasSelected = this.selectedItems.length > 0
       if (!isTyping && !this.isEditingComp && !this.iconDrop && !(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))

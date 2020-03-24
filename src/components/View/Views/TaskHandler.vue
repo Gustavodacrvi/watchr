@@ -61,7 +61,7 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
-    'getCalendarOrderDate', 'updateViewIds', 'showingRuler',
+    'calendarDate', 'updateViewIds', 'showingRuler',
     'width', 'disableRootActions', 'fallbackFunctionData',
 
     'headingEditOptions', 'taskIconDropOptions', 'filterByAssigned',
@@ -84,11 +84,11 @@ export default {
     this.order = this.tasksOrder
   },
   methods: {
-    applyAutoSchedule(autoSchedule) {
-      this.$refs.renderer.applyAutoSchedule(autoSchedule)
+    applyAutoSchedule(autoSchedule, calendarDate) {
+      this.$refs.renderer.applyAutoSchedule(autoSchedule, calendarDate)
     },
-    saveAutoSchedule(info, headingId) {
-      this.$refs.renderer.applyAutoScheduleToHeading(info, headingId)
+    saveAutoSchedule(info, headingId, calendarDate) {
+      this.$refs.renderer.applyAutoScheduleToHeading(info, headingId, calendarDate)
     },
     addTaskEdit() {
       this.$refs.renderer.appendItem()
@@ -184,9 +184,9 @@ export default {
       selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
       user: state => state.user,
-      fallbackSelected: state => state.fallbackSelected,
     }),
     ...mapGetters({
+      fallbackSelected: 'fallbackSelected',
       lists: 'list/lists',
       logLists: 'list/logLists',
       folders: 'folder/folders',
@@ -324,11 +324,14 @@ export default {
               ]
             },
           ]
-          opt.push(utils.getAutoSchedulerIconDropObject(obj => {
-            if (!this.fallbackSelected || this.fallbackSelected.length === 0)
-              this.saveAutoSchedule(obj, head.id)
-            else this.$emit('auto-schedule-from-heading', obj)
-          }, this.userInfo))
+          if ((head.calendarDate || this.calendarDate) && !head.listType)
+            opt.push(utils.getAutoSchedulerIconDropObject(obj => {
+              if (this.selectedItems.length === 0)
+                this.saveAutoSchedule(obj, head.id, head.calendarDate || this.calendarDate)
+              else this.$emit('auto-schedule-from-heading', {
+                obj, calendarDate: head.calendarDate || this.calendarDate,
+              })
+            }, this.userInfo))
           if (options && options.length > 0)
             opt.push({
               type: 'hr',
@@ -475,7 +478,7 @@ export default {
     },
     pipeCompleted() {
       if (this.showCompleted) return () => true
-      return task => !this.isTaskCompleted(task, this.getCalendarOrderDate, this.itemCompletionCompareDate)
+      return task => !this.isTaskCompleted(task, this.calendarDate, this.itemCompletionCompareDate)
     },
     pipeCanceled() {
       if (this.showCompleted) return () => true

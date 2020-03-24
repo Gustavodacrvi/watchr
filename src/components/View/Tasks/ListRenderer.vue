@@ -262,14 +262,14 @@ export default {
     }
   },
   methods: {
-    applyAutoScheduleToHeading(info, headingId) {
-      this.$refs.headings.applyAutoScheduleToHeading(info, headingId)
+    applyAutoScheduleToHeading(info, headingId, calendarDate) {
+      this.$refs.headings.applyAutoScheduleToHeading(info, headingId, calendarDate)
     },
-    applyAutoSchedule(obj) {
+    applyAutoSchedule(obj, calendarDate) {
       if (this.comp === 'Task') {
-        this.autoScheduleItems(this, obj, this.getItems)
+        this.autoScheduleItems(this, calendarDate, obj, this.getItems)
         if (this.$refs.headings)
-          this.$refs.headings.applyAutoSchedule(obj)
+          this.$refs.headings.applyAutoSchedule(obj, calendarDate)
       }
     },
     forEachItem(callback) {
