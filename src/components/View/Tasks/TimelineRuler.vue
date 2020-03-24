@@ -12,7 +12,7 @@
       @mouseup.stop
       @touchend.stop.passive
     >
-      <span v-if="getNewValue" class="save">Save</span>
+      <span v-if="getNewValue" class="save" @click="$emit('save')">Save</span>
       <div :class="{touch: !isDesktopDevice}"
         class="wrapper"
         ref='wrapper'
@@ -114,6 +114,11 @@ export default {
           false
         )
       )
+    },
+  },
+  watch: {
+    minutesToAdd() {
+      this.$emit('input', this.isPositive ? this.minutesToAdd : -this.minutesToAdd)
     },
   },
 }

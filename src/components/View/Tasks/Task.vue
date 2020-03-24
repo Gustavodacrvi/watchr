@@ -233,7 +233,7 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'showingRuler',
+  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'showingRuler', 'timelineIncrement',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
@@ -479,6 +479,15 @@ export default {
         assigned: uid,
       })
     },
+    saveNewCalendarTime() {
+      if (this.incrementedTime)
+        this.saveTaskContent({
+          calendar: {
+            ...this.item.calendar,
+            time: this.incrementedTime,
+          },
+        })
+    },
   },
   computed: {
     ...mapGetters({
@@ -649,7 +658,16 @@ export default {
     calendarTime() {
       const c = this.item.calendar
       if (!c || !c.time) return null
+      if (this.incrementedTime)
+        return this.incrementedTime
       return c.time
+    },
+    incrementedTime() {
+      if (!this.timelineIncrement || !this.isItemSelected)
+        return null
+      const newTime = mom(this.item.calendar.time, 'HH:mm').add(this.timelineIncrement, 'm')
+      if (newTime.isValid())
+        return newTime.format('HH:mm')
     },
     formatedTime() {
       if (!this.calendarTime)
@@ -683,10 +701,9 @@ export default {
       return split[split.length - 1]
     },
     startMin() {
-      const c = this.item.calendar
-      if (!c || !c.time)
+      if (!this.calendarTime)
         return null
-      return mom(c.time, 'HH:mm').format('mm')
+      return mom(this.calendarTime, 'HH:mm').format('mm')
     },
     isLogbookTask() {
       return this.item.logDate

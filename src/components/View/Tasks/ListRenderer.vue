@@ -38,6 +38,7 @@
 
           :itemHeight='itemHeight'
           :item='item'
+          :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
@@ -85,7 +86,10 @@
           @cancel='removeEdit'
         />
       </template>
-      <TimelineRuler v-if='showTimelineRuler'/>
+      <TimelineRuler v-if='showTimelineRuler'
+        v-model="timelineIncrement"
+        @save='saveTimelineIncrement'
+      />
       <div v-if="!moving && !hasEdit"
         class='list-info'
       >
@@ -206,6 +210,8 @@ export default {
       droppedIds: [],
       waitingUpdateTimeout: null,
 
+      timelineIncrement: 0,
+
       addedItem: null,
       edit: null,
       focusToggle: false,
@@ -274,6 +280,10 @@ export default {
         if (this.$refs.headings)
           this.$refs.headings.applyAutoSchedule(obj, calendarDate)
       }
+    },
+    saveTimelineIncrement() {
+      this.forEachItem(vm => vm.saveNewCalendarTime())
+      this.$store.commit('clearSelected')
     },
     forEachItem(callback) {
       const keys = Object.keys(this.$refs)
