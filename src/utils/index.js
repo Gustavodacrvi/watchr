@@ -220,82 +220,66 @@ export default {
     return {
       comp: 'InfoList',
       content: {
+        width: '290px',
         links: [
           {
-            name: 'Test 1',
-            info: 'Info 1 Info 1 Info 1 Info 1 Info 1',
-            icon: {
-              color: 'blue',
-              name: 'calendar-star',
-            },
+            name: 'Start schedule from',
+            value: formatTime(time),
+            info: 'The start time of the timeline.',
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: 'Start schedule from:',
+                callback: newTime => this.getScheduleIconDropObject({
+                  time: newTime, buffer, fallback,
+                }, saveAutoSchedule, userInfo)
+              }
+            })
           },
           {
-            name: 'Test 2',
-            info: 'Info 2 Info 2 Info 2 Info 2 Info 2',
-            icon: {
-              color: 'yellow',
-              name: 'star',
-            },
+            name: 'Buffer time',
+            value: this.formatQuantity(buffer),
+            info: 'Add some breathing room after each item for short breaks or minor delays.',
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                format: '24hr',
+                msg: "Buffer time:",
+                callback: newBuffer => this.getScheduleIconDropObject({
+                  time, buffer: newBuffer, fallback,
+                }, saveAutoSchedule, userInfo)
+              }
+            })
           },
           {
-            name: 'Test 3',
-            info: 'Info 3 Info 3 Info 3 Info 3 Info 3',
+            name: 'Assume duration of',
+            value: this.formatQuantity(fallback),
+            info: 'Items without a specific duration will adopt this value for the purpose of auto-scheduling.',
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                format: '24hr',
+                msg: "Buffer time:",
+                callback: newFallback => this.getScheduleIconDropObject({
+                  time, buffer, fallback: newFallback,
+                }, saveAutoSchedule, userInfo)
+              }
+            })
+          },
+          {
             icon: {
-              color: 'purple',
-              name: 'sun',
+              color: 'var(--yellow)',
+              name: 'magic',
+            },
+            name: 'Start auto-schedule',
+            callback: () => {
+              saveAutoSchedule({...info})
+              return null
             },
           },
         ],
       }
     }
-    return [
-      {
-        name: `${'Start from:'} <span class="fade">${formatTime(time)}</span>`,
-        callback: () => ({
-          comp: 'TimePicker',
-          content: {
-            msg: 'Start from:',
-            callback: newTime => this.getScheduleIconDropObject({
-              time: newTime, buffer, fallback,
-            }, saveAutoSchedule, userInfo)
-          }
-        })
-      },
-      {
-        name: `${'Buffer time:'} <span class="fade">${this.formatQuantity(buffer)}</span>`,
-        callback: () => ({
-          comp: 'TimePicker',
-          content: {
-            format: '24hr',
-            msg: "Buffer time:",
-            callback: newBuffer => this.getScheduleIconDropObject({
-              time, buffer: newBuffer, fallback,
-            }, saveAutoSchedule, userInfo)
-          }
-        })
-      },
-      {
-        name: `${'Fallback time:'} <span class="fade">${this.formatQuantity(fallback)}</span>`,
-        callback: () => ({
-          comp: 'TimePicker',
-          content: {
-            format: '24hr',
-            msg: "Buffer time:",
-            callback: newFallback => this.getScheduleIconDropObject({
-              time, buffer, fallback: newFallback,
-            }, saveAutoSchedule, userInfo)
-          }
-        })
-      },
-      {
-        name: 'Auto schedule',
-        callback: () => {
-          saveAutoSchedule({...info})
-          return null
-        },
-        type: 'button',
-      },
-    ]
   },
   calendarObjNaturalCalendarInput(str, disablePmFormat) {
     const tod = mom()
