@@ -55,17 +55,7 @@ export const setInfo = (batch, info, rootState, writes) => {
     userId: uid(),
   }
 
-  utils.findChangesBetweenObjs(rootState.userInfo, obj, (key, val) => {
-    switch (typeof obj[key]) {
-      case 'object': {
-        Vue.set(rootState.userInfo, key, {...rootState.userInfo[key], ...val})
-        break
-      }
-      default: {
-        Vue.set(rootState.userInfo, key, val)
-      }
-    }
-  })
+  utils.findChangesBetweenObjs(rootState.userInfo, obj)
   
   if (!writes)
     batch.set(cacheRef(), {

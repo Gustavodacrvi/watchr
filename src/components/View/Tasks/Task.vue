@@ -67,7 +67,7 @@
               ref='cont'
             >
               <transition name='ruler-t'>
-                <div v-if="showingRuler"
+                <div v-if="computedShowRuler"
                   class="ruler-element"
                   @click='rulerClick'
                 >
@@ -157,7 +157,7 @@
                       <span v-html="parsedName" ref='parsed-name'></span>
                     </div>
                     
-                    <span v-if="!showingRuler && timeStr" class="txt-icon tag dark rb">{{ timeStr }}</span>
+                    <span v-if="!computedShowRuler && timeStr" class="txt-icon tag dark rb">{{ timeStr }}</span>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
                     icon="pie"
@@ -286,7 +286,7 @@ export default {
         inf.transitionDuration = 0
         c.opacity = 0
         inf.opacity = 0
-        co.transform = `translateX(-${this.showingRuler ? 62 : 27}px)`
+        co.transform = `translateX(-${this.computedShowRuler ? 62 : 27}px)`
         this.deselectItem()
         requestAnimationFrame(() => {
           c.transitionDuration = '.2s'
@@ -320,7 +320,7 @@ export default {
           inf.transitionDuration = '.2s'
           c.opacity = 0
           inf.opacity = 0
-          co.transform = `translateX(-${this.showingRuler ? 62 : 27}px)`
+          co.transform = `translateX(-${this.computedShowRuler ? 62 : 27}px)`
           setTimeout(() => {
             this.doneTransition = true
           }, 152)
@@ -482,6 +482,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      calendarDate: 'calendarDate',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
       isDesktopDevice: 'isDesktopDevice',
       layout: 'layout',
@@ -499,6 +500,9 @@ export default {
       savedTags: 'tag/sortedTagsByName',
       getTagsById: 'tag/getTagsById',
     }),
+    computedShowRuler() {
+      return this.showingRuler && this.calendarDate
+    },
     isItemLogged() {
       return this.isTaskInLogbook(this.item)
     },
@@ -752,7 +756,7 @@ export default {
 }
 
 .ruler-element {
-  width: 35px;
+  width: 50px;
   flex-shrink: 0;
 }
 

@@ -85,6 +85,7 @@
           @cancel='removeEdit'
         />
       </template>
+      <TimelineRuler v-if='showTimelineRuler'/>
       <div v-if="!moving && !hasEdit"
         class='list-info'
       >
@@ -160,6 +161,7 @@
 import Vue from 'vue'
 
 import Task from './Task.vue'
+import TimelineRuler from './TimelineRuler.vue'
 import List from './../Lists/List.vue'
 import TaskEdit from './Edit.vue'
 import ListEdit from './../Lists/Edit.vue'
@@ -191,7 +193,8 @@ export default {
   components: {
     Task, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
-    Illustration: IllustrationVue, 
+    Illustration: IllustrationVue,
+    TimelineRuler,
   },
   data() {
     return {
@@ -1114,6 +1117,9 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    showTimelineRuler() {
+      return this.showingRuler && this.selected.length > 0
+    },
     slicedHeadings() {
       return this.showEmptyHeadings ? this.headings.slice() : this.headings.filter(this.filterHeading)
     },
