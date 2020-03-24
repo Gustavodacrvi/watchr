@@ -189,29 +189,16 @@ export default {
   sortListByName(lists, property = 'name') {
     return lists.slice().sort((a, b) => a[property].toLowerCase().localeCompare(b[property].toLowerCase()))
   },
-  getAutoSchedulerIconDropObject(autoSchedule, saveAutoSchedule, userInfo) {
+  getAutoSchedulerIconDropObject(saveAutoSchedule, userInfo) {
     return {
       name: 'Auto schedule',
       icon: 'magic',
-      callback: () => {
-        if (autoSchedule)
-          return [
-            {
-              name: 'Remove schedule',
-              callback: () => saveAutoSchedule(null)
-            },
-            {
-              name: 'Edit schedule',
-              callback: () => this.getScheduleIconDropObject(autoSchedule, saveAutoSchedule, userInfo)
-            }
-          ]
-        return this.getScheduleIconDropObject(null, saveAutoSchedule, userInfo)
-      }
+      callback: () => this.getScheduleIconDropObject(null, saveAutoSchedule, userInfo)
     }
   },
   getScheduleIconDropObject(info, saveAutoSchedule, userInfo) {
     if (!info)
-      info = {time: mom().format('HH:mm'), buffer: '00:05', fallback: '00:15'}
+      info = {time: mom().format('HH:mm'), buffer: '00:05', fallback: '00:10'}
 
     const {time, buffer, fallback} = info
 
@@ -916,8 +903,9 @@ export default {
               else if (val)
                 Vue.set(oldObj, k, {...oldObj[k], ...val})
               else Vue.set(oldObj, k, null)
-            } else
+            } else {
               Vue.set(oldObj, k, val)
+            }
           }
         }
       }

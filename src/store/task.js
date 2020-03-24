@@ -109,6 +109,23 @@ export default {
     hasDurationAndTime: () => t => t.calendar && t.calendar.time && t.taskDuration,
     
     ...MemoizeGetters({
+      isTaskCompleted: {
+        getter({}, task, moment, compareDate) {
+          return utilsTask.isTaskCompleted(task, moment, compareDate)
+        },
+        cache(args) {
+          let t = args[0]
+          return JSON.stringify({
+              t: {
+                completed: t.completed,
+                canceled: t.canceled,
+                logbook: t.logbook,
+                calendar: t.calendar,
+              },
+            a: [args[1], args[2]]
+          })
+        },
+      },
       isCalendarObjectShowingToday: {
         deepStateTouch: {
           'userInfo/allowOverdue': [],
@@ -214,19 +231,6 @@ export default {
               l: args[0].logbook
             }) :
             args[0].logbook
-        },
-      },
-      isTaskCompleted: {
-        getter({}, task, moment, compareDate) {
-          return utilsTask.isTaskCompleted(task, moment, compareDate)
-        },
-        cache(args) {
-          let task = args[0]
-          const i = {
-            completed: task.completed,
-            calendar: task.calendar,
-          }
-          return JSON.stringify({i, a: [args[1], args[2]]})
         },
       },
       isTaskOverdue: {

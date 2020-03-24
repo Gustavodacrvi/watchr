@@ -72,12 +72,11 @@
           :showSomeday='passSomedayTasks'
           :pipeFilterOptions='pipeFilterOptions'
           :taskIconDropOptions='taskIconDropOptions'
-          :autoSchedule='autoSchedule'
           :filterByAssigned='filterByAssigned'
+          :showingRuler='showingRuler'
 
           @allow-someday='showSomeday = true'
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
-          @save-schedule-object='saveScheduleObject'
 
           @present-tags='getPresentTags'
           @present-lists='getPresentLists'
@@ -138,7 +137,7 @@ export default {
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
-  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
+  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'calendarDate', 'viewItem',
   'showHeading', 'viewComponent',
   
@@ -160,6 +159,7 @@ export default {
       showingPrioritySelection: false,
       showCompleted: false,
       showSomeday: false,
+      showingRuler: false,
 
       filterByAssigned: false,
 
@@ -174,7 +174,6 @@ export default {
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
-      autoSchedule: null,
 
       inclusiveTags: [],
       exclusiveTags: [],
@@ -206,7 +205,7 @@ export default {
     this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
     this.showingGroupSelection = localStorage.getItem('groupFilters') === 'true'
     this.showingListSelection = localStorage.getItem('listFilters') === 'true'
-    this.autoSchedule = this.savedSchedule
+    this.showingRuler = localStorage.getItem('showingRuler') === 'true'
 
     window.addEventListener('keydown', this.keydown)
     window.addEventListener('keypress', this.keypress)
@@ -222,6 +221,10 @@ export default {
     ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
 
+    toggleRuler() {
+      this.showingRuler = !this.showingRuler
+      localStorage.setItem('showingRuler', this.showingRuler)
+    },
     openMainComp() {
       this.$refs.mainComp.open()
     },
@@ -280,7 +283,6 @@ export default {
     getAllListsIds(ids) {
       this.allListsIds = ids
     },
-
 
     go(dire) {
       const ids = this.allViewItemsIds
@@ -598,12 +600,6 @@ export default {
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
       else this.computedHeaderOptions = []
     },
-    saveScheduleObject(obj) {
-      this.$emit('save-schedule', {
-        ...this.autoSchedule,
-        scheduleObject: obj,
-      })
-    },
     assignUser(assigned) {
       this.$store.dispatch('task/saveTasksById', {
         ids: this.selectedItems,
@@ -611,9 +607,9 @@ export default {
       })
     },
     saveAutoSchedule(info) {
-      this.autoSchedule = info
+/*       this.autoSchedule = info
       if (info === null)
-        this.$emit('save-schedule', info)
+        this.$emit('save-schedule', info) */
     },
 
     selectPagination(newPage) {
@@ -1193,15 +1189,21 @@ export default {
           },
         ]
         if (this.calendarDate)
-          opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(this.autoSchedule, this.saveAutoSchedule, this.userInfo))
+          opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(this.saveAutoSchedule, this.userInfo))
 
 
-        if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming'))
+        if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming')) {
+          opt.push({
+            name: !this.showingRuler ? 'Show timeline ruler' : 'Hide timeline ruler',
+            icon: 'clock',
+            callback: this.toggleRuler,
+          })
           opt.push({
             name: 'Show Google Calendar',
             icon: 'calendar',
             callback: () => this.$store.commit('toggleCalendar', true)
           })
+        }
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',
@@ -1556,12 +1558,8 @@ export default {
   },
   watch: {
     viewName() {
-      this.autoSchedule = null
       this.getComputedOptions()
       this.saveMainSelection(null)
-    },
-    savedSchedule() {
-      this.autoSchedule = this.savedSchedule
     },
     viewNameValue() {
       this.showSomeday = false
@@ -1578,7 +1576,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 85px;
+  margin: 0 65px;
   min-height: 100%;
   position: relative;
   display: flex;

@@ -19,8 +19,8 @@ export default {
       fail: false,
       timeout: null,
       checkStartTimeout: null,
-      completed: false,
       canceled: false,
+      completed: false,
       completeAnimation: false,
     }
   },
@@ -87,23 +87,24 @@ export default {
       s.marginRight = 0
       s.opacity = 0
     },
+    toggleSelect() {
+      if (!this.isItemSelected) {
+        if (this.selectedItems.length === 0) {
+          this.selectItem()
+        } else {
+          this.selectItem()
+        }
+      } else {
+        this.deselectItem()
+      }
+    },
     mainSelectionKeyDown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
 
-      const toggleSelect = () => {
-        if (!this.isItemSelected) {
-          if (this.selectedItems.length === 0) {
-            this.selectItem()
-          } else {
-            this.selectItem()
-          }
-        } else {
-          this.deselectItem()
-        }
-      }
+      const toggleSelect = this.toggleSelect()
 
       const hasSelected = this.selectedItems.length > 0
       if (!isTyping && !this.isEditingComp && !this.iconDrop && !(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
@@ -327,9 +328,11 @@ export default {
         this.completeAnimation = !this.completed
         const anticipate = (this.viewName !== 'Today' && this.comp === "Task")
         this.completed = !this.completed || anticipate
-        if (this.completed || anticipate)
-          this.dispatchCompleteItem()
-        else this.dispatchUncompleteItem()
+        this.$nextTick(() => {
+          if (this.completed || anticipate)
+            this.dispatchCompleteItem()
+          else this.dispatchUncompleteItem()
+        })
       }
     },
     cancelItem(force = false) {
@@ -338,9 +341,11 @@ export default {
       } else {
         this.completeAnimation = !this.canceled
         this.canceled = !this.canceled
-        if (this.canceled)
-          this.dispatchCancelItem()
-        else this.dispatchUncancelItem()
+        this.$nextTick(() => {
+          if (this.canceled)
+            this.dispatchCancelItem()
+          else this.dispatchUncancelItem()
+        })
       }
     },
   },

@@ -50,7 +50,6 @@
           @add-item-after='addItemAfterSelection'
           @add-heading-after='addHeadingAfterSelection'
           @go='moveItemHandlerSelection'
-          @change-time='changeTime'
 
 
           :data-id='item.id'
@@ -128,6 +127,7 @@
       :viewName='viewName'
       :viewType='viewType'
       :viewNameValue='viewNameValue'
+      :showingRuler='showingRuler'
       :headings='getHeadings'
       :headingEditOptions='headingEditOptions'
       :isSmart='isSmart'
@@ -137,7 +137,6 @@
       :showAllHeadingsItems='showAllHeadingsItems'
       :itemCompletionCompareDate='itemCompletionCompareDate'
       :mainFallbackItem='mainFallbackItem'
-      :scheduleObject='scheduleObject'
       :disableSortableMount='disableSortableMount'
       :onAddExistingItem='onAddExistingItem'
       :isRootAddingHeadings='isAddingHeadings'
@@ -148,7 +147,6 @@
       :itemPlaceholder='itemPlaceholder'
       :disableFallback='disableFallback'
 
-      @change-time='changeTime'
       @added-heading-complete-mount='justAddedHeading = null'
       @go='moveItemHandlerSelection'
       @add-heading='addHeadingFromRootHeadings'
@@ -184,7 +182,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
-  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr',
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
@@ -385,9 +383,6 @@ export default {
         this.$parent.$emit('items-ids', this.allItemsIds)
       else
         this.$emit('items-ids', this.allItemsIds)
-    },
-    changeTime(args) {
-      this.$emit('change-time', args)
     },
     addHeadingFromRootHeadings(obj) {
       this.justAddedHeading = obj.name

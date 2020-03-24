@@ -56,13 +56,11 @@
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
           :showHeadingName="h.showHeadingName"
-          :scheduleObject='h.scheduleObject || scheduleObject'
           :onSortableAdd='h.onSortableAdd'
           :addedHeading='justAddedHeading'
           @add-heading='addHeading'
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
-          @change-time='changeTime'
           @items-ids='ids => getItemsIds(ids, i)'
           @added-heading-complete-mount='addedHeadingCompleteMount'
 
@@ -93,7 +91,7 @@ export default {
     ListRenderer: () => import('./ListRenderer.vue'),
   },
   props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
-  , 'scheduleObject', 'justAddedHeading',
+  , 'justAddedHeading', 'showingRuler',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {
@@ -185,9 +183,6 @@ export default {
     updateHeadingItemIds(h, ids) {
       if (h.updateIds)
         h.updateIds(ids)
-    },
-    changeTime(args) {
-      this.$emit('change-time', args)
     },
     moveItemHandlerSelection(bool) {
       this.$emit('go', bool)

@@ -199,15 +199,5 @@ export default {
     disableRootActions() {
       return this.isFixedHeadingsView
     },
-    savedSchedule() {
-      const n = this.viewName
-      if (this.calendarOrders) {
-        let date = this.getCalendarOrderDate
-        const schedule = (this.calendarOrders[date] && this.calendarOrders[date].schedule)
-        if (date && schedule)
-          return {...schedule}
-      }
-      return null
-    },
   },
 }
