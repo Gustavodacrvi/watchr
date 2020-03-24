@@ -1118,7 +1118,7 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     showTimelineRuler() {
-      return this.showingRuler && this.selected.length > 0
+      return this.comp === "Task" && this.showingRuler && this.selected.length > 0 && this.selected.every(id => this.getItems.some(item => item.id === id))
     },
     slicedHeadings() {
       return this.showEmptyHeadings ? this.headings.slice() : this.headings.filter(this.filterHeading)

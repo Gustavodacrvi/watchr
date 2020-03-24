@@ -13,18 +13,20 @@
       @touchend.stop.passive
     >
       <span v-if="getNewValue" class="save">Save</span>
-      <div
+      <div :class="{touch: !isDesktopDevice}"
         class="wrapper"
         ref='wrapper'
 
         @mousedown='mousedown'
         @mouseup='mouseup'
+        @touchstart.passive='touchstart'
+        @touchend.passive='mouseup'
       >
         <transition name='fade-t'>
           <div v-if="handleY" class="handle" :style="{top: handleY + 'px'}"></div>
         </transition>
       </div>
-      <div v-if="getNewValue" class="time">
+      <div v-if="getNewValue" class="time" :class="{right: !isDesktopDevice}">
         <span v-if="isPositive">+</span>
         <span v-else>-</span>
         {{ getTime }}
@@ -39,6 +41,8 @@ import schedulerMixin from '@/mixins/scheduler.js'
 
 import utils from "@/utils"
 
+import { mapGetters } from 'vuex'
+
 export default {
   mixins: [schedulerMixin],
   data() {
@@ -49,10 +53,14 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener('mousemove', this.mousemove)
+    if (this.isDesktopDevice)
+      window.addEventListener('mousemove', this.mousemove)
+    else window.addEventListener('touchmove', this.touchmove, {passive: true})
   },
   beforeDestroy() {
-    window.removeEventListener('mousemove', this.mousemove)
+    if (this.isDesktopDevice)
+      window.removeEventListener('mousemove', this.mousemove)
+    else window.removeEventListener('touchmove', this.touchmove, {passive: true})
   },
   methods: {
     mousemove(evt) {
@@ -63,13 +71,21 @@ export default {
           found = true
           break
         }
-      
+
+
+
       if (found)
-        this.handleY = this.round(5, evt.clientY - this.offsetTop)
+        this.handleY = this.round(5, evt.clientY - this.$el.getBoundingClientRect().top)
       else this.handleY = null
     },
+    touchstart(evt) {
+      this.dragStart = evt.touches[0].clientY - this.$el.getBoundingClientRect().top
+    },
+    touchmove(evt) {
+      this.mousemove(evt.touches[0])
+    },
     mousedown(evt) {
-      this.dragStart = evt.clientY - this.offsetTop
+      this.dragStart = evt.clientY - this.$el.getBoundingClientRect().top
     },
     mouseup(evt) {
       this.lastValue = this.getNewValue
@@ -77,9 +93,7 @@ export default {
     },
   },
   computed: {
-    offsetTop() {
-      return this.$el.getBoundingClientRect().top
-    },
+    ...mapGetters(['isDesktopDevice']),
     isPositive() {
       return this.getNewValue > 0
     },
@@ -88,12 +102,15 @@ export default {
         return this.lastValue
       return this.lastValue - (this.dragStart - this.handleY)
     },
+    minutesToAdd() {
+      return this.round(5,
+            this.convertOffsetToMin(Math.abs(this.getNewValue), 3000)
+          )
+    },
     getTime() {
       return utils.formatQuantity(
         this.formatMin(
-          this.round(5,
-              this.convertOffsetToMin(Math.abs(this.getNewValue), 3000)
-          ),
+          this.minutesToAdd,
           false
         )
       )
@@ -125,6 +142,10 @@ export default {
   cursor: grab;
 }
 
+.touch {
+  touch-action: none;
+}
+
 .handle {
   background-color: var(--purple);
   border-radius: 8px;
@@ -137,9 +158,14 @@ export default {
 
 .time {
   position: absolute;
-  top: 0;
+  top: -25px;
   right: 52px;
   white-space: nowrap;
+}
+
+.right {
+  left: 52px;
+  right: unset;
 }
 
 .save {
