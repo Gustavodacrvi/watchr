@@ -784,7 +784,8 @@ export default {
 }
 
 .timeline-info {
-  font-size: .75em;
+  font-size: .7em;
+  color: var(--fade);
   margin-left: 2px;
   display: flex;
   flex-direction: column;

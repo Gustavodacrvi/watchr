@@ -84,6 +84,12 @@ export default {
     this.order = this.tasksOrder
   },
   methods: {
+    applyAutoSchedule(autoSchedule) {
+      this.$refs.renderer.applyAutoSchedule(autoSchedule)
+    },
+    saveAutoSchedule(info, headingId) {
+      this.$refs.renderer.applyAutoScheduleToHeading(info, headingId)
+    },
     addTaskEdit() {
       this.$refs.renderer.appendItem()
     },
@@ -178,6 +184,7 @@ export default {
       selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
       user: state => state.user,
+      fallbackSelected: state => state.fallbackSelected,
     }),
     ...mapGetters({
       lists: 'list/lists',
@@ -317,6 +324,11 @@ export default {
               ]
             },
           ]
+          opt.push(utils.getAutoSchedulerIconDropObject(obj => {
+            if (!this.fallbackSelected || this.fallbackSelected.length === 0)
+              this.saveAutoSchedule(obj, head.id)
+            else this.$emit('auto-schedule-from-heading', obj)
+          }, this.userInfo))
           if (options && options.length > 0)
             opt.push({
               type: 'hr',

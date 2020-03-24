@@ -171,6 +171,8 @@ import HeadingsRenderer from './HeadingsRenderer.vue'
 import { fire } from '@/store/'
 import { uid, setTask } from '@/utils/firestore'
 
+import autoScheduleMixin from "@/mixins/autoSchedule"
+
 import { mapState, mapGetters } from 'vuex'
 
 import { Sortable } from 'sortablejs'
@@ -181,6 +183,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
+  mixins: [autoScheduleMixin],
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
@@ -259,6 +262,16 @@ export default {
     }
   },
   methods: {
+    applyAutoScheduleToHeading(info, headingId) {
+      this.$refs.headings.applyAutoScheduleToHeading(info, headingId)
+    },
+    applyAutoSchedule(obj) {
+      if (this.comp === 'Task') {
+        this.autoScheduleItems(this, obj, this.getItems)
+        if (this.$refs.headings)
+          this.$refs.headings.applyAutoSchedule(obj)
+      }
+    },
     forEachItem(callback) {
       const keys = Object.keys(this.$refs)
       for (const k of keys)

@@ -45,8 +45,10 @@ export default {
     callback(l) {
       const opt = l.callback(l, this, this.$parent)
 
-      if (!opt || (opt && opt.then)) close()
-      else this.$emit('update', opt)
+      if (!opt || (opt && opt.then)) {
+        this.$emit('close')
+        this.$store.commit('clearSelected')
+      } else this.$emit('update', opt)
     },
   },
 }

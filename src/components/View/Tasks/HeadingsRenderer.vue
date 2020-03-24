@@ -82,9 +82,12 @@ import { mapGetters } from 'vuex'
 
 import { Sortable } from 'sortablejs'
 
+import autoScheduleMixin from "@/mixins/autoSchedule"
+
 export default {
   mixins: [
     Defer(),
+    autoScheduleMixin,
   ],
   components: {
     HeadingVue,
@@ -113,11 +116,24 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    applyAutoScheduleToHeading(obj, headingId) {
+      this.findHeading(headingId, vm => vm.applyAutoSchedule(obj))
+    },
+    findHeading(headingId, callback) {
+      if (this.$refs[headingId] && this.$refs[headingId][0])
+        callback(this.$refs[headingId][0])
+    },
+    applyAutoSchedule(obj) {
+      this.forEachRenderer(vm => vm.applyAutoSchedule(obj))
+    },
     selectAll() {
+      this.forEachRenderer(vm => vm.selectAll())
+    },
+    forEachRenderer(callback) {
       const keys = Object.keys(this.$refs)
       keys.forEach(k => {
         if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].selectAll)
-          this.$refs[k][0].selectAll()
+          callback(this.$refs[k][0])
       })
     },
     getContHeight(h) {
