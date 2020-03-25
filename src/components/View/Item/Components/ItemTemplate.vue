@@ -17,11 +17,19 @@
         <ItemCont
           v-bind="item"
           
-          :movingItem='movingItem'
-          :isSelecting='isSelecting'
-        />
+          :completed='completed'
+          :canceled='canceled'
+          :nameIcon='nameIcon'
+        >
 
-          
+          <template v-slot:check-icon>
+            <slot name="check-icon"></slot>
+          </template>
+          <template v-slot:info>
+            <slot name="info"></slot>
+          </template>
+
+        </ItemCont>
       </div>
     </div>
   </transition>
@@ -37,11 +45,11 @@ export default {
   components: {
     ItemCont,
   },
-  props: ['itemHeight', 'item', 'movingItem', 'isSelecting'],
+  props: ['nameIcon', 'itemHeight', 'item', 'completed', 'canceled'],
   methods: {
     enter(el, done) {
       const cont = this.$refs['cont-wrapper']
-      const parentIds = this.$parent.disableItemEnterTransitionIds
+      const parentIds = this.$parent.$parent.disableItemEnterTransitionIds
       
       let disableTransition = false
       if (parentIds.includes(this.item.id)) {
@@ -72,7 +80,7 @@ export default {
     },
     leave(el, done) {
       const cont = this.$refs['cont-wrapper']
-      const parentIds = this.$parent.disableItemEnterTransitionIds
+      const parentIds = this.$parent.$parent.disableItemEnterTransitionIds
       
       let disableTransition = false
       if (parentIds.includes(this.item.id)) {
@@ -114,6 +122,7 @@ export default {
   position: relative;
   z-index: 5;
   height: 100%;
+  user-select: none;
 }
 
 .desktop .cont-wrapper:hover, .desktop .cont-wrapper:active {

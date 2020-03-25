@@ -2,29 +2,37 @@
   <div class="ItemCont">
     <div class="cont">
       <div class="icon-wrapper">
-        <TaskIcons
-          :co='completed'
-          :color='circleColor'
-          :se='isSelecting'
-          :ac='isItemSelected'
-          :ca='canceled'
-          :so='isSomeday'
-          :re='isRepeatingItem'
-        />
+        <slot name="check-icon"></slot>
       </div>
       <div>
         <div class="text">
-          {{ name }}
+          <transition
+            appear
+            @enter='infoEnter'
+            @leave='infoLeave'
+          >
+            <Icon v-if="nameIcon"
+              class="name-icon"
+            
+              :icon='nameIcon.name'
+              :color='nameIcon.color'
+
+              width='14px'
+            />
+          </transition>
+          <span>
+            {{ name }}
+          </span>
         </div>
         <transition
+          appear
+        
           @enter='enterInfo'
           @leave='leaveInfo'
         >
-          <div v-if="false"
-            class="info"
-          >
-            fdsa
-          </div>
+          <slot
+            name="info"
+          ></slot>
         </transition>
       </div>
     </div>
@@ -33,31 +41,8 @@
 
 <script>
 
-import TaskIcons from '../Tasks/TaskIcons.vue'
-
-import utilsTask from '@/utils/task'
-
-import { mapGetters, mapState } from 'vuex'
-
 export default {
-  components: {
-    TaskIcons,
-  },
-  props: [
-    'movingItem', 'isSelecting',
-    
-    'name', 'priority', 'id', 'calendar',
-  ],
-  data() {
-    return {
-      completed: false,
-      canceled: false,
-      test: 0,
-    }
-  },
-  created() {
-    setInterval(() => this.test++, 2500)
-  },
+  props: ['name', 'nameIcon'],
   methods: {
     enterInfo(el, done) {
       const s = el.style
@@ -103,33 +88,31 @@ export default {
       })
 
     },
-  },
-  computed: {
-    ...mapState({
-      selectedItems: state => state.selectedItems,
-    }),
+    infoEnter(el) {
+      const s = el.style
 
-    hasInfo() {
-      return (this.test % 2) === 0
+      requestAnimationFrame(() => {
+        const {width} = el.getBoundingClientRect()
+        s.transitionDuration = 0
+        s.width = 0
+        s.opacity = 0
+        s.marginRight = 0
+  
+        requestAnimationFrame(() => {
+          s.transitionDuration = '.2s'
+          s.width = width + 'px'
+          s.marginRight = '9px'
+          s.opacity = 1
+        })
+      })
     },
+    infoLeave(el) {
+      const s = el.style
 
-    circleColor() {
-      if (!this.priority) return ''
-      const obj = {
-        'Low priority': 'var(--green)',
-        'Medium priority': 'var(--yellow)',
-        'High priority': 'var(--red)',
-      }
-      return obj[this.priority]
-    },
-    isItemSelected() {
-      return !this.movingItem && this.selectedItems.includes(this.id)
-    },
-    isSomeday() {
-      return this.calendar && this.calendar.type === 'someday'
-    },
-    isRepeatingItem() {
-      return utilsTask.isRecurringTask(this.calendar)
+      s.transitionDuration = '.2s'
+      s.width = 0
+      s.marginRight = 0
+      s.opacity = 0
     },
   },
 }
@@ -162,13 +145,19 @@ export default {
   opacity: .4;
 }
 
+.name-icon {
+  transform: translateY(1px);
+}
+
 .text {
   height: 60%;
+  display: flex;
+  align-items: center;
 }
 
 .info {
   height: 40%;
-  font-size: .8em;
+  font-size: .825em;
   opacity: .7;
   overflow: visible;
 }
