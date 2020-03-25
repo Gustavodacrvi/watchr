@@ -1479,7 +1479,7 @@ export default {
       if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming')) {
         opt.push({
           name: !this.showingRuler ? 'Show timeline ruler' : 'Hide timeline ruler',
-          icon: 'clock',
+          icon: 'duration',
           callback: this.toggleRuler,
         })
         opt.push({

@@ -50,6 +50,7 @@ import folder from '@/assets/icons/folder.svg'
 import filter from '@/assets/icons/filter.svg'
 import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
+import duration from '@/assets/icons/duration.svg'
 import message from '@/assets/icons/message.svg'
 import pie from '@/assets/icons/pie.svg'
 import check from '@/assets/icons/check.svg'
@@ -82,7 +83,7 @@ const icons = {
   envelope, deadline, sleep, repeat, box, file,
   folder, heart, close, filter, magic, clock,
   pie, check, group, message, crown, play,
-  comment, logbook, moon, tint,
+  comment, logbook, moon, tint, duration,
   "later-lists": laterLists,
   "logged-lists": loggedLists,
   "faded-logged-lists": fadedLoggedLists,

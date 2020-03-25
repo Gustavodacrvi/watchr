@@ -25,7 +25,7 @@ export default {
     if (p.timeStr)
       c.push(get({
         name: p.timeStr,
-        icon: 'clock',
+        icon: 'duration',
         color: 'var(--green)',
       }))
     if (p.hasTags)

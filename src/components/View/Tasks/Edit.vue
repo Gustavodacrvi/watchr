@@ -42,7 +42,7 @@
         <div class="tags-wrapper" :class="{showTag: atLeastOnSpecialTag || task.tags && task.tags.length > 0}">
           <div class="tags" :class="{show}">
             <Tag v-if="task.taskDuration"
-              icon="clock"
+              icon="duration"
               color="var(--purple)"
               :value="taskDurationStr"
               @click="task.taskDuration = ''"
@@ -261,11 +261,11 @@
                 :center='true'
               />
               <IconDrop
-                handle="clock"
+                handle="duration"
                 width="18px"
                 :box='true'
                 :active='isIcon(4)'
-                ref='clock'
+                ref='duration'
                 :options="durationOptions"
                
                 handleColor='var(--purple)'
@@ -905,7 +905,7 @@ export default {
 
         const icons = [
           'checklist-icon',
-          'clock',
+          'duration',
           'deadline',
           'file',
           'calendar',
