@@ -38,6 +38,7 @@
 
           :itemHeight='itemHeight'
           :item='item'
+          :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
@@ -50,7 +51,6 @@
           @add-item-after='addItemAfterSelection'
           @add-heading-after='addHeadingAfterSelection'
           @go='moveItemHandlerSelection'
-          @change-time='changeTime'
 
 
           :data-id='item.id'
@@ -86,6 +86,10 @@
           @cancel='removeEdit'
         />
       </template>
+      <TimelineRuler v-if='showTimelineRuler'
+        v-model="timelineIncrement"
+        @save='saveTimelineIncrement'
+      />
       <div v-if="!moving && !hasEdit"
         class='list-info'
       >
@@ -128,6 +132,7 @@
       :viewName='viewName'
       :viewType='viewType'
       :viewNameValue='viewNameValue'
+      :showingRuler='showingRuler'
       :headings='getHeadings'
       :headingEditOptions='headingEditOptions'
       :isSmart='isSmart'
@@ -137,7 +142,6 @@
       :showAllHeadingsItems='showAllHeadingsItems'
       :itemCompletionCompareDate='itemCompletionCompareDate'
       :mainFallbackItem='mainFallbackItem'
-      :scheduleObject='scheduleObject'
       :disableSortableMount='disableSortableMount'
       :onAddExistingItem='onAddExistingItem'
       :isRootAddingHeadings='isAddingHeadings'
@@ -148,7 +152,6 @@
       :itemPlaceholder='itemPlaceholder'
       :disableFallback='disableFallback'
 
-      @change-time='changeTime'
       @added-heading-complete-mount='justAddedHeading = null'
       @go='moveItemHandlerSelection'
       @add-heading='addHeadingFromRootHeadings'
@@ -162,6 +165,7 @@
 import Vue from 'vue'
 
 import Task from './Task.vue'
+import TimelineRuler from './TimelineRuler.vue'
 import List from './../Lists/List.vue'
 import TaskEdit from './Edit.vue'
 import ListEdit from './../Lists/Edit.vue'
@@ -173,6 +177,8 @@ import HeadingsRenderer from './HeadingsRenderer.vue'
 import { fire } from '@/store/'
 import { uid, setTask } from '@/utils/firestore'
 
+import autoScheduleMixin from "@/mixins/autoSchedule"
+
 import { mapState, mapGetters } from 'vuex'
 
 import { Sortable } from 'sortablejs'
@@ -183,14 +189,16 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
+  mixins: [autoScheduleMixin],
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
-  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr',
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
-    Illustration: IllustrationVue, 
+    Illustration: IllustrationVue,
+    TimelineRuler,
   },
   data() {
     return {
@@ -201,6 +209,8 @@ export default {
       disableItemEnterTransitionIds: [],
       droppedIds: [],
       waitingUpdateTimeout: null,
+
+      timelineIncrement: 0,
 
       addedItem: null,
       edit: null,
@@ -261,6 +271,21 @@ export default {
     }
   },
   methods: {
+    applyAutoScheduleToHeading(info, headingId, calendarDate) {
+      this.$refs.headings.applyAutoScheduleToHeading(info, headingId, calendarDate)
+    },
+    applyAutoSchedule(obj, calendarDate) {
+      if (this.comp === 'Task') {
+        this.autoScheduleItems(this, calendarDate, obj, this.getItems)
+        if (this.$refs.headings)
+          this.$refs.headings.applyAutoSchedule(obj, calendarDate)
+      }
+    },
+    saveTimelineIncrement() {
+      this.forEachItem(vm => vm.saveNewCalendarTime())
+      this.$store.commit('clearSelected')
+      this.timelineIncrement = 0
+    },
     forEachItem(callback) {
       const keys = Object.keys(this.$refs)
       for (const k of keys)
@@ -385,9 +410,6 @@ export default {
         this.$parent.$emit('items-ids', this.allItemsIds)
       else
         this.$emit('items-ids', this.allItemsIds)
-    },
-    changeTime(args) {
-      this.$emit('change-time', args)
     },
     addHeadingFromRootHeadings(obj) {
       this.justAddedHeading = obj.name
@@ -1106,6 +1128,9 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    showTimelineRuler() {
+      return this.comp === "Task" && this.showingRuler && this.selected.length > 0 && this.selected.every(id => this.getItems.some(item => item.id === id))
+    },
     slicedHeadings() {
       return this.showEmptyHeadings ? this.headings.slice() : this.headings.filter(this.filterHeading)
     },

@@ -44,9 +44,10 @@ export default (memoizeObject) => {
 
       }
 
-      if (val.touchGetters)
+      if (val.touchGetters) {
         for (const str of val.touchGetters)
           thisBinding[str] = rootGetters[str]
+      }
 
       if (val.deepStateTouch) {
 
@@ -66,11 +67,12 @@ export default (memoizeObject) => {
 
       }
 
-      if (val.touchState)
+      if (val.touchState) {
         for (const str of val.touchState) {
           const split = str.split('/')
           thisBinding[str] = rootState[split[0]][split[1]]
         }
+      }
       
       const firstArg = {state, getters, rootState, rootGetters}
       if (!val.getter)

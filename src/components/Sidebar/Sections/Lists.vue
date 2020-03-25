@@ -327,7 +327,7 @@ export default {
       const arr = []
       for (const f of lists) if (!f.folder && !f.group) arr.push(f)
       
-      return arr
+      return this.addListOptions(arr)
     },
     getRootLists() {
       let arr = this.rootLists.slice()

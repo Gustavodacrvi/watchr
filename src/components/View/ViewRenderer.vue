@@ -34,7 +34,7 @@
         :groups='groupSelectionOptions'
 
         :viewName="viewName"
-        :options="getHeaderOptions"
+        :options="viewRendererOptions"
         :optionsHandle='headerHandle'
 
         @tag='selectTag'
@@ -72,12 +72,12 @@
           :showSomeday='passSomedayTasks'
           :pipeFilterOptions='pipeFilterOptions'
           :taskIconDropOptions='taskIconDropOptions'
-          :autoSchedule='autoSchedule'
           :filterByAssigned='filterByAssigned'
+          :showingRuler='showingRuler'
 
           @allow-someday='showSomeday = true'
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
-          @save-schedule-object='saveScheduleObject'
+          @auto-schedule-from-heading='saveAutoSchedule'
 
           @present-tags='getPresentTags'
           @present-lists='getPresentLists'
@@ -107,8 +107,10 @@ import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import SlimModeNav from './SlimModeNav.vue'
 import TaskHandler from './Views/TaskHandler.vue'
 import ListHandler from './Views/ListHandler.vue'
-import Defer from '@/mixins/defer'
 import CalendarEvents from './RenderComponents/CalendarEvents.vue'
+
+import Defer from '@/mixins/defer'
+import autoScheduleMixin from "@/mixins/autoSchedule"
 
 import ViewRendererLongCalendarPicker from './SmartComponents/LongCalendarPicker.vue'
 
@@ -122,6 +124,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/index.js'
 import mom from 'moment'
 
+
 import { pipeBooleanFilters } from '@/utils/memo'
 
 const MAXIMUM_TOUCH_DISTANCE = 100
@@ -129,6 +132,7 @@ const MINIMUM_DISTANCE = 10
 
 export default {
   mixins: [
+    autoScheduleMixin,
     Defer(),
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
@@ -138,7 +142,7 @@ export default {
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
-  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
+  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'calendarDate', 'viewItem',
   'showHeading', 'viewComponent',
   
@@ -160,6 +164,7 @@ export default {
       showingPrioritySelection: false,
       showCompleted: false,
       showSomeday: false,
+      showingRuler: false,
 
       filterByAssigned: false,
 
@@ -174,7 +179,6 @@ export default {
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
-      autoSchedule: null,
 
       inclusiveTags: [],
       exclusiveTags: [],
@@ -206,7 +210,7 @@ export default {
     this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
     this.showingGroupSelection = localStorage.getItem('groupFilters') === 'true'
     this.showingListSelection = localStorage.getItem('listFilters') === 'true'
-    this.autoSchedule = this.savedSchedule
+    this.showingRuler = localStorage.getItem('showingRuler') === 'true'
 
     window.addEventListener('keydown', this.keydown)
     window.addEventListener('keypress', this.keypress)
@@ -222,6 +226,10 @@ export default {
     ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
 
+    toggleRuler() {
+      this.showingRuler = !this.showingRuler
+      localStorage.setItem('showingRuler', this.showingRuler)
+    },
     openMainComp() {
       this.$refs.mainComp.open()
     },
@@ -280,7 +288,6 @@ export default {
     getAllListsIds(ids) {
       this.allListsIds = ids
     },
-
 
     go(dire) {
       const ids = this.allViewItemsIds
@@ -598,22 +605,17 @@ export default {
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
       else this.computedHeaderOptions = []
     },
-    saveScheduleObject(obj) {
-      this.$emit('save-schedule', {
-        ...this.autoSchedule,
-        scheduleObject: obj,
-      })
-    },
     assignUser(assigned) {
       this.$store.dispatch('task/saveTasksById', {
         ids: this.selectedItems,
         task: {assigned},
       })
     },
-    saveAutoSchedule(info) {
-      this.autoSchedule = info
-      if (info === null)
-        this.$emit('save-schedule', info)
+    saveAutoSchedule({obj, calendarDate}) {
+      if (this.selectedItems.length === 0)
+        this.$refs.taskHandler.applyAutoSchedule(obj, calendarDate || this.calendarDate)
+      else if (this.shortcutsType === 'Task')
+        this.autoScheduleItems(this, calendarDate || this.calendarDate, obj, this.getTasksById(this.selectedItems))
     },
 
     selectPagination(newPage) {
@@ -840,6 +842,9 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    fallbackSelectedTasks() {
+      return this.getTasksById(this.fallbackSelected)
+    },
     mainSelectionIndex() {
       if (!this.mainSelection)
         return null
@@ -866,11 +871,6 @@ export default {
     },
     isTaskHandler() {
       return this.getViewComp === 'TaskHandler'
-    },
-    getHeaderOptions() {
-      if (this.getViewComp === 'Statistics')
-        return []
-      return this.taskIconDropOptions
     },
     headerHandle() {
       return 'settings-v'
@@ -1112,385 +1112,390 @@ export default {
           this.$store.dispatch('list/logLists', ids)
       }
       
-      if (ids.length === 0) {
-        let opt = [
+      let opt
+      if (this.shortcutsType === 'Task')
+        opt = [
           {
-            name: 'Sort tasks',
-            icon: 'sort',
-            callback: () => [
+            name: 'Move to logbook',
+            icon: 'logbook',
+            callback: () => logItems()
+          },
+          {
+            name: 'Move to list',
+            icon: 'tasks',
+            callback: () => this.getIconDropOptionsLists
+          },
+          {
+            name: 'Move to folder',
+            icon: 'folder',
+            callback: () => this.getIconDropOptionsFolders
+          },
+          {
+            name: 'Move to group',
+            icon: 'group',
+            callback: () => this.getIconDropOptionsGroups
+          },
+          {
+            name: 'Add tags',
+            icon: 'tag',
+            callback: () => this.getIconDropOptionsTags
+          },
+          {
+            type: 'optionsList',
+            name: 'Deadline',
+            options: [
               {
-                name: 'Sort by name',
-                icon: 'sort-name',
-                callback: () => this.sortByName()
+                icon: 'star',
+                id: 'd',
+                color: 'var(--yellow)',
+                callback: () => saveDeadline(mom().format('Y-M-D')),
               },
               {
-                name: 'Sort by priority',
-                icon: 'priority',
-                callback: () => this.sortByPriority()
+                icon: 'sun',
+                id: 'çljk',
+                color: 'var(--orange)',
+                callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
               },
               {
-                name: 'Sort by creation date',
                 icon: 'calendar',
-                callback: () => this.sortByDate(),
+                id: 'çljkasdf',
+                color: 'var(--green)',
+                callback: () => ({
+                  comp: 'CalendarPicker',
+                  content: {
+                    onlyDates: true,
+                    noTime: true,
+                    allowNull: true,
+                    callback: ({specific}) => {saveDeadline(specific,
+                    )}
+                  }
+                })
               },
               {
-                name: 'Sort by schedule time',
-                icon: 'calendar-star',
-                callback: () => this.sortBySchedule(),
+                icon: 'bloqued',
+                id: 'asdf',
+                color: 'var(--red)',
+                callback: () => saveDeadline(null),
               },
-              {
-                name: 'Sort by duration(long to short)',
-                icon: 'magic',
-                callback: () => this.sortByDurationLong()
-              },
-              {
-                name: 'Sort by duration(short to long)',
-                icon: 'magic',
-                callback: () => this.sortByDurationShort()
-              },
-            ],
+            ]
           },
           {
-            name: 'Filter tasks',
-            icon: 'filter',
-            callback: () => [
+            type: 'optionsList',
+            name: 'Defer',
+            options: [
               {
-                name: 'Filter by tags',
-                icon: 'tag',
-                callback: () => this.toggleTagSelection()
+                icon: 'star',
+                id: 'd',
+                color: 'var(--yellow)',
+                callback: () => this.saveDates({
+                  type: 'specific',
+                  specific: mom().format('Y-M-D'),
+                }, ids),
               },
               {
-                name: 'Filter by priority',
+                icon: 'sun',
+                id: 'çljk',
+                color: 'var(--orange)',
+                callback: () => this.saveDates({
+                  type: 'specific',
+                  specific: mom().add(1, 'day').format('Y-M-D'),
+                }, ids),
+              },
+              {
+                icon: 'layer-group',
+                id: 'asdffds',
+                color: 'var(--olive)',
+                callback: () => this.saveDates({
+                  type: 'anytime',
+                }, ids)
+              },
+              {
+                icon: 'archive',
+                id: 'açlkjsdffds',
+                color: 'var(--brown)',
+                callback: () => this.saveDates({
+                  type: 'someday',
+                }, ids)
+              },
+              {
+                icon: 'calendar',
+                id: 'çljkasdf',
+                color: 'var(--green)',
+                callback: () => {return {
+                  comp: "CalendarPicker",
+                  content: {callback: date => this.saveDates(date, ids)}}},
+              },
+              {
+                id: 'No date',
+                color: 'var(--red)',
+                icon: 'bloqued',
+                callback: () => this.saveDates(null, ids)
+              },
+            ]
+          },
+          {
+            type: 'optionsList',
+            name: 'Priority',
+            options: [
+              {
                 icon: 'priority',
-                callback: () => this.togglePrioritySelection()
+                id: 'd',
+                color: 'var(--fade)',
+                callback: () => savePri('')
               },
               {
-                name: 'Filter by lists',
-                icon: 'tasks',
-                callback: () => this.toggleListSelection()
+                icon: 'priority',
+                id: 'f',
+                color: 'var(--green)',
+                callback: () => savePri('Low priority')
               },
               {
-                name: 'Filter by folders',
-                icon: 'folder',
-                callback: () => this.toggleFolderSelection()
+                icon: 'priority',
+                id: 'j',
+                color: 'var(--yellow)',
+                callback: () => savePri('Medium priority')
               },
               {
-                name: 'Filter by Groups',
-                icon: 'group',
-                callback: () => this.toggleGroupSelection()
+                icon: 'priority',
+                id: 'l',
+                color: 'var(--red)',
+                callback: () => savePri('High priority')
               },
-              {
-                name: 'Show only assigned to me',
-                icon: 'user',
-                callback: () => this.filterByAssigned = !this.filterByAssigned
-              }
             ],
           },
           {
-            name: 'Show completed',
-            icon: 'circle-check',
-            callback: () => this.toggleCompleted()
+            name: 'Delete tasks',
+            icon: 'trash',
+            important: true,
+            callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
-        if (this.calendarDate)
-          opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(this.autoSchedule, this.saveAutoSchedule, this.userInfo))
+      else
+        opt = [
+          {
+            name: 'Log lists',
+            icon: 'faded-logged-lists',
+            callback: () => logItems()
+          },
+          {
+            name: 'Move to folder',
+            icon: 'folder',
+            callback: () => this.getIconDropOptionsFolders
+          },
+          {
+            name: 'Move to group',
+            icon: 'group',
+            callback: () => this.getIconDropOptionsGroups
+          },
+          {
+            type: 'optionsList',
+            name: 'Deadline',
+            options: [
+              {
+                icon: 'star',
+                id: 'd',
+                color: 'var(--yellow)',
+                callback: () => saveDeadline(mom().format('Y-M-D')),
+              },
+              {
+                icon: 'sun',
+                id: 'çljk',
+                color: 'var(--orange)',
+                callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
+              },
+              {
+                icon: 'calendar',
+                id: 'çljkasdf',
+                color: 'var(--green)',
+                callback: () => ({
+                  comp: 'CalendarPicker',
+                  content: {
+                    onlyDates: true,
+                    noTime: true,
+                    allowNull: true,
+                    callback: ({specific}) => {saveDeadline(specific,
+                    )}
+                  }
+                })
+              },
+              {
+                icon: 'bloqued',
+                id: 'asdf',
+                color: 'var(--red)',
+                callback: () => saveDeadline(null),
+              },
+            ]
+          },
+          {
+            type: 'optionsList',
+            name: 'Defer',
+            options: [
+              {
+                icon: 'star',
+                id: 'd',
+                color: 'var(--yellow)',
+                callback: () => this.saveDates({
+                  type: 'specific',
+                  specific: mom().format('Y-M-D'),
+                }, ids),
+              },
+              {
+                icon: 'sun',
+                id: 'çljk',
+                color: 'var(--orange)',
+                callback: () => this.saveDates({
+                  type: 'specific',
+                  specific: mom().add(1, 'day').format('Y-M-D'),
+                }, ids),
+              },
+              {
+                icon: 'layer-group',
+                id: 'açlkjsdffd',
+                color: 'var(--olive)',
+                callback: () => this.saveDates({
+                  type: 'anytime',
+                }, ids)
+              },
+              {
+                icon: 'archive',
+                id: 'açlkjsdffds',
+                color: 'var(--brown)',
+                callback: () => this.saveDates({
+                  type: 'someday',
+                }, ids)
+              },
+              {
+                icon: 'calendar',
+                id: 'çljkasdf',
+                color: 'var(--green)',
+                callback: () => {return {
+                  comp: "CalendarPicker",
+                  content: {callback: date => this.saveDates(date, ids)}}},
+              },
+              {
+                id: 'No date',
+                icon: 'bloqued',
+                color: 'var(--red)',
+                callback: () => this.saveDates(null, ids)
+              },
+            ]
+          },
+          {
+            name: 'Delete lists',
+            icon: 'trash',
+            important: true,
+            callback: () => dispatch('list/deleteMultipleListsByIds', ids)
+          },
+        ]
 
-
-        if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming'))
-          opt.push({
-            name: 'Show Google Calendar',
-            icon: 'calendar',
-            callback: () => this.$store.commit('toggleCalendar', true)
-          })
-        if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
-          opt.push({
-            type: 'hr',
-            name: 'division',
-          })
-          opt = [...opt, ...this.computedHeaderOptions]
-        }
-        return opt
-      } else {
-        let opt
-        if (this.shortcutsType === 'Task')
-          opt = [
+      if (((this.viewItem && this.viewItem.group) || (this.viewType === 'group')) && this.viewItem)
+        opt.unshift(this.getAssigneeIconDrop({group: this.viewItem.group || this.viewItem.id}, uid => this.assignUser(uid)))
+      return opt
+    },
+    viewRendererOptions() {
+      let opt = [
+        {
+          name: 'Sort tasks',
+          icon: 'sort',
+          callback: () => [
             {
-              name: 'Move to logbook',
-              icon: 'logbook',
-              callback: () => logItems()
+              name: 'Sort by name',
+              icon: 'sort-name',
+              callback: () => this.sortByName()
             },
             {
-              name: 'Move to list',
-              icon: 'tasks',
-              callback: () => this.getIconDropOptionsLists
+              name: 'Sort by priority',
+              icon: 'priority',
+              callback: () => this.sortByPriority()
             },
             {
-              name: 'Move to folder',
-              icon: 'folder',
-              callback: () => this.getIconDropOptionsFolders
+              name: 'Sort by creation date',
+              icon: 'calendar',
+              callback: () => this.sortByDate(),
             },
             {
-              name: 'Move to group',
-              icon: 'group',
-              callback: () => this.getIconDropOptionsGroups
+              name: 'Sort by schedule time',
+              icon: 'calendar-star',
+              callback: () => this.sortBySchedule(),
             },
             {
-              name: 'Add tags',
+              name: 'Sort by duration(long to short)',
+              icon: 'magic',
+              callback: () => this.sortByDurationLong()
+            },
+            {
+              name: 'Sort by duration(short to long)',
+              icon: 'magic',
+              callback: () => this.sortByDurationShort()
+            },
+          ],
+        },
+        {
+          name: 'Filter tasks',
+          icon: 'filter',
+          callback: () => [
+            {
+              name: 'Filter by tags',
               icon: 'tag',
-              callback: () => this.getIconDropOptionsTags
+              callback: () => this.toggleTagSelection()
             },
             {
-              type: 'optionsList',
-              name: 'Deadline',
-              options: [
-                {
-                  icon: 'star',
-                  id: 'd',
-                  color: 'var(--yellow)',
-                  callback: () => saveDeadline(mom().format('Y-M-D')),
-                },
-                {
-                  icon: 'sun',
-                  id: 'çljk',
-                  color: 'var(--orange)',
-                  callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
-                },
-                {
-                  icon: 'calendar',
-                  id: 'çljkasdf',
-                  color: 'var(--green)',
-                  callback: () => ({
-                    comp: 'CalendarPicker',
-                    content: {
-                      onlyDates: true,
-                      noTime: true,
-                      allowNull: true,
-                      callback: ({specific}) => {saveDeadline(specific,
-                      )}
-                    }
-                  })
-                },
-                {
-                  icon: 'bloqued',
-                  id: 'asdf',
-                  color: 'var(--red)',
-                  callback: () => saveDeadline(null),
-                },
-              ]
+              name: 'Filter by priority',
+              icon: 'priority',
+              callback: () => this.togglePrioritySelection()
             },
             {
-              type: 'optionsList',
-              name: 'Defer',
-              options: [
-                {
-                  icon: 'star',
-                  id: 'd',
-                  color: 'var(--yellow)',
-                  callback: () => this.saveDates({
-                    type: 'specific',
-                    specific: mom().format('Y-M-D'),
-                  }, ids),
-                },
-                {
-                  icon: 'sun',
-                  id: 'çljk',
-                  color: 'var(--orange)',
-                  callback: () => this.saveDates({
-                    type: 'specific',
-                    specific: mom().add(1, 'day').format('Y-M-D'),
-                  }, ids),
-                },
-                {
-                  icon: 'layer-group',
-                  id: 'asdffds',
-                  color: 'var(--olive)',
-                  callback: () => this.saveDates({
-                    type: 'anytime',
-                  }, ids)
-                },
-                {
-                  icon: 'archive',
-                  id: 'açlkjsdffds',
-                  color: 'var(--brown)',
-                  callback: () => this.saveDates({
-                    type: 'someday',
-                  }, ids)
-                },
-                {
-                  icon: 'calendar',
-                  id: 'çljkasdf',
-                  color: 'var(--green)',
-                  callback: () => {return {
-                    comp: "CalendarPicker",
-                    content: {callback: date => this.saveDates(date, ids)}}},
-                },
-                {
-                  id: 'No date',
-                  color: 'var(--red)',
-                  icon: 'bloqued',
-                  callback: () => this.saveDates(null, ids)
-                },
-              ]
+              name: 'Filter by lists',
+              icon: 'tasks',
+              callback: () => this.toggleListSelection()
             },
             {
-              type: 'optionsList',
-              name: 'Priority',
-              options: [
-                {
-                  icon: 'priority',
-                  id: 'd',
-                  color: 'var(--fade)',
-                  callback: () => savePri('')
-                },
-                {
-                  icon: 'priority',
-                  id: 'f',
-                  color: 'var(--green)',
-                  callback: () => savePri('Low priority')
-                },
-                {
-                  icon: 'priority',
-                  id: 'j',
-                  color: 'var(--yellow)',
-                  callback: () => savePri('Medium priority')
-                },
-                {
-                  icon: 'priority',
-                  id: 'l',
-                  color: 'var(--red)',
-                  callback: () => savePri('High priority')
-                },
-              ],
-            },
-            {
-              name: 'Delete tasks',
-              icon: 'trash',
-              important: true,
-              callback: () => dispatch('task/deleteTasks', ids)
-            },
-          ]
-        else
-          opt = [
-            {
-              name: 'Log lists',
-              icon: 'faded-logged-lists',
-              callback: () => logItems()
-            },
-            {
-              name: 'Move to folder',
+              name: 'Filter by folders',
               icon: 'folder',
-              callback: () => this.getIconDropOptionsFolders
+              callback: () => this.toggleFolderSelection()
             },
             {
-              name: 'Move to group',
+              name: 'Filter by Groups',
               icon: 'group',
-              callback: () => this.getIconDropOptionsGroups
+              callback: () => this.toggleGroupSelection()
             },
             {
-              type: 'optionsList',
-              name: 'Deadline',
-              options: [
-                {
-                  icon: 'star',
-                  id: 'd',
-                  color: 'var(--yellow)',
-                  callback: () => saveDeadline(mom().format('Y-M-D')),
-                },
-                {
-                  icon: 'sun',
-                  id: 'çljk',
-                  color: 'var(--orange)',
-                  callback: () => saveDeadline(mom().add(1, 'day').format('Y-M-D')),
-                },
-                {
-                  icon: 'calendar',
-                  id: 'çljkasdf',
-                  color: 'var(--green)',
-                  callback: () => ({
-                    comp: 'CalendarPicker',
-                    content: {
-                      onlyDates: true,
-                      noTime: true,
-                      allowNull: true,
-                      callback: ({specific}) => {saveDeadline(specific,
-                      )}
-                    }
-                  })
-                },
-                {
-                  icon: 'bloqued',
-                  id: 'asdf',
-                  color: 'var(--red)',
-                  callback: () => saveDeadline(null),
-                },
-              ]
-            },
-            {
-              type: 'optionsList',
-              name: 'Defer',
-              options: [
-                {
-                  icon: 'star',
-                  id: 'd',
-                  color: 'var(--yellow)',
-                  callback: () => this.saveDates({
-                    type: 'specific',
-                    specific: mom().format('Y-M-D'),
-                  }, ids),
-                },
-                {
-                  icon: 'sun',
-                  id: 'çljk',
-                  color: 'var(--orange)',
-                  callback: () => this.saveDates({
-                    type: 'specific',
-                    specific: mom().add(1, 'day').format('Y-M-D'),
-                  }, ids),
-                },
-                {
-                  icon: 'layer-group',
-                  id: 'açlkjsdffd',
-                  color: 'var(--olive)',
-                  callback: () => this.saveDates({
-                    type: 'anytime',
-                  }, ids)
-                },
-                {
-                  icon: 'archive',
-                  id: 'açlkjsdffds',
-                  color: 'var(--brown)',
-                  callback: () => this.saveDates({
-                    type: 'someday',
-                  }, ids)
-                },
-                {
-                  icon: 'calendar',
-                  id: 'çljkasdf',
-                  color: 'var(--green)',
-                  callback: () => {return {
-                    comp: "CalendarPicker",
-                    content: {callback: date => this.saveDates(date, ids)}}},
-                },
-                {
-                  id: 'No date',
-                  icon: 'bloqued',
-                  color: 'var(--red)',
-                  callback: () => this.saveDates(null, ids)
-                },
-              ]
-            },
-            {
-              name: 'Delete lists',
-              icon: 'trash',
-              important: true,
-              callback: () => dispatch('list/deleteMultipleListsByIds', ids)
-            },
-          ]
+              name: 'Show only assigned to me',
+              icon: 'user',
+              callback: () => this.filterByAssigned = !this.filterByAssigned
+            }
+          ],
+        },
+        {
+          name: 'Show completed',
+          icon: 'circle-check',
+          callback: () => this.toggleCompleted()
+        },
+      ]
+      if (this.calendarDate)
+        opt.splice(opt.length - 1, 0, utils.getAutoSchedulerIconDropObject(obj => this.saveAutoSchedule({obj}), this.userInfo))
 
-        if (((this.viewItem && this.viewItem.group) || (this.viewType === 'group')) && this.viewItem)
-          opt.unshift(this.getAssigneeIconDrop({group: this.viewItem.group || this.viewItem.id}, uid => this.assignUser(uid)))
-        return opt
+
+      if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming')) {
+        opt.push({
+          name: !this.showingRuler ? 'Show timeline ruler' : 'Hide timeline ruler',
+          icon: 'clock',
+          callback: this.toggleRuler,
+        })
+        opt.push({
+          name: 'Show Google Calendar',
+          icon: 'calendar',
+          callback: () => this.$store.commit('toggleCalendar', true)
+        })
       }
+      if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
+        opt.push({
+          type: 'hr',
+          name: 'division',
+        })
+        opt = [...opt, ...this.computedHeaderOptions]
+      }
+      return opt
     },
 
     getFilterOptions() {
@@ -1556,12 +1561,8 @@ export default {
   },
   watch: {
     viewName() {
-      this.autoSchedule = null
       this.getComputedOptions()
       this.saveMainSelection(null)
-    },
-    savedSchedule() {
-      this.autoSchedule = this.savedSchedule
     },
     viewNameValue() {
       this.showSomeday = false
@@ -1578,7 +1579,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 85px;
+  margin: 0 75px;
   min-height: 100%;
   position: relative;
   display: flex;

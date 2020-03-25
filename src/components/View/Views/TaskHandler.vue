@@ -9,7 +9,6 @@
       :items='sortLaseredTasks'
 
       :headings='sortHeadings'
-      :scheduleObject='scheduleObject'
 
       :addItem='addTask'
       :showSomedayButton='showSomedayButton'
@@ -27,7 +26,6 @@
       @update="updateIds"
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
-      @change-time='changeTime'
 
       @go='go'
       @selectItem='selectItem'
@@ -63,12 +61,12 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
-    'getCalendarOrderDate', 'updateViewIds',
+    'calendarDate', 'updateViewIds', 'showingRuler',
     'width', 'disableRootActions', 'fallbackFunctionData',
 
     'headingEditOptions', 'taskIconDropOptions', 'filterByAssigned',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
-    'itemCompletionCompareDate', 'rootFallbackItem', 'autoSchedule',
+    'itemCompletionCompareDate', 'rootFallbackItem',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
   components: {
@@ -77,17 +75,21 @@ export default {
   },
   data() {
     return {
-      scheduleObject: null,
       tempoOrder: {},
       order: [],
       tempoTimeout: null,
     }
   },
   created() {
-    this.updateSchedule()
     this.order = this.tasksOrder
   },
   methods: {
+    applyAutoSchedule(autoSchedule, calendarDate) {
+      this.$refs.renderer.applyAutoSchedule(autoSchedule, calendarDate)
+    },
+    saveAutoSchedule(info, headingId, calendarDate) {
+      this.$refs.renderer.applyAutoScheduleToHeading(info, headingId, calendarDate)
+    },
     addTaskEdit() {
       this.$refs.renderer.appendItem()
     },
@@ -173,156 +175,8 @@ export default {
     addHeading(obj) {
       this.$parent.$emit('add-heading', {...obj})
     },
-    updateSchedule() {
-      const schedule = this.autoSchedule
-      if (schedule) {
-        if (!schedule.scheduleObject)
-          this.createSchedule()
-        else
-          this.scheduleObject = schedule.scheduleObject
-      }
-      else this.scheduleObject = null
-    },
-    changeTime({from, add, time}) {
-      const obj = this.scheduleObject
-      const target = obj[from]
-      const timeSplited = time.split(':')
-
-      const affectedTasks = []
-      const objKeys = Object.keys(obj)
-      for (const key of objKeys)
-        if (obj[key].index >= target.index)
-          affectedTasks.push(obj[key])
-
-      const format = this.timeFormat
-      
-      const init = mom(affectedTasks[0].start, 'HH:mm')
-
-      const hoursToAdd = parseInt(timeSplited[0], 10)
-      const minutesToAdd = parseInt(timeSplited[1], 10)
-      if (add) {
-        init.add(hoursToAdd, 'h')
-        init.add(minutesToAdd, 'm')
-      } else {
-        init.subtract(hoursToAdd, 'h')
-        init.subtract(minutesToAdd, 'm')
-      }
-
-      const { buffer, fallback } = this.autoSchedule
-      const bufferSplit = buffer.split(':')
-      
-      for (const el of affectedTasks) {
-        const t = this.allViewTasks.filter(task => task.id === el.id)
-        
-        const start = init.format(format)
-        const split = start.split(':')
-
-        const startHour = split[0]
-        let startMin = ''
-        const startSplit = split[1]
-        for (const s of startSplit)
-          if (this.notChar(s))
-            startMin += s
-
-        const taskDuration = t.taskDuration ? t.taskDuration : fallback
-
-        const durationSplit = taskDuration.split(':')
-
-        init.add(parseInt(durationSplit[0], 10), 'h')
-        init.add(parseInt(durationSplit[1], 10), 'm')
-
-        const end = init.format(format)
-        const endSplit = end.split(':')
-
-        const endHour = endSplit[0]
-        let endMin = ''
-        const endSplitStr = split[1]
-        for (const s of endSplitStr)
-          if (this.notChar(s))
-            endMin += s
-
-        init.add(parseInt(bufferSplit[0], 10), 'h')
-        init.add(parseInt(bufferSplit[1], 10), 'm')
-
-        obj[el.id] = {...el, ...{
-          start, startHour, startMin,
-          end, endHour, endMin,
-        }}
-      }
-      this.createSchedule({...obj})
-    },
-    createSchedule(newObj) {
-      const obj = newObj || this.getScheduleObject(this.autoSchedule, this.allViewTasks)
-      this.scheduleObject = obj
-      this.$emit('save-schedule-object', obj)
-    },
     notChar(s) {
       return s !== 'A' && s !== 'M' && s !== 'P'
-    },
-    getScheduleObject(autoSchedule, tasks) {
-      if (!autoSchedule) return null
-      
-      const { time, buffer, fallback } = autoSchedule
-
-      let init = mom(time, 'HH:mm')
-
-      const bufferSplit = buffer.split(':')
-
-      const finalObj = {}
-
-      const format = this.timeFormat
-
-      let i = 0
-      for (const t of tasks) {
-        if (t.calendar && t.calendar.time)
-          init = mom(t.calendar.time, 'HH:mm')
-        
-        const start = init.format(format)
-        const split = start.split(':')
-
-        const region = init.format('a')
-
-        const startHour = split[0]
-        let startMin = ''
-        const startSplit = split[1]
-        for (const s of startSplit)
-          if (this.notChar(s))
-            startMin += s
-
-        const taskDuration = t.taskDuration ? t.taskDuration : fallback
-
-        const durationSplit = taskDuration.split(':')
-
-        init.add(parseInt(durationSplit[0], 10), 'h')
-        init.add(parseInt(durationSplit[1], 10), 'm')
-
-        const end = init.format(format)
-        const endSplit = end.split(':')
-
-        const endHour = endSplit[0]
-        let endMin = ''
-        const endSplitStr = split[1]
-        for (const s of endSplitStr)
-          if (this.notChar(s))
-            endMin += s
-
-        init.add(parseInt(bufferSplit[0], 10), 'h')
-        init.add(parseInt(bufferSplit[1], 10), 'm')
-
-        const obj = {
-          id: t.id,
-          region,
-          index: i,
-          start, startHour, startMin,
-          end, endHour, endMin,
-        }
-
-        finalObj[t.id] = obj
-
-        i++
-      }
-
-      return finalObj
     },
   },
   computed: {
@@ -332,6 +186,7 @@ export default {
       user: state => state.user,
     }),
     ...mapGetters({
+      fallbackSelected: 'fallbackSelected',
       lists: 'list/lists',
       logLists: 'list/logLists',
       folders: 'folder/folders',
@@ -469,6 +324,14 @@ export default {
               ]
             },
           ]
+          if ((head.calendarDate || this.calendarDate) && !head.listType)
+            opt.push(utils.getAutoSchedulerIconDropObject(obj => {
+              if (this.selectedItems.length === 0)
+                this.saveAutoSchedule(obj, head.id, head.calendarDate || this.calendarDate)
+              else this.$emit('auto-schedule-from-heading', {
+                obj, calendarDate: head.calendarDate || this.calendarDate,
+              })
+            }, this.userInfo))
           if (options && options.length > 0)
             opt.push({
               type: 'hr',
@@ -481,40 +344,13 @@ export default {
           updateIds = undefined
 
 
-        let scheduleObject = null
-        const createSchedule = newObj => {
-          const obj = newObj || this.getScheduleObject(head.autoSchedule, tasks)
-          scheduleObject = obj
-          head.saveScheduleObject(obj)
-        }
-        
-        if (head.allowAutoSchedule) {
-          if (head.autoSchedule) {
-            if (!head.autoSchedule.scheduleObject)
-              createSchedule()
-            else
-              scheduleObject = head.autoSchedule.scheduleObject
-          }
-          else scheduleObject = null
-        }
-
-
         return {
           ...head,
           filter: undefined,
-          scheduleObject,
           items: tasks,
           nonFiltered,
-          options: (tasks, autoSchedule) => {
+          options: (tasks) => {
             let options = head.options ? head.options(tasks) : []
-
-            if (head.allowAutoSchedule && head.saveAutoSchedule)
-              options.push(
-                utils.getAutoSchedulerIconDropObject(autoSchedule, obj => {
-                  head.autoSchedule = obj
-                  head.saveAutoSchedule(obj)
-                }, this.userInfo),
-              )
 
             if (updateIds)
               options = unshiftSortingOptions(options)
@@ -642,7 +478,7 @@ export default {
     },
     pipeCompleted() {
       if (this.showCompleted) return () => true
-      return task => !this.isTaskCompleted(task, this.getCalendarOrderDate, this.itemCompletionCompareDate)
+      return task => !this.isTaskCompleted(task, this.calendarDate, this.itemCompletionCompareDate)
     },
     pipeCanceled() {
       if (this.showCompleted) return () => true
@@ -704,12 +540,6 @@ export default {
     },
     tasksOrder() {
       this.order = this.tasksOrder.slice()
-    },
-    autoSchedule: {
-      handler() {
-        this.updateSchedule()
-      },
-      deep: true,
     },
   }
 }

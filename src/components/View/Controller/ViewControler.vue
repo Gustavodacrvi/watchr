@@ -11,7 +11,6 @@
     :icon='icon'
     :showEmptyHeadings='showEmptyHeadings'
     :updateHeadingIds='updateHeadingIds'
-    :savedSchedule='savedSchedule'
     :headingEditOptions='headingEditOptions'
     :headerOptions='headerOptions'
     :notes='getViewNotes'
@@ -95,6 +94,7 @@ export default {
       })
     },
     getLogbookOptions() {
+      const dispatch = this.$store.dispatch
       return tasks => [
             {
               name: 'Remove from logbook',
@@ -193,6 +193,7 @@ export default {
         calendarEvents: o.calendarEvents ? o.calendarEvents : date,
         showHeading: true,
         dateType: true,
+        calendarDate: date,
 
         sort: o.sort ? o.sort : this.sortArray,
         order: o.order ? o.order : this.getCalendarOrderByDate(date),
@@ -726,20 +727,9 @@ export default {
         const date = tod.format('Y-M-D')
         const orders = this.calendarOrders
         
-        const autoSchedule = (orders[date] && orders[date].schedule) || null
-
-        const saveAutoSchedule = schedule => this.saveSchedule(schedule, date)
-
         arr.push(
           this.getCalendarOrderTypeHeadings(date, {
             disableCalendarStr: true,
-            saveAutoSchedule,
-            saveScheduleObject: scheduleObject => saveAutoSchedule({
-              ...autoSchedule,
-              scheduleObject,
-            }),
-            autoSchedule,
-            allowAutoSchedule: true,
           })
         )
       }

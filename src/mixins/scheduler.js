@@ -13,8 +13,8 @@ export default {
       const rest = round % num
       
       if (rest === 0)
-        return toRound
-      return round - rest
+        return Math.floor(toRound)
+      return Math.floor(round - rest)
     },
     formatTime(time) {
       return mom(time, 'HH:mm').format(this.format)

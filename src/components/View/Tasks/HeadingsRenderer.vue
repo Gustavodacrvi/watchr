@@ -56,13 +56,11 @@
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
           :showHeadingName="h.showHeadingName"
-          :scheduleObject='h.scheduleObject || scheduleObject'
           :onSortableAdd='h.onSortableAdd'
           :addedHeading='justAddedHeading'
           @add-heading='addHeading'
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
-          @change-time='changeTime'
           @items-ids='ids => getItemsIds(ids, i)'
           @added-heading-complete-mount='addedHeadingCompleteMount'
 
@@ -84,6 +82,7 @@ import { mapGetters } from 'vuex'
 
 import { Sortable } from 'sortablejs'
 
+
 export default {
   mixins: [
     Defer(),
@@ -93,7 +92,7 @@ export default {
     ListRenderer: () => import('./ListRenderer.vue'),
   },
   props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
-  , 'scheduleObject', 'justAddedHeading',
+  , 'justAddedHeading', 'showingRuler',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {
@@ -115,11 +114,24 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    applyAutoScheduleToHeading(obj, headingId, calendarDate) {
+      this.findHeading(headingId, vm => vm.applyAutoSchedule(obj, calendarDate))
+    },
+    findHeading(headingId, callback) {
+      if (this.$refs[headingId] && this.$refs[headingId][0])
+        callback(this.$refs[headingId][0])
+    },
+    applyAutoSchedule(obj, calendarDate) {
+      this.forEachRenderer(vm => vm.applyAutoSchedule(obj, calendarDate))
+    },
     selectAll() {
+      this.forEachRenderer(vm => vm.selectAll())
+    },
+    forEachRenderer(callback) {
       const keys = Object.keys(this.$refs)
       keys.forEach(k => {
         if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].selectAll)
-          this.$refs[k][0].selectAll()
+          callback(this.$refs[k][0])
       })
     },
     getContHeight(h) {
@@ -185,9 +197,6 @@ export default {
     updateHeadingItemIds(h, ids) {
       if (h.updateIds)
         h.updateIds(ids)
-    },
-    changeTime(args) {
-      this.$emit('change-time', args)
     },
     moveItemHandlerSelection(bool) {
       this.$emit('go', bool)

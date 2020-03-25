@@ -5,16 +5,10 @@
     @enter='taskEnter'
     @leave='taskLeave'
   >
-    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isItemMainSelection}, deviceLayout, isLogbookTask]"
+    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, isItemMainSelection}, deviceLayout, isLogbookTask]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
     >
-      <transition name="fade-t">
-        <Timeline v-if="schedule && !isEditing"
-          v-bind="schedule"
-          @change-time='changeTime'
-        />
-      </transition>
       <CommentCounter v-if="item.group && isDesktopBreakPoint && !isEditing"
         ref="comment-counter"
         :hover='onHover'
@@ -72,6 +66,33 @@
             <div class="cont"
               ref='cont'
             >
+              <transition name='ruler-t'>
+                <div v-if="computedShowRuler"
+                  class="ruler-element"
+                  @click='rulerClick'
+                >
+                  <div class="element-wrapper">
+                    <span v-if='startHour'
+                      class="timeline-time"
+                    >
+                      <span class="hour">
+                        {{startHour}}
+                      </span>
+                      <span class="timeline-info">
+                        <span>
+                          {{startMin}}
+                        </span>
+                        <span class="pm-am">
+                          {{timePmAm}}
+                        </span>
+                      </span>
+                    </span>
+                    <span v-else class='timeline-line'>
+                      
+                    </span>
+                  </div>
+                </div>
+              </transition>
               <div class="check" ref='check'
                 :class="{changeColor}"
 
@@ -136,7 +157,7 @@
                       <span v-html="parsedName" ref='parsed-name'></span>
                     </div>
                     
-                    <span v-if="timeStr" class="txt-icon tag dark rb">{{ timeStr }}</span>
+                    <span v-if="!computedShowRuler && timeStr" class="txt-icon tag dark rb">{{ timeStr }}</span>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
                     icon="pie"
@@ -163,7 +184,7 @@
                 <span v-if="groupStr" class="tag dark rb">{{ groupStr }}</span>
                 <span v-if="listStr" class="tag dark rb">{{ listStr }}</span>
                 <span v-if="headingName && showHeadingName" class="tag dark rb">{{ headingName }}</span>
-                <span v-if="taskDuration && !schedule" class="tag dark rb">{{ taskDuration }}</span>
+                <span v-if="taskDuration" class="tag dark rb">{{ taskDuration }}</span>
               </span>
             </div>
           </div>
@@ -193,7 +214,6 @@
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
-import Timeline from './Timeline.vue'
 import TaskIcons from './TaskIcons.vue'
 import CommentCounter from '@/components/View/RenderComponents/CommentCounter.vue'
 
@@ -213,11 +233,11 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject',
+  props: ['item', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'disableDeadlineStr', 'disableCalendarStr', 'allowLogStr', 'isRoot', 'itemCompletionCompareDate', 'showingRuler', 'timelineIncrement',
   'selectEverythingToggle', 'hideGroupName'],
   components: {
     CommentCounter,
-    Timeline, TaskIcons,
+    TaskIcons,
     IconDrop: IconDropVue,
     Edit: EditVue,
     Tag: TagVue,
@@ -249,6 +269,11 @@ export default {
       this.$store.dispatch('task/copyTask', this.item)
     },
 
+    rulerClick() {
+      if (!this.isSelecting)
+        this.selectItem()
+    },
+
     enter(el) {
       if (!this.isEditing) {
         const co = el.style
@@ -261,7 +286,7 @@ export default {
         inf.transitionDuration = 0
         c.opacity = 0
         inf.opacity = 0
-        co.transform = 'translateX(-27px)'
+        co.transform = `translateX(-${this.computedShowRuler ? 62 : 27}px)`
         this.deselectItem()
         requestAnimationFrame(() => {
           c.transitionDuration = '.2s'
@@ -295,7 +320,7 @@ export default {
           inf.transitionDuration = '.2s'
           c.opacity = 0
           inf.opacity = 0
-          co.transform = 'translateX(-27px)'
+          co.transform = `translateX(-${this.computedShowRuler ? 62 : 27}px)`
           setTimeout(() => {
             this.doneTransition = true
           }, 152)
@@ -454,9 +479,19 @@ export default {
         assigned: uid,
       })
     },
+    saveNewCalendarTime() {
+      if (this.incrementedTime)
+        this.saveTaskContent({
+          calendar: {
+            ...this.item.calendar,
+            time: this.incrementedTime,
+          },
+        })
+    },
   },
   computed: {
     ...mapGetters({
+      calendarDate: 'calendarDate',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
       isDesktopDevice: 'isDesktopDevice',
       layout: 'layout',
@@ -474,6 +509,9 @@ export default {
       savedTags: 'tag/sortedTagsByName',
       getTagsById: 'tag/getTagsById',
     }),
+    computedShowRuler() {
+      return this.showingRuler && this.calendarDate
+    },
     isItemLogged() {
       return this.isTaskInLogbook(this.item)
     },
@@ -617,10 +655,56 @@ export default {
 
       return str
     },
-    timeStr() {
+    calendarTime() {
       const c = this.item.calendar
       if (!c || !c.time) return null
-      return `at ${utils.parseTime(c.time, this.userInfo)}`
+      if (this.incrementedTime)
+        return this.incrementedTime
+      return c.time
+    },
+    incrementedTime() {
+      if (!this.timelineIncrement || !this.isItemSelected)
+        return null
+      const newTime = mom(this.item.calendar.time, 'HH:mm').add(this.timelineIncrement, 'm')
+      if (newTime.isValid())
+        return newTime.format('HH:mm')
+    },
+    formatedTime() {
+      if (!this.calendarTime)
+        return null
+      return mom(this.calendarTime, 'HH:mm').format(this.timeFormat)
+    },
+    timeStr() {
+      if (!this.calendarTime)
+        return null
+      return `at ${utils.parseTime(this.calendarTime, this.userInfo)}`
+    },
+    timeFormat() {
+      return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'
+    },
+    startHour() {
+      if (!this.formatedTime)
+        return null
+
+      return mom(this.timeNumbers, 'HH:mm').format('HH')
+    },
+    timeNumbers() {
+      if (!this.formatedTime)
+        return null
+      if (this.userInfo.disablePmFormat)
+        return this.formatedTime
+      return this.formatedTime.split(' ')[0]
+    },
+    timePmAm() {
+      if (!this.formatedTime || this.userInfo.disablePmFormat)
+        return null
+      const split = this.formatedTime.split(' ')
+      return split[split.length - 1]
+    },
+    startMin() {
+      if (!this.calendarTime)
+        return null
+      return mom(this.calendarTime, 'HH:mm').format('mm')
     },
     isLogbookTask() {
       return this.item.logDate
@@ -669,11 +753,6 @@ export default {
       }
       return obj[this.item.priority]
     },
-    schedule() {
-      if (this.scheduleObject)
-        return this.scheduleObject[this.item.id]
-      return null
-    },
   },
   watch: {
     selectEverythingToggle() {
@@ -692,6 +771,46 @@ export default {
   user-select: none;
   position: relative;
   z-index: 2;
+}
+
+.ruler-element {
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.element-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.timeline-line {
+  display: block;
+  height: 3px;
+  width: 10px;
+  border-radius: 4px;
+  background-color: var(--fade);
+}
+
+.timeline-time {
+  display: flex;
+}
+
+.pm-am {
+  font-size: .8em;
+}
+
+.hour {
+  font-size: 1.2em;
+}
+
+.timeline-info {
+  font-size: .7em;
+  color: var(--fade);
+  margin-left: 2px;
+  display: flex;
+  flex-direction: column;
 }
 
 .changeColor {
@@ -749,10 +868,6 @@ export default {
   border: 0px solid transparent;
   background-color: var(--txt);
   transition-duration: .2s;
-}
-
-.schedule.mobile {
-  margin-left: 60px;
 }
 
 .mobile .cont-wrapper {
@@ -999,6 +1114,18 @@ export default {
   align-items: center;
   opacity: 1;
   justify-content: center;
+}
+
+.ruler-t-enter, .ruler-t-leave-to {
+  opacity: 0;
+  width: 0;
+  transition-duration: .2s;
+}
+
+.ruler-t-leave, .ruler-t-enter-to {
+  opacity: 1;
+  width: 35px;
+  transition-duration: .2s;
 }
 
 </style>
