@@ -5,7 +5,7 @@
     @enter='taskEnter'
     @leave='taskLeave'
   >
-    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, isItemMainSelection}, deviceLayout, isLogbookTask]"
+    <div class="Task draggable" :class="taskClass"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
     >
@@ -20,24 +20,6 @@
         @comment="commentsPopup"
         @mouseenter.native='onHover = true'
       />
-      <div v-if="doneTransition && !isEditing && !isDesktopDevice"
-        class="back rb"
-        ref='back'
-        :style="{height: (itemHeight - 5) + 'px'}"
-      >
-        <div class="back-icons-wrapper">
-          <Icon class="back-icon"
-            icon='circle-filled'
-            color='white'
-            width="16px"
-          />
-          <Icon class="back-icon"
-            icon='circle-filled'
-            color='white'
-            width="16px"  
-          />
-        </div>
-      </div>
       <div
         class="cont-wrapper item-handle rb"
         :class='{doneTransition}'
@@ -509,6 +491,16 @@ export default {
       savedTags: 'tag/sortedTagsByName',
       getTagsById: 'tag/getTagsById',
     }),
+
+    taskClass() {
+      return {
+          isItemSelected: this.isItemSelected,
+          showingIconDropContent: this.showingIconDropContent || this.isEditing,
+          isItemMainSelection: this.isItemMainSelection,
+          deviceLayout: this.deviceLayout,
+          isLogbookTask: this.isLogbookTask,
+        }
+    },
     computedShowRuler() {
       return this.showingRuler && this.calendarDate
     },
@@ -821,12 +813,6 @@ export default {
   z-index: 5;
 }
 
-.back-icons-wrapper {
-  flex-basis: 85%;
-  justify-content: space-between;
-  display: flex;
-}
-
 .cont-wrapper {
   position: relative;
   min-height: 38px;
@@ -1080,10 +1066,6 @@ export default {
   background-color: rgba(53, 73, 90, 0.9) !important;
 }
 
-.isItemSelected .back {
-  opacity: 0;
-}
-
 .sortable-ghost {
   height: unset !important;
 }
@@ -1101,19 +1083,6 @@ export default {
 
 .isLogbookTask {
   opacity: .6 !important;
-}
-
-.back {
-  position: absolute;
-  left: 2px;
-  top: 3px;
-  background-color: var(--primary);
-  width: 98%;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  opacity: 1;
-  justify-content: center;
 }
 
 .ruler-t-enter, .ruler-t-leave-to {

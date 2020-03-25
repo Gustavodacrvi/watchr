@@ -164,7 +164,7 @@
 
 import Vue from 'vue'
 
-import Task from './Task.vue'
+// import Task from './Task.vue'
 import TimelineRuler from './TimelineRuler.vue'
 import List from './../Lists/List.vue'
 import TaskEdit from './Edit.vue'
@@ -173,6 +173,7 @@ import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import HeadingsRenderer from './HeadingsRenderer.vue' 
+import ItemTemplate from "../Item/ItemTemplate.vue"
 
 import { fire } from '@/store/'
 import { uid, setTask } from '@/utils/firestore'
@@ -195,7 +196,8 @@ export default {
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
-    Task, ButtonVue, List, ListEdit,
+    Task: ItemTemplate,
+    ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
     Illustration: IllustrationVue,
     TimelineRuler,
