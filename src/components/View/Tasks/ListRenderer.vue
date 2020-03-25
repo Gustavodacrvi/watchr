@@ -284,6 +284,7 @@ export default {
     saveTimelineIncrement() {
       this.forEachItem(vm => vm.saveNewCalendarTime())
       this.$store.commit('clearSelected')
+      this.timelineIncrement = 0
     },
     forEachItem(callback) {
       const keys = Object.keys(this.$refs)

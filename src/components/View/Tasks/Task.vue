@@ -676,6 +676,7 @@ export default {
     },
     timeStr() {
       if (!this.calendarTime)
+        return null
       return `at ${utils.parseTime(this.calendarTime, this.userInfo)}`
     },
     timeFormat() {

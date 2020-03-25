@@ -58,6 +58,7 @@ export default {
     else window.addEventListener('touchmove', this.touchmove, {passive: true})
   },
   beforeDestroy() {
+    this.$emit('input', 0)
     if (this.isDesktopDevice)
       window.removeEventListener('mousemove', this.mousemove)
     else window.removeEventListener('touchmove', this.touchmove, {passive: true})
@@ -104,7 +105,7 @@ export default {
     },
     minutesToAdd() {
       return this.round(5,
-            this.convertOffsetToMin(Math.abs(this.getNewValue), 3000)
+            this.convertOffsetToMin(Math.abs(this.getNewValue), 3250)
           )
     },
     getTime() {
