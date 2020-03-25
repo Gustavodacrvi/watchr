@@ -5,63 +5,82 @@ import InfoEl from "./InfoEl.vue"
 
 export default {
   functional: true,
-  render(create, p) {
-    const get = props => create(InfoEl, props)
+  render(create, context) {
+    const get = props => create(InfoEl, {props})
 
+    const p = context.props
     const c = []
 
+    if (p.listObj)
+      c.push(get({
+        name: p.listObj.name,
+        icon: 'tasks',
+        color: p.listObj.color || 'var(--txt)',
+      }))
+    if (p.folderObj)
+      c.push(get({
+        name: p.folderObj.name,
+        icon: 'folder',
+        color: p.folderObj.color || 'var(--txt)',
+      }))
+    if (p.groupObj)
+      c.push(get({
+        name: p.groupObj.name,
+        icon: 'group',
+        color: p.groupObj.color || 'var(--txt)',
+      }))
+    
     if (p.deadlineStr)
       c.push(get({
         name: p.deadlineStr,
         icon: 'deadline',
         color: 'var(--red)',
       }))
-    if (p.calendarStr && p.isToday && p.isTomorrow)
+    if (p.calendarStr && !p.isToday && !p.isTomorrow)
       c.push(get({
         name: p.calendarStr,
-        icon: 'calendar',
-        color: 'var(--green)',
+        icon: p.isRepeatingTask ? 'repeat' : 'calendar',
+        color: p.isRepeatingTask ? 'var(--txt)' : 'var(--green)',
       }))
     if (p.timeStr)
       c.push(get({
         name: p.timeStr,
-        icon: 'duration',
-        color: 'var(--green)',
+        icon: 'clock',
+        color: 'var(--yellow)',
       }))
-    if (p.hasTags)
+    if (p.taskDuration)
+      c.push(get({
+        name: p.taskDuration,
+        icon: 'duration',
+        color: 'var(--purple)',
+      }))
+    if (p.hasTags && p.tagNames && p.tagNames.length > 0)
+      c.push(get({
+        name: p.tagNames.reduce((acc, str) => acc + str + ', ', '').split("").reverse().join("").substr(2).split("").reverse().join(""),
+        icon: 'tag',
+        color: 'var(--red)',
+      }))
+    if (p.hasFiles)
+      c.push(get({
+        name: '',
+        icon: 'file',
+        color: 'var(--txt)',
+      }))
+    if (p.hasFiles)
       c.push(get({
         name: '',
         icon: 'file',
         color: 'var(--txt)',
       }))
 
+
     return create('div', {class: 'info'}, c)
   },
   props: [
     'isToday', 'isTomorrow', 'isRepeatingTask', 'calendarStr', 'deadlineStr',
-    'timeStr', 'hasTags', 'haveFiles'
+    'timeStr', 'hasTags', 'tagNames', 'hasFiles', 'taskDuration', 'listObj',
+    'folderObj', 'groupObj'
   ]
 }
 
 </script>
-
-<style scoped>
-
-.txt-wrapper {
-  display: inline-flex;
-  align-items: center;
-}
-
-.txt-wrapper + .txt-wrapper {
-  margin-left: 6px;
-}
-
-.txt-icon {
-  transform: translateY(1px);
-}
-
-.txt-name {
-  margin-left: 4px;
-}
-
-</style>

@@ -20,12 +20,19 @@
         :isToday='isToday'
         :isTomorrow='isTomorrow'
 
-        :calendarStr='calendarStr'
+        :calendarStr='`Every 2 days`'
         :isRepeatingTask='isRepeatingTask'
-        :deadlineStr='deadlineStr'
-        :timeStr='timeStr'
-        :haveFiles='haveFiles'
-        :hasTags='hasTags'
+        :deadlineStr='"35min"'
+        :timeStr='`10:25`'
+        :hasFiles='hasFiles'
+
+        :listObj='listObj'
+        :folderObj='folderObj'
+        :groupObj='groupObj'
+        
+        :hasTags='true'
+        :tagNames='tagNames'
+        :taskDuration='`15min`'
       />
     </template>
   </ItemTemplate>
@@ -38,6 +45,7 @@ import ItemTemplate from "./Components/ItemTemplate.vue"
 import Info from "./Components/Info/Task.vue"
 
 import utils from "@/utils"
+import utilsMoment from "@/utils/moment"
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -48,7 +56,8 @@ const tod = mom()
 export default {
   props: [
     'item', 'isSelecting', 'movingItem', 'disableCalendarStr',
-    'disableDeadlineStr', 'timelineIncrement',
+    'disableDeadlineStr', 'timelineIncrement', 'hideListName',
+    'hideGroupName', 'hideFolderName',
 
     'viewName', 'viewType',
   ],
@@ -69,6 +78,10 @@ export default {
     }),
     ...mapGetters({
       isDesktopBreakPoint: 'isDesktopBreakPoint',
+      getTagsById: 'tag/getTagsById',
+      getFoldersById: 'list/getFoldersById',
+      savedFolders: 'folder/savedFolders',
+      getGroupsById: 'group/getGroupsById',
       isTaskInView: 'task/isTaskInView',
       isRecurringTask: 'task/isRecurringTask',
       getTaskDeadlineStr: 'task/getTaskDeadlineStr',
@@ -150,13 +163,106 @@ export default {
         return newTime.format('HH:mm')
     },
 
-    haveFiles() {
+    folderObj() {
+      const folder = this.itemFolder
+
+      if (!folder || this.hideFolderName || (folder.name === this.viewName)) return null
+      
+      return {
+        name: folder.name,
+        color: folder.color,
+      }
+    },
+    itemGroup() {
+      if (!this.item.group)
+        return null
+      return this.getGroupsById([this.item.group])[0]
+    },
+    groupObj() {
+      const group = this.itemGroup
+
+      if (!group || this.hideGroupName || (group.name === this.viewName)) return null
+      
+      return {
+        name: group.name,
+        color: group.color,
+      }
+    },
+    itemFolder() {
+      if (!this.item.folder)
+        return null
+      return this.getFoldersById([this.item.folder])[0]
+    },
+    listObj() {
+      const list = this.itemList
+      if (!list || this.hideListName) return null
+      const savedList = this.itemList
+      if (!savedList || (savedList.name === this.viewName)) return null
+      
+      let name = savedList.name
+      let color = savedList.color
+      
+      const heading = this.listHeading
+
+      if (heading) {
+        name += ' - ' + heading.name
+        if (heading.color)
+          color = heading.color
+      }
+
+      return {name, color}
+    },
+    listHeading() {
+      const list = this.itemList
+      if (!list) return null
+      return list.headings.find(h => h.id === this.item.heading)
+    },
+    itemList() {
+      if (!this.item.list)
+        return null
+      return this.getListsById([this.item.list])[0]
+    },
+
+    taskDuration() {
+      return this.item.taskDuration ? utils.formatQuantity(this.item.taskDuration) : null
+    },
+    checklistPieProgress() {
+      const c = this.item.calendar
+      let completed
+      
+      if (!c || !this.isRepeatingTask)
+        completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
+      else {
+        const compareDate = utilsMoment.getNextEventAfterCompletionDate(c).format('Y-M-D')
+        
+        completed = this.item.checklist.reduce((acc, opt) => {
+          if (!compareDate)
+            return opt.completed ? acc + 1 : acc
+          if (!opt.completeDate)
+            return false
+
+          return (opt.completed && mom(opt.completeDate, 'Y-M-D').isSameOrAfter(mom(compareDate, 'Y-M-D'), 'day')) ? acc + 1 : acc
+        }, 0)
+      }
+
+      return 100 * completed / this.item.checklist.length
+    },
+    checklistProgress() {
+      if (this.item.checklist && this.item.checklist.length > 0)
+        return this.checklistPieProgress
+    },
+
+    hasFiles() {
       return this.item.files && this.item.files.length > 0
     },
     hasTags() {
       if (this.viewType === 'tag' && this.tagNames.length === 1)
         return this.tagNames[0] !== this.viewName
       return this.item.tags && this.item.tags.length > 0
+    },
+    tagNames() {
+      return ['AA', "BB", "Cc"]
+      return this.getTagsById(this.item.tags || []).map(el => el.name)
     },
 
     isItemSelected() {

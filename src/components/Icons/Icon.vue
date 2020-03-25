@@ -43,6 +43,7 @@ import heart from '@/assets/icons/heart.svg'
 import sleep from '@/assets/icons/sleep.svg'
 import deadline from '@/assets/icons/deadline.svg'
 import repeat from '@/assets/icons/repeat.svg'
+import next from '@/assets/icons/next.svg'
 import box from '@/assets/icons/box.svg'
 import boxDash from '@/assets/icons/box-dash.svg'
 import file from '@/assets/icons/file.svg'
@@ -84,6 +85,7 @@ const icons = {
   folder, heart, close, filter, magic, clock,
   pie, check, group, message, crown, play,
   comment, logbook, moon, tint, duration,
+  next,
   "later-lists": laterLists,
   "logged-lists": loggedLists,
   "faded-logged-lists": fadedLoggedLists,
