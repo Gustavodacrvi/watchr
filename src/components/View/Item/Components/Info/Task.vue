@@ -66,12 +66,6 @@ export default {
         icon: 'file',
         color: 'var(--txt)',
       }))
-    if (p.hasFiles)
-      c.push(get({
-        name: '',
-        icon: 'file',
-        color: 'var(--txt)',
-      }))
 
 
     return create('div', {class: 'info'}, c)

@@ -122,7 +122,7 @@
                       @leave='infoLeave'
                       tag='span'
                     >
-                      <templateo>
+                      <template>
                         <span v-if="deadlineStr" class="txt-str alert" key='5'>{{ deadlineStr }}</span>
                         <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb" key='6'>
                           {{ calendarStr }}
@@ -1000,7 +1000,7 @@ export default {
 
 .isItemSelected.isItemMainSelection .cont-wrapper,
 .isItemSelected:hover .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.9) !important;
+  background-color: rgba(157, 209, 255, 0.9) !important;
 }
 
 .sortable-ghost {

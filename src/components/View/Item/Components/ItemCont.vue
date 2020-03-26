@@ -20,8 +20,13 @@
               width='14px'
             />
           </transition>
-          <span>
-            {{ name }}
+          <span class="name-wrapper">
+            <span class="name">
+              <span v-html="parsedName"></span>
+            </span>
+            <span class="after-name">
+              <slot name="after-name"></slot>
+            </span>
           </span>
         </div>
         <transition
@@ -40,6 +45,8 @@
 </template>
 
 <script>
+
+import utils from '@/utils'
 
 export default {
   props: ['name', 'nameIcon'],
@@ -115,6 +122,11 @@ export default {
       s.opacity = 0
     },
   },
+  computed: {
+    parsedName() {
+      return utils.parseHTMLStr(this.name)
+    },
+  },
 }
 
 </script>
@@ -129,13 +141,32 @@ export default {
   height: 100%;
 }
 
+.name-wrapper, .cont, .text {
+  display: flex;
+  align-items: center;
+}
+
+.after-name {
+  margin-left: 9px;
+}
+
 .cont {
   position: relative;
   height: 100%;
   width: 100%;
+}
 
-  display: flex;
-  align-items: center;
+.name-wrapper {
+  position: absolute;
+  width: calc(100% - 35px);
+}
+
+.name {
+  max-width: 100%;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .icon-wrapper {
@@ -151,8 +182,6 @@ export default {
 
 .text {
   height: 60%;
-  display: flex;
-  align-items: center;
 }
 
 .info {

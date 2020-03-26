@@ -172,7 +172,7 @@ import ListEdit from './../Lists/Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
-import HeadingsRenderer from './HeadingsRenderer.vue' 
+import HeadingsRenderer from './HeadingsRenderer.vue'
 import Task from "../Item/Task.vue"
 
 import { fire } from '@/store/'
@@ -849,9 +849,7 @@ export default {
           }
         },
       }
-      if (this.isDesktopDevice) {
-        obj['multiDragKey'] = 'CTRL'
-      } else {
+      if (!this.isDesktopDevice) {
         obj.forceFallback = true
         obj.fallbackOnBody = true
       }

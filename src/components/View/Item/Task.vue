@@ -5,6 +5,9 @@
 
     :item='item'
     :nameIcon='nameIcon'
+    :options='options'
+
+    @copy-item='copyItem'
   >
     <template v-slot:check-icon>
       <CheckIcon
@@ -15,24 +18,32 @@
       />
     </template>
 
+    <template v-slot:after-name>
+      <Icon v-if="checklistProgress" class="icon"
+        icon='pie'
+        :progress='checklistProgress'
+        width='7px'
+      />
+    </template>
+
     <template v-slot:info>
-      <Info
+      <Info v-if="hasAtLeastOne"
         :isToday='isToday'
         :isTomorrow='isTomorrow'
 
-        :calendarStr='`Every 2 days`'
+        :calendarStr='calendarStr'
         :isRepeatingTask='isRepeatingTask'
-        :deadlineStr='"35min"'
-        :timeStr='`10:25`'
+        :deadlineStr='deadlineStr'
+        :timeStr='timeStr'
         :hasFiles='hasFiles'
 
         :listObj='listObj'
         :folderObj='folderObj'
         :groupObj='groupObj'
         
-        :hasTags='true'
+        :hasTags='hasTags'
         :tagNames='tagNames'
-        :taskDuration='`15min`'
+        :taskDuration='taskDuration'
       />
     </template>
   </ItemTemplate>
@@ -45,6 +56,7 @@ import ItemTemplate from "./Components/ItemTemplate.vue"
 import Info from "./Components/Info/Task.vue"
 
 import utils from "@/utils"
+import utilsTask from "@/utils/task"
 import utilsMoment from "@/utils/moment"
 
 import { mapGetters, mapState } from 'vuex'
@@ -55,7 +67,7 @@ const tod = mom()
 
 export default {
   props: [
-    'item', 'isSelecting', 'movingItem', 'disableCalendarStr',
+    'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',
     'hideGroupName', 'hideFolderName',
 
@@ -70,6 +82,11 @@ export default {
       completed: false,
       canceled: false,
     }
+  },
+  methods: {
+    copyItem() {
+      this.$store.dispatch('task/copyTask', this.item)
+    },
   },
   computed: {
     ...mapState({
@@ -223,6 +240,22 @@ export default {
       return this.getListsById([this.item.list])[0]
     },
 
+    hasAtLeastOne() {
+      return
+        this.listObj ||
+        this.folderObj ||
+        this.groupObj ||
+        this.deadlineStr ||
+        (this.calendarStr && !this.isToday && !this.isTomorrow) ||
+        this.timeStr ||
+        this.taskDuration ||
+        (this.hasTags && this.tagNames && this.tagNames.length > 0) ||
+        this.hasFiles
+    },
+    options() {
+      return utilsTask.taskOptions(this.item, this)
+    },
+
     taskDuration() {
       return this.item.taskDuration ? utils.formatQuantity(this.item.taskDuration) : null
     },
@@ -303,5 +336,10 @@ export default {
 </script>
 
 <style scoped>
+
+.icon {
+  transform: translate(4px, 2px);
+  opacity: .6;
+}
 
 </style>
