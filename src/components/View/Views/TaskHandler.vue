@@ -84,6 +84,10 @@ export default {
     this.order = this.tasksOrder
   },
   methods: {
+    toggleCompletion(ids) {
+      this.$refs.renderer.toggleCompletion(ids)
+    },
+    
     applyAutoSchedule(autoSchedule, calendarDate) {
       this.$refs.renderer.applyAutoSchedule(autoSchedule, calendarDate)
     },

@@ -230,6 +230,11 @@ export default {
       this.showingRuler = !this.showingRuler
       localStorage.setItem('showingRuler', this.showingRuler)
     },
+    fallbackToggleCompletion() {
+      if (this.$refs.extraView)
+        this.$refs.extraView.toggleCompletion(this.fallbackSelected)
+      this.$refs.taskHandler.toggleCompletion(this.fallbackSelected)
+    },
     openMainComp() {
       this.$refs.mainComp.open()
     },
@@ -487,7 +492,7 @@ export default {
                   break
                 }
                 case 'toggleCompletion': {
-                  this.$store.commit('toggleTaskCompletion', fallbackItems)
+                  this.fallbackToggleCompletion()
                   break
                 }
                 case 'toggleCancel': {
@@ -510,7 +515,7 @@ export default {
                 break
               }
               case 'toggleCompletion': {
-                this.$store.commit('toggleListCompletion', fallbackItems)
+                this.fallbackToggleCompletion()
                 break
               }
               case 'logbook': {

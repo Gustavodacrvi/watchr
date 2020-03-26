@@ -4,19 +4,26 @@
     class="Task"
 
     :item='item'
-    :nameIcon='nameIcon'
+    :completedItem='completedItem'
+    :canceledItem='canceledItem'
     :options='options'
 
     ref='template'
 
     @copy-item='copyItem'
-  >
-    <template v-slot:check-icon>
-      <CheckIcon
-        v-bind="{...$attrs, item: item}"
 
-        :completed='completed'
-        :canceled='canceled'
+    @complete-item='completeItem'
+    @uncomplete-item='unCompleteItem'
+
+    @cancel-item='cancelItem'
+    @uncancel-item='unCancelItem'
+  >
+    <template v-slot:check-icon="props">
+      <CheckIcon
+        v-bind="{...$attrs, ...item}"
+
+        :completed='props.completed'
+        :canceled='props.canceled'
       />
     </template>
 
@@ -30,6 +37,22 @@
           @click.native='rulerClick'
         />
       </transition>
+    </template>
+
+    <template v-slot:before-name>
+      <span v-if="logStr && !showCheckDate"
+        class="check-date"
+      >
+        {{ logStr }}
+      </span>
+      <Icon v-else-if="nameIcon"
+        class="name-icon"
+      
+        :icon='nameIcon.name'
+        :color='nameIcon.color'
+
+        width='14px'
+      />
     </template>
 
     <template v-slot:after-name>
@@ -80,25 +103,20 @@ import { mapGetters, mapState } from 'vuex'
 import mom from 'moment'
 
 const tod = mom()
+const TOD_DATE = tod.format('Y-M-D')
 
 export default {
   props: [
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',
     'hideGroupName', 'hideFolderName', 'showingRuler',
-    'isSelecting',
+    'isSelecting', 'allowLogStr',
 
     'viewName', 'viewType',
   ],
   components: {
     ItemTemplate, Info,
     CheckIcon, TimelineElement,
-  },
-  data() {
-    return {
-      completed: false,
-      canceled: false,
-    }
   },
   methods: {
     copyItem() {
@@ -107,6 +125,9 @@ export default {
     rulerClick() {
       if (!this.isSelecting)
         this.selectItem()
+    },
+    toggleCompletion() {
+      this.$refs.template.toggleCompletion()
     },
     selectItem() {
       this.$refs.template.selectItem()
@@ -126,6 +147,19 @@ export default {
           },
         })
     },
+
+    cancelItem() {
+      this.$store.dispatch('task/cancelTasks', [this.item.id])
+    },
+    unCancelItem() {
+      this.$store.dispatch('task/uncancelTasks', [this.item.id])
+    },
+    completeItem() {
+      this.$store.dispatch('task/completeTasks', [this.item])
+    },
+    unCompleteItem() {
+      this.$store.dispatch('task/uncompleteTasks', [this.item])
+    },
   },
   computed: {
     ...mapState({
@@ -136,10 +170,13 @@ export default {
       isDesktopBreakPoint: 'isDesktopBreakPoint',
       calendarDate: 'calendarDate',
       getTagsById: 'tag/getTagsById',
-      getFoldersById: 'list/getFoldersById',
+      getListsById: 'list/getListsById',
+      getFoldersById: 'folder/getFoldersById',
       savedFolders: 'folder/savedFolders',
       getGroupsById: 'group/getGroupsById',
       isTaskInView: 'task/isTaskInView',
+      isTaskCompleted: 'task/isTaskCompleted',
+      isTaskCanceled: 'task/isTaskCanceled',
       isRecurringTask: 'task/isRecurringTask',
       getTaskDeadlineStr: 'task/getTaskDeadlineStr',
     }),
@@ -200,6 +237,16 @@ export default {
       return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
 
+    logStr() {
+      if (!this.allowLogStr || !this.item.logDate) return null
+      return utils.getHumanReadableDate(this.item.logDate)
+    },
+    showCheckDate() {
+      const n = this.viewName
+      if ((!this.item.checkDate && !this.item.completeDate) || n === 'Logbook' || n === 'Logbook' || n === 'Canceled')
+        return null
+      return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate)
+    },
     calendarTime() {
       const c = this.item.calendar
       if (!c || !c.time) return null
@@ -328,6 +375,12 @@ export default {
 
       return mom(this.timeNumbers, 'HH:mm').format('HH')
     },
+    completedItem() {
+      return this.isTaskCompleted(this.item, TOD_DATE, this.itemCompletionCompareDate)
+    },
+    canceledItem() {
+      return this.isTaskCanceled(this.item)
+    },
 
     hasAtLeastOne() {
       return
@@ -432,6 +485,19 @@ export default {
   opacity: .6;
 }
 
+.check-date {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  height: 100%;
+  margin-right: 8px;
+  color: var(--primary);
+  font-size: .9em;
+  overflow: hidden;
+  transform: translateY(-2.5px);
+  opacity: .4;
+}
+
 .ruler-t-enter, .ruler-t-leave-to {
   opacity: 0;
   width: 0;
@@ -443,6 +509,5 @@ export default {
   width: 35px;
   transition-duration: .2s;
 }
-
 
 </style>

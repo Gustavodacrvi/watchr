@@ -57,6 +57,10 @@ export default {
     ListRendererVue,
   },
   methods: {
+    toggleCompletion(ids) {
+      this.$refs.renderer.toggleCompletion(ids)
+    },
+    
     selectAll() {
       this.$refs.renderer.selectAll()
     },

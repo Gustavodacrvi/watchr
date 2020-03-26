@@ -114,6 +114,9 @@ export default {
       this.sortable.destroy()
   },
   methods: {
+    toggleCompletion(ids) {
+      this.forEachRenderer(vm => vm.toggleCompletion(ids))
+    },
     applyAutoScheduleToHeading(obj, headingId, calendarDate) {
       this.findHeading(headingId, vm => vm.applyAutoSchedule(obj, calendarDate))
     },

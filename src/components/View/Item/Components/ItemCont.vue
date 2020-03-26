@@ -1,9 +1,18 @@
 <template>
-  <div class="ItemCont">
+  <div class="ItemCont" :class="{showLine}">
     <div class="cont">
       <slot name='root'></slot>
-      <div class="icon-wrapper">
-        <slot name="check-icon"></slot>
+      <div
+        class="icon-wrapper"
+
+        @click="$emit('toggle-complete')"
+        @contextmenu="$emit('toggle-complete')"
+      >
+        <slot
+          name="check-icon"
+
+          
+        ></slot>
       </div>
       <div class="content-wrapper">
         <div class="text">
@@ -12,21 +21,23 @@
             @enter='infoEnter'
             @leave='infoLeave'
           >
-            <Icon v-if="nameIcon"
-              class="name-icon"
-            
-              :icon='nameIcon.name'
-              :color='nameIcon.color'
-
-              width='14px'
-            />
+            <slot name='before-name'></slot>
           </transition>
           <span class="name-wrapper">
+            <span class="line-wrapper">
+              <span class="line"></span>
+            </span>
             <span class="name">
               <span v-html="parsedName"></span>
             </span>
             <span class="after-name">
-              <slot name="after-name"></slot>
+              <transition
+                appear
+                @enter='infoEnter'
+                @leave='infoLeave'
+              >
+                <slot name="after-name"></slot>
+              </transition>
             </span>
           </span>
         </div>
@@ -50,7 +61,12 @@
 import utils from '@/utils'
 
 export default {
-  props: ['name', 'nameIcon'],
+  props: ['name'],
+  data() {
+    return {
+      showLine: false,
+    }
+  },
   methods: {
     enterInfo(el, done) {
       const s = el.style
@@ -64,7 +80,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
         s.height = height
-        s.opacity = .7
+        s.opacity = .6
 
         setTimeout(done, 250)
       })
@@ -75,7 +91,7 @@ export default {
 
       s.transitionDuration = 0
       s.height = 'auto'
-      s.opacity = .7
+      s.opacity = .6
 
       requestAnimationFrame(() => {
         const height = getComputedStyle(el).height
@@ -122,6 +138,10 @@ export default {
       s.marginRight = 0
       s.opacity = 0
     },
+
+    animate() {
+      this.showLine = true
+    },
   },
   computed: {
     parsedName() {
@@ -164,6 +184,7 @@ export default {
 
 .name-wrapper {
   overflow: hidden;
+  position: relative;
 }
 
 .name {
@@ -193,8 +214,29 @@ export default {
 .info {
   height: 40%;
   font-size: .825em;
-  opacity: .7;
+  opacity: .6;
   overflow: visible;
+}
+
+.line-wrapper {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+}
+
+.line {
+  width: 0;
+
+  height: 3px;
+  background-color: var(--txt);
+  border-radius: 8px;
+  transition-duration: .2s;
+}
+
+.showLine .line {
+  width: 100%;
 }
 
 </style>

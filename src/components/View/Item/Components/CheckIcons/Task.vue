@@ -29,6 +29,9 @@ export default {
     
     'name', 'priority', 'id', 'calendar',
   ],
+  created() {
+    console.log(this.completed)
+  },
   computed: {
     ...mapState({
       selectedItems: state => state.selectedItems,

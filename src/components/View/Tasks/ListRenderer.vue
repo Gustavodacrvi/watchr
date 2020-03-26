@@ -273,6 +273,15 @@ export default {
     }
   },
   methods: {
+    toggleCompletion(ids) {
+      ids.forEach(id => this.findItem(id, vm => vm.toggleCompletion()))
+      if (this.$refs.headings)
+        this.$refs.headings.toggleCompletion(ids)
+    },
+    findItem(id, callback) {
+      if (this.$refs[id] && this.$refs[id][0])
+        callback(this.$refs[id][0])
+    },
     applyAutoScheduleToHeading(info, headingId, calendarDate) {
       this.$refs.headings.applyAutoScheduleToHeading(info, headingId, calendarDate)
     },

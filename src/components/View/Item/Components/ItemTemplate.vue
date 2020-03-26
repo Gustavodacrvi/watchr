@@ -15,14 +15,17 @@
       >
         <ItemCont
           v-bind="item"
-          
-          :completed='completed'
-          :canceled='canceled'
-          :nameIcon='nameIcon'
+          ref='cont'
+
+          @toggle-complete='toggleComplete'
+          @toggle-cancel='toggleCancel'
         >
 
           <template v-slot:check-icon>
-            <slot name="check-icon"></slot>
+            <slot name="check-icon"
+              :completed='completed'
+              :canceled='canceled'
+            ></slot>
           </template>
           <template v-slot:root>
             <slot name="root"></slot>
@@ -32,6 +35,9 @@
           </template>
           <template v-slot:info>
             <slot name="info"></slot>
+          </template>
+          <template v-slot:before-name>
+            <slot name="before-name"></slot>
           </template>
 
         </ItemCont>
@@ -53,8 +59,9 @@ export default {
     ItemCont,
   },
   props: [
-    'nameIcon', 'itemHeight', 'item', 'completed', 'canceled',
+    'itemHeight', 'item',
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
+    'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
 
     'options',
   ],
@@ -62,7 +69,15 @@ export default {
     return {
       justSaved: false,
       isEditing: false,
+      completeAnimation: false,
+      
+      completed: false,
+      canceled: false,
     }
+  },
+  created() {
+    this.completed = this.completedItem
+    this.canceled = this.canceledItem
   },
   methods: {
     enter(el, done) {
@@ -114,14 +129,67 @@ export default {
       s.height = this.itemHeight + 'px'
       s.minHeight = this.itemHeight + 'px'
 
-      requestAnimationFrame(() => {
+      const hideItem = () => {
         s.transitionDuration = disableTransition ? 0 : '.2s'
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
 
-        setTimeout(done, 205)
+        setTimeout(done, disableTransition ? 0 : 201)
+      }
+
+      requestAnimationFrame(() => {
+        if (!this.completeAnimation) {
+          hideItem()
+        } else {
+          this.waitForAnotherItemComplete(hideItem)
+        }
       })
+    },
+
+    animate(animate) {
+      this.completeAnimation = animate
+      if (animate)
+        this.$refs.cont.animate()
+    },
+
+    toggleComplete() {
+      if (this.isDesktopDevice)
+        this.completeItem()
+    },
+    toggleCancel() {
+      if (this.isDesktopDevice)
+        this.canceleItem()
+    },
+    toggleCompletion() {
+      this.completeItem()
+    },
+    completeItem(force = false) {
+      if (this.canceled && !force) {
+        this.cancelItem(true)
+      } else {
+        this.animate(!this.completed)
+        const anticipate = (this.viewName !== 'Today' && this.comp === "Task")
+        this.completed = !this.completed || anticipate
+        this.$nextTick(() => {
+          if (this.completed || anticipate)
+            this.$emit('complete-item')
+          else this.$emit('uncomplete-item')
+        })
+      }
+    },
+    cancelItem(force = false) {
+      if (this.completed && !force) {
+        this.completeItem(true)
+      } else {
+        this.animate(!this.canceled)
+        this.canceled = !this.canceled
+        this.$nextTick(() => {
+          if (this.canceled)
+            this.$emit('cancel-item')
+          else this.$emit('uncancel-item')
+        })
+      }
     },
 
     
@@ -281,6 +349,16 @@ export default {
   watch: {
     isItemMainSelection() {
       this.bindMainSelection()
+    },
+    completed() {
+      if (this.completed)
+        this.animate(this.completed)
+    },
+    completedItem() {
+      this.completed = this.completedItem
+    },
+    canceledItem() {
+      this.canceled = this.canceledItem
     },
     options() {
       this.bindContextMenu(this.options)
