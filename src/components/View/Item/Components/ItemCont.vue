@@ -8,11 +8,7 @@
         @click="$emit('toggle-complete')"
         @contextmenu="$emit('toggle-complete')"
       >
-        <slot
-          name="check-icon"
-
-          
-        ></slot>
+        <slot name="check-icon"></slot>
       </div>
       <div class="content-wrapper">
         <div class="text">

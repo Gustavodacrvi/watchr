@@ -348,6 +348,9 @@ export default {
         })
       }
     },
+    assignUser(uid) {
+      this.$emit('assign-user', uid)
+    },
   },
   computed: {
     ...mapState({

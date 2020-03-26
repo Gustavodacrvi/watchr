@@ -12,6 +12,8 @@
 
     @copy-item='copyItem'
 
+    @assign-user='assignUser'
+
     @complete-item='completeItem'
     @uncomplete-item='unCompleteItem'
 
@@ -27,7 +29,7 @@
       />
     </template>
 
-    <template v-slot:root>
+    <template>
       <transition name='ruler-t'>
         <TimelineElement v-if='computedShowRuler'
           :startHour='startHour'
@@ -121,6 +123,11 @@ export default {
   methods: {
     copyItem() {
       this.$store.dispatch('task/copyTask', this.item)
+    },
+    assignUser(uid) {
+      this.saveTaskContent({
+        assigned: uid,
+      })
     },
     rulerClick() {
       if (!this.isSelecting)

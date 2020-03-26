@@ -8,6 +8,9 @@
     <div
       class="ItemTemplate item-handle draggable"
       :class="[layout, {isItemSelected, isItemMainSelection}]"
+
+      @mouseenter="onHover = true"
+      @mouseleave="onHover = false"
     >
       <div
         class="cont-wrapper item-handle rb"
@@ -28,7 +31,24 @@
             ></slot>
           </template>
           <template v-slot:root>
-            <slot name="root"></slot>
+
+            <CommentCounter v-if="item.group && isDesktopBreakPoint && !isEditing"
+              ref="comment-counter"
+              :hover='onHover'
+              :number='nonReadComments'
+              :isOwner='isGroupOwner'
+              :assigned='item.assigned'
+              :groupId='item.group'
+              
+              @assign="assignItem"
+              @comment="commentsPopup"
+              @mouseenter.native='onHover = true'
+            />
+            
+            <slot name="root"
+              :isEditing='isEditing'
+              :onHover='onHover'
+            ></slot>
           </template>
           <template v-slot:after-name>
             <slot name="after-name"></slot>
@@ -52,11 +72,13 @@ import ItemCont from './ItemCont.vue'
 
 import utils from "@/utils"
 
+import CommentCounter from '@/components/View/RenderComponents/CommentCounter.vue'
+
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    ItemCont,
+    ItemCont, CommentCounter,
   },
   props: [
     'itemHeight', 'item',
@@ -70,6 +92,7 @@ export default {
       justSaved: false,
       isEditing: false,
       completeAnimation: false,
+      onHover: false,
       
       completed: false,
       canceled: false,
@@ -152,6 +175,12 @@ export default {
       if (animate)
         this.$refs.cont.animate()
     },
+    assignUser(uid) {
+      this.$emit('assign-user', uid)
+    },
+    assignItem() {
+      this.$store.commit('pushIconDrop', this.assignUserProfiles)
+    },
 
     toggleComplete() {
       if (this.isDesktopDevice)
@@ -191,7 +220,15 @@ export default {
         })
       }
     },
-
+    commentsPopup() {
+      this.$store.dispatch('pushPopup', {
+        comp: "Comments",
+        payload: {
+          groupId: this.item.group,
+          id: this.item.id,
+        },
+      })
+    },
     
     bindMainSelection() {
       if (this.isDesktopDevice)
@@ -336,7 +373,17 @@ export default {
       window.removeEventListener('keydown', this.mainSelectionKeyDown)
   },
   computed: {
-    ...mapState(['selectedItems', 'mainSelection', 'isEditingComp', 'iconDrop', 'isOnAlt', 'fallbackSelected', 'isOnControl', 'isOnShift']),
+    ...mapState(['selectedItems', 'mainSelection', 'isEditingComp', 'iconDrop', 'isOnAlt', 'fallbackSelected', 'isOnControl', 'isOnShift', 'userInfo']),
+    ...mapGetters({
+      layout: 'layout',
+      isDesktopDevice: 'isDesktopDevice',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
+
+      getGroupsById: 'group/getGroupsById',
+
+      nonReadCommentsById: 'group/nonReadCommentsById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
+    }),
     ...mapGetters(['layout', 'isDesktopDevice']),
 
     isItemSelected() {
@@ -344,6 +391,21 @@ export default {
     },
     isItemMainSelection() {
       return this.item.id === this.mainSelection
+    },
+    assignUserProfiles() {
+      return this.getAssigneeIconDrop(this.item, uid => this.assignUser(uid))
+    },
+    
+    nonReadComments() {
+      return this.nonReadCommentsById(this.item.group, this.item.id).length
+    },
+    isGroupOwner() {
+      return (this.itemGroup && this.itemGroup.userId === this.userInfo.userId)
+    },
+    itemGroup() {
+      if (!this.item.group)
+        return null
+      return this.getGroupsById([this.item.group])[0]
     },
   },
   watch: {
