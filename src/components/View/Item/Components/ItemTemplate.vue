@@ -19,11 +19,12 @@
         <ItemCont
           v-bind="item"
           ref='cont'
+          
+          :isEditing='isEditing'
 
           @toggle-complete='toggleComplete'
           @toggle-cancel='toggleCancel'
         >
-
           <template v-slot:check-icon>
             <slot name="check-icon"
               :completed='completed'
