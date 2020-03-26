@@ -1,10 +1,11 @@
 <template>
   <div class="ItemCont">
     <div class="cont">
+      <slot name='root'></slot>
       <div class="icon-wrapper">
         <slot name="check-icon"></slot>
       </div>
-      <div>
+      <div class="content-wrapper">
         <div class="text">
           <transition
             appear
@@ -156,9 +157,13 @@ export default {
   width: 100%;
 }
 
+.content-wrapper {
+  width: 100%;
+  overflow: hidden;
+}
+
 .name-wrapper {
-  position: absolute;
-  width: calc(100% - 35px);
+  overflow: hidden;
 }
 
 .name {
@@ -182,6 +187,7 @@ export default {
 
 .text {
   height: 60%;
+  max-width: 100%;
 }
 
 .info {

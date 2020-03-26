@@ -42,6 +42,12 @@ export default {
         icon: p.isRepeatingTask ? 'repeat' : 'calendar',
         color: p.isRepeatingTask ? 'var(--txt)' : 'var(--green)',
       }))
+    if (p.nextCalendarEvent)
+      c.push(get({
+        name: p.nextCalendarEvent,
+        icon: 'next',
+        color: 'var(--yellow)',
+      }))
     if (p.timeStr)
       c.push(get({
         name: p.timeStr,
@@ -73,7 +79,7 @@ export default {
   props: [
     'isToday', 'isTomorrow', 'isRepeatingTask', 'calendarStr', 'deadlineStr',
     'timeStr', 'hasTags', 'tagNames', 'hasFiles', 'taskDuration', 'listObj',
-    'folderObj', 'groupObj'
+    'folderObj', 'groupObj', 'nextCalendarEvent'
   ]
 }
 

@@ -9,7 +9,6 @@
       class="ItemTemplate item-handle draggable"
       :class="[layout, {isItemSelected, isItemMainSelection}]"
     >
-      <slot name="root"></slot>
       <div
         class="cont-wrapper item-handle rb"
         ref='cont-wrapper'
@@ -24,6 +23,9 @@
 
           <template v-slot:check-icon>
             <slot name="check-icon"></slot>
+          </template>
+          <template v-slot:root>
+            <slot name="root"></slot>
           </template>
           <template v-slot:after-name>
             <slot name="after-name"></slot>
@@ -108,19 +110,17 @@ export default {
       const s = cont.style
 
       s.transitionDuration = '0s'
-      s.opacity = 0
-      s.height = 0
-      
+      s.opacity = 1
+      s.height = this.itemHeight + 'px'
+      s.minHeight = this.itemHeight + 'px'
+
       requestAnimationFrame(() => {
         s.transitionDuration = disableTransition ? 0 : '.2s'
-        s.opacity = 1
-        s.height = this.itemHeight + 'px'
+        s.opacity = 0
+        s.height = 0
+        s.minHeight = 0
 
-        setTimeout(() => {
-          s.transitionDuration = '.2s'
-          s.height = 'auto'
-          done()
-        }, 205)
+        setTimeout(done, 205)
       })
     },
 
@@ -160,10 +160,9 @@ export default {
           if (!isTyping && !this.isEditingComp && !this.iconDrop) {
             const select = (this.isOnControl || this.isSelecting)
             if (!select && !this.justSaved)
-            this.isEditing = true
-            else if (select) {
+              this.isEditing = true
+            else if (select)
               toggleSelect()
-            }
           }
           break
         }
@@ -239,11 +238,11 @@ export default {
     },
     deselectItem() {
       setTimeout(() => {
-        this.$emit('de-select', this.$el)
+        this.$parent.$emit('de-select', this.$el)
       }, 5)
     },
     selectItem() {
-      this.$emit('select', this.$el)
+      this.$parent.$emit('select', this.$el)
     },
     toggleSelect() {
       if (!this.isItemSelected) {

@@ -58,7 +58,7 @@ export default {
     else window.addEventListener('touchmove', this.touchmove, {passive: true})
   },
   beforeDestroy() {
-    this.$emit('input', 0)
+    this.$emit('input', null)
     if (this.isDesktopDevice)
       window.removeEventListener('mousemove', this.mousemove)
     else window.removeEventListener('touchmove', this.touchmove, {passive: true})
@@ -138,7 +138,7 @@ export default {
   border-top: 0 solid transparent;
   border-bottom: 0 solid transparent;
   background-color: rgba(161, 96, 235, .05);
-  z-index: 3;
+  z-index: 6;
 }
 
 .wrapper {

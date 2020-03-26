@@ -702,18 +702,6 @@ export default {
   z-index: 2;
 }
 
-.ruler-element {
-  width: 50px;
-  flex-shrink: 0;
-}
-
-.element-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
 .timeline-line {
   display: block;
   height: 3px;

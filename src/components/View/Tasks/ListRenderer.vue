@@ -212,7 +212,7 @@ export default {
       droppedIds: [],
       waitingUpdateTimeout: null,
 
-      timelineIncrement: 0,
+      timelineIncrement: null,
 
       addedItem: null,
       edit: null,

@@ -7,6 +7,8 @@
     :nameIcon='nameIcon'
     :options='options'
 
+    ref='template'
+
     @copy-item='copyItem'
   >
     <template v-slot:check-icon>
@@ -18,6 +20,18 @@
       />
     </template>
 
+    <template v-slot:root>
+      <transition name='ruler-t'>
+        <TimelineElement v-if='computedShowRuler'
+          :startHour='startHour'
+          :startMin='startMin'
+          :timePmAm='timePmAm'
+        
+          @click.native='rulerClick'
+        />
+      </transition>
+    </template>
+
     <template v-slot:after-name>
       <Icon v-if="checklistProgress" class="icon"
         icon='pie'
@@ -27,7 +41,7 @@
     </template>
 
     <template v-slot:info>
-      <Info v-if="hasAtLeastOne"
+      <Info v-show="hasAtLeastOne"
         :isToday='isToday'
         :isTomorrow='isTomorrow'
 
@@ -36,6 +50,7 @@
         :deadlineStr='deadlineStr'
         :timeStr='timeStr'
         :hasFiles='hasFiles'
+        :nextCalendarEvent='nextCalendarEvent'
 
         :listObj='listObj'
         :folderObj='folderObj'
@@ -54,6 +69,7 @@
 import CheckIcon from "./Components/CheckIcons/Task.vue"
 import ItemTemplate from "./Components/ItemTemplate.vue"
 import Info from "./Components/Info/Task.vue"
+import TimelineElement from "./Components/TimelineElement.vue"
 
 import utils from "@/utils"
 import utilsTask from "@/utils/task"
@@ -69,13 +85,14 @@ export default {
   props: [
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',
-    'hideGroupName', 'hideFolderName',
+    'hideGroupName', 'hideFolderName', 'showingRuler',
+    'isSelecting',
 
     'viewName', 'viewType',
   ],
   components: {
     ItemTemplate, Info,
-    CheckIcon,
+    CheckIcon, TimelineElement,
   },
   data() {
     return {
@@ -87,6 +104,28 @@ export default {
     copyItem() {
       this.$store.dispatch('task/copyTask', this.item)
     },
+    rulerClick() {
+      if (!this.isSelecting)
+        this.selectItem()
+    },
+    selectItem() {
+      this.$refs.template.selectItem()
+    },
+    saveTaskContent(obj) {
+      this.$store.dispatch('task/saveTask', {
+        id: this.item.id,
+        ...obj,
+      })
+    },
+    saveNewCalendarTime() {
+      if (this.incrementedTime)
+        this.saveTaskContent({
+          calendar: {
+            ...this.item.calendar,
+            time: this.incrementedTime,
+          },
+        })
+    },
   },
   computed: {
     ...mapState({
@@ -95,6 +134,7 @@ export default {
     }),
     ...mapGetters({
       isDesktopBreakPoint: 'isDesktopBreakPoint',
+      calendarDate: 'calendarDate',
       getTagsById: 'tag/getTagsById',
       getFoldersById: 'list/getFoldersById',
       savedFolders: 'folder/savedFolders',
@@ -168,7 +208,7 @@ export default {
       return c.time
     },
     timeStr() {
-      if (!this.calendarTime)
+      if (!this.calendarTime || this.computedShowRuler)
         return null
       return `at ${utils.parseTime(this.calendarTime, this.userInfo)}`
     },
@@ -180,6 +220,23 @@ export default {
         return newTime.format('HH:mm')
     },
 
+    computedShowRuler() {
+      return this.showingRuler && this.calendarDate
+    },
+
+    nextCalendarEvent() {
+      const t = this.item
+      const c = t.calendar
+      
+      if (!c || !this.isRepeatingTask)
+        return null
+
+      const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c, true)
+
+      const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'))
+      if (!date || date === this.viewName) return null
+      return date
+    },
     folderObj() {
       const folder = this.itemFolder
 
@@ -239,18 +296,51 @@ export default {
         return null
       return this.getListsById([this.item.list])[0]
     },
+    formatedTime() {
+      if (!this.calendarTime)
+        return null
+      return mom(this.calendarTime, 'HH:mm').format(this.timeFormat)
+    },
+    timeFormat() {
+      return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'
+    },
+    timePmAm() {
+      if (!this.formatedTime || this.userInfo.disablePmFormat)
+        return null
+      const split = this.formatedTime.split(' ')
+      return split[split.length - 1]
+    },
+    startMin() {
+      if (!this.calendarTime)
+        return null
+      return mom(this.calendarTime, 'HH:mm').format('mm')
+    },
+    timeNumbers() {
+      if (!this.formatedTime)
+        return null
+      if (this.userInfo.disablePmFormat)
+        return this.formatedTime
+      return this.formatedTime.split(' ')[0]
+    },
+    startHour() {
+      if (!this.formatedTime)
+        return null
+
+      return mom(this.timeNumbers, 'HH:mm').format('HH')
+    },
 
     hasAtLeastOne() {
       return
-        this.listObj ||
+        (this.listObj ||
         this.folderObj ||
+        this.nextCalendarEvent ||
         this.groupObj ||
         this.deadlineStr ||
         (this.calendarStr && !this.isToday && !this.isTomorrow) ||
         this.timeStr ||
         this.taskDuration ||
         (this.hasTags && this.tagNames && this.tagNames.length > 0) ||
-        this.hasFiles
+        this.hasFiles)
     },
     options() {
       return utilsTask.taskOptions(this.item, this)
@@ -341,5 +431,18 @@ export default {
   transform: translate(4px, 2px);
   opacity: .6;
 }
+
+.ruler-t-enter, .ruler-t-leave-to {
+  opacity: 0;
+  width: 0;
+  transition-duration: .2s;
+}
+
+.ruler-t-leave, .ruler-t-enter-to {
+  opacity: 1;
+  width: 35px;
+  transition-duration: .2s;
+}
+
 
 </style>
