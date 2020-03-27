@@ -1,11 +1,13 @@
 <template>
-  <div class="ItemCont">
-    <EditRaw v-if='showingEdit'
-      :class="{transitioning}"
-      :style="{minHeight: itemHeight + 'px'}"
+  <div class="ItemCont" @click='click'>
+    <EditRaw v-if='showingEdit && (!showingCont || isEditing)'
       :name='name'
+      :itemHeight='itemHeight'
+      :editComponent='editComponent'
+      :hasFirstTextField='true'
+      :doneTransition='completeEditLeaveEvent'
 
-      @close="$emit('close')"
+      @close="close"
     >
 
       <template v-slot:check-icon>
@@ -13,12 +15,13 @@
       </template>
       
     </EditRaw>
-    <DisplayCont v-if="showingCont"
+    <DisplayCont v-if="showingCont && completeEditLeave"
+      :class="{transitioning}"
+      :itemHeight='itemHeight'
+    
       :name='name'
       :showLine='showLine'
 
-      :style="{minHeight: itemHeight + 'px'}"
-    
       @toggle-complete='$emit("toggle-complete")'
       @toggle-cancel='$emit("toggle-cancel")'
     >
@@ -55,20 +58,32 @@ export default {
   components: {
     DisplayCont, EditRaw,
   },
-  props: ['name', 'isEditing', 'itemHeight'],
+  props: ['name', 'isEditing', 'itemHeight', 'editComponent'],
   data() {
     return {
       showElements: true,
       showLine: false,
-      transitionDone: false,
+      transitioning: false,
       showingCont: true,
+      completeEditLeave: true,
 
       showingEdit: false,
     }
   },
   methods: {
+    completeEditLeaveEvent() {
+      this.completeEditLeave = true
+    },
+    click(evt) {
+      if (this.transitioning)
+        evt.stopPropagation()
+    },
     animate() {
       this.showLine = true
+    },
+    close() {
+      if (!this.transitioning)
+        this.$emit('close')
     },
   },
   watch: {
@@ -82,11 +97,12 @@ export default {
           this.transitioning = false
         }, 200)
       } else {
+        this.completeEditLeave = false
         this.transitioning = true
         this.showElements = true
+        this.showingEdit = false
         this.showingCont = true
         setTimeout(() => {
-          this.showingEdit = false
           this.transitioning = false
         }, 200)
       }
@@ -99,11 +115,8 @@ export default {
 <style scoped>
 
 .ItemCont {
-  position: absolute;
-  left: 0;
-  top: 0;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
 }
 
 .transitioning {

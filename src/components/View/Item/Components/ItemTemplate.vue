@@ -24,6 +24,7 @@
           
           :isEditing='isEditing'
           :itemHeight='itemHeight'
+          :editComponent='editComponent'
 
           @toggle-complete='toggleComplete'
           @toggle-cancel='toggleCancel'
@@ -90,6 +91,7 @@ export default {
     'itemHeight', 'item',
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
     'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
+    'editComponent',
 
     'options',
   ],

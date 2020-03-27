@@ -3,13 +3,16 @@
     <slot name='root'></slot>
     <div
       class="icon-wrapper"
+      :style="{height: itemHeight + 'px'}"
 
       @click="$emit('toggle-complete')"
       @contextmenu="$emit('toggle-cancel')"
     >
       <slot name="check-icon"></slot>
     </div>
-    <div class="content-name-wrapper">
+    <div class="content-name-wrapper" 
+      :style="{minHeight: itemHeight + 'px'}"
+    >
       <div class="text">
         <transition
           appear
@@ -55,7 +58,7 @@
 import utils from '@/utils'
 
 export default {
-  props: ['name', 'showLine'],
+  props: ['name', 'showLine', 'itemHeight'],
   methods: {
     enterSecondRow(el, done) {
       const s = el.style
@@ -133,7 +136,7 @@ export default {
 
 <style scoped>
 
-.name-wrapper, .DisplayCont, .text {
+.name-wrapper, .DisplayCont, .text, .content-name-wrapper {
   display: flex;
   align-items: center;
 }
@@ -144,7 +147,6 @@ export default {
 
 .DisplayCont {
   position: relative;
-  height: 100%;
   width: 100%;
   z-index: 5;
 }
@@ -152,10 +154,14 @@ export default {
 .content-name-wrapper {
   width: 100%;
   overflow: hidden;
+  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .name-wrapper {
   overflow: hidden;
+  height: 100%;
   position: relative;
 }
 

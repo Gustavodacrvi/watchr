@@ -2,11 +2,13 @@
   <ItemTemplate
     v-bind="{...$attrs, ...$props}"
     class="Task"
+    editComponent='Task'
 
     :item='item'
     :completedItem='completedItem'
     :canceledItem='canceledItem'
     :options='options'
+
 
     ref='template'
 

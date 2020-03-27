@@ -58,7 +58,7 @@ export default {
     }
   },
   created() {
-    if (!this.disableAutoSelect)
+    if (!this.disableAutoSelect && this.options)
       this.active = this.options[0]
   },
   mounted() {
@@ -103,7 +103,7 @@ export default {
     },
     onFocus() {
       this.showing = true
-      if (!this.disableAutoSelect)
+      if (!this.disableAutoSelect && this.options)
         this.active = this.options[0]
       else this.active = ''
     },
@@ -213,6 +213,8 @@ export default {
       }
     },
     moveActive(key) {
+      if (!this.options)
+        return;
       if (!this.active)
         this.active = this.options[0]
       else {
