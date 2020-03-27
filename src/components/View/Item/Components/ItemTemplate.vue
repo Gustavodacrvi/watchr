@@ -7,10 +7,12 @@
   >
     <div
       class="ItemTemplate item-handle draggable"
-      :class="[layout, {isItemSelected, isItemMainSelection}]"
+      :class="[layout, {isItemSelected, isItemMainSelection, isEditing}]"
 
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
+
+      @click='click'
     >
       <div
         class="cont-wrapper item-handle rb"
@@ -21,14 +23,17 @@
           ref='cont'
           
           :isEditing='isEditing'
+          :itemHeight='itemHeight'
 
           @toggle-complete='toggleComplete'
           @toggle-cancel='toggleCancel'
+          @close="close"
         >
-          <template v-slot:check-icon>
+          <template v-slot:check-icon='props'>
             <slot name="check-icon"
               :completed='completed'
               :canceled='canceled'
+              :forceDefault='props.forceDefault'
             ></slot>
           </template>
           <template v-slot:root>
@@ -75,7 +80,7 @@ import utils from "@/utils"
 
 import CommentCounter from '@/components/View/RenderComponents/CommentCounter.vue'
 
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
@@ -104,6 +109,19 @@ export default {
     this.canceled = this.canceledItem
   },
   methods: {
+    ...mapMutations(['saveMainSelection']),
+    
+    click(evt) {
+      if (!this.isSelecting && this.isDesktopDevice && !this.isEditing) {
+        this.isEditing = true
+        evt.stopPropagation()
+      }
+    },
+    close() {
+      this.isEditing = false
+      this.saveMainSelection(this.item.id)
+    },
+    
     enter(el, done) {
       const cont = this.$refs['cont-wrapper']
       const parentIds = this.$parent.$parent.disableItemEnterTransitionIds
@@ -461,6 +479,18 @@ export default {
 </style>
 
 <style scoped>
+
+.ItemTemplate {
+  position: relative;
+  transition-duration: .2s;
+  margin: 0;
+  z-index: 5;
+}
+
+.isEditing {
+  margin: 70px 0 !important;
+  z-index: 6;
+}
 
 .cont-wrapper {
   position: relative;

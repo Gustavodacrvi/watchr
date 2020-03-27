@@ -1,6 +1,6 @@
 <template>
   <ItemTemplate
-    v-bind="$attrs"
+    v-bind="{...$attrs, ...$props}"
     class="Task"
 
     :item='item'
@@ -22,10 +22,11 @@
   >
     <template v-slot:check-icon="props">
       <CheckIcon
-        v-bind="{...$attrs, ...item}"
+        v-bind="{...{...$attrs, ...$props}, ...item}"
 
         :completed='props.completed'
         :canceled='props.canceled'
+        :forceDefault='props.forceDefault'
       />
     </template>
 

@@ -2,6 +2,7 @@
   <TaskIcons
     :co='completed'
     :ca='canceled'
+    :forceDefault='forceDefault'
 
     :color='circleColor'
     :se='isSelecting'
@@ -25,7 +26,7 @@ export default {
   },
   props: [
     'movingItem', 'isSelecting', 'completed',
-    'canceled',
+    'canceled', 'forceDefault',
     
     'name', 'priority', 'id', 'calendar',
   ],

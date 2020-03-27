@@ -9,7 +9,7 @@
     >
       <slot name="check-icon"></slot>
     </div>
-    <div class="content-wrapper">
+    <div class="content-name-wrapper">
       <div class="text">
         <transition
           appear
@@ -23,7 +23,7 @@
             <span class="line"></span>
           </span>
           <span class="name">
-            <span v-html="parsedName"></span>
+            <span class="name-parsed" v-html="parsedName"></span>
           </span>
           <span class="after-name">
             <transition
@@ -71,33 +71,27 @@ export default {
         s.height = height
         s.opacity = .6
 
-        setTimeout(done, 250)
+        setTimeout(() => {
+          s.height = 'auto'
+          done()
+        }, 200)
       })
 
     },
     leaveSecondRow(el, done) {
       const s = el.style
 
+      const height = getComputedStyle(el).height
+
       s.transitionDuration = 0
-      s.height = 'auto'
-      s.opacity = .6
+      s.height = height
 
       requestAnimationFrame(() => {
-        const height = getComputedStyle(el).height
+        s.transitionDuration = '.2s'
+        s.height = 0
+        s.opacity = 0
 
-        s.height = height
-
-        requestAnimationFrame(() => {
-          s.transitionDuration = '.2s'
-          s.height = 0
-          s.opacity = 0
-
-          setTimeout(() => {
-            s.height = 'auto'
-            s.opacity = 0
-            done()
-          }, 210)
-        })
+        setTimeout(done, 200)
       })
 
     },
@@ -152,9 +146,10 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
+  z-index: 5;
 }
 
-.content-wrapper {
+.content-name-wrapper {
   width: 100%;
   overflow: hidden;
 }
@@ -162,6 +157,10 @@ export default {
 .name-wrapper {
   overflow: hidden;
   position: relative;
+}
+
+.name-parsed {
+  transition: 0;
 }
 
 .name {
@@ -176,6 +175,7 @@ export default {
   position: relative;
   height: 100%;
   width: 35px;
+  flex-shrink: 0;
   opacity: .4;
 }
 

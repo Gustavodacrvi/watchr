@@ -18,7 +18,7 @@ export default {
     sortedFromMeInvites(state, d, c, rootGetters) {
       return rootGetters.checkMissingIdsAndSortArr([], state.fromMe)
     },
-    ...MemoizeGetters('fromMe', {
+    ...MemoizeGetters({
       getSentInvitesByGroupId: {
         getter({getters}, groupId) {
           return getters.sortedFromMeInvites.filter(i => i.groupId === groupId)

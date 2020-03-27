@@ -11,16 +11,16 @@
       width="13px"
       :box='true'
     />
+    <Icon v-else-if="props.forceDefault || (!props.ca && !props.co && !props.se && !props.so)" class="tra-icon cursor remove-highlight" key="1"
+      icon="box"
+      :color='props.color'
+      width="13px"
+      :box='true'
+    />
     <Icon v-else-if="props.re && !props.se" class="tra-icon cursor remove-highlight" key="0"
       icon="repeat"
       :color='props.color'
       width="15px"
-      :box='true'
-    />
-    <Icon v-else-if="!props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="1"
-      icon="box"
-      :color='props.color'
-      width="13px"
       :box='true'
     />
     <Icon v-else-if="props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="2"
@@ -70,7 +70,7 @@
 <script>
 
 export default {
-  props: ['co', 'so', 'ca', 're', 'ac', 'se', 'color'],
+  props: ['co', 'forceDefault', 'so', 'ca', 're', 'ac', 'se', 'color'],
 }
 
 </script>
