@@ -2,6 +2,8 @@
   <div class="ItemCont" @click='click'>
     <EditRaw v-if='showingEdit && (!showingCont || isEditing)'
       :name='name'
+      :item='item'
+      :editRawPlaceholder='editRawPlaceholder'
       :itemHeight='itemHeight'
       :editComponent='editComponent'
       :hasFirstTextField='true'
@@ -58,7 +60,7 @@ export default {
   components: {
     DisplayCont, EditRaw,
   },
-  props: ['name', 'isEditing', 'itemHeight', 'editComponent'],
+  props: ['name', 'isEditing', 'itemHeight', 'editComponent', 'editRawPlaceholder', 'item'],
   data() {
     return {
       showElements: true,

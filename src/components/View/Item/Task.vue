@@ -8,7 +8,7 @@
     :completedItem='completedItem'
     :canceledItem='canceledItem'
     :options='options'
-
+    editRawPlaceholder='Task name...'
 
     ref='template'
 

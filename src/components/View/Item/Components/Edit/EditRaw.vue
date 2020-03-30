@@ -7,16 +7,29 @@
     <div class="EditRaw">
       <div class="back-layer"></div>
       <div class="cont rb" ref='cont'>
-        <div class="first-field">
+        <div
+          class="first-field"
+          @pointerdown.stop
+        >
           <div v-show="!hideIcons" class="icon-wrapper">
             <slot name="check-icon"></slot>
           </div>
-          <span v-show="showCont" class="input">
-            {{ name }}
-          </span>
+          <div v-show="showCont" class="input">
+            <DropInput
+              class="no-back drop-input"
+              :placeholder='editRawPlaceholder'
+              :options='options'
+            
+              v-model="model"
+            />
+          </div>
         </div>
         <transition name="fade-t">
-          <component :is="editComponent"/>
+          <component :is="editComponent"
+            v-model="options"
+          
+            :item='item'
+          />
         </transition>
       </div>
     </div>
@@ -27,13 +40,18 @@
 
 import Task from "./Task.vue"
 
+import DropInput from "@/components/Auth/DropInput.vue"
+
 export default {
   components: {
-    Task,
+    Task, DropInput,
   },
-  props: ['name', 'itemHeight', 'editComponent', 'hasFirstTextField', 'doneTransition'],
+  props: ['name', 'itemHeight', 'editComponent', 'hasFirstTextField', 'doneTransition', 'editRawPlaceholder', 'item'],
   data() {
     return {
+      model: this.name,
+      options: [],
+      
       showCont: false,
       hideIcons: false,
 
@@ -134,6 +152,11 @@ export default {
       })
     },
   },
+  watch: {
+    name() {
+      this.model = this.name
+    },
+  },
 }
 
 </script>
@@ -156,8 +179,10 @@ export default {
 }
 
 .first-field {
+  position: relative;
   display: flex;
-  height: 30px;
+  align-items: stretch;
+  min-height: 30px;
 }
 
 .back-layer {
@@ -170,16 +195,24 @@ export default {
 }
 
 .icon-wrapper {
-  position: relative;
+  position: absolute;
   height: 100%;
   width: 35px;
+  transform: translateY(-1px);
   flex-grow: 0;
   opacity: .4;
 }
 
 .input {
+  padding-right: 0px;
   display: flex;
+  width: 100%;
   align-items: center;
+}
+
+.drop-input {
+  width: 100%;
+  margin-left: 26px;
 }
 
 </style>

@@ -20,11 +20,13 @@
       >
         <ItemCont
           v-bind="item"
+          :item='item'
           ref='cont'
           
           :isEditing='isEditing'
           :itemHeight='itemHeight'
           :editComponent='editComponent'
+          :editRawPlaceholder='editRawPlaceholder'
 
           @toggle-complete='toggleComplete'
           @toggle-cancel='toggleCancel'
@@ -88,7 +90,7 @@ export default {
     ItemCont, CommentCounter,
   },
   props: [
-    'itemHeight', 'item',
+    'itemHeight', 'item', 'editRawPlaceholder',
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
     'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
     'editComponent',
@@ -470,11 +472,9 @@ export default {
   height: 50px;
 }
 
-.sortable-ghost.ItemTemplate .cont {
-  display: none;
-}
-
-.sortable-ghost.ItemTemplate .icon-wrapper {
+.sortable-ghost.ItemTemplate .cont,
+.sortable-ghost.ItemTemplate .icon-wrapper,
+.sortable-ghost.ItemTemplate .info {
   display: none;
 }
 

@@ -64,7 +64,7 @@ export default {
   mounted() {
     if (this.focus)
       this.focusInput(200)
-    setTimeout(this.fixHeight)
+    setTimeout(this.fixHeight, 200)
   },
   methods: {
     onpaste(...args) {
@@ -81,11 +81,12 @@ export default {
         setTimeout(() => el.focus(), timeout)
     },
     fixHeight() {
-      const el = this.$refs.input
-      if (el) {
-        el.style.height = '5px'
-        el.style.height = (el.scrollHeight) + 'px'
-      }
+      setTimeout(() => {
+        const el = this.$refs.input
+        if (el) {
+          el.style.height = (el.scrollHeight) + 'px'
+        }
+      })
     },
     enterItems(el, done) {
       el.style.opacity = 0
