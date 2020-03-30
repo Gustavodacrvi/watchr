@@ -36,6 +36,7 @@
             <slot name="check-icon"
               :completed='completed'
               :canceled='canceled'
+              :color='props.iconColor'
               :forceDefault='props.forceDefault'
             ></slot>
           </template>

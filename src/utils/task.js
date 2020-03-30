@@ -450,7 +450,7 @@ export default {
     if (n.includes(' !n'))
       return {
         priority: '',
-        str: n.replace(' !no', ''),
+        str: n.replace(' !n', ''),
       }
     return {
       priority: null,

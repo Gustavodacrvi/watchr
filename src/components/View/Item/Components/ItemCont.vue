@@ -12,8 +12,12 @@
       @close="close"
     >
 
-      <template v-slot:check-icon>
-        <slot name="check-icon" :forceDefault='true'></slot>
+      <template v-slot:check-icon='slotProps'
+      >
+        <slot name="check-icon"
+          :iconColor='slotProps.iconColor'
+          :forceDefault='true'
+        ></slot>
       </template>
       
     </EditRaw>

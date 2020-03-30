@@ -2,14 +2,15 @@
 
 import InputDrop from "@/components/Auth/DropInput.vue"
 
-// model, textFields, instance = {},props = []
+import { mapGetters, mapState } from 'vuex'
 
 export default ({
+  value,
   textFields,
   instance = {},
   props = [],
 }) => ({
-  props: ['item', ...props],
+  props: ['item', 'value', ...props],
   data() {
     return {
       currentPrefix: '',
@@ -19,12 +20,6 @@ export default ({
   created() {
     if (this.item)
       this.model = {...this.model, ...this.item}
-  },
-  methods: {
-    ...(instance.methods || {}),
-  },
-  computed: {
-    ...(instance.computed || {}),
   },
   render(create) {
     return create('div', {
@@ -53,5 +48,30 @@ export default ({
         )
       )
     ])
+  },
+  methods: {
+    ...(instance.methods || {}),
+  },
+  computed: {
+    ...mapState({
+      userInfo: state => state.userInfo,
+    }),
+    ...mapGetters({
+      lists: 'list/sortedLists',
+      folders: 'folder/sortedFolders',
+      groups: 'group/sortedGroupsByName',
+      tags: 'tag/sortedTagsByName',
+    }),
+    
+    ...(instance.computed || {}),
+  },
+  watch: {
+    value() {
+      if (value) {
+        value(this.value, this)
+      }
+    },
+    
+    ...(instance.watch || {}),
   },
 })

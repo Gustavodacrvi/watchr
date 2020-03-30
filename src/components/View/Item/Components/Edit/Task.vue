@@ -7,6 +7,7 @@ import utils from "@/utils/"
 import taskUtils from "@/utils/task"
 
 export default EditBuilder({
+  value: (v, vm) => vm.model.name = v,
   textFields: [
     {
       props: {
@@ -92,7 +93,7 @@ export default EditBuilder({
         const n = this.model.name
         let changedOptions = false
 
-        const send = arr => this.$emit('input', arr) // Show options array dropdown
+        const send = arr => this.$emit('set-options', arr) // Show options array dropdown
         // this.currentPrefix - Used when selecting an options array element
 
         const match = (prefix, arr, onFind) => {
@@ -121,6 +122,8 @@ export default EditBuilder({
         const { priority, str } = taskUtils.parsePriorityFromString(n)
         if (priority !== null) {
           this.model.name = str
+
+          console.log(priority)
           this.model.priority = priority
         }
 
@@ -159,6 +162,16 @@ export default EditBuilder({
         }
 
         if (!changedOptions) send([])
+        if (this.model.name !== this.value)
+          this.$emit('input', this.model.name)
+      },
+      'model.priority'() {
+        const obj = {
+          "High priority": "var(--red)",
+          "Medium priority": "var(--orange)",
+          "Low priority": "var(--primary)",
+        }
+        this.$emit('icon-color', obj[this.model.priority] || '')
       },
     },
   }

@@ -12,7 +12,9 @@
           @pointerdown.stop
         >
           <div v-show="!hideIcons" class="icon-wrapper">
-            <slot name="check-icon"></slot>
+            <slot name="check-icon"
+              :iconColor='iconColor'
+            ></slot>
           </div>
           <div v-show="showCont" class="input">
             <DropInput
@@ -26,9 +28,11 @@
         </div>
         <transition name="fade-t">
           <component :is="editComponent"
-            v-model="options"
-          
+            v-model="model"
             :item='item'
+            
+            @icon-color='v => iconColor = v'
+            @set-options='v => options = v'
           />
         </transition>
       </div>
@@ -51,6 +55,7 @@ export default {
     return {
       model: this.name,
       options: [],
+      iconColor: '',
       
       showCont: false,
       hideIcons: false,

@@ -4,7 +4,7 @@
     :ca='canceled'
     :forceDefault='forceDefault'
 
-    :color='circleColor'
+    :color='color || circleColor'
     :se='isSelecting'
     :ac='isItemSelected'
     :so='isSomeday'
@@ -26,7 +26,7 @@ export default {
   },
   props: [
     'movingItem', 'isSelecting', 'completed',
-    'canceled', 'forceDefault',
+    'canceled', 'forceDefault', 'color',
     
     'name', 'priority', 'id', 'calendar',
   ],

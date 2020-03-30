@@ -28,6 +28,7 @@
 
         :completed='props.completed'
         :canceled='props.canceled'
+        :color='props.color'
         :forceDefault='props.forceDefault'
       />
     </template>
