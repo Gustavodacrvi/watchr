@@ -6,8 +6,62 @@ import EditBuilder from './EditBuilder.js'
 import utils from "@/utils/"
 import taskUtils from "@/utils/task"
 
+const saveByShortcut = (type, task) => {
+  switch (type) {
+    case 'CalendarPicker': {
+      this.fromIconDrop = task !== null
+      if (task !== null)
+        this.toReplace = null
+      
+      this.task.calendar = task
+      this.fromDefaultTask = false
+      break
+    }
+    case 'save': {
+      if (task.tags && task.tags.length > 0) {
+        this.task = {
+          ...this.task,
+          tags: this.getTagsById(task.tags).map(el => el.name)
+        }
+      } else if (task.list) {
+        this.task = {
+          ...this.task,
+          list: this.getListsById([task.list]).map(el => el.name)[0],
+          heading: null,
+          group: null,
+          folder: null,
+        }
+      } else if (task.folder) {
+        this.task = {
+          ...this.task,
+          folder: this.getFoldersById([task.folder]).map(el => el.name)[0],
+          list: null,
+          group: null,
+          heading: null,
+        }
+      } else {
+        this.task = {...this.task, ...task}
+      }
+    }
+  }
+}
+
+/*
+  'checklist-icon',
+  'duration',
+  'deadline',
+  'file',
+  'calendar',
+  'group',
+  'folder',
+  'tasks',
+  'priority',
+  'tag',
+*/
+
 export default EditBuilder({
   value: (v, vm) => vm.model.name = v,
+  saveByShortcut,
   textFields: [
     {
       props: {
@@ -36,7 +90,21 @@ export default EditBuilder({
         
         },
       },
+      ref: 'notes',
+      select: true,
       vModel: 'notes', // this.model[option]
+    },
+  ],
+  checklist: {
+    vModel: 'checklist', // this.model[option]
+    order: 'checklist', // this.model[option]
+  }, // requires removeSubtask, saveChecklist, addSubtask methods
+  leftSmartIconDrops: [
+    {
+      ref: 'checklist-icon',
+      placeholder: 'Checklist...',
+      icon: 'menu',
+      activate: 'type',
     },
   ],
   instance: {
@@ -79,6 +147,11 @@ export default EditBuilder({
             order: this.model.order || [],
           })
       },
+      removeSubtask(id) {
+        const i = this.model.checklist.findIndex(el => el.id === id)
+        this.model.checklist.splice(i, 1)
+        this.saveChecklist()
+      },
 
       addModelTag(name) {
         if (!this.model.tags)
@@ -93,37 +166,14 @@ export default EditBuilder({
         const n = this.model.name
         let changedOptions = false
 
-        const send = arr => this.$emit('set-options', arr) // Show options array dropdown
+        const send = arr => this.$emit('set-first-field-options', arr) // Show options array dropdown
         // this.currentPrefix - Used when selecting an options array element
 
-        const match = (prefix, arr, onFind) => {
-          for (const el of arr) {
-            const elName = ` ${prefix}${el.name}`
-            if (n.includes(elName)) {
-              this.model.name = n.replace(elName, '')
-              onFind(el)
-              break
-            }
-          }
-
-          const split = n.split(' ')
-          const lastWord = split[split.length - 1]
-          if (lastWord[0] === prefix) {
-            this.currentPrefix = prefix
-            const word = lastWord.substr(1)
-
-            send(
-              arr.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
-            )
-            changedOptions = true
-          }
-        }
+        const match = (prefix, arr, onFind) => this.match(n, prefix, arr, onFind)
 
         const { priority, str } = taskUtils.parsePriorityFromString(n)
         if (priority !== null) {
           this.model.name = str
-
-          console.log(priority)
           this.model.priority = priority
         }
 

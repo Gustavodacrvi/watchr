@@ -11,28 +11,36 @@
           class="first-field"
           @pointerdown.stop
         >
-          <div v-show="!hideIcons" class="icon-wrapper">
+          <div v-show="!hideIcons" class="icon-wrapper" :class="{noColor: !iconColor}">
             <slot name="check-icon"
               :iconColor='iconColor'
             ></slot>
           </div>
           <div v-show="showCont" class="input">
             <DropInput
+              ref='first-field'
+              v-model="model"
+              :focus='true'
               class="no-back drop-input"
               :placeholder='editRawPlaceholder'
               :options='options'
+
+              @select='select'
             
-              v-model="model"
             />
           </div>
         </div>
         <transition name="fade-t">
           <component :is="editComponent"
+            ref='comp'
             v-model="model"
             :item='item'
+            :firstFieldOptions='options'
             
             @icon-color='v => iconColor = v'
-            @set-options='v => options = v'
+            @focus-on-field='focus'
+            @cancel='close'
+            @set-first-field-options='v => options = v'
           />
         </transition>
       </div>
@@ -50,13 +58,13 @@ export default {
   components: {
     Task, DropInput,
   },
-  props: ['name', 'itemHeight', 'editComponent', 'hasFirstTextField', 'doneTransition', 'editRawPlaceholder', 'item'],
+  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item'],
   data() {
     return {
       model: this.name,
       options: [],
       iconColor: '',
-      
+
       showCont: false,
       hideIcons: false,
 
@@ -71,6 +79,12 @@ export default {
     window.addEventListener('click', this.windowClick)
   },
   methods: {
+    focus() {
+      this.$refs['first-field'].focusInput(0)
+    },
+    select(val) {
+      this.$refs.comp.select(val)
+    },
     windowClick(evt) {
       const path = evt.path || (evt.composedPath && evt.composedPath())
       let found
@@ -93,28 +107,31 @@ export default {
     enter(el, done) {
       this.beginTransition = true
 
-      const height = getComputedStyle(this.$refs['cont']).height
-
-      const s = this.$refs['cont'].style
-
-      s.transitionDuration = 0
-      s.boxShadow = '0 0 0 transparent'
-      s.backgroundColor = 'var(--ligth-gray)'
-
-      s.height = this.itemHeight + 'px'
-
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        const height = this.$refs['cont'].getBoundingClientRect().height
+  
+        const s = this.$refs['cont'].style
+  
+        s.transitionDuration = 0
+        s.boxShadow = '0 0 0 transparent'
+        s.backgroundColor = 'var(--light-gray)'
 
-        s.boxShadow = '0 4px 14px rgba(10,10,10,.3)'
-        s.backgroundColor = 'var(--card)'
-        s.height = height
-
-        setTimeout(() => {
-          s.height = 'auto'
-          this.beginTransition = false
-          done()
-        }, 200)
+  
+        s.height = this.itemHeight + 'px'
+  
+        requestAnimationFrame(() => {
+          s.transitionDuration = '.2s'
+  
+          s.boxShadow = '0 4px 14px rgba(10,10,10,.3)'
+          s.backgroundColor = 'var(--card)'
+          s.height = height + 'px'
+  
+          setTimeout(() => {
+            s.height = 'auto'
+            this.beginTransition = false
+            done()
+          }, 200)
+        })
       })
 
     },
@@ -134,6 +151,7 @@ export default {
       s.height = height
       rootS.height = height
       s.boxShadow = '0 4px 14px rgba(10,10,10,.3)'
+      s.overflow = 'hidden'
       s.backgroundColor = 'var(--card)'
       rootS.backgroundColor = 'var(--card)'
 
@@ -179,7 +197,6 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   z-index: 201;
 }
 
@@ -187,7 +204,7 @@ export default {
   position: relative;
   display: flex;
   align-items: stretch;
-  min-height: 30px;
+  min-height: 35px;
 }
 
 .back-layer {
@@ -205,6 +222,9 @@ export default {
   width: 35px;
   transform: translateY(-1px);
   flex-grow: 0;
+}
+
+.icon-wrapper.noColor {
   opacity: .4;
 }
 

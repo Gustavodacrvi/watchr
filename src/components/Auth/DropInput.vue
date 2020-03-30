@@ -22,13 +22,13 @@
       @dragleave.stop.prevent
       @dragover.stop.prevent
       
-      :style="backColor ? `background-color: ${backColor}` : ''"
+      :style="{backgroundColor: backColor || ''}"
     ></textarea>
     <transition
       @enter="enter"
       @leave="leave"
     >
-      <div v-if="showing" class="content scroll-thin shadow cb rb">
+      <div v-if="showing" class="content scroll-thin shadow rb">
         <transition-group
           @enter='enterItems'
           @leave='leaveItems'
@@ -64,7 +64,6 @@ export default {
   mounted() {
     if (this.focus)
       this.focusInput(200)
-    setTimeout(this.fixHeight, 200)
   },
   methods: {
     onpaste(...args) {
@@ -80,13 +79,11 @@ export default {
       if (el)
         setTimeout(() => el.focus(), timeout)
     },
-    fixHeight() {
-      setTimeout(() => {
-        const el = this.$refs.input
-        if (el) {
-          el.style.height = (el.scrollHeight) + 'px'
-        }
-      })
+    fixHeight(height) {
+      const el = this.$refs.input
+      if (el) {
+        el.style.height = (height || el.scrollHeight) + 'px'
+      }
     },
     enterItems(el, done) {
       el.style.opacity = 0
@@ -247,6 +244,7 @@ export default {
     },
     str() {
       this.fixHeight()
+      console.log(this.str, this.value)
       this.$emit('input', this.str)
     },
     value() {
@@ -290,6 +288,7 @@ export default {
   top: 43px;
   overflow: auto;
   max-height: 200px;
+  background-color: var(--light-gray);
 }
 
 .link {
@@ -303,7 +302,7 @@ export default {
 }
 
 .link.active, .link:hover {
-  background-color: var(--light-gray);
+  background-color: var(--extra-light-gray);
 }
 
 .no-back .cbd {

@@ -6,7 +6,6 @@
       :editRawPlaceholder='editRawPlaceholder'
       :itemHeight='itemHeight'
       :editComponent='editComponent'
-      :hasFirstTextField='true'
       :doneTransition='completeEditLeaveEvent'
 
       @close="close"
