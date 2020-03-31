@@ -127,7 +127,6 @@
           @remove='removeSubtask'
           @update='updateIds'
           @save-checklist='saveChecklist'
-          @convert-task='convertTask'
           @is-adding-toggle='v => isAddingChecklist = v'
         />
         <div class="files show" :class="{show, hasFiles: files.length > 0}">
@@ -705,16 +704,6 @@ export default {
       this.task.order = ids
       this.saveChecklist()
     },
-    convertTask({ids, index, id}) {
-      ids.splice(index, 0, id)
-      this.task.order = ids
-      this.task.checklist.push({
-        completed: false, id,
-        name: this.savedTasks.find(el => el.id === id).name
-      })
-
-      this.$store.dispatch('task/deleteTasks', [id])
-    },
     addSubtask({name, index, ids}) {
       const id = utils.getUid()
 
@@ -864,9 +853,9 @@ export default {
       return this.task.notes.length > 0
     },
     getCompareDate() {
-      if (!this.defaultTask) return null
-      const c = this.defaultTask.calendar
-      if (!c || !this.isRecurringTask(this.defaultTask))
+      if (!this.item) return null
+      const c = this.item.calendar
+      if (!c || !this.isRecurringTask(this.item))
         return null
       return momUtils.getNextEventAfterCompletionDate(c).format('Y-M-D')
     },

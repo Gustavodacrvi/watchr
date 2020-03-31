@@ -97,14 +97,19 @@ export default EditBuilder({
   ],
   checklist: {
     vModel: 'checklist', // this.model[option]
-    order: 'checklist', // this.model[option]
-  }, // requires removeSubtask, saveChecklist, addSubtask methods
+    order: 'order', // this.model[option]
+  }, // requires removeSubtask, saveChecklist, addSubtask, isRecurringItem methods
   leftSmartIconDrops: [
     {
       ref: 'checklist-icon',
-      placeholder: 'Checklist...',
-      icon: 'menu',
-      activate: 'type',
+      props: {
+        placeholder: 'Checklist...',
+        icon: 'menu',
+        trigger: 'type',
+      },
+      onTrigger: (vm, getModel) => {
+        vm.$refs.checklist.pushEditString(getModel)
+      },
     },
   ],
   instance: {
@@ -129,9 +134,12 @@ export default EditBuilder({
       }
     },
     methods: {
+      isRecurringItem(item) {
+        return this.isRecurringTask(item)
+      },
       addSubtask({name, index, ids}) {
         const id = utils.getUid()
-
+        
         ids.splice(index, 0, id)
         this.model.order = ids
         this.model.checklist.push({

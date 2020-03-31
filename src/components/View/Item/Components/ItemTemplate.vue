@@ -397,7 +397,18 @@ export default {
       window.removeEventListener('keydown', this.mainSelectionKeyDown)
   },
   computed: {
-    ...mapState(['selectedItems', 'mainSelection', 'isEditingComp', 'iconDrop', 'isOnAlt', 'fallbackSelected', 'isOnControl', 'isOnShift', 'userInfo']),
+    ...mapState({
+      selectedItems: state => state.selectedItems,
+      mainSelection: state => state.mainSelection,
+      isEditingComp: state => state.isEditing,
+      iconDrop: state => state.iconDrop,
+
+      isOnAlt: state => state.isOnAlt,
+      isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
+      fallbackSelected: state => state.fallbackSelected,
+      userInfo: state => state.userInfo,
+    }),
     ...mapGetters({
       layout: 'layout',
       isDesktopDevice: 'isDesktopDevice',

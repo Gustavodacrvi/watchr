@@ -26,7 +26,7 @@
               :options='options'
 
               @select='select'
-            
+              @cancel='$emit("close")'
             />
           </div>
         </div>
@@ -122,7 +122,7 @@ export default {
         requestAnimationFrame(() => {
           s.transitionDuration = '.2s'
   
-          s.boxShadow = '0 4px 14px rgba(10,10,10,.3)'
+          s.boxShadow = '0 2px 18px rgba(10,10,10,.45)'
           s.backgroundColor = 'var(--card)'
           s.height = height + 'px'
   
@@ -220,7 +220,6 @@ export default {
   position: absolute;
   height: 100%;
   width: 35px;
-  transform: translateY(-1px);
   flex-grow: 0;
 }
 
@@ -237,6 +236,7 @@ export default {
 
 .drop-input {
   width: 100%;
+  font-size: 1.05m;
   margin-left: 26px;
 }
 

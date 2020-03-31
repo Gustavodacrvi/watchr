@@ -14,7 +14,7 @@ html {
   --primary: #5f8dc4;
   --primary-light: #9fc4d5;
   --sidebar-color: #171717;
-  --light-sidebar-color: #1a1a1a;
+  --light-sidebar-color: #1c1c1c;
   --card: #212121;
   --txt: #b3b3b3;
   --dark-txt: #A8A8A8;
@@ -85,7 +85,7 @@ body, input, button, textarea {
 }
 
 .shadow {
-  box-shadow: 0 4px 14px rgba(10,10,10,.3);
+  box-shadow: 0 2px 18px rgba(10,10,10,.45);
 }
 
 .pc {

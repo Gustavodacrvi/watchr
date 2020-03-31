@@ -244,7 +244,6 @@ export default {
     },
     str() {
       this.fixHeight()
-      console.log(this.str, this.value)
       this.$emit('input', this.str)
     },
     value() {

@@ -1,6 +1,9 @@
 
 
 import InputDrop from "@/components/Auth/DropInput.vue"
+import SmartIconDrop from "@/components/Icons/SmartIconDrop.vue"
+import ChecklistVue from '@/components/View/Tasks/Checklist/Checklist.vue'
+import momUtils from '@/utils/moment'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -20,6 +23,7 @@ export default ({
       currentPrefix: '',
       cursorPos: 0,
       isFirstEdit: true,
+      isAddingChecklist: false,
       
       ...(instance.data ? instance.data() : {}),
     }
@@ -31,19 +35,37 @@ export default ({
     setTimeout(() => this.isFirstEdit = false, 200)
 
     window.addEventListener('keydown', this.keydown)
+    this.$store.commit('isEditing', true)
   },
   beforeDestroy() {
+    this.$store.commit('isEditing', false)
     window.removeEventListener('keydown', this.keydown)
   },
   render(create) {
-    return create('div', {
-      class: 'EditBuilder',
-      on: {
-        click: evt => evt.stopPropagation(),
-        pointerdown: evt => evt.stopPropagation(),
-      },
-    }, [
-      create('div', {class: 'text-fields'}, 
+
+    let num = this.getFirstSmartIconKeyboardActionPosition - 1
+    const leftComponents = leftSmartIconDrops.map(el => {
+      
+      num++
+      return create(SmartIconDrop, {
+        class: 'smart',
+        props: {
+          ...el.props,
+          active: num === this.cursorPos,
+        },
+        ref: el.ref,
+
+        on: {
+          trigger: getModel => {
+            if (el.onTrigger)
+              el.onTrigger(this, getModel)
+          },
+        },
+      })
+    })
+
+    const editChildren = [
+      create('div', {class: 'text-fields'},
         textFields.map(el =>
           create(InputDrop, {
             class: 'field no-back',
@@ -58,13 +80,80 @@ export default ({
               input(event) {
                 this.$emit('input', event.target.value)
               },
+              cancel: () => this.$parent.$emit('close'),
             },
           })
         )
+      ),
+      create('div', {class: 'smart-icons'}, [
+          create('div', {class: 'left-icons'}, leftComponents)
+        ]
       )
-    ])
+    ]
+
+    /*
+      ref='checklist'
+      :list='getChecklist'
+
+      :activeChecklistId='activeChecklistId'
+      :compareDate='getCompareDate'
+
+      @move-cursor='moveCursor'
+
+      @reset-cursor='resetCursor'
+      @add='addSubtask'
+      @remove='removeSubtask'
+      @update='updateIds'
+      @save-checklist='saveChecklist'
+      @convert-task='convertTask'
+      @is-adding-toggle='v => isAddingChecklist = v'
+    */
+
+    
+    if (checklist)
+      editChildren.splice(1, 0, create(ChecklistVue, {
+        ref: 'checklist',
+
+        props: {
+          list: this.getChecklist,
+          activeChecklistId: this.activeChecklistId,
+          compareDate: this.getCompareDate,
+        },
+
+        on: {
+          moveCursor: this.moveCursor,
+          resetCursor: this.resetCursor,
+          isAddingToggle: v => this.isAddingChecklist = v,
+          add: this.addSubtask,
+          remove: this.removeSubtask,
+          update: this.updateIds,
+          saveChecklist: this.saveChecklist,
+        },
+      })
+    )
+    
+    return create('div', {
+      class: 'EditBuilder',
+      on: {
+        click: evt => evt.stopPropagation(),
+        pointerdown: evt => evt.stopPropagation(),
+      },
+    }, editChildren)
   },
   methods: {
+    updateIds(ids) {
+      this.model[checklist.order] = ids
+      this.saveChecklist()
+    },
+    resetCursor() {
+      if (!this.isAddingChecklist)
+        this.cursorPos = 0
+    },
+    moveCursor(dire) {
+      const newIndex = this.cursorPos + dire
+      if (this.keyboardActions[newIndex])
+        this.cursorPos = newIndex
+    },
     cancel() {
       this.$emit('cancel')
     },
@@ -188,8 +277,22 @@ export default ({
       folders: 'folder/sortedFolders',
       groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
+      isRecurringTask: 'task/isRecurringTask',
     }),
 
+    getFirstSmartIconKeyboardActionPosition() {
+      return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0)
+    },
+    getCompareDate() {
+      if (!this.item) return null
+      const c = this.item.calendar
+      if (!c || !this.isRecurringItem(this.item))
+        return null
+      return momUtils.getNextEventAfterCompletionDate(c).format('Y-M-D')
+    },
+    fieldFunctions() {
+      return textFields.map(el => () => this.$refs[el.ref].focusInput(0))
+    },
     keyboardActions() {
       const c = ref => () => this.$refs[ref].click()
 
@@ -199,9 +302,7 @@ export default ({
 
       let num = 1
       
-      const fieldFunctions = textFields.map(el => () => this.$refs[el.ref].focusInput(0))
-
-      fieldFunctions.forEach(func => {
+      this.fieldFunctions.forEach(func => {
         obj[num] = func
         num++
       })
@@ -214,11 +315,9 @@ export default ({
       }
       
       const getIconsObj = () => {
-        return {}
-        num += !hasChecklist ? 0 : this.model[checklist.vModel].length
 
         return leftSmartIconDrops.reduce((obj, {ref}) => {
-          obj[num] = c(ref)
+          obj[num] = () => this.$refs[ref].activate()
           num++
           return obj
         }, {})
