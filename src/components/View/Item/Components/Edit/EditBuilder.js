@@ -13,6 +13,7 @@ export default ({
   value,
   textFields,
   checklist, leftSmartIconDrops,
+  rightSmartIconDrops,
   saveByShortcut = () => {},
   instance = {},
   props = [],
@@ -44,25 +45,32 @@ export default ({
   render(create) {
 
     let num = this.getFirstSmartIconKeyboardActionPosition - 1
-    const leftComponents = leftSmartIconDrops.map(el => {
-      
-      num++
-      return create(SmartIconDrop, {
-        class: 'smart',
-        props: {
-          ...el.props,
-          active: num === this.cursorPos,
-        },
-        ref: el.ref,
 
-        on: {
-          trigger: getModel => {
-            if (el.onTrigger)
-              el.onTrigger(this, getModel)
+    const mapSmartIconDrops = arr => {
+      return arr.map(el => {
+      
+        num++
+        return create(SmartIconDrop, {
+          class: 'smart',
+          props: {
+            ...el.props,
+            list: el.props.list ? el.props.list(this[el.props.listProperty]) : undefined,
+            active: num === this.cursorPos,
           },
-        },
+          ref: el.ref,
+  
+          on: {
+            trigger: getModel => {
+              if (el.onTrigger)
+                el.onTrigger(this, getModel)
+            },
+          },
+        })
       })
-    })
+    }
+    
+    const leftComponents = mapSmartIconDrops(leftSmartIconDrops)
+    const rightComponents = mapSmartIconDrops(rightSmartIconDrops)
 
     const editChildren = [
       create('div', {class: 'text-fields'},
@@ -86,29 +94,11 @@ export default ({
         )
       ),
       create('div', {class: 'smart-icons'}, [
-          create('div', {class: 'left-icons'}, leftComponents)
+          create('div', {class: 'left-icons'}, leftComponents),
+          create('div', {class: 'right-icons'}, rightComponents),
         ]
       )
     ]
-
-    /*
-      ref='checklist'
-      :list='getChecklist'
-
-      :activeChecklistId='activeChecklistId'
-      :compareDate='getCompareDate'
-
-      @move-cursor='moveCursor'
-
-      @reset-cursor='resetCursor'
-      @add='addSubtask'
-      @remove='removeSubtask'
-      @update='updateIds'
-      @save-checklist='saveChecklist'
-      @convert-task='convertTask'
-      @is-adding-toggle='v => isAddingChecklist = v'
-    */
-
     
     if (checklist)
       editChildren.splice(1, 0, create(ChecklistVue, {
@@ -205,16 +195,15 @@ export default ({
 
       utils.saveByShortcut(this, true, key, p, saveByShortcut, ['CalendarPicker'])
 
-
       if (!this.iconDrop && this.firstFieldOptions.length === 0) {
-        if (key === "ArrowUp") {
+        if ((key === "ArrowUp" && !this.currentSmartIconHasList) || key === "ArrowLeft") {
           p()
   
           if (this.isOnShift)
             this.cursorPos = 0
           else        
             this.incrementPos(-1)
-        } else if (key === "ArrowDown") {
+        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || key === "ArrowRight") {
           p()
   
           if (this.isOnShift)
@@ -259,6 +248,9 @@ export default ({
     focusName() {
       this.$emit('focus-on-field')
     },
+    removeNameFocus() {
+      this.$emit('remove-focus')
+    },
 
     ...(instance.methods || {}),
   },
@@ -280,6 +272,19 @@ export default ({
       isRecurringTask: 'task/isRecurringTask',
     }),
 
+    currentSmartIconHasList() {
+      if (this.cursorPos < this.getFirstSmartIconKeyboardActionPosition)
+        return false
+      const icon = this.allSmartIcons[this.cursorPos - this.getFirstSmartIconKeyboardActionPosition]
+      return icon.props.list && icon.props.list.length > 0  
+    },
+    allSmartIcons() {
+      return [
+        ...leftSmartIconDrops,
+        ...rightSmartIconDrops,
+      ]
+    },
+
     getFirstSmartIconKeyboardActionPosition() {
       return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0)
     },
@@ -293,9 +298,22 @@ export default ({
     fieldFunctions() {
       return textFields.map(el => () => this.$refs[el.ref].focusInput(0))
     },
-    keyboardActions() {
-      const c = ref => () => this.$refs[ref].click()
+    removeFocusRefs() {
+      const obj = {
+        0: this.removeNameFocus
+      }
 
+      let num = 1
+
+      textFields.forEach(({ref}) => {
+        obj[num] = () => this.$refs[ref].removeFocus()
+
+        num++
+      })
+      
+      return obj
+    },
+    keyboardActions() {
       const obj = {
         0: this.focusName,
       }
@@ -307,8 +325,6 @@ export default ({
         num++
       })
       
-      const hasChecklist = this.hasChecklist
-
       for (const t of this.getChecklist) {
         obj[num] = t.id
         num++ 
@@ -316,7 +332,7 @@ export default ({
       
       const getIconsObj = () => {
 
-        return leftSmartIconDrops.reduce((obj, {ref}) => {
+        return this.allSmartIcons.reduce((obj, {ref}) => {
           obj[num] = () => this.$refs[ref].activate()
           num++
           return obj
@@ -364,6 +380,13 @@ export default ({
       }
     },
     cursorPos(newPos, oldPos) {
+      const textFieldLastIndex = textFields.length
+
+      
+      if (oldPos <= textFieldLastIndex && textFieldLastIndex < newPos) {
+        this.removeFocusRefs[oldPos]()
+      }
+      
       if (this.cursorPos < (textFields.length + 1) && this.isElementFunction)
         this.keyboardActions[this.cursorPos]()
     },

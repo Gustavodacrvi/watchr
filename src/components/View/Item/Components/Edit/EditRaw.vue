@@ -39,6 +39,7 @@
             
             @icon-color='v => iconColor = v'
             @focus-on-field='focus'
+            @remove-focus='removeFocus'
             @cancel='close'
             @set-first-field-options='v => options = v'
           />
@@ -79,6 +80,9 @@ export default {
     window.addEventListener('click', this.windowClick)
   },
   methods: {
+    removeFocus() {
+      this.$refs['first-field'].removeFocus()
+    },
     focus() {
       this.$refs['first-field'].focusInput(0)
     },

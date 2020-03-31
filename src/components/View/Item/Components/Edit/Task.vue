@@ -112,6 +112,31 @@ export default EditBuilder({
       },
     },
   ],
+  rightSmartIconDrops: [
+    {
+      ref: 'tag',
+      props: {
+        placeholder: 'Tags...',
+        icon: 'tag',
+        color: 'var(--red)',
+        trigger: 'enter',
+        listProperty: 'tags', // will be used on the list function, this[option]
+        list: tags => tags.map(el => ({
+          id: el.id,
+          name: el.name,
+          icon: 'tag',
+          color: 'var(--red)',
+          callback: model => {
+            console.log(model)
+            if (model.tags.includes(el.id)) {
+              const i = model.tags.findIndex(id => el.id)
+              model.tags.splice(i, 1)
+            } else model.tags.push(el.id)
+          },
+        })),
+      },
+    },
+  ],
   instance: {
     data() {
       return {

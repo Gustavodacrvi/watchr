@@ -83,7 +83,7 @@
       <div class="buttons">
         <ButtonInput
           :value='getTime ? getTime : "Add time"'
-          icon='duration'
+          icon='clock'
           :defaultColor='getTime ? "var(--purple)" : ""'
           @click.native="addTime"
         />
