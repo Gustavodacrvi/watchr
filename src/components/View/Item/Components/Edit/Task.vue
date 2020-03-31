@@ -121,7 +121,7 @@ export default EditBuilder({
         color: 'var(--red)',
         trigger: 'enter',
         listProperty: 'tags', // will be used on the list function, this[option]
-        list: tags => tags.map(el => ({
+        list: (tags, vm) => tags.map(el => ({
           id: el.id,
           name: el.name,
           icon: 'tag',
@@ -130,7 +130,11 @@ export default EditBuilder({
             if (model.tags.includes(el.id)) {
               const i = model.tags.findIndex(id => el.id)
               model.tags.splice(i, 1)
-            } else model.tags.push(el.id)
+              vm.cursorPos--
+            } else {
+              vm.cursorPos++
+              model.tags.push(el.id)
+            }
           },
         })),
       },
@@ -230,6 +234,22 @@ export default EditBuilder({
           this.model.tags = []
         if (!this.model.tags.some(e => e === name))
           this.model.tags.push(name)
+      },
+    },
+    computed: {
+      getViewTags() {
+        return this.getTagsById(this.model.tags).map(tag => ({
+          id: tag.id,
+          props: {
+            icon: 'tag',
+            color: 'var(--red)',
+            value: tag.name,
+            callback: () => {
+              const i = this.model.tags.findIndex(el => el.id === tag.id)
+              this.model.tags.splice(i, 1)
+            },
+          },
+        }))
       },
     },
     watch: {

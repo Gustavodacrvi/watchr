@@ -3,6 +3,8 @@
 import InputDrop from "@/components/Auth/DropInput.vue"
 import SmartIconDrop from "@/components/Icons/SmartIconDrop.vue"
 import ChecklistVue from '@/components/View/Tasks/Checklist/Checklist.vue'
+import TagVue from '@/components/View/Tag.vue'
+
 import momUtils from '@/utils/moment'
 
 import { mapGetters, mapState } from 'vuex'
@@ -55,7 +57,7 @@ export default ({
           class: 'smart',
           props: {
             ...el.props,
-            list: el.props.list ? el.props.list(this[el.props.listProperty]) : undefined,
+            list: el.props.list ? el.props.list(this[el.props.listProperty], this) : undefined,
             active: currentNumber === this.cursorPos,
           },
           ref: el.ref,
@@ -110,9 +112,9 @@ export default ({
           create('div', {class: 'left-icons'}, leftComponents),
           create('div', {class: 'right-icons'}, rightComponents),
         ]
-      )
+      ),
     ]
-    
+
     if (checklist)
       editChildren.splice(1, 0, create(ChecklistVue, {
         ref: 'checklist',
@@ -134,7 +136,27 @@ export default ({
         },
       })
     )
-    
+
+    num = textFields.length + this.getChecklist.length
+
+    editChildren.splice(2, 0,
+      create('div', {class: 'tags'},
+        this.getViewTags.map(tag => {
+
+          num++
+          const currentNumber = num
+          return create(TagVue, {
+            ref: tag.id,
+
+            props: {
+              ...tag.props,
+              active: currentNumber === this.cursorPos,
+            },
+          })
+        })
+      )  
+    )
+
     return create('div', {
       class: 'EditBuilder',
       on: {
@@ -203,8 +225,9 @@ export default ({
 
       if (key === "Escape" && !isTyping)
         this.cancel()
-      if (key === "Enter" && this.isElementFunction && !isTyping)
+      if (key === "Enter" && this.isElementFunction && !isTyping) {
         this.keyboardActions[this.cursorPos]()
+      }
 
       utils.saveByShortcut(this, true, key, p, saveByShortcut, ['CalendarPicker'])
 
@@ -282,6 +305,8 @@ export default ({
       folders: 'folder/sortedFolders',
       groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
+      getTagsById: 'tag/getTagsById',
+
       isRecurringTask: 'task/isRecurringTask',
     }),
 
@@ -299,7 +324,7 @@ export default ({
     },
 
     getFirstSmartIconKeyboardActionPosition() {
-      return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0)
+      return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0) + this.getViewTags.length
     },
     getCompareDate() {
       if (!this.item) return null
@@ -343,19 +368,17 @@ export default ({
         num++ 
       }
       
-      const getIconsObj = () => {
+      this.getViewTags.forEach(({id}) => {
+        obj[num] = () => this.$refs[id].activate()
+        num++
+      })
 
-        return this.allSmartIcons.reduce((obj, {ref}) => {
-          obj[num] = () => this.$refs[ref].activate()
-          num++
-          return obj
-        }, {})
-      }
+      this.allSmartIcons.forEach(({ref}) => {
+        obj[num] = () => this.$refs[ref].activate()
+        num++
+      })
       
-      return {
-        ...obj,
-        ...getIconsObj(),
-      }
+      return obj
     },
     hasChecklist() {
       return checklist && this.model[checklist.vModel].length > 0
@@ -382,6 +405,9 @@ export default ({
       if (!checklist)
         return false
       return this.model[checklist.vModel].some(el => el.id === this.activeChecklistId)
+    },
+    getViewTags() {
+      return []
     },
     
     ...(instance.computed || {}),

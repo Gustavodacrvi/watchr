@@ -13,3 +13,9 @@
 .right-icons {
   display: flex;
 }
+
+.tags {
+  display: flex;
+  padding: 0 9px;
+  padding-bottom: 6px;
+}

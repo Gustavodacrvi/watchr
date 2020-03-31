@@ -5,7 +5,7 @@
   >
     <div class="wrapper" @click="$emit('click')">
       <div class="Tag cursor"
-        :class="[{selected, disabled}, layout]"
+        :class="[{selected, disabled, active}, layout]"
         :style="{border: selectedBorder}"
         @mouseenter="hover = true"
         @mouseleave="hover = false"
@@ -28,7 +28,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['value', 'icon', 'color', 'selected', 'disabled', 'extraIcon'],
+  props: ['value', 'icon', 'color', 'selected', 'disabled', 'extraIcon', 'active', 'callback'],
   data() {
     return {
       height: 0,
@@ -90,6 +90,9 @@ export default {
         })
       })
     },
+    activate() {
+      this.callback()
+    },
     getWrapper() {
       return this.$el.style
     },
@@ -148,7 +151,7 @@ export default {
   transition-duration: .2s;
 }
 
-.Tag:hover {
+.Tag:hover, .active {
   background-color: var(--fade);
   background-color: var(--light-gray);
 }
