@@ -25,6 +25,7 @@
               :placeholder='editRawPlaceholder'
               :options='options'
 
+              @click.native='fixCursor'
               @select='select'
               @cancel='$emit("close")'
             />
@@ -80,6 +81,9 @@ export default {
     window.addEventListener('click', this.windowClick)
   },
   methods: {
+    fixCursor() {
+      this.$refs.comp.cursorPos = 0
+    },
     removeFocus() {
       this.$refs['first-field'].removeFocus()
     },

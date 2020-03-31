@@ -17,13 +17,13 @@
         <Icon v-if="!isTaskCompleted"
           class="icon primary-hover"
           icon="circle"
-          color='var(--fade)'
+          color='var(--primary)'
           width='16px'
         />
         <Icon v-else
           class="icon primary-hover"
           icon="circle-check"
-          color='var(--fade)'
+          color='var(--primary)'
           width='16px'
         />
       </span>
@@ -87,6 +87,11 @@ export default {
       this.editing = true
     },
     keydown({key}) {
+      if (key === "ArrowDown" || key === 'ArrowUp') {
+        this.str = this.name
+        this.editing = false
+      }
+      
       if (key === "ArrowUp")
         this.$emit('move-cursor-up')
       else if (key === 'ArrowDown')

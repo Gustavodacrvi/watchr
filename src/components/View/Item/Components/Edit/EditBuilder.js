@@ -50,12 +50,13 @@ export default ({
       return arr.map(el => {
       
         num++
+        const currentNumber = num
         return create(SmartIconDrop, {
           class: 'smart',
           props: {
             ...el.props,
             list: el.props.list ? el.props.list(this[el.props.listProperty]) : undefined,
-            active: num === this.cursorPos,
+            active: currentNumber === this.cursorPos,
           },
           ref: el.ref,
   
@@ -65,6 +66,9 @@ export default ({
                 el.onTrigger(this, getModel)
             },
           },
+          nativeOn: {
+            click: () => this.cursorPos = currentNumber,
+          },
         })
       })
     }
@@ -72,10 +76,15 @@ export default ({
     const leftComponents = mapSmartIconDrops(leftSmartIconDrops)
     const rightComponents = mapSmartIconDrops(rightSmartIconDrops)
 
+    num = 0
+
     const editChildren = [
       create('div', {class: 'text-fields'},
-        textFields.map(el =>
-          create(InputDrop, {
+        textFields.map(el => {
+
+          num++
+          const currentNumber = num
+          return create(InputDrop, {
             class: 'field no-back',
             props: el.props,
             ref: el.ref,
@@ -90,7 +99,11 @@ export default ({
               },
               cancel: () => this.$parent.$emit('close'),
             },
+            nativeOn: {
+              click: () => this.cursorPos = currentNumber,
+            },
           })
+        }
         )
       ),
       create('div', {class: 'smart-icons'}, [
@@ -382,7 +395,6 @@ export default ({
     cursorPos(newPos, oldPos) {
       const textFieldLastIndex = textFields.length
 
-      
       if (oldPos <= textFieldLastIndex && textFieldLastIndex < newPos) {
         this.removeFocusRefs[oldPos]()
       }

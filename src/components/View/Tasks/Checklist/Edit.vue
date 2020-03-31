@@ -10,7 +10,7 @@
           <Icon
             class="icon primary-hover"
             icon="circle"
-            color='var(--fade)'
+            color='var(--primary)'
             width='16px'
           />
         </div>

@@ -127,7 +127,6 @@ export default EditBuilder({
           icon: 'tag',
           color: 'var(--red)',
           callback: model => {
-            console.log(model)
             if (model.tags.includes(el.id)) {
               const i = model.tags.findIndex(id => el.id)
               model.tags.splice(i, 1)
@@ -136,7 +135,47 @@ export default EditBuilder({
         })),
       },
     },
-  ],
+    {
+      ref: 'priority',
+      props: {
+        placeholder: 'Priority...',
+        icon: 'priority',
+        color: 'var(--yellow)',
+        listWidth: '150px',
+        trigger: 'enter',
+        listProperty: 'tags', // will be used on the list function, this[option]
+        list: tags => [
+          {
+            id: 'priority',
+            name: 'High priority',
+            icon: 'priority',
+            color: 'var(--red)',
+            callback: model => model.priority = 'High priority',
+          },
+          {
+            id: 'priority2',
+            name: 'Medium priority',
+            icon: 'priority',
+            color: 'var(--yellow)',
+            callback: model => model.priority = 'Medium priority',
+          },
+          {
+            id: 'priority3',
+            name: 'Low priority',
+            icon: 'priority',
+            color: 'var(--primary)',
+            callback: model => model.priority = 'Low priority',
+          },
+          {
+            id: 'priority4',
+            name: 'No priority',
+            icon: 'priority',
+            callback: model => model.priority = '',
+          },
+        ],
+      },
+    },
+  ].reverse(),
   instance: {
     data() {
       return {

@@ -40,6 +40,8 @@
       <div v-if="isActive && list"
         class="list rb scroll-thin"
         ref='list'
+
+        :style='{width: listWidth}'
       >
         <transition-group name="option-t">
           <div v-for="o in searchFiltered" :key="o.id"
@@ -72,7 +74,7 @@
 <script>
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth'],
   data() {
     return {
       hover: false,
@@ -133,12 +135,14 @@ export default {
       s.transitionDuration = 0
       s.width = 0
       s.opacity = 0
+      s.padding = '0'
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
 
         s.width = width
         s.opacity = 1
+        s.padding = '0 4px'
 
         setTimeout(done, 200)
       })
@@ -150,6 +154,7 @@ export default {
       s.transitionDuration = '.2s'
       s.width = 0
       s.opacity = 0
+      s.padding = '0'
 
       setTimeout(done, 200)
 
@@ -204,20 +209,26 @@ export default {
         })
         const list = this.$refs.list
 
+        const p = this.getRefsPositions(this.activeListElement)
         if (key === 'ArrowDown' && i + 1 < this.searchFiltered.length) {
           this.activeListElement = this.searchFiltered[i + 1].id
-          const p = this.getRefsPositions(this.activeListElement)
 
           if (p.act.top + p.act.height > p.list.height + p.list.scroll)
             list.scrollTop += p.act.height
         } else if (key === 'ArrowUp' && i !== 0) {
           this.activeListElement = this.searchFiltered[i - 1].id
-          const p = this.getRefsPositions(this.activeListElement)
 
           if (p.act.top < p.list.scroll)
             list.scrollTop -= p.act.height
-        } else if (i + 1 !== this.searchFiltered.length)
-          this.activeListElement = ''
+        } else {
+          if (key === 'ArrowUp' && this.searchFiltered[this.searchFiltered.length - 1].id) {
+            list.scrollTop = p.list.height
+            this.activeListElement = this.searchFiltered[this.searchFiltered.length - 1].id
+          } else if (key === 'ArrowDown' && this.searchFiltered[0].id) {
+            list.scrollTop = 0
+            this.activeListElement = this.searchFiltered[0].id
+          }
+        }
       }
     },
   },
@@ -302,7 +313,8 @@ export default {
 }
 
 .list {
-  background-color: var(--sidebar-color);
+  background-color: var(--card);
+  border: 1px solid var(--light-gray);
   padding: 8px 0;
   position: absolute;
   overflow: auto;
@@ -320,7 +332,7 @@ export default {
 }
 
 .option:hover, .activeOption {
-  background-color: rgba(87,160,222,.3);
+  background-color: var(--extra-light-gray);
 }
 
 .option-wrapper {
