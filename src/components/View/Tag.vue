@@ -34,6 +34,8 @@ export default {
       height: 0,
       width: 0,
       hover: false,
+
+      smartIconOptions: [],
     }
   },
   methods: {
@@ -103,7 +105,7 @@ export default {
     },
     activate() {
       if (this.callback)
-        this.callback()
+        this.smartIconOptions = this.callback()
     },
     click(evt) {
       this.$emit('click')

@@ -40,6 +40,9 @@ export default ({
 
     window.addEventListener('keydown', this.keydown)
     this.$store.commit('isEditing', true)
+
+    if (instance.created)
+      instance.created.apply(this)
   },
   beforeDestroy() {
     this.$store.commit('isEditing', false)
@@ -146,11 +149,14 @@ export default ({
 
           num++
           const currentNumber = num
-          return create(TagVue, {
+          return create(SmartIconDrop, {
             key: tag.id,
+            ref: tag.id,
 
             props: {
               ...tag.props,
+              tagMode: true,
+              list: tag.props.list ? tag.props.list(this[tag.props.listProperty], this) : undefined,
               active: currentNumber === this.cursorPos,
             },
           })
@@ -309,6 +315,7 @@ export default ({
       folders: 'folder/sortedFolders',
       groups: 'group/sortedGroupsByName',
       tags: 'tag/sortedTagsByName',
+      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTagsById: 'tag/getTagsById',
 
       isRecurringTask: 'task/isRecurringTask',

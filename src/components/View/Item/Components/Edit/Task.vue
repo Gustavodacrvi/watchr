@@ -3,6 +3,11 @@
 
 import EditBuilder from './EditBuilder.js'
 
+import mom from 'moment'
+
+const TOD = mom()
+const TOD_STR = TOD.format('Y-M-D')
+
 import utils from "@/utils/"
 import taskUtils from "@/utils/task"
 
@@ -58,6 +63,47 @@ const saveByShortcut = (type, task) => {
   'priority',
   'tag',
 */
+
+const calendarSmartIconOptions = (s, vm, activeOption) => [
+  {
+    id: 'tod',
+    name: 'Today',
+    icon: 'star',
+    color: 'var(--yellow)',
+    callback: model => model.calendar = vm.getSpecificDayCalendarObj(TOD_STR),
+  },
+  {
+    id: 'eve',
+    name: 'This evening',
+    icon: 'moon',
+    color: 'var(--dark-purple)',
+    callback: model => model.calendar = {
+      ...vm.getSpecificDayCalendarObj(TOD_STR),
+      evening: true,
+    },
+  },
+  {
+    id: 'tom',
+    name: 'Tomorrow',
+    icon: 'sun',
+    color: 'var(--orange)',
+    callback: model => model.calendar = vm.getSpecificDayCalendarObj(TOD.clone().add(1, 'd').format('Y-M-D')),
+  },
+  {
+    id: 'soa',
+    name: 'Anytime',
+    icon: 'layer-group',
+    color: 'var(--olive)',
+    callback: model => model.calendar = {type: 'anytime'},
+  },
+  {
+    id: 'sa',
+    name: 'Someday',
+    icon: 'archive',
+    color: 'var(--brown)',
+    callback: model => model.calendar = {type: 'someday'},
+  },
+  ]
 
 export default EditBuilder({
   value: (v, vm) => vm.model.name = v,
@@ -186,7 +232,7 @@ export default EditBuilder({
         icon: 'calendar',
         color: 'var(--green)',
         trigger: 'enter',
-        listProperty: ''
+        list: calendarSmartIconOptions,
       },
     },
   ].reverse(),
@@ -209,7 +255,12 @@ export default EditBuilder({
           checklist: [],
           order: [],
         },
+        fromDefaultItem: false,
       }
+    },
+    created() {
+      if (this.item.calendar)
+        this.fromDefaultItem = true
     },
     methods: {
       isRecurringItem(item) {
@@ -278,14 +329,15 @@ export default EditBuilder({
         return 'calendar'
       },
       calendarTagObj() {
-
+        const name = this.calendarStr
+        
         return {
           id: 'calendar_tag',
           props: {
+            name,
             icon: this.getCalendarStrIcon,
             color: this.getCalendarStrColor,
-            value: this.calendarStr,
-            callback: () => {},
+            list: calendarSmartIconOptions,
           },
         }
       },
@@ -300,7 +352,7 @@ export default EditBuilder({
             props: {
               icon: 'tag',
               color: 'var(--red)',
-              value: tag.name,
+              name: tag.name,
               callback: () => {
                 const i = this.model.tags.findIndex(el => el === tag.id)
                 if (i > -1)
@@ -356,10 +408,10 @@ export default EditBuilder({
           this.toReplace = res.matches
           if (res && res.calendar) {
             this.model.calendar = res.calendar
-            this.fromDefaultTask = false
+            this.fromDefaultItem = false
             this.fromIconDrop = null
-          } else if (!this.fromIconDrop && !this.fromDefaultTask) {
-            this.fromDefaultTask = false
+          } else if (!this.fromIconDrop && !this.fromDefaultItem) {
+            this.fromDefaultItem = false
             this.model.calendar = null
           }
         }

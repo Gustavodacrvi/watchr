@@ -19,4 +19,6 @@
   padding: 0 9px;
   padding-bottom: 9px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
 }

@@ -3,7 +3,7 @@
     @mouseenter="hover = true"
     @mouseleave="hover = false"
 
-    :class="{isActive}"
+    :class="{isActive, tagMode}"
   >
     <div class="wrapper">
       <div class="icon-wrapper" @click="activate">
@@ -18,17 +18,22 @@
         @enter='placeEnter'
         @leave='placeLeave'
       >
-        <div v-if="hover || focus" class="placeholder">
-          <input class="input"
+        <div v-if="isActive || tagMode" class="placeholder">
+          <input v-if="!tagMode || tagModeToggle" class="input"
             v-model="model"
             ref='input'
-            :placeholder='placeholder'
+            :placeholder='getPlaceholder'
             size='1'
+
+            :style="{width: tagModeWidth}"
 
             @keydown="keydown"
             @focus='focus = true'
             @blur='focus = false'
           />
+          <span v-else ref="tag-mode-name">
+            {{ name }}
+          </span>
         </div>
       </transition>
     </div>
@@ -37,7 +42,7 @@
       @enter='listEnter'
       @leave='listLeave'
     >
-      <div v-if="isActive && list"
+      <div v-if="(isActive && list && !tagMode) || (tagMode && tagModeToggle)"
         class="list rb scroll-thin"
         ref='list'
 
@@ -74,14 +79,25 @@
 <script>
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name'],
   data() {
     return {
       hover: false,
       focus: false,
       model: '',
       activeListElement: null,
+      tagModeWidth: null,
+
+      tagModeToggle: false,
     }
+  },
+  created() {
+    if (this.list && this.searchFiltered[0])
+      this.activeListElement = this.searchFiltered[0].id
+  },
+  mounted() {
+    if (this.tagMode)
+      this.tagModeWidth = this.$refs['tag-mode-name'].getBoundingClientRect().width + 'px'
   },
   methods: {
     listEnter(el, done) {
@@ -160,16 +176,27 @@ export default {
 
     },
     activate(option) {
-      this.$emit('trigger', option || (this.trigger === 'type' ? () => this.model : null))
+      if (!this.tagMode)
+        this.$emit('trigger', option || (this.trigger === 'type' ? () => this.model : null))
+      else {
+        this.tagModeToggle = !this.tagModeToggle
+      }
     },
 
 
-    keydown({key}) {
+    keydown(evt) {
+      const {key} = evt
 
       if (key === 'ArrowDown' || key === 'ArrowUp') {
+        evt.stopPropagation()
         this.moveActive(key)
       } else if (key === 'Enter' && this.activeListElement) {
         this.select(this.searchFiltered.find(el => el.id === this.activeListElement))
+        setTimeout(() => {
+          this.tagModeToggle = !this.tagModeToggle
+        })
+      } else if (key === 'Escape' || key === 'ArrowRight' || key === 'ArrowLeft') {
+        this.tagModeToggle = !this.tagModeToggle
       }
     },
     select(option) {
@@ -231,14 +258,20 @@ export default {
         }
       }
     },
-  },
-  created() {
-    if (this.list && this.searchFiltered[0])
-      this.activeListElement = this.searchFiltered[0].id
+    focusOnNextTick() {
+      this.$nextTick(() => {
+        if (this.$refs.input)
+          this.$refs.input.focus()
+      })
+    },
   },
   computed: {
+    getPlaceholder() {
+      return this.tagMode ? this.name : this.placeholder
+    },
+    
     isActive() {
-      return this.hover || this.focus
+      return this.hover || this.focus || this.active
     },
     searchFiltered() {
       if (!this.list)
@@ -247,15 +280,21 @@ export default {
     },
   },
   watch: {
+    tagModeToggle() {
+      if (this.tagModeToggle) {
+        this.model = ''
+        this.focusOnNextTick()
+      }
+    },
     searchFiltered() {
       if (!this.searchFiltered.find(el => el.id === this.activeListElement) && this.searchFiltered[0])
         this.activeListElement = this.searchFiltered[0].id
     },
     active() {
-      if (this.active) {
+      if (this.active && !this.tagMode) {
         this.focus = true
-        this.$nextTick(() => this.$refs.input.focus())
-      } else if (!this.active && this.focus)
+        this.focusOnNextTick()
+      } else if (!this.active && this.focus && this.$refs.input)
         this.$refs.input.blur()
     },
     isActive(val) {
@@ -285,6 +324,14 @@ export default {
   background-color: var(--light-sidebar-color);
 }
 
+.tagMode {
+  border: 1px solid var(--light-gray);
+}
+
+.tagMode.isActive {
+  background-color: var(--light-gray);
+}
+
 .icon-wrapper {
   min-width: 20px;
   display: flex;
@@ -293,6 +340,10 @@ export default {
 
 .icon {
   transform: translateX(-1px);
+}
+
+.tagMode .icon {
+  transform: translateY(-1.5px);
 }
 
 .wrapper {
