@@ -14,8 +14,7 @@ import utils from "@/utils/"
 export default ({
   value,
   textFields,
-  checklist, leftSmartIconDrops,
-  rightSmartIconDrops,
+  checklist,
   saveByShortcut = () => {},
   instance = {},
   props = [],
@@ -64,7 +63,7 @@ export default ({
             list: el.props.list ? el.props.list(this[el.props.listProperty], this) : undefined,
             active: currentNumber === this.cursorPos,
           },
-          ref: el.ref,
+          ref: el.id,
   
           on: {
             trigger: getModel => {
@@ -79,8 +78,8 @@ export default ({
       })
     }
     
-    const leftComponents = mapSmartIconDrops(leftSmartIconDrops)
-    const rightComponents = mapSmartIconDrops(rightSmartIconDrops)
+    const leftComponents = mapSmartIconDrops(this.leftSmartIconDrops)
+    const rightComponents = mapSmartIconDrops(this.rightSmartIconDrops)
 
     num = 0
 
@@ -93,7 +92,7 @@ export default ({
           return create(InputDrop, {
             class: 'field no-back',
             props: el.props,
-            ref: el.ref,
+            ref: el.id,
 
             domProps: {
               value: this.model[el.vModel],
@@ -329,8 +328,8 @@ export default ({
     },
     allSmartIcons() {
       return [
-        ...leftSmartIconDrops,
-        ...rightSmartIconDrops,
+        ...this.leftSmartIconDrops,
+        ...this.rightSmartIconDrops,
       ]
     },
 
@@ -345,7 +344,7 @@ export default ({
       return momUtils.getNextEventAfterCompletionDate(c).format('Y-M-D')
     },
     fieldFunctions() {
-      return textFields.map(el => () => this.$refs[el.ref].focusInput(0))
+      return textFields.map(el => () => this.$refs[el.id].focusInput(0))
     },
     removeFocusRefs() {
       const obj = {
@@ -354,8 +353,8 @@ export default ({
 
       let num = 1
 
-      textFields.forEach(({ref}) => {
-        obj[num] = () => this.$refs[ref].removeFocus()
+      textFields.forEach(({id}) => {
+        obj[num] = () => this.$refs[id].removeFocus()
 
         num++
       })

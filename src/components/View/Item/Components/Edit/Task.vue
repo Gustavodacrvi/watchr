@@ -103,7 +103,14 @@ const calendarSmartIconOptions = (s, vm, activeOption) => [
     color: 'var(--brown)',
     callback: model => model.calendar = {type: 'someday'},
   },
-  ]
+  {
+    id: 's',
+    name: 'Inbox',
+    icon: 'inbox',
+    color: 'var(--primary)',
+    callback: model => model.calendar = null,
+  },
+]
 
 export default EditBuilder({
   value: (v, vm) => vm.model.name = v,
@@ -136,7 +143,7 @@ export default EditBuilder({
         
         },
       },
-      ref: 'notes',
+      id: 'notes',
       select: true,
       vModel: 'notes', // this.model[option]
     },
@@ -145,97 +152,6 @@ export default EditBuilder({
     vModel: 'checklist', // this.model[option]
     order: 'order', // this.model[option]
   }, // requires removeSubtask, saveChecklist, addSubtask, isRecurringItem methods
-  leftSmartIconDrops: [
-    {
-      ref: 'checklist-icon',
-      props: {
-        placeholder: 'Checklist...',
-        icon: 'menu',
-        trigger: 'type',
-      },
-      onTrigger: (vm, getModel) => {
-        vm.$refs.checklist.pushEditString(getModel)
-      },
-    },
-  ],
-  rightSmartIconDrops: [
-    {
-      ref: 'tag',
-      props: {
-        placeholder: 'Tags...',
-        icon: 'tag',
-        color: 'var(--red)',
-        trigger: 'enter',
-        listProperty: 'tags', // will be used on the list function, this[option]
-        list: (tags, vm) => tags.map(el => ({
-          id: el.id,
-          name: el.name,
-          icon: 'tag',
-          color: 'var(--red)',
-          callback: model => {
-            if (model.tags.includes(el.id)) {
-              const i = model.tags.findIndex(id => el.id)
-              model.tags.splice(i, 1)
-              vm.cursorPos--
-            } else {
-              vm.cursorPos++
-              model.tags.push(el.id)
-            }
-          },
-        })),
-      },
-    },
-    {
-      ref: 'priority',
-      props: {
-        placeholder: 'Priority...',
-        icon: 'priority',
-        color: 'var(--yellow)',
-        listWidth: '150px',
-        trigger: 'enter',
-        listProperty: 'tags', // will be used on the list function, this[option]
-        list: tags => [
-          {
-            id: 'priority',
-            name: 'High priority',
-            icon: 'priority',
-            color: 'var(--red)',
-            callback: model => model.priority = 'High priority',
-          },
-          {
-            id: 'priority2',
-            name: 'Medium priority',
-            icon: 'priority',
-            color: 'var(--yellow)',
-            callback: model => model.priority = 'Medium priority',
-          },
-          {
-            id: 'priority3',
-            name: 'Low priority',
-            icon: 'priority',
-            color: 'var(--primary)',
-            callback: model => model.priority = 'Low priority',
-          },
-          {
-            id: 'priority4',
-            name: 'No priority',
-            icon: 'priority',
-            callback: model => model.priority = '',
-          },
-        ],
-      },
-    },
-    {
-      ref: 'calendar',
-      props: {
-        placeholder: 'When...',
-        icon: 'calendar',
-        color: 'var(--green)',
-        trigger: 'enter',
-        list: calendarSmartIconOptions,
-      },
-    },
-  ].reverse(),
   instance: {
     data() {
       return {
@@ -328,6 +244,93 @@ export default EditBuilder({
           return 'sun'
         return 'calendar'
       },
+      leftSmartIconDrops() {
+        return [
+          {
+            id: 'checklist-icon',
+            props: {
+              placeholder: 'Checklist...',
+              icon: 'menu',
+              trigger: 'type',
+            },
+            onTrigger: (vm, getModel) => {
+              vm.$refs.checklist.pushEditString(getModel)
+            },
+          },
+        ]
+      },
+      rightSmartIconDrops() {
+        const arr = [
+          {
+            id: 'tag',
+            props: {
+              placeholder: 'Tags...',
+              icon: 'tag',
+              color: 'var(--red)',
+              trigger: 'enter',
+              listProperty: 'tags', // will be used on the list function, this[option]
+              list: (tags, vm) => tags.map(el => ({
+                id: el.id,
+                name: el.name,
+                icon: 'tag',
+                color: 'var(--red)',
+                callback: model => {
+                  if (model.tags.includes(el.id)) {
+                    const i = model.tags.findIndex(id => el.id)
+                    model.tags.splice(i, 1)
+                    vm.cursorPos--
+                  } else {
+                    vm.cursorPos++
+                    model.tags.push(el.id)
+                  }
+                },
+              })),
+            },
+          },
+          {
+            id: 'priority',
+            props: {
+              placeholder: 'Priority...',
+              icon: 'priority',
+              color: 'var(--yellow)',
+              listWidth: '150px',
+              trigger: 'enter',
+              listProperty: 'tags', // will be used on the list function, this[option]
+              list: tags => [
+                {
+                  id: 'priority',
+                  name: 'High priority',
+                  icon: 'priority',
+                  color: 'var(--red)',
+                  callback: model => model.priority = 'High priority',
+                },
+                {
+                  id: 'priority2',
+                  name: 'Medium priority',
+                  icon: 'priority',
+                  color: 'var(--yellow)',
+                  callback: model => model.priority = 'Medium priority',
+                },
+                {
+                  id: 'priority3',
+                  name: 'Low priority',
+                  icon: 'priority',
+                  color: 'var(--primary)',
+                  callback: model => model.priority = 'Low priority',
+                },
+                {
+                  id: 'priority4',
+                  name: 'No priority',
+                  icon: 'priority',
+                  callback: model => model.priority = '',
+                },
+              ],
+            },
+          },
+        ]
+        
+        return arr
+      },
       calendarTagObj() {
         const name = this.calendarStr
         
@@ -337,18 +340,17 @@ export default EditBuilder({
             name,
             icon: this.getCalendarStrIcon,
             color: this.getCalendarStrColor,
-            trigger: 'list',
+            trigger: 'enter',
             list: calendarSmartIconOptions,
           },
         }
       },
-      getViewTags() {
-        const tags = []
-
-        tags.push(this.calendarTagObj)
-        
-        return tags.concat(
-          this.getTagsById(this.model.tags).map(tag => ({
+      getTagsLabels() {
+        return utils.sortListByName(
+            this.getTagsById(
+              this.model.tags
+            )
+          ).map(tag => ({
             id: tag.id,
             props: {
               icon: 'tag',
@@ -362,7 +364,13 @@ export default EditBuilder({
               },
             },
           }))
-        )
+      },
+      getViewTags() {
+        const tags = []
+
+        tags.push(this.calendarTagObj)
+        
+        return tags.concat(this.getTagsLabels)
       },
     },
     watch: {

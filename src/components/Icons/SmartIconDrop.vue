@@ -1,79 +1,86 @@
 <template>
-  <div class="SmartIconDrop cursor"
-
-    :class="{isActive, tagMode}"
-
-    @click="click"
+  <transition
+    :css='false'
+    @appear='appear'
+    @enter='enter'
+    @leave='leave'
   >
-    <div class="wrapper" @click="activate">
-      <div class="icon-wrapper">
-        <Icon class="icon"
-          :icon='icon'
-          :width='width || "16px"'
-          :color='color'
-        />
+    <div class="SmartIconDrop cursor"
+
+      :class="{isActive, tagMode}"
+
+      @click="click"
+    >
+      <div class="wrapper" @click="activate">
+        <div class="icon-wrapper">
+          <Icon class="icon"
+            :icon='icon'
+            :width='width || "16px"'
+            :color='color'
+          />
+        </div>
+        <transition
+          :css='false'
+          @enter='placeEnter'
+          @leave='placeLeave'
+        >
+          <div v-if="isActive || tagMode" class="placeholder">
+            <input v-if="!tagMode || tagModeToggle" class="input"
+              v-model="model"
+              ref='input'
+              :placeholder='getPlaceholder'
+              size='1'
+
+              :style="{width: tagModeWidth}"
+
+              @keydown="keydown"
+              @focus='focus = true'
+              @blur='focus = false'
+            />
+            <span v-else ref="tag-mode-name">
+              {{ name }}
+            </span>
+          </div>
+        </transition>
       </div>
       <transition
-        :css='false'
-        @enter='placeEnter'
-        @leave='placeLeave'
+        appear
+        @enter='listEnter'
+        @leave='listLeave'
       >
-        <div v-if="isActive || tagMode" class="placeholder">
-          <input v-if="!tagMode || tagModeToggle" class="input"
-            v-model="model"
-            ref='input'
-            :placeholder='getPlaceholder'
-            size='1'
+        <div v-if="isShowingList"
+          class="list rb scroll-thin"
+          ref='list'
 
-            :style="{width: tagModeWidth}"
+          :style='{width: listWidth}'
+        >
+          <transition-group name="option-t">
+            <div v-for="o in searchFiltered" :key="o.id"
+              class="option rb"
+              :class="{activeOption: activeListElement === o.id}"
 
-            @keydown="keydown"
-            @focus='focus = true'
-            @blur='focus = false'
-          />
-          <span v-else ref="tag-mode-name">
-            {{ name }}
-          </span>
+              :data-id='o.id'
+
+              @click="select(o)"
+            >
+              <div class="option-wrapper">
+                <div class="option-icon-wrapper">
+                  <Icon class="option-icon"
+                    :icon='o.icon'
+                    :color='o.color'
+                    width='14px'
+                  />
+                </div>
+                <div class="option-name">
+                  {{ o.name }}
+                </div>
+              </div>
+            </div>
+          </transition-group>
         </div>
       </transition>
     </div>
-    <transition
-      appear
-      @enter='listEnter'
-      @leave='listLeave'
-    >
-      <div v-if="isShowingList"
-        class="list rb scroll-thin"
-        ref='list'
-
-        :style='{width: listWidth}'
-      >
-        <transition-group name="option-t">
-          <div v-for="o in searchFiltered" :key="o.id"
-            class="option rb"
-            :class="{activeOption: activeListElement === o.id}"
-
-            :data-id='o.id'
-
-            @click="select(o)"
-          >
-            <div class="option-wrapper">
-              <div class="option-icon-wrapper">
-                <Icon class="option-icon"
-                  :icon='o.icon'
-                  :color='o.color'
-                  width='14px'
-                />
-              </div>
-              <div class="option-name">
-                {{ o.name }}
-              </div>
-            </div>
-          </div>
-        </transition-group>
-      </div>
-    </transition>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -103,6 +110,83 @@ export default {
     this.$parent.$el.addEventListener('click', this.hide)
   },
   methods: {
+    appear(el, done) {
+      if (this.$parent.isFirstEdit)
+        return done()
+      this.enter(el, done)
+    },
+    enter(el, done) {
+      const s = el.style
+
+      const {width} = getComputedStyle(el)
+
+      s.transitionDuration = 0
+      s.width = 0
+      s.opacity = 0
+      s.overflow = 'hidden'
+      s.whiteSpace = 'nowrap'
+
+      if (this.tagMode) {
+        s.height = 0
+        s.border = 0
+        s.marginLeft = 0
+      }
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+
+        s.width = width
+        s.opacity = 1
+
+        if (this.tagMode) {
+          s.height = '25px'
+          s.border = '1px solid var(--light-gray)'
+        }
+
+        setTimeout(() => {
+          s.width = 'auto'
+          s.overflow = 'unset'
+          s.whiteSpace = 'unset'
+          s.marginLeft = '4px'
+          done()
+        }, 200)
+      })
+    },
+    leave(el, done) {
+
+      const s = el.style
+
+      const {width} = getComputedStyle(el)
+
+      s.transitionDuration = 0
+
+      s.width = width
+      s.opacity = 1
+
+      if (this.tagMode) {
+        s.height = '25px'
+        s.border = '1px solid var(--light-gray)'
+      }
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+        s.width = 0
+        s.opacity = 0
+        s.overflow = 'hidden'
+        s.whiteSpace = 'nowrap'
+
+        if (this.tagMode) {
+          s.height = 0
+          s.border = 0
+          s.marginLeft = 0
+        }
+
+        setTimeout(done, 200)
+      })
+
+
+    },
+    
     saveValueWith() {
       setTimeout(() => {
         if (this.tagMode)
@@ -204,7 +288,7 @@ export default {
     },
     click() {
       if (this.tagMode) {
-        if (this.trigger === 'list')
+        if (this.trigger === 'enter')
           this.tagModeToggle = !this.tagModeToggle
         else if (this.trigger === 'click')
           this.callback()
@@ -215,7 +299,7 @@ export default {
     activate(option) {
       if (!this.tagMode)
         this.$emit('trigger', option || (this.trigger === 'type' ? () => this.model : null))
-      else
+      else if (!option)
         this.click()
     },
 
@@ -358,6 +442,7 @@ export default {
   padding: 4px;
   display: inline-block;
   border-radius: 6px;
+  box-sizing: border-box;
   position: relative;
   transition-duration: .2s;
 }
@@ -419,6 +504,11 @@ export default {
   width: 145px;
   left: 0;
   top: 100%;
+}
+
+.tag-mode-name {
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .option {
