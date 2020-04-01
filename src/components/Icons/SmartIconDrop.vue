@@ -9,7 +9,7 @@
 
       :class="{isActive, tagMode}"
 
-      @click="click"
+      @click.stop="click"
     >
       <div class="wrapper" @click="activate">
         <div class="icon-wrapper">
@@ -91,12 +91,13 @@ export default {
       model: '',
       activeListElement: null,
       tagModeWidth: null,
+      currentList: this.list,
 
       tagModeToggle: false,
     }
   },
   created() {
-    if (this.list && this.searchFiltered[0])
+    if (this.currentList && this.searchFiltered[0])
       this.activeListElement = this.searchFiltered[0].id
 
   },
@@ -310,16 +311,31 @@ export default {
         this.moveActive(key)
       } else if (key === 'Enter' && this.activeListElement) {
         this.select(this.searchFiltered.find(el => el.id === this.activeListElement))
-        setTimeout(() => {
-          this.tagModeToggle = !this.tagModeToggle
-        })
       } else if (key === 'Escape' || key === 'ArrowRight' || key === 'ArrowLeft') {
         if (key === "Escape") evt.stopPropagation()
-        this.tagModeToggle = !this.tagModeToggle
+        if (this.tagMode && this.currentList === this.list)
+          this.tagModeToggle = !this.tagModeToggle
+        else
+          this.switchLists()
       }
     },
     select(option) {
-      option.callback(this.$parent.model)
+      const res = option.callback(this.$parent.model)
+      if (Array.isArray(res))
+        this.switchLists(res)
+      else if (this.tagMode)
+        setTimeout(() => {
+          this.tagModeToggle = !this.tagModeToggle
+          this.switchLists()
+        })
+    },
+    switchLists(arr) {
+      if (!arr && !this.list)
+        return;
+      arr = arr || this.list
+      this.currentList = arr
+      if (arr && arr.length > 0)
+        this.activeListElement = arr[0].id
     },
     getRefsPositions(id) {
       const list = this.$refs.list
@@ -345,7 +361,7 @@ export default {
       }
     },
     moveActive(key) {
-      if (!this.list)
+      if (!this.currentList)
         return;
       if (!this.activeListElement)
         this.activeListElement = this.searchFiltered[0].id
@@ -393,12 +409,12 @@ export default {
       return this.focus || this.active
     },
     searchFiltered() {
-      if (!this.list)
+      if (!this.currentList)
         return []
-      return this.list.filter(el => el.name.toLowerCase().includes(this.model.toLowerCase()))
+      return this.currentList.filter(el => el.name.toLowerCase().includes(this.model.toLowerCase()))
     },
     isShowingList() {
-      return (this.isActive && this.list && !this.tagMode) || (this.tagMode && this.tagModeToggle)
+      return (this.isActive && this.currentList && !this.tagMode) || (this.tagMode && this.tagModeToggle)
     },
   },
   watch: {
@@ -423,6 +439,7 @@ export default {
     },
     isActive(val) {
       this.model = ''
+      this.switchLists()
     },
     model() {
       if (this.trigger === 'type' && this.model.length > 0)
@@ -498,6 +515,7 @@ export default {
   padding: 8px 0;
   position: absolute;
   overflow: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
   max-height: 250px;
   width: 145px;
   left: 0;

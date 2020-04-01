@@ -60,7 +60,6 @@ export default ({
           class: 'smart',
           props: {
             ...el.props,
-            list: el.props.list ? el.props.list(this[el.props.listProperty], this) : undefined,
             active: currentNumber === this.cursorPos,
           },
           ref: el.id,
@@ -155,7 +154,6 @@ export default ({
             props: {
               ...tag.props,
               tagMode: true,
-              list: tag.props.list ? tag.props.list(this[tag.props.listProperty], this) : undefined,
               active: currentNumber === this.cursorPos,
             },
           })
@@ -316,6 +314,10 @@ export default ({
       tags: 'tag/sortedTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTagsById: 'tag/getTagsById',
+
+      getListsById: 'list/getListsById',
+      getFoldersById: 'folder/getFoldersById',
+      getGroupsById: 'group/getGroupsById',
 
       isRecurringTask: 'task/isRecurringTask',
     }),

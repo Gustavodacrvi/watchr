@@ -51,7 +51,73 @@ const saveByShortcut = (type, task) => {
   }
 }
 
-const calendarSmartIconOptions = (s, vm, activeOption) => [
+const getMoveToListOptions = function() {
+  return [
+    {
+      id: 'fdsa',
+      name: 'Move to list',
+      icon: 'tasks',
+      color: 'var(--primary)',
+      callback: () => this.lists.map(el => ({
+        id: el.id,
+        name: el.name,
+        icon: 'tasks',
+        callback: () => {
+          this.model.list = el.id
+          this.model.heading = null
+          this.model.folder = null
+          this.model.group = null
+        },
+      }))
+    },
+    {
+      id: 'fds',
+      name: 'Move to folder',
+      icon: 'folder',
+      callback: () => this.folders.map(el => ({
+        id: el.id,
+        name: el.name,
+        icon: 'folder',
+        callback: () => {
+          this.model.list = null
+          this.model.heading = null
+          this.model.folder = el.id
+          this.model.group = null
+        },
+      }))
+    },
+    {
+      id: 'fs',
+      name: 'Move to group',
+      icon: 'group',
+      callback: () => this.groups.map(el => ({
+        id: el.id,
+        name: el.name,
+        icon: 'group',
+        callback: () => {
+          this.model.list = null
+          this.model.heading = null
+          this.model.folder = null
+          this.model.group = el.id
+        },
+      }))
+    },
+    {
+      id: 'fd',
+      name: 'Remove from lists',
+      icon: 'bloqued',
+      callback: () => {
+        this.model.list = null
+        this.model.heading = null
+        this.model.folder = null
+        this.model.group = null
+      },
+    },
+  ]
+}
+
+
+const calendarSmartIconOptions = [
   {
     id: 'tod',
     name: 'Today',
@@ -99,7 +165,7 @@ const calendarSmartIconOptions = (s, vm, activeOption) => [
   },
 ]
 
-const deadlineIconOptions = () => [
+const deadlineIconOptions = [
   {
     id: 'tod',
     name: 'Today',
@@ -273,32 +339,6 @@ export default EditBuilder({
       rightSmartIconDrops() {
         const arr = [
           {
-            id: 'tag',
-            props: {
-              placeholder: 'Tags...',
-              icon: 'tag',
-              color: 'var(--red)',
-              trigger: 'enter',
-              listProperty: 'tags', // will be used on the list function, this[option]
-              list: (tags, vm) => tags.map(el => ({
-                id: el.id,
-                name: el.name,
-                icon: 'tag',
-                color: 'var(--red)',
-                callback: model => {
-                  if (model.tags.includes(el.id)) {
-                    const i = model.tags.findIndex(id => el.id)
-                    model.tags.splice(i, 1)
-                    vm.cursorPos--
-                  } else {
-                    vm.cursorPos++
-                    model.tags.push(el.id)
-                  }
-                },
-              })),
-            },
-          },
-          {
             id: 'priority',
             props: {
               placeholder: 'Priority...',
@@ -306,8 +346,7 @@ export default EditBuilder({
               color: 'var(--yellow)',
               listWidth: '150px',
               trigger: 'enter',
-              listProperty: 'tags', // will be used on the list function, this[option]
-              list: tags => [
+              list: [
                 {
                   id: 'priority',
                   name: 'High priority',
@@ -338,6 +377,31 @@ export default EditBuilder({
               ],
             },
           },
+          {
+            id: 'tag',
+            props: {
+              placeholder: 'Tags...',
+              icon: 'tag',
+              color: 'var(--red)',
+              trigger: 'enter',
+              list: this.tags.map(el => ({
+                id: el.id,
+                name: el.name,
+                icon: 'tag',
+                color: 'var(--red)',
+                callback: model => {
+                  if (model.tags.includes(el.id)) {
+                    const i = model.tags.findIndex(id => el.id)
+                    model.tags.splice(i, 1)
+                    vm.cursorPos--
+                  } else {
+                    vm.cursorPos++
+                    model.tags.push(el.id)
+                  }
+                },
+              })),
+            },
+          },
         ]
 
         if (!this.model.deadline)
@@ -351,8 +415,44 @@ export default EditBuilder({
               list: deadlineIconOptions,
             },
           })
+
+        if (!this.isInList)
+          arr.unshift({
+            id: 'lists',
+            props: {
+              placeholder: 'Move to...',
+              icon: 'tasks',
+              color: 'var(--primary)',
+              listWidth: '180px',
+              trigger: 'enter',
+              list: getMoveToListOptions.apply(this),
+            },
+          })
         
         return arr
+      },
+      isInList() {
+        return this.model.list || this.model.folder || this.model.group
+      },
+      getListName() {
+        if (this.model.list)
+          return this.getListsById([this.model.list])[0].name
+        if (this.model.folder)
+          return this.getFoldersById([this.model.folder])[0].name
+        if (this.model.group)
+          return this.getGroupsById([this.model.group])[0].name
+      },
+      getListIcon() {
+        if (this.model.list)
+          return 'tasks'
+        if (this.model.group)
+          return 'group'
+        if (this.model.folder)
+          return 'folder'
+      },
+      getListColor() {
+        if (this.model.list)
+          return 'var(--primary)'
       },
       calendarTagObj() {
         const name = this.calendarStr
@@ -402,6 +502,19 @@ export default EditBuilder({
               color: 'var(--orange)',
               trigger: 'enter',
               list: deadlineIconOptions,
+            },
+          })
+
+        if (this.isInList)
+          tags.push({
+            id: 'lists_tag',
+            props: {
+              name: this.getListName,
+              icon: this.getListIcon,
+              listWidth: '180px',
+              color: this.getListColor,
+              trigger: 'enter',
+              list: getMoveToListOptions.apply(this),
             },
           })
         
