@@ -337,6 +337,7 @@ export default EditBuilder({
             name,
             icon: this.getCalendarStrIcon,
             color: this.getCalendarStrColor,
+            trigger: 'list',
             list: calendarSmartIconOptions,
           },
         }
@@ -346,13 +347,14 @@ export default EditBuilder({
 
         tags.push(this.calendarTagObj)
         
-        tags.concat(
+        return tags.concat(
           this.getTagsById(this.model.tags).map(tag => ({
             id: tag.id,
             props: {
               icon: 'tag',
               color: 'var(--red)',
               name: tag.name,
+              trigger: 'click',
               callback: () => {
                 const i = this.model.tags.findIndex(el => el === tag.id)
                 if (i > -1)
@@ -361,8 +363,6 @@ export default EditBuilder({
             },
           }))
         )
-
-        return tags
       },
     },
     watch: {

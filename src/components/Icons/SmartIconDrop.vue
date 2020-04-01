@@ -1,12 +1,12 @@
 <template>
   <div class="SmartIconDrop cursor"
-    @mouseenter="hover = true"
-    @mouseleave="hover = false"
 
     :class="{isActive, tagMode}"
+
+    @click="click"
   >
-    <div class="wrapper">
-      <div class="icon-wrapper" @click="activate">
+    <div class="wrapper" @click="activate">
+      <div class="icon-wrapper">
         <Icon class="icon"
           :icon='icon'
           :width='width || "16px"'
@@ -42,7 +42,7 @@
       @enter='listEnter'
       @leave='listLeave'
     >
-      <div v-if="(isActive && list && !tagMode) || (tagMode && tagModeToggle)"
+      <div v-if="isShowingList"
         class="list rb scroll-thin"
         ref='list'
 
@@ -79,10 +79,9 @@
 <script>
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback'],
   data() {
     return {
-      hover: false,
       focus: false,
       model: '',
       activeListElement: null,
@@ -94,12 +93,40 @@ export default {
   created() {
     if (this.list && this.searchFiltered[0])
       this.activeListElement = this.searchFiltered[0].id
+
+  },
+  beforeDestroy() {
+    this.$parent.$el.addEventListener('click', this.hide)
   },
   mounted() {
-    if (this.tagMode)
-      this.tagModeWidth = this.$refs['tag-mode-name'].getBoundingClientRect().width + 'px'
+    this.saveValueWith()
+    this.$parent.$el.addEventListener('click', this.hide)
   },
   methods: {
+    saveValueWith() {
+      setTimeout(() => {
+        if (this.tagMode)
+          this.tagModeWidth = this.$refs['tag-mode-name'].getBoundingClientRect().width + 'px'
+      }, 200)
+    },
+    hide(evt) {
+      
+      const path = evt.path || (evt.composedPath && evt.composedPath())
+      let found
+      for (const node of path)
+        if (node === this.$el) {
+          found = true
+          break
+        }
+
+      if (!found) {
+        if (this.tagMode)
+          this.tagModeToggle = false
+        else if (this.active)
+          this.$parent.resetCursor()
+      }
+      
+    },
     listEnter(el, done) {
 
       const s = el.style
@@ -175,12 +202,21 @@ export default {
       setTimeout(done, 200)
 
     },
+    click() {
+      if (this.tagMode) {
+        if (this.trigger === 'list')
+          this.tagModeToggle = !this.tagModeToggle
+        else if (this.trigger === 'click')
+          this.callback()
+      } else if (this.$refs.input) {
+        this.$refs.input.focus()
+      }
+    },
     activate(option) {
       if (!this.tagMode)
         this.$emit('trigger', option || (this.trigger === 'type' ? () => this.model : null))
-      else {
-        this.tagModeToggle = !this.tagModeToggle
-      }
+      else
+        this.click()
     },
 
 
@@ -196,6 +232,7 @@ export default {
           this.tagModeToggle = !this.tagModeToggle
         })
       } else if (key === 'Escape' || key === 'ArrowRight' || key === 'ArrowLeft') {
+        if (key === "Escape") evt.stopPropagation()
         this.tagModeToggle = !this.tagModeToggle
       }
     },
@@ -271,15 +308,21 @@ export default {
     },
     
     isActive() {
-      return this.hover || this.focus || this.active
+      return this.focus || this.active
     },
     searchFiltered() {
       if (!this.list)
         return []
       return this.list.filter(el => el.name.toLowerCase().includes(this.model.toLowerCase()))
     },
+    isShowingList() {
+      return (this.isActive && this.list && !this.tagMode) || (this.tagMode && this.tagModeToggle)
+    },
   },
   watch: {
+    name() {
+      this.saveValueWith()
+    },
     tagModeToggle() {
       if (this.tagModeToggle) {
         this.model = ''
@@ -292,7 +335,6 @@ export default {
     },
     active() {
       if (this.active && !this.tagMode) {
-        this.focus = true
         this.focusOnNextTick()
       } else if (!this.active && this.focus && this.$refs.input)
         this.$refs.input.blur()
@@ -320,7 +362,11 @@ export default {
   transition-duration: .2s;
 }
 
-.SmartIconDrop.isActive {
+.tagMode + .tagMode {
+  margin-left: 4px;
+}
+
+.SmartIconDrop.isActive, .SmartIconDrop:hover {
   background-color: var(--light-sidebar-color);
 }
 
@@ -328,7 +374,7 @@ export default {
   border: 1px solid var(--light-gray);
 }
 
-.tagMode.isActive {
+.tagMode.isActive, .tagMode:hover {
   background-color: var(--light-gray);
 }
 
