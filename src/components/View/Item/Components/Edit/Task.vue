@@ -51,19 +51,6 @@ const saveByShortcut = (type, task) => {
   }
 }
 
-/*
-  'checklist-icon',
-  'duration',
-  'deadline',
-  'file',
-  'calendar',
-  'group',
-  'folder',
-  'tasks',
-  'priority',
-  'tag',
-*/
-
 const calendarSmartIconOptions = (s, vm, activeOption) => [
   {
     id: 'tod',
@@ -109,6 +96,30 @@ const calendarSmartIconOptions = (s, vm, activeOption) => [
     icon: 'inbox',
     color: 'var(--primary)',
     callback: model => model.calendar = null,
+  },
+]
+
+const deadlineIconOptions = () => [
+  {
+    id: 'tod',
+    name: 'Today',
+    icon: 'star',
+    color: 'var(--yellow)',
+    callback: model => model.deadline = TOD_STR,
+  },
+  {
+    id: 'to',
+    name: 'Tomorrow',
+    icon: 'sun',
+    color: 'var(--orange)',
+    callback: model => model.deadline = TOD.clone().add(1, 'd').format('Y-M-D')
+  },
+  {
+    id: 'o',
+    name: 'No deadline',
+    icon: 'bloqued',
+    color: 'var(--txt)',
+    callback: model => model.deadline = null
   },
 ]
 
@@ -328,6 +339,18 @@ export default EditBuilder({
             },
           },
         ]
+
+        if (!this.model.deadline)
+          arr.unshift({
+            id: 'deadline',
+            props: {
+              placeholder: 'deadline',
+              icon: 'deadline',
+              color: 'var(--orange)',
+              trigger: 'enter',
+              list: deadlineIconOptions,
+            },
+          })
         
         return arr
       },
@@ -369,6 +392,18 @@ export default EditBuilder({
         const tags = []
 
         tags.push(this.calendarTagObj)
+
+        if (this.model.deadline)
+          tags.push({
+            id: 'deadline',
+            props: {
+              name: utils.getHumanReadableDate(this.model.deadline),
+              icon: 'deadline',
+              color: 'var(--orange)',
+              trigger: 'enter',
+              list: deadlineIconOptions,
+            },
+          })
         
         return tags.concat(this.getTagsLabels)
       },

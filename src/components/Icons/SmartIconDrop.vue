@@ -34,8 +34,6 @@
               :style="{width: tagModeWidth}"
 
               @keydown="keydown"
-              @focus='focus = true'
-              @blur='focus = false'
             />
             <span v-else ref="tag-mode-name">
               {{ name }}
