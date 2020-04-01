@@ -116,7 +116,7 @@ export default {
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',
     'hideGroupName', 'hideFolderName', 'showingRuler',
-    'isSelecting', 'allowLogStr',
+    'isSelecting', 'allowLogStr', 'itemModelFallback',
 
     'viewName', 'viewType',
   ],

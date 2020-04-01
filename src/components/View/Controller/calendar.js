@@ -33,6 +33,18 @@ export default {
         })
       }
     },
+    itemModelFallback() {
+      const date = this.getCalendarOrderDate
+      if (date)
+        return {
+          calendar: {
+            type: 'specific',
+            specific: date,
+            editDate: date,
+            begins: date,   
+          },
+        }
+    },
     
     
     updateHeadingIds() {

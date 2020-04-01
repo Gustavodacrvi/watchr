@@ -321,7 +321,7 @@ export default {
   max-height: 250px;
   width: 145px;
   left: 0;
-  top: 110%;
+  top: 100%;
 }
 
 .option {
@@ -332,13 +332,12 @@ export default {
 }
 
 .option:hover, .activeOption {
-  background-color: var(--extra-light-gray);
+  background-color: var(--light-gray);
 }
 
 .option-wrapper {
   display: flex;
   align-items: center;
-  color: white;
   height: 100%;
 }
 

@@ -32,6 +32,11 @@ export default {
       
       return fs[this.viewName]
     },
+    itemModelFallback() {
+      const calendar = this.getCalObjectByView(this.viewName)
+      
+      if (calendar) return {calendar}
+    },
     
     updateIds() {
       const fs = functionFallbacks.updateOrderFunctions
@@ -159,7 +164,6 @@ export default {
         case 'Upcoming': return this.upcomingHeadings
         case 'Recurring': return this.recurringHeadings
         case 'Today': {
-          console.log
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return heads
         }

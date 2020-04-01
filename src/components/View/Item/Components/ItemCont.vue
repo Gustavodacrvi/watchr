@@ -6,6 +6,7 @@
       :editRawPlaceholder='editRawPlaceholder'
       :itemHeight='itemHeight'
       :editComponent='editComponent'
+      :itemModelFallback='itemModelFallback'
       :doneTransition='completeEditLeaveEvent'
 
       @close="close"
@@ -63,7 +64,7 @@ export default {
   components: {
     DisplayCont, EditRaw,
   },
-  props: ['name', 'isEditing', 'itemHeight', 'editComponent', 'editRawPlaceholder', 'item'],
+  props: ['name', 'isEditing', 'itemHeight', 'editComponent', 'editRawPlaceholder', 'item', 'itemModelFallback'],
   data() {
     return {
       showElements: true,

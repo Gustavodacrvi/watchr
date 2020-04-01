@@ -143,7 +143,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'calendarDate', 'viewItem',
+  'calendarDate', 'viewItem', 'itemModelFallback',
   'showHeading', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],

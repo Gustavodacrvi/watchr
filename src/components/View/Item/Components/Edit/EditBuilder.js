@@ -20,7 +20,7 @@ export default ({
   instance = {},
   props = [],
 }) => ({
-  props: ['item', 'firstFieldOptions', 'value', ...props],
+  props: ['item', 'firstFieldOptions', 'itemModelFallback', 'value', ...props],
   data() {
     return {
       currentPrefix: '',
@@ -32,6 +32,7 @@ export default ({
     }
   },
   created() {
+    this.model = {...this.model, ...this.itemModelFallback}
     if (this.item)
       this.model = {...this.model, ...this.item}
 
@@ -146,7 +147,7 @@ export default ({
           num++
           const currentNumber = num
           return create(TagVue, {
-            ref: tag.id,
+            key: tag.id,
 
             props: {
               ...tag.props,
@@ -295,6 +296,9 @@ export default ({
       userInfo: state => state.userInfo,
       iconDrop: state => state.iconDrop,
       user: state => state.user,
+
+      viewName: state => state.viewName,
+      viewType: state => state.viewType,
 
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,

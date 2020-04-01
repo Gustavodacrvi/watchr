@@ -61,7 +61,7 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
-    'calendarDate', 'updateViewIds', 'showingRuler',
+    'calendarDate', 'updateViewIds', 'showingRuler', 'itemModelFallback',
     'width', 'disableRootActions', 'fallbackFunctionData',
 
     'headingEditOptions', 'taskIconDropOptions', 'filterByAssigned',

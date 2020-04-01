@@ -18,13 +18,13 @@
           class="icon primary-hover"
           icon="circle"
           color='var(--primary)'
-          width='16px'
+          width='15px'
         />
         <Icon v-else
           class="icon primary-hover"
           icon="circle-check"
           color='var(--primary)'
-          width='16px'
+          width='15px'
         />
       </span>
       <span v-if="!editing"

@@ -11,7 +11,7 @@
             class="icon primary-hover"
             icon="circle"
             color='var(--primary)'
-            width='16px'
+            width='15px'
           />
         </div>
         <div class="input">

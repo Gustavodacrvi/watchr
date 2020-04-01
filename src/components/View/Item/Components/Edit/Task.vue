@@ -179,6 +179,16 @@ export default EditBuilder({
         ],
       },
     },
+    {
+      ref: 'calendar',
+      props: {
+        placeholder: 'When...',
+        icon: 'calendar',
+        color: 'var(--green)',
+        trigger: 'enter',
+        listProperty: ''
+      },
+    },
   ].reverse(),
   instance: {
     data() {
@@ -237,19 +247,70 @@ export default EditBuilder({
       },
     },
     computed: {
-      getViewTags() {
-        return this.getTagsById(this.model.tags).map(tag => ({
-          id: tag.id,
+      calendarStr() {
+        if (this.model.calendar)
+          return utils.parseCalendarObjectToString(this.model.calendar, this.userInfo, true)
+        return "Inbox"
+      },
+      getCalendarStrColor() {
+        switch (this.getCalendarStrIcon) {
+          case 'inbox': return 'var(--primary)'
+          case 'archive': return 'var(--brown)'
+          case 'layer-group': return 'var(--olive)'
+          case 'star': return 'var(--yellow)'
+          case 'sun': return 'var(--orange)'
+          case 'calendar': return 'var(--green)'
+        }
+        return 'var(--txt)'
+      },
+      getCalendarStrIcon() {
+        if (!this.model.calendar)
+          return 'inbox'
+        if (this.isRecurringItem(this.model))
+          return 'repeat'
+        switch (this.calendarStr) {
+          case 'Someday': return 'archive'
+          case 'Anytime': return 'layer-group'
+          case 'Today': return 'star'
+        }
+        if (this.calendarStr.includes('Tomorrow'))
+          return 'sun'
+        return 'calendar'
+      },
+      calendarTagObj() {
+
+        return {
+          id: 'calendar_tag',
           props: {
-            icon: 'tag',
-            color: 'var(--red)',
-            value: tag.name,
-            callback: () => {
-              const i = this.model.tags.findIndex(el => el.id === tag.id)
-              this.model.tags.splice(i, 1)
-            },
+            icon: this.getCalendarStrIcon,
+            color: this.getCalendarStrColor,
+            value: this.calendarStr,
+            callback: () => {},
           },
-        }))
+        }
+      },
+      getViewTags() {
+        const tags = []
+
+        tags.push(this.calendarTagObj)
+        
+        tags.concat(
+          this.getTagsById(this.model.tags).map(tag => ({
+            id: tag.id,
+            props: {
+              icon: 'tag',
+              color: 'var(--red)',
+              value: tag.name,
+              callback: () => {
+                const i = this.model.tags.findIndex(el => el === tag.id)
+                if (i > -1)
+                  this.model.tags.splice(i, 1)
+              },
+            },
+          }))
+        )
+
+        return tags
       },
     },
     watch: {

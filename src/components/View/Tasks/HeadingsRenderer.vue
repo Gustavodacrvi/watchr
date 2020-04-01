@@ -51,6 +51,9 @@
           :headingFilterFunction='h.filterFunction'
           :headingFallbackItem='h.fallbackItem'
           :disableCalendarStr='h.disableCalendarStr'
+          :itemModelFallback='{
+            ...itemModelFallback, ...(h.itemModelFallback || {}),
+          }'
           :disableDeadlineStr='h.disableDeadlineStr'
           :allowLogStr='h.logStr'
           :disableSortableMount='h.disableSortableMount'
@@ -92,7 +95,7 @@ export default {
     ListRenderer: () => import('./ListRenderer.vue'),
   },
   props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
-  , 'justAddedHeading', 'showingRuler',
+  , 'justAddedHeading', 'showingRuler', 'itemModelFallback',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {

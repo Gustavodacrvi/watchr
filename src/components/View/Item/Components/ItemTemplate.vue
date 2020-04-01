@@ -26,6 +26,7 @@
           :isEditing='isEditing'
           :itemHeight='itemHeight'
           :editComponent='editComponent'
+          :itemModelFallback='itemModelFallback'
           :editRawPlaceholder='editRawPlaceholder'
 
           @toggle-complete='toggleComplete'
@@ -94,7 +95,7 @@ export default {
     'itemHeight', 'item', 'editRawPlaceholder',
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
     'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
-    'editComponent',
+    'editComponent', 'itemModelFallback',
 
     'options',
   ],

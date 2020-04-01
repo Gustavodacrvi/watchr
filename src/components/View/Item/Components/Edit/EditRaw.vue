@@ -36,6 +36,7 @@
             ref='comp'
             v-model="model"
             :item='item'
+            :itemModelFallback='itemModelFallback'
             :firstFieldOptions='options'
             
             @icon-color='v => iconColor = v'
@@ -60,7 +61,7 @@ export default {
   components: {
     Task, DropInput,
   },
-  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item'],
+  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item', 'itemModelFallback'],
   data() {
     return {
       model: this.name,
