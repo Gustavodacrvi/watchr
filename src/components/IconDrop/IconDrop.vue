@@ -52,6 +52,7 @@
 import ListIcons from './ListIcons.vue'
 import InfoList from './InfoList.vue'
 import ColorPicker from './ColorPicker.vue'
+import DurationPicker from './Calendar/DurationPicker.vue'
 import CalendarPicker from './Calendar.vue'
 import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
 import TimePicker from './Calendar/TimePicker.vue'
@@ -65,7 +66,7 @@ export default {
     ListIcons, CalendarPicker,
     TimePicker, RepeatPicker,
     Confirm, ColorPicker,
-    InfoList,
+    InfoList, DurationPicker,
   },
   data() {
     return {

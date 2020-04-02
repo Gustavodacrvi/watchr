@@ -53,6 +53,7 @@ export default {
   font-size: 1.1em;
   display: flex;
   align-items: center;
+  white-space: nowrap;
   transition-duration: .2s;;
 }
 

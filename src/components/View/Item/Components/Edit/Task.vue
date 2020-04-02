@@ -355,6 +355,19 @@ export default EditBuilder({
             callback: model => model.taskDuration = null,
           },
           {
+            id: 'select_date',
+            name: 'Select duration',
+            icon: 'duration',
+            callback: model => {
+              this.$store.commit('pushIconDrop', {
+                comp: 'DurationPicker',
+                content: {
+                  callback: console.log,
+                },
+              })
+            },
+          },
+          {
             id: '5min',
             name: '5 minutes',
             icon: 'duration',

@@ -124,7 +124,7 @@ export default {
         s.transitionDuration = 0
         s.boxShadow = '0 0 0 transparent'
         s.backgroundColor = 'var(--light-gray)'
-
+        s.overflow = 'hidden'
   
         s.height = this.itemHeight + 'px'
   
@@ -137,6 +137,7 @@ export default {
   
           setTimeout(() => {
             s.height = 'auto'
+            s.overflow = 'unset'
             this.beginTransition = false
             done()
           }, 200)
