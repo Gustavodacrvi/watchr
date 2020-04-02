@@ -67,6 +67,8 @@ const getMoveToListOptions = function() {
           this.model.heading = null
           this.model.folder = null
           this.model.assigned = null
+          if (el.group)
+            this.cursorPos++
           this.model.group = null
         },
       }))
@@ -102,6 +104,7 @@ const getMoveToListOptions = function() {
           this.model.folder = null
           this.model.assigned = null
           this.model.group = el.id
+          this.cursorPos++
         },
       }))
     },
