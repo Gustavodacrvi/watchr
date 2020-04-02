@@ -66,6 +66,7 @@ const getMoveToListOptions = function() {
           this.model.list = el.id
           this.model.heading = null
           this.model.folder = null
+          this.model.assigned = null
           this.model.group = null
         },
       }))
@@ -82,6 +83,7 @@ const getMoveToListOptions = function() {
           this.model.list = null
           this.model.heading = null
           this.model.folder = el.id
+          this.model.assigned = null
           this.model.group = null
         },
       }))
@@ -98,6 +100,7 @@ const getMoveToListOptions = function() {
           this.model.list = null
           this.model.heading = null
           this.model.folder = null
+          this.model.assigned = null
           this.model.group = el.id
         },
       }))
@@ -235,6 +238,7 @@ export default EditBuilder({
         model: {
           name: '',
           priority: '',
+          assigned: '',
           taskDuration: '',
           deadline: '',
           folder: '',
@@ -416,7 +420,7 @@ export default EditBuilder({
             },
           })
 
-        if (!this.isInList)
+        if (!this.isInAtLeastOneList)
           arr.unshift({
             id: 'lists',
             props: {
@@ -428,19 +432,53 @@ export default EditBuilder({
               list: getMoveToListOptions.apply(this),
             },
           })
+
+        const listObj = this.getListObj
+
+        if (!this.model.assigned && listObj && (listObj.group || this.model.group)) {
+          
+          arr.unshift({
+            id: 'fdjkasçlasdf',
+            props: {
+              placeholder: 'Assign to...',
+              icon: 'plus',
+              listWidth: '180px',
+              color: '',
+              trigger: 'enter',
+              list: this.getAssigneeIconDropLinks,
+            },
+          })
+        }
         
         return arr
       },
-      isInList() {
+      getAssignedName() {
+        const iconDropObj = this.getAssignees
+        if (iconDropObj)
+          return iconDropObj.links.find(el => el.id === this.model.assigned).name
+      },
+      getAssigneeIconDropLinks() {
+        const iconDropObj = this.getAssignees
+        if (iconDropObj)
+          return iconDropObj.links.map(el => ({
+                ...el,
+                callback: () => {
+                  if (el.name === "Remove assignee")
+                    this.model.assigned = null
+                  else this.model.assigned = el.id
+                }
+              }))
+      },
+      isInAtLeastOneList() {
         return this.model.list || this.model.folder || this.model.group
       },
-      getListName() {
+      getListObj() {
         if (this.model.list)
-          return this.getListsById([this.model.list])[0].name
+          return this.getListsById([this.model.list])[0]
         if (this.model.folder)
-          return this.getFoldersById([this.model.folder])[0].name
+          return this.getFoldersById([this.model.folder])[0]
         if (this.model.group)
-          return this.getGroupsById([this.model.group])[0].name
+          return this.getGroupsById([this.model.group])[0]
       },
       getListIcon() {
         if (this.model.list)
@@ -451,6 +489,9 @@ export default EditBuilder({
           return 'folder'
       },
       getListColor() {
+        const obj = this.getListObj
+        if (obj && obj.color)
+          return obj.color
         if (this.model.list)
           return 'var(--primary)'
       },
@@ -488,6 +529,18 @@ export default EditBuilder({
             },
           }))
       },
+      getAssignees() {
+        let group
+        const listObj = this.getListObj
+
+        if (this.model.group)
+          group = this.model.group
+        else if (listObj.group)
+          group = listObj.group
+
+        if (group)
+          return this.getAssigneeIconDrop({group})
+      },
       getViewTags() {
         const tags = []
 
@@ -498,23 +551,37 @@ export default EditBuilder({
             id: 'deadline',
             props: {
               name: utils.getHumanReadableDate(this.model.deadline),
-              icon: 'deadline',
+              icon: 'Deadline...',
               color: 'var(--orange)',
               trigger: 'enter',
               list: deadlineIconOptions,
             },
           })
 
-        if (this.isInList)
+        const listObj = this.getListObj
+
+        if (this.isInAtLeastOneList && listObj)
           tags.push({
             id: 'lists_tag',
             props: {
-              name: this.getListName,
+              name: listObj.name,
               icon: this.getListIcon,
               listWidth: '180px',
               color: this.getListColor,
               trigger: 'enter',
               list: getMoveToListOptions.apply(this),
+            },
+          })
+
+        if (this.model.assigned)
+          tags.push({
+            id: 'assigned',
+            props: {
+              name: this.getAssignedName,
+              icon: 'user',
+              listWidth: '180px',
+              trigger: 'enter',
+              list: this.getAssigneeIconDropLinks,
             },
           })
         
@@ -543,12 +610,14 @@ export default EditBuilder({
           this.model.list = list.id
           this.model.group = list.group
           this.model.folder = ''
+          this.model.assigned = null
         })
         match('$', this.folders, folder => {
           this.model.folder = f.id
           this.model.list = ''
           this.model.group = ''
           this.model.heading = ''
+          this.model.assigned = null
           this.model.headingId = ''
         })
         match('%', this.groups, group => {
@@ -556,6 +625,7 @@ export default EditBuilder({
           this.model.list = ''
           this.model.group = f.id
           this.model.heading = ''
+          this.model.assigned = null
           this.model.headingId = ''
         })
 

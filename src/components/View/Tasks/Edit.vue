@@ -191,40 +191,6 @@
                 :center='true'
               />
               <IconDrop
-                handle="tasks"
-                width="18px"
-                :box='true'
-                :options="listOptions"
-                :active='isIcon(10)'
-                ref='tasks'
-               
-                handleColor='var(--primary)'
-                title='Add to list'
-                :center='true'
-              />
-              <IconDrop
-                handle="folder"
-                width="19px"
-                :box='true'
-                :options="folderOptions"
-                :active='isIcon(9)'
-                ref='folder'
-               
-                title='Add to folder'
-                :center='true'
-              />
-              <IconDrop
-                handle="group"
-                width="19px"
-                :box='true'
-                :options="groupOptions"
-                :active='isIcon(8)'
-                ref='group'
-               
-                title='Add to group'
-                :center='true'
-              />
-              <IconDrop
                 handle="calendar"
                 width="18px"
                 :box='true'

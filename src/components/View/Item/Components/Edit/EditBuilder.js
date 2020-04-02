@@ -318,6 +318,7 @@ export default ({
       getListsById: 'list/getListsById',
       getFoldersById: 'folder/getFoldersById',
       getGroupsById: 'group/getGroupsById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
 
       isRecurringTask: 'task/isRecurringTask',
     }),
