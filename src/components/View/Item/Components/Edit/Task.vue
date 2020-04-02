@@ -346,6 +346,65 @@ export default EditBuilder({
           },
         ]
       },
+      durationList() {
+        return [
+          {
+            id: 'no_duration_clock',
+            name: 'No duration',
+            icon: 'bloqued',
+            callback: model => model.taskDuration = null,
+          },
+          {
+            id: '5min',
+            name: '5 minutes',
+            icon: 'duration',
+            color: 'var(--purple)',
+            callback: model => model.taskDuration = '00:05',
+          },
+          {
+            id: '10min',
+            name: '10 minutes',
+            icon: 'duration',
+            color: 'var(--purple)',
+            callback: model => model.taskDuration = '00:10',
+          },
+          {
+            id: '15min',
+            name: '15 minutes',
+            icon: 'duration',
+            color: 'var(--purple)',
+            callback: model => model.taskDuration = '00:15',
+          },
+          {
+            id: '20min',
+            name: '20 minutes',
+            icon: 'duration',
+            color: 'var(--purple)',
+            callback: model => model.taskDuration = '00:20',
+          },
+          {
+            id: '30min',
+            name: '30 minutes',
+            icon: 'duration',
+            color: 'var(--purple)',
+            callback: model => model.taskDuration = '00:30',
+          },
+          {
+            id: '1 hour',
+            name: '1 hour',
+            icon: 'duration',
+            color: 'var(--purple)',
+            callback: model => model.taskDuration = '01:00',
+          },
+          {
+            id: '2 hour',
+            name: '2 hour',
+            icon: 'duration',
+            color: 'var(--purple)',
+            callback: model => model.taskDuration = '02:00',
+          },
+        ]
+      },
       rightSmartIconDrops() {
         const arr = [
           {
@@ -413,6 +472,18 @@ export default EditBuilder({
             },
           },
         ]
+
+        if (!this.model.taskDuration)
+          arr.unshift({
+            id: 'duration_clock',
+            props: {
+              placeholder: 'Duration...',
+              icon: 'duration',
+              color: 'var(--purple)',
+              trigger: 'enter',
+              list: this.durationList,
+            },
+          })
 
         if (!this.model.deadline)
           arr.unshift({
@@ -585,6 +656,11 @@ export default EditBuilder({
         if (group)
           return this.getAssigneeIconDrop({group})
       },
+      durationStr() {
+        if (this.model.taskDuration)
+          return 'Takes ' + utils.formatQuantity(this.model.taskDuration)
+        return null
+      },
       getViewTags() {
         const tags = []
 
@@ -639,6 +715,18 @@ export default EditBuilder({
               color: 'var(--primary)',
               trigger: 'enter',
               list: this.listHeadings,
+            },
+          })
+
+        if (this.model.taskDuration)
+          tags.push({
+            id: 'duration_clock',
+            props: {
+              name: this.durationStr,
+              icon: 'duration',
+              color: 'var(--purple)',
+              trigger: 'enter',
+              list: this.durationList,
             },
           })
         
