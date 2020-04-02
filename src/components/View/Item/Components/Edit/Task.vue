@@ -405,6 +405,30 @@ export default EditBuilder({
           },
         ]
       },
+      composeDurationList() {
+        return (list, search) => {
+          if (!search)
+            return list
+
+          const duration = utils.matchDuration(search)
+
+          const arr = [
+            ...list.filter(el => el.name.toLowerCase().includes(search.toLowerCase())),
+          ]
+
+          if (duration)
+            arr.unshift({
+              id: 'hour_obj',
+              name: utils.formatQuantity(duration),
+              icon: 'duration',
+              color: 'var(--purple)',
+              trigger: 'enter',
+              callback: () => this.model.taskDuration = duration
+            })
+
+          return arr
+        }
+      },
       rightSmartIconDrops() {
         const arr = [
           {
@@ -481,6 +505,7 @@ export default EditBuilder({
               icon: 'duration',
               color: 'var(--purple)',
               trigger: 'enter',
+              compose: this.composeDurationList,
               list: this.durationList,
             },
           })
@@ -489,7 +514,7 @@ export default EditBuilder({
           arr.unshift({
             id: 'deadline',
             props: {
-              placeholder: 'deadline',
+              placeholder: 'Deadline...',
               icon: 'deadline',
               color: 'var(--orange)',
               trigger: 'enter',
@@ -671,7 +696,7 @@ export default EditBuilder({
             id: 'deadline',
             props: {
               name: utils.getHumanReadableDate(this.model.deadline),
-              icon: 'Deadline...',
+              icon: 'deadline',
               color: 'var(--orange)',
               trigger: 'enter',
               list: deadlineIconOptions,
@@ -726,6 +751,7 @@ export default EditBuilder({
               icon: 'duration',
               color: 'var(--purple)',
               trigger: 'enter',
+              compose: this.composeDurationList,
               list: this.durationList,
             },
           })

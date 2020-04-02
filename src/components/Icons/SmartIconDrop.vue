@@ -84,7 +84,7 @@
 <script>
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose'],
   data() {
     return {
       focus: false,
@@ -312,11 +312,20 @@ export default {
       } else if (key === 'Enter' && this.activeListElement) {
         this.select(this.searchFiltered.find(el => el.id === this.activeListElement))
       } else if (key === 'Escape' || key === 'ArrowRight' || key === 'ArrowLeft') {
-        if (key === "Escape") evt.stopPropagation()
-        if (this.tagMode && this.currentList === this.list)
-          this.tagModeToggle = !this.tagModeToggle
-        else
-          this.switchLists()
+
+        let stop
+        
+        if (key === "Escape" || ((key === 'ArrowRight' || key === 'ArrowLeft') && this.model.length > 0)) {
+          stop = true
+          evt.stopPropagation()
+        }
+
+        if (!stop) {
+          if (this.tagMode && this.currentList === this.list)
+            this.tagModeToggle = !this.tagModeToggle
+          else
+            this.switchLists()
+        }
       }
     },
     select(option) {
@@ -411,7 +420,7 @@ export default {
     searchFiltered() {
       if (!this.currentList)
         return []
-      return this.currentList.filter(el => el.name.toLowerCase().includes(this.model.toLowerCase()))
+      return this.compose ? this.compose(this.currentList, this.model) : this.currentList.filter(el => el.name.toLowerCase().includes(this.model.toLowerCase()))
     },
     isShowingList() {
       return (this.isActive && this.currentList && !this.tagMode) || (this.tagMode && this.tagModeToggle)

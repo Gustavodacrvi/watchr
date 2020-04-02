@@ -813,6 +813,32 @@ export default {
 
     return {calendar: cal, matches}
   },
+  matchDuration(search) {
+    const getMatch = (regex, format) => {
+      let match = search.match(regex)
+      const getNum = str => parseInt(str, 10)
+      
+      if (match) {
+        
+        match = getNum(match)
+  
+        if (!mom(match, format).isValid())
+          return '00'
+      } else return '00'
+      return getNum(match)
+    }
+
+    const hourMatch = getMatch(/(\d)(\d)?( )?(hour|h)/gi, 'HH')
+    const minMatch = getMatch(/(\d)(\d)?( )?(minute|min|m)/gi, 'mm')
+
+    const time = mom(
+      `${hourMatch}:${minMatch}`, 'HH:mm'
+    )
+
+    if (((hourMatch !== '00') || (minMatch !== '00')) && time.isValid())
+      return time.format('HH:mm')
+    return null
+  },
   parseHTMLStr(str) {
     const escapeHTML = str => {
       let div = document.createElement("div")
