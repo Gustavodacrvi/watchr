@@ -30,6 +30,7 @@ import plus from '@/assets/icons/plus.svg'
 import circleCheck from '@/assets/icons/circle-check.svg'
 import globe from '@/assets/icons/globe.svg'
 import heading from '@/assets/icons/heading.svg'
+import headingSlash from '@/assets/icons/heading-slash.svg'
 import envelope from '@/assets/icons/envelope.svg'
 import search from '@/assets/icons/search.svg'
 import note from '@/assets/icons/note.svg'
@@ -87,6 +88,7 @@ const icons = {
   comment, logbook, moon, tint, duration,
   next,
   "later-lists": laterLists,
+  "heading-slash": headingSlash,
   "logged-lists": loggedLists,
   "faded-logged-lists": fadedLoggedLists,
   "paper-plane": paperPlane,

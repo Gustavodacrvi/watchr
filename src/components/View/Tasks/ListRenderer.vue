@@ -32,9 +32,10 @@
         >
 
         </div>
-        <component v-else-if="!item.isEdit" :is='comp' :key="item.id" 
+        <component v-else-if="!item.isEdit" :is='comp'
           v-bind="$props"
           :ref='item.id'
+          :key="item.id"
 
           :itemHeight='itemHeight'
           :item='item'
@@ -59,7 +60,7 @@
         />
         <component v-else-if="item.isEdit === 'Edit'"
           :is='editComp'
-          :key="item.isEdit"
+          :key="item.isEdit + 'component eidt'"
 
           v-bind='item.propsData'
           :focusToggle='focusToggle'
@@ -74,7 +75,7 @@
         />
         <EditComp v-else
           :heading='true'
-          :key="item.isEdit"
+          :key="item.isEdit + 'editComp'"
 
           v-bind='item.propsData'
 

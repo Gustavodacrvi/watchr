@@ -63,6 +63,7 @@ export default ({
             active: currentNumber === this.cursorPos,
           },
           ref: el.id,
+          key: el.id,
   
           on: {
             trigger: getModel => {

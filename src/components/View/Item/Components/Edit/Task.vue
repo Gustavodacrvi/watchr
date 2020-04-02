@@ -67,8 +67,10 @@ const getMoveToListOptions = function() {
           this.model.heading = null
           this.model.folder = null
           this.model.assigned = null
-          if (el.group)
-            this.cursorPos++
+          this.$nextTick(() => {
+            if (el.group)
+              this.cursorPos++
+          })
           this.model.group = null
         },
       }))
@@ -104,7 +106,9 @@ const getMoveToListOptions = function() {
           this.model.folder = null
           this.model.assigned = null
           this.model.group = el.id
-          this.cursorPos++
+          this.$nextTick(() => {
+            this.cursorPos++
+          })
         },
       }))
     },
@@ -250,7 +254,6 @@ export default EditBuilder({
           notes: '',
           calendar: null,
           heading: null,
-          headingId: null,
           tags: [],
           checklist: [],
           order: [],
@@ -438,8 +441,7 @@ export default EditBuilder({
 
         const listObj = this.getListObj
 
-        if (!this.model.assigned && listObj && (listObj.group || this.model.group)) {
-          
+        if (!this.model.assigned && listObj && (listObj.group || this.model.group))
           arr.unshift({
             id: 'fdjkasçlasdf',
             props: {
@@ -451,7 +453,19 @@ export default EditBuilder({
               list: this.getAssigneeIconDropLinks,
             },
           })
-        }
+        
+        if (!this.model.heading && listObj && listObj.headings && listObj.headings.length > 0)
+          arr.unshift({
+            id: 'headingsd_id',
+            props: {
+              placeholder: 'Heading...',
+              icon: 'heading',
+              listWidth: '180px',
+              color: 'var(--primary)',
+              trigger: 'enter',
+              list: this.listHeadings,
+            },
+          })
         
         return arr
       },
@@ -459,6 +473,33 @@ export default EditBuilder({
         const iconDropObj = this.getAssignees
         if (iconDropObj)
           return iconDropObj.links.find(el => el.id === this.model.assigned).name
+      },
+      getListHeadingName() {
+        const listObj = this.getListObj
+
+        if (this.model.heading && listObj && listObj.headings && listObj.headings.length > 0)
+          return listObj.headings.find(el => el.id === this.model.heading).name
+      },
+      listHeadings() {
+        const listObj = this.getListObj
+
+        if (listObj)
+          return [
+            {
+              id: 'no_heading',
+              name: 'No heading',
+              icon: 'heading-slash',
+              trigger: 'enter',
+              callback: () => this.model.heading = null
+            },
+            ...listObj.headings.map(h => ({
+              id: h.id,
+              name: h.name,
+              icon: 'heading',
+              trigger: 'enter',
+              callback: () => this.model.heading = h.id
+            }))
+          ]
       },
       getAssigneeIconDropLinks() {
         const iconDropObj = this.getAssignees
@@ -585,6 +626,19 @@ export default EditBuilder({
               listWidth: '180px',
               trigger: 'enter',
               list: this.getAssigneeIconDropLinks,
+            },
+          })
+
+        if (this.model.heading && listObj && listObj.headings && listObj.headings.length > 0)
+          tags.push({
+            id: 'headingsd_id',
+            props: {
+              name: this.getListHeadingName,
+              icon: 'heading',
+              listWidth: '180px',
+              color: 'var(--primary)',
+              trigger: 'enter',
+              list: this.listHeadings,
             },
           })
         
