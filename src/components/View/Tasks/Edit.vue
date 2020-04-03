@@ -707,10 +707,6 @@ export default {
             for (const s of this.toReplace)
               if (!this.fromIconDrop && s)
                 n = n.replace(new RegExp(s), '')
-          const i = n.indexOf(' $')
-          if (i && i > -1 && t.calendar) {
-            n = n.substr(0, i)
-          }
           let heading = t.headingId
           let calendar = t.calendar
           if (heading === undefined) heading = null

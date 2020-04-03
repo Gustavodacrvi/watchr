@@ -38,7 +38,7 @@ export default {
     circleColor() {
       if (!this.priority) return ''
       const obj = {
-        'Low priority': 'var(--green)',
+        'Low priority': 'var(--primary)',
         'Medium priority': 'var(--yellow)',
         'High priority': 'var(--red)',
       }

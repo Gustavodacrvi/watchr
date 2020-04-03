@@ -126,7 +126,6 @@ const getMoveToListOptions = function() {
   ]
 }
 
-
 export default EditBuilder({
   value: (v, vm) => vm.model.name = v,
   saveByShortcut,
@@ -168,11 +167,13 @@ export default EditBuilder({
     order: 'order', // this.model[option]
   }, // requires removeSubtask, saveChecklist, addSubtask, isRecurringItem methods
   allowFiles: {
-    storageFolder: 'tasks',
+    storageFolder: 'tasks', // requires file handle on firestore function
   },
   instance: {
     data() {
       return {
+        toReplace: [],
+        fromIconDrop: false,
         model: {
           name: '',
           priority: '',
@@ -195,11 +196,42 @@ export default EditBuilder({
     created() {
       if (this.item.calendar)
         this.fromDefaultItem = true
-    },
-    beforeSave(model) {
 
+      if (this.item.tags)
+        this.model.tags = this.item.tags.slice()
+      if (this.item.checklist)
+        this.model.checklist = this.item.checklist.slice()
+      if (this.item.order)
+        this.model.order = this.item.order.slice()
     },
     methods: {
+      beforeSave(model) {
+        const m = model
+        
+        if (m.name) {
+          if (m.group)
+            m.tags = []
+
+          let n = m.name
+          if (this.toReplace)
+            for (const s of this.toReplace)
+              if (!this.fromIconDrop && s)
+                n = n.replace(new RegExp(s), '')
+
+          return {
+            ...m,
+            name: m.name.trim(),
+            notes: m.notes.trim(),
+          }
+        }
+      },
+      afterSave(model) {
+        model.checklist = []
+        model.notes = ''
+        model.name = ''
+        model.order = []
+      },
+      
       parseKeyword(str) {
         const res = utils.calendarObjNaturalCalendarInput(str, this.userInfo.disablePmFormat)
         return res ? res.calendar : null
@@ -231,11 +263,11 @@ export default EditBuilder({
         this.saveChecklist()
       },
 
-      addModelTag(name) {
+      addModelTag(id) {
         if (!this.model.tags)
           this.model.tags = []
-        if (!this.model.tags.some(e => e === name))
-          this.model.tags.push(name)
+        if (!this.model.tags.some(e => e === id))
+          this.model.tags.push(id)
       },
     },
     computed: {
@@ -443,7 +475,6 @@ export default EditBuilder({
               name: utils.formatQuantity(duration),
               icon: 'duration',
               listWidth: '225px',
-              color: 'var(--purple)',
               trigger: 'enter',
               callback: () => this.model.taskDuration = duration
             })
@@ -603,7 +634,10 @@ export default EditBuilder({
               ],
             },
           },
-          {
+        ]
+
+        if (!this.model.group)
+          arr.push({
             id: 'tag',
             props: {
               placeholder: 'Tags...',
@@ -627,8 +661,7 @@ export default EditBuilder({
                 },
               })),
             },
-          },
-        ]
+          },)
 
         if (!this.model.taskDuration)
           arr.unshift({
@@ -907,7 +940,7 @@ export default EditBuilder({
             },
           })
         
-        return tags.concat(this.getTagsLabels)
+        return tags.concat(this.model.group ? [] : this.getTagsLabels)
       },
     },
     watch: {
@@ -919,7 +952,11 @@ export default EditBuilder({
         const send = arr => this.$emit('set-first-field-options', arr) // Show options array dropdown
         // this.currentPrefix - Used when selecting an options array element
 
-        const match = (prefix, arr, onFind) => this.match(n, prefix, arr, onFind)
+        const match = (prefix, arr, onFind) => {
+          const didChange = this.match(n, prefix, arr, onFind)
+          if (didChange)
+            changedOptions = true
+        }
 
         const { priority, str } = taskUtils.parsePriorityFromString(n)
         if (priority !== null) {
@@ -927,7 +964,7 @@ export default EditBuilder({
           this.model.priority = priority
         }
 
-        match('#', this.tags, tag => this.addModelTag(tag.name))
+        match('#', this.tags, tag => this.addModelTag(tag.id))
         match('@', this.lists, list => {
           this.model.list = list.id
           this.model.group = list.group
@@ -935,20 +972,18 @@ export default EditBuilder({
           this.model.assigned = null
         })
         match('$', this.folders, folder => {
-          this.model.folder = f.id
+          this.model.folder = folder.id
           this.model.list = ''
           this.model.group = ''
           this.model.heading = ''
           this.model.assigned = null
-          this.model.headingId = ''
         })
         match('%', this.groups, group => {
           this.model.folder = ''
           this.model.list = ''
-          this.model.group = f.id
+          this.model.group = group.id
           this.model.heading = ''
           this.model.assigned = null
-          this.model.headingId = ''
         })
 
         if (!this.isFirstEdit) {
@@ -971,7 +1006,7 @@ export default EditBuilder({
       'model.priority'() {
         const obj = {
           "High priority": "var(--red)",
-          "Medium priority": "var(--orange)",
+          "Medium priority": "var(--yellow)",
           "Low priority": "var(--primary)",
         }
         this.$emit('icon-color', obj[this.model.priority] || '')

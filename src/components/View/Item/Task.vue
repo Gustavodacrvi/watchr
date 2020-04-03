@@ -20,6 +20,7 @@
     @uncomplete-item='unCompleteItem'
 
     @cancel-item='cancelItem'
+    @save='save'
     @uncancel-item='unCancelItem'
   >
     <template v-slot:check-icon="props">
@@ -73,6 +74,7 @@
       <Info v-show="hasAtLeastOne"
         :isToday='isToday'
         :isTomorrow='isTomorrow'
+        :evening='item.calendar && item.evening'
 
         :calendarStr='calendarStr'
         :isRepeatingTask='isRepeatingTask'
@@ -125,6 +127,11 @@ export default {
     CheckIcon, TimelineElement,
   },
   methods: {
+    save(obj) {
+      if (this.item)
+        this.saveTaskContent(obj)
+      else this.$emit('save', obj)
+    },
     copyItem() {
       this.$store.dispatch('task/copyTask', this.item)
     },

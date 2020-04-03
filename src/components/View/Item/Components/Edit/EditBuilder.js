@@ -30,6 +30,7 @@ export default ({
       cursorPos: 0,
       isFirstEdit: true,
       isAddingChecklist: false,
+      savingItem: false,
       
       ...(instance.data ? instance.data() : {}),
     }
@@ -103,6 +104,7 @@ export default ({
             key: el.id,
 
             domProps: {
+              enterOnShift: true,
               value: this.model[el.vModel],
               options: el.options ? this[el.options] : [],
             },
@@ -110,6 +112,7 @@ export default ({
               input(event) {
                 this.$emit('input', event.target.value)
               },
+              enter: this.save,
               cancel: () => this.$parent.$emit('close'),
             },
             nativeOn: {
@@ -206,6 +209,9 @@ export default ({
               tagMode: true,
               active: currentNumber === this.cursorPos,
             },
+            nativeOn: {
+              click: () => this.cursorPos = currentNumber
+            }
           })
         })
       )  
@@ -220,6 +226,42 @@ export default ({
     }, editChildren)
   },
   methods: {
+    save() {
+      const model = this.beforeSave(this.model, this)
+      if (model) {
+        if (allowFiles && allowFiles.storageFolder && this.isEditingFiles && this.addedFiles.length > 0)
+          this.savingItem = true
+
+        const obj = model
+
+        if (allowFiles && allowFiles.storageFolder) {
+          obj.files = this.getSaveFilePromise || []
+          obj.handleFiles = this.isEditingFiles ? itemId => {
+            return new Promise((solve, reject) => {
+              this.saveFiles(this.getFilesToRemove, this.addedFiles, itemId, allowFiles.storageFolder)
+              .then(() => {
+                this.files = []
+                this.addedFiles = []
+                solve()
+              })
+              .catch(() => {
+                this.$store.commit('pushToast', {
+                  name: 'An error occurred while editing files.',
+                  seconds: 4,
+                  type: 'error',
+                })
+                reject()
+              })
+            })
+          } : null
+        }
+          
+        this.$emit('save', obj)
+
+        this.afterSave(this.model)
+      }
+    },
+    
     updateIds(ids) {
       this.model[checklist.order] = ids
       this.saveChecklist()
@@ -345,11 +387,12 @@ export default ({
         this.currentPrefix = prefix
         const word = lastWord.substr(1)
 
-        send(
+        this.$emit('set-first-field-options',
           arr.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
         )
-        changedOptions = true
+        return true
       }
+      return false
     },
     focusName() {
       this.$emit('focus-on-field')

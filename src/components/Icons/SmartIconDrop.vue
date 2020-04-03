@@ -40,6 +40,8 @@
               :style="{width: tagModeWidth}"
 
               @keydown="keydown"
+              @blur='focus = false'
+              @focus='focus = true'
             />
             <span v-else ref="tag-mode-name">
               {{ name }}
@@ -212,11 +214,17 @@ export default {
           break
         }
 
+      const clickedInSmartIcon = () => {
+        for (const node of path)
+          if (node && node.classList && node.classList.contains('SmartIconDrop'))
+            return true
+      }
+
       if (!found) {
         if (this.tagMode)
           this.tagModeToggle = false
-        else if (this.active)
-          this.$parent.resetCursor()
+        else if (this.active && !clickedInSmartIcon())
+          this.$refs.input.focus()
       }
       
     },
@@ -466,8 +474,9 @@ export default {
     active() {
       if (this.active && !this.tagMode) {
         this.focusOnNextTick()
-      } else if (!this.active && this.focus && this.$refs.input)
+      } else if (!this.active && this.focus && this.$refs.input) {
         this.$refs.input.blur()
+      }
     },
     isActive(val) {
       this.model = ''

@@ -965,9 +965,8 @@ export default {
 
         const index = targetIndex || this.getListRendererPosition()
 
-        if (shouldRender) {
+        if (shouldRender)
           this.lazyItems.splice(index, 0, t)
-        }
         this.addedItem = t.id
 
         this.addItem({

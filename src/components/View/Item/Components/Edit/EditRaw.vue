@@ -26,6 +26,7 @@
               :options='options'
 
               @click.native='fixCursor'
+              @enter='save'
               @select='select'
               @cancel='$emit("close")'
             />
@@ -38,6 +39,8 @@
             :item='item'
             :itemModelFallback='itemModelFallback'
             :firstFieldOptions='options'
+            
+            @save='obj => $emit("save", obj)'
             
             @icon-color='v => iconColor = v'
             @focus-on-field='focus'
@@ -75,13 +78,19 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => this.showCont = true, 175)
+    setTimeout(() => {
+      this.showCont = true
+      this.$nextTick(() => this.focus())
+    }, 200)
     window.addEventListener('click', this.windowClick)
   },
   beforeDestroy() {
     window.addEventListener('click', this.windowClick)
   },
   methods: {
+    save() {
+      this.$refs.comp.save()
+    },
     fixCursor() {
       this.$refs.comp.cursorPos = 0
     },
@@ -231,9 +240,6 @@ export default {
   height: 100%;
   width: 35px;
   flex-grow: 0;
-}
-
-.icon-wrapper.noColor {
   opacity: .4;
 }
 

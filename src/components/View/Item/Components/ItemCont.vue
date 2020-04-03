@@ -8,6 +8,7 @@
       :editComponent='editComponent'
       :itemModelFallback='itemModelFallback'
       :doneTransition='completeEditLeaveEvent'
+      @save='obj => $emit("save", obj)'
 
       @close="close"
     >
@@ -101,7 +102,7 @@ export default {
         setTimeout(() => {
           this.showingCont = false
           this.transitioning = false
-        }, 200)
+        }, 250)
       } else {
         this.completeEditLeave = false
         this.transitioning = true

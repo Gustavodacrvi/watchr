@@ -63,7 +63,7 @@ export default {
   },
   mounted() {
     if (this.focus)
-      this.focusInput(200)
+      this.focusInput(10)
   },
   methods: {
     onpaste(...args) {

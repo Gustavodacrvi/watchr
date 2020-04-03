@@ -36,6 +36,12 @@ export default {
         icon: 'deadline',
         color: 'var(--red)',
       }))
+    if (p.evening)
+      c.push(get({
+        name: '',
+        icon: 'moon',
+        color: 'var(--dark-purple)',
+      }))
     if (p.calendarStr && !p.isToday && !p.isTomorrow)
       c.push(get({
         name: p.calendarStr,
@@ -79,7 +85,7 @@ export default {
   props: [
     'isToday', 'isTomorrow', 'isRepeatingTask', 'calendarStr', 'deadlineStr',
     'timeStr', 'hasTags', 'tagNames', 'hasFiles', 'taskDuration', 'listObj',
-    'folderObj', 'groupObj', 'nextCalendarEvent'
+    'folderObj', 'groupObj', 'nextCalendarEvent', 'evening',
   ]
 }
 

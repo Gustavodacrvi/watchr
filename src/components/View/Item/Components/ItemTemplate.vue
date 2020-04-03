@@ -30,6 +30,7 @@
           :editRawPlaceholder='editRawPlaceholder'
 
           @toggle-complete='toggleComplete'
+          @save='save'
           @toggle-cancel='toggleCancel'
           @close="close"
         >
@@ -117,6 +118,10 @@ export default {
   methods: {
     ...mapMutations(['saveMainSelection']),
     
+    save(obj) {
+      this.$emit('save', obj)
+      this.isEditing = false
+    },
     click(evt) {
       if (!this.isSelecting && this.isDesktopDevice && !this.isEditing) {
         this.isEditing = true
