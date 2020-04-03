@@ -81,7 +81,7 @@
         @calc='$emit("calc")'
       />
       <div class="buttons">
-        <ButtonInput
+        <ButtonInput v-if="!noTime"
           :value='getTime ? getTime : "Add time"'
           icon='clock'
           :defaultColor='getTime ? "var(--purple)" : ""'

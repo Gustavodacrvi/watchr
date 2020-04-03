@@ -127,30 +127,6 @@ const getMoveToListOptions = function() {
 }
 
 
-const deadlineIconOptions = [
-  {
-    id: 'tod',
-    name: 'Today',
-    icon: 'star',
-    color: 'var(--yellow)',
-    callback: model => model.deadline = TOD_STR,
-  },
-  {
-    id: 'to',
-    name: 'Tomorrow',
-    icon: 'sun',
-    color: 'var(--orange)',
-    callback: model => model.deadline = TOD.clone().add(1, 'd').format('Y-M-D')
-  },
-  {
-    id: 'o',
-    name: 'No deadline',
-    icon: 'bloqued',
-    color: 'var(--txt)',
-    callback: model => model.deadline = null
-  },
-]
-
 export default EditBuilder({
   value: (v, vm) => vm.model.name = v,
   saveByShortcut,
@@ -393,6 +369,23 @@ export default EditBuilder({
           },
         ]
       },
+      deadlineListComposer() {
+        return (list, search) => {
+          if (!search)
+            return list
+          
+          let arr = list.filter(el => el.name.toLowerCase().includes(search.toLowerCase()), this.userInfo.disablePmFormat)
+
+          const helperList = utils.matchCalendarHelperList(search, true)
+
+          arr = [...arr, ...helperList.map(el => ({
+            ...el,
+            callback: () => this.model.deadline = this.parseKeyword(' ' + el.name).specific,
+          }))]
+
+          return arr
+        }
+      },
       composeCalendarListHelper() {
         return (list, search) => {
           if (!search)
@@ -441,6 +434,51 @@ export default EditBuilder({
 
           return arr
         }
+      },
+      deadlineIconOptions() {
+        return [
+          {
+            id: 'o',
+            name: 'No deadline',
+            icon: 'bloqued',
+            color: 'var(--txt)',
+            callback: model => model.deadline = null
+          },
+          {
+            id: 'tod',
+            name: 'Today',
+            icon: 'star',
+            color: 'var(--yellow)',
+            callback: model => model.deadline = TOD_STR,
+          },
+          {
+            id: 'to',
+            name: 'Tomorrow',
+            icon: 'sun',
+            color: 'var(--orange)',
+            callback: model => model.deadline = TOD.clone().add(1, 'd').format('Y-M-D')
+          },
+          {
+            id: 'select_date',
+            name: 'Select date',
+            icon: 'calendar',
+            color: 'var(--green)',
+            callback: () => {
+              this.$store.commit('pushIconDrop', {
+                comp: 'CalendarPicker',
+                content: {
+                  allowNull: true,
+                  noTime: true,
+                  defaultTime: this.model.calendar,
+                  onlyDates: true,
+                  callback: calendar => {
+                    this.model.deadline = calendar.specific
+                  },
+                },
+              })
+            }
+          },
+        ]
       },
       calendarSmartIconOptions() {
         return [
@@ -597,7 +635,8 @@ export default EditBuilder({
               icon: 'deadline',
               color: 'var(--orange)',
               trigger: 'enter',
-              list: deadlineIconOptions,
+              compose: this.deadlineListComposer,
+              list: this.deadlineIconOptions,
             },
           })
 
@@ -794,7 +833,8 @@ export default EditBuilder({
               icon: 'deadline',
               color: 'var(--orange)',
               trigger: 'enter',
-              list: deadlineIconOptions,
+              compose: this.deadlineListComposer,
+              list: this.deadlineIconOptions,
             },
           })
 
