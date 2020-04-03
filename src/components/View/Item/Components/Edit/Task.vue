@@ -218,6 +218,10 @@ export default EditBuilder({
         this.fromDefaultItem = true
     },
     methods: {
+      parseKeyword(str) {
+        const res = utils.calendarObjNaturalCalendarInput(str, this.userInfo.disablePmFormat)
+        return res ? res.calendar : null
+      },
       isRecurringItem(item) {
         return this.isRecurringTask(item)
       },
@@ -389,6 +393,32 @@ export default EditBuilder({
           },
         ]
       },
+      composeCalendarListHelper() {
+        return (list, search) => {
+          if (!search)
+            return list
+          
+          let arr = list.filter(el => el.name.toLowerCase().includes(search.toLowerCase()), this.userInfo.disablePmFormat)
+
+          const helperList = utils.matchCalendarHelperList(search, false)
+
+          arr = [...arr, ...helperList.map(el => ({
+            ...el,
+            callback: () => this.model.calendar = this.parseKeyword(' ' + el.name),
+          }))]
+
+          const calendar = this.parseKeyword(' ' + search.trim())
+          if (calendar)
+            arr.unshift({
+              id: 'found_match',
+              name: search,
+              icon: 'calendar',
+              callback: () => this.model.calendar = calendar
+            })
+
+          return arr
+        }
+      },
       composeDurationList() {
         return (list, search) => {
           if (!search)
@@ -396,15 +426,14 @@ export default EditBuilder({
 
           const duration = utils.matchDuration(search)
 
-          const arr = [
-            ...list.filter(el => el.name.toLowerCase().includes(search.toLowerCase())),
-          ]
+          const arr = list.filter(el => el.name.toLowerCase().includes(search.toLowerCase()))
 
           if (duration)
             arr.unshift({
               id: 'hour_obj',
               name: utils.formatQuantity(duration),
               icon: 'duration',
+              listWidth: '225px',
               color: 'var(--purple)',
               trigger: 'enter',
               callback: () => this.model.taskDuration = duration
@@ -695,6 +724,7 @@ export default EditBuilder({
             icon: this.getCalendarStrIcon,
             color: this.getCalendarStrColor,
             trigger: 'enter',
+            compose: this.composeCalendarListHelper,
             list: this.calendarSmartIconOptions,
           },
         }

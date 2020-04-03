@@ -268,6 +268,39 @@ export default {
       }
     }
   },
+  matchCalendarHelperList(search, onlySpecific = true) {
+    const specificKeywords = [
+      'next week', 'next month', 'end of month', 'end of week',
+      'end of year', 'mid month', 'next year', 'next sunday', 'next monday',
+      'next tuesday', 'next wednesday', 'next thursday', 'next friday', 'next saturday',
+    ]
+
+    const periodic = [
+      'every day', 'every day after', 'every sunday', 'every monday', 'every tuesday', 'every wednesday', 'every thursday', 'every friday', 'every saturday',
+    ]
+
+    const filter = str => str.toLowerCase().includes(search.toLowerCase())
+
+    let arr = specificKeywords.filter(filter).map(str => ({
+      id: str,
+      name: str,
+      icon: 'calendar',
+      trigger: 'enter',
+    }))
+
+    if (!onlySpecific)
+      arr = [
+        ...arr,
+        ...periodic.filter(filter).map(str => ({
+          id: str,
+          name: str,
+          icon: 'repeat',
+          trigger: 'enter',
+        }))
+      ]
+
+    return arr
+  },
   calendarObjNaturalCalendarInput(str, disablePmFormat) {
     const tod = mom()
     const TOD_STR = tod.format('Y-M-D')
