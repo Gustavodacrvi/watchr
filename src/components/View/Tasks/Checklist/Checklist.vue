@@ -132,9 +132,10 @@ export default {
     },
     pushEditString(getString) {
       this.addEdit(this.list.length)
-      this.$nextTick(() => {
-        this.$refs.Edit[0].updateString(getString())
-      })
+      if (getString)
+        this.$nextTick(() => {
+          this.$refs.Edit[0].updateString(getString())
+        })
     },
     addEdit(i) {
       this.removeEdit()

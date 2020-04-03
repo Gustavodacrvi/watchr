@@ -127,54 +127,6 @@ const getMoveToListOptions = function() {
 }
 
 
-const calendarSmartIconOptions = [
-  {
-    id: 'tod',
-    name: 'Today',
-    icon: 'star',
-    color: 'var(--yellow)',
-    callback: model => model.calendar = vm.getSpecificDayCalendarObj(TOD_STR),
-  },
-  {
-    id: 'eve',
-    name: 'This evening',
-    icon: 'moon',
-    color: 'var(--dark-purple)',
-    callback: model => model.calendar = {
-      ...vm.getSpecificDayCalendarObj(TOD_STR),
-      evening: true,
-    },
-  },
-  {
-    id: 'tom',
-    name: 'Tomorrow',
-    icon: 'sun',
-    color: 'var(--orange)',
-    callback: model => model.calendar = vm.getSpecificDayCalendarObj(TOD.clone().add(1, 'd').format('Y-M-D')),
-  },
-  {
-    id: 'soa',
-    name: 'Anytime',
-    icon: 'layer-group',
-    color: 'var(--olive)',
-    callback: model => model.calendar = {type: 'anytime'},
-  },
-  {
-    id: 'sa',
-    name: 'Someday',
-    icon: 'archive',
-    color: 'var(--brown)',
-    callback: model => model.calendar = {type: 'someday'},
-  },
-  {
-    id: 's',
-    name: 'Inbox',
-    icon: 'inbox',
-    color: 'var(--primary)',
-    callback: model => model.calendar = null,
-  },
-]
-
 const deadlineIconOptions = [
   {
     id: 'tod',
@@ -461,6 +413,72 @@ export default EditBuilder({
           return arr
         }
       },
+      calendarSmartIconOptions() {
+        return [
+          {
+            id: 'tod',
+            name: 'Today',
+            icon: 'star',
+            color: 'var(--yellow)',
+            callback: model => model.calendar = this.getSpecificDayCalendarObj(TOD_STR),
+          },
+          {
+            id: 'eve',
+            name: 'This evening',
+            icon: 'moon',
+            color: 'var(--dark-purple)',
+            callback: model => this.model.calendar = {
+              ...this.getSpecificDayCalendarObj(TOD_STR),
+              evening: true,
+            },
+          },
+          {
+            id: 'tom',
+            name: 'Tomorrow',
+            icon: 'sun',
+            color: 'var(--orange)',
+            callback: model => model.calendar = this.getSpecificDayCalendarObj(TOD.clone().add(1, 'd').format('Y-M-D')),
+          },
+          {
+            id: 'soa',
+            name: 'Anytime',
+            icon: 'layer-group',
+            color: 'var(--olive)',
+            callback: model => model.calendar = {type: 'anytime'},
+          },
+          {
+            id: 'sa',
+            name: 'Someday',
+            icon: 'archive',
+            color: 'var(--brown)',
+            callback: model => model.calendar = {type: 'someday'},
+          },
+          {
+            id: 's',
+            name: 'Inbox',
+            icon: 'inbox',
+            color: 'var(--primary)',
+            callback: model => model.calendar = null,
+          },
+          {
+            id: 'select_date',
+            name: 'Select date',
+            icon: 'calendar',
+            color: 'var(--green)',
+            callback: () => {
+              this.$store.commit('pushIconDrop', {
+                comp: 'CalendarPicker',
+                content: {
+                  repeat: true,
+                  callback: calendar => {
+                    this.model.calendar = calendar
+                  },
+                },
+              })
+            }
+          },
+        ]
+      },
       rightSmartIconDrops() {
         const arr = [
           {
@@ -518,9 +536,9 @@ export default EditBuilder({
                   if (model.tags.includes(el.id)) {
                     const i = model.tags.findIndex(id => el.id)
                     model.tags.splice(i, 1)
-                    vm.cursorPos--
+                    this.cursorPos--
                   } else {
-                    vm.cursorPos++
+                    this.cursorPos++
                     model.tags.push(el.id)
                   }
                 },
@@ -677,7 +695,7 @@ export default EditBuilder({
             icon: this.getCalendarStrIcon,
             color: this.getCalendarStrColor,
             trigger: 'enter',
-            list: calendarSmartIconOptions,
+            list: this.calendarSmartIconOptions,
           },
         }
       },

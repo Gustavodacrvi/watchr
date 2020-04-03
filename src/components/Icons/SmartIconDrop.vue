@@ -9,7 +9,7 @@
 
       :class="{isActive, tagMode}"
 
-      @click.stop="click"
+      @click="click"
     >
       <div class="wrapper" @click="activate">
         <div class="icon-wrapper">
@@ -59,7 +59,7 @@
 
               :data-id='o.id'
 
-              @click="select(o)"
+              @click.stop="select(o)"
             >
               <div class="option-wrapper">
                 <div class="option-icon-wrapper">

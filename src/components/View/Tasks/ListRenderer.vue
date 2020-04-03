@@ -1010,7 +1010,7 @@ export default {
       if (!this.header && this.comp !== 'List') {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-        if (!isTyping && !this.isOnControl && !this.isOnAlt) {
+        if (!isTyping && !this.isOnControl && !this.isOnAlt & !this.isEditing) {
           if (!this.disableRootActions) {
             if (key === 'a')
               this.addEditComp(this.lazyItems.length)
@@ -1114,6 +1114,7 @@ export default {
   computed: {
     ...mapState({
       isDraggingOverSidebarElement: state => state.isDraggingOverSidebarElement,
+      isEditing: state => state.isEditing,
       cameFromAnotherTabHTMLElement: state => state.cameFromAnotherTabHTMLElement,
       selected: state => state.selectedItems,
 
