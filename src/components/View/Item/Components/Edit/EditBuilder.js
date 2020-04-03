@@ -72,7 +72,10 @@ export default ({
             },
           },
           nativeOn: {
-            click: () => this.cursorPos = currentNumber,
+            click: () => {
+              if (!el.props.disabled)
+                this.cursorPos = currentNumber
+            },
           },
         })
       })
@@ -93,6 +96,7 @@ export default ({
             class: 'field no-back',
             props: el.props,
             ref: el.id,
+            key: el.id,
 
             domProps: {
               value: this.model[el.vModel],
@@ -105,7 +109,10 @@ export default ({
               cancel: () => this.$parent.$emit('close'),
             },
             nativeOn: {
-              click: () => this.cursorPos = currentNumber,
+              click: () => {
+                if (!el.props.disabled)
+                  this.cursorPos = currentNumber
+              },
             },
           })
         }
@@ -387,8 +394,8 @@ export default ({
         num++
       })
 
-      this.allSmartIcons.forEach(({ref}) => {
-        obj[num] = () => this.$refs[ref].activate()
+      this.allSmartIcons.forEach(({id}) => {
+        obj[num] = () => this.$refs[id].activate()
         num++
       })
       

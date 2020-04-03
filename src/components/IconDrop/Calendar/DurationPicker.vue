@@ -2,23 +2,25 @@
   <div class="DurationPicker">
     <div class="wrapper">
       <div class="scroll-wrapper">
-        <div class="display">
-          00
-        </div>
+        <DurationScroll
+          :max='24'
+          v-model="hour"
+        />
         <div class="label">
-          hh
+          h
         </div>
       </div>
       <div class="scroll-wrapper">
-        <div class="display">
-          00
-        </div>
+        <DurationScroll
+          :max='60'
+          v-model="min"
+        />
         <div class="label">
-          mm
+          m
         </div>
       </div>
     </div>
-    <ButtonInput
+    <ButtonInput class="btn"
       value='Save duration'
       icon='duration'
       defaultColor='var(--purple)'
@@ -30,14 +32,27 @@
 <script>
 
 import ButtonInput from '../Components/Button.vue'
+import DurationScroll from './DurationScroll.vue'
 
 export default {
+  props: ['callback'],
   components: {
     ButtonInput,
+    DurationScroll,
+  },
+  data() {
+    return {
+      hour: 0,
+      min: 0,
+    }
   },
   methods: {
     saveDuration() {
+      const opt = this.callback(`${this.hour}:${this.min}`)
 
+      if (!opt || (opt && opt.then))
+        this.$emit('close')
+      else this.$emit('update', opt)
     },
   },
 }
@@ -45,6 +60,11 @@ export default {
 </script>
 
 <style scoped>
+
+.btn {
+  z-index: 2;
+  position: relative;
+}
 
 .DurationPicker {
   width: 275px;
@@ -60,19 +80,16 @@ export default {
 .scroll-wrapper {
   margin: 12px;
   display: flex;
-}
-
-.display {
-  font-size: 3.8em;
-  display: flex;
-  align-items: flex-end;
+  position: relative;
+  height: 100%;
 }
 
 .label {
-  font-size: 2em;
+  font-size: 1.8em;
   display: flex;
-  align-items: flex-end;
-  margin-left: 4px;
+  align-items: center;
+  transform: translateY(-3px);
+  margin-left: 8px;
 }
 
 </style>

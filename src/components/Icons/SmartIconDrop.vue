@@ -24,7 +24,7 @@
           @enter='placeEnter'
           @leave='placeLeave'
         >
-          <div v-if="isActive || tagMode" class="placeholder">
+          <div v-if="!disabled && (isActive || tagMode)" class="placeholder">
             <input v-if="!tagMode || tagModeToggle" class="input"
               v-model="model"
               ref='input'
@@ -84,7 +84,7 @@
 <script>
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled'],
   data() {
     return {
       focus: false,
@@ -291,8 +291,11 @@ export default {
           this.tagModeToggle = !this.tagModeToggle
         else if (this.trigger === 'click')
           this.callback()
-      } else if (this.$refs.input) {
-        this.$refs.input.focus()
+      } else {
+        if (!this.disabled && this.$refs.input)
+          this.$refs.input.focus()
+        else if (this.trigger === 'click')
+          this.callback()
       }
     },
     activate(option) {
@@ -423,7 +426,7 @@ export default {
       return this.compose ? this.compose(this.currentList, this.model) : this.currentList.filter(el => el.name.toLowerCase().includes(this.model.toLowerCase()))
     },
     isShowingList() {
-      return (this.isActive && this.currentList && !this.tagMode) || (this.tagMode && this.tagModeToggle)
+      return !this.disabled && (this.isActive && this.currentList && !this.tagMode) || (this.tagMode && this.tagModeToggle)
     },
   },
   watch: {

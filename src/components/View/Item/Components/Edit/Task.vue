@@ -332,7 +332,7 @@ export default EditBuilder({
         return 'calendar'
       },
       leftSmartIconDrops() {
-        return [
+        const arr = [
           {
             id: 'checklist-icon',
             props: {
@@ -345,6 +345,25 @@ export default EditBuilder({
             },
           },
         ]
+
+        if (this.model.calendar && !this.model.calendar.evening)
+          arr.push({
+            id: 'evening_left_icon',
+            props: {
+              disabled: true,
+              icon: 'moon',
+              color: 'var(--dark-purple)',
+              trigger: 'click',
+              callback: () => {
+                this.model.calendar = {
+                  ...this.model.calendar,
+                  evening: true,
+                }
+              }
+            },
+          })
+
+        return arr
       },
       durationList() {
         return [
@@ -362,7 +381,7 @@ export default EditBuilder({
               this.$store.commit('pushIconDrop', {
                 comp: 'DurationPicker',
                 content: {
-                  callback: console.log,
+                  callback: time => {this.model.taskDuration = time},
                 },
               })
             },
@@ -703,6 +722,21 @@ export default EditBuilder({
         const tags = []
 
         tags.push(this.calendarTagObj)
+
+        if (this.model.calendar && this.model.calendar.evening)
+          tags.push({
+            id: 'evening_left_icon',
+            props: {
+              icon: 'moon',
+              name: 'Evening',
+              color: 'var(--dark-purple)',
+              trigger: 'click',
+              callback: () => this.model.calendar = {
+                ...this.model.calendar,
+                evening: false,
+              }
+            },
+          })
 
         if (this.model.deadline)
           tags.push({
