@@ -235,9 +235,7 @@ export default {
 
 .Checklist {
   margin: 0;
-  padding: 0 9px;
-  min-height: px;
-  margin-bottom: 9px;
+  transition-duration: .2s;
 }
 
 .trans-enter, .trans-leave-to {

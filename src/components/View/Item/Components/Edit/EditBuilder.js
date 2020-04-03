@@ -3,9 +3,12 @@
 import InputDrop from "@/components/Auth/DropInput.vue"
 import SmartIconDrop from "@/components/Icons/SmartIconDrop.vue"
 import ChecklistVue from '@/components/View/Tasks/Checklist/Checklist.vue'
-import TagVue from '@/components/View/Tag.vue'
+import FileApp from '@/components/View/RenderComponents/File.vue'
+import FileDragDrop from '@/components/View/RenderComponents/FileDragDrop.vue'
 
 import momUtils from '@/utils/moment'
+
+import FileMixin from '@/mixins/file.js'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -14,12 +17,13 @@ import utils from "@/utils/"
 export default ({
   value,
   textFields,
-  checklist,
+  checklist, allowFiles,
   saveByShortcut = () => {},
   instance = {},
   props = [],
 }) => ({
   props: ['item', 'firstFieldOptions', 'itemModelFallback', 'value', ...props],
+  mixins: [FileMixin],
   data() {
     return {
       currentPrefix: '',
@@ -129,6 +133,9 @@ export default ({
       editChildren.splice(1, 0, create(ChecklistVue, {
         ref: 'checklist',
 
+        class: {
+          hasContent: this.getChecklist && this.getChecklist.length > 0
+        },
         props: {
           list: this.getChecklist,
           activeChecklistId: this.activeChecklistId,
@@ -147,10 +154,45 @@ export default ({
       })
     )
 
+    if (allowFiles && allowFiles.storageFolder) {
+      editChildren.splice(2, 0, 
+        create('div', {class: 'file-drag-drop-wrapper'}, [
+          create(FileDragDrop, {
+            props: {
+              onDrop: this.onDrop,
+            }
+          })
+        ])
+      )
+      editChildren.splice(3, 0, 
+        create('div', {class: {
+          files: true,
+          hasContent: this.getFiles && this.getFiles.length > 0
+        }}, this.getFiles.map(str => {
+          return create(FileApp, {
+            key: str,
+            props: {
+              name: str,
+              status: this.getFileStatus(str),
+              active: this.activeFileName,
+            },
+            on: {
+              delete: () => this.deleteFile(str),
+              download: () => this.downloadFile(str, allowFiles.storageFolder, this.model.id),
+              view: () => this.viewFile(str, allowFiles.storageFolder, this.model.id)
+            },
+          })
+        }))
+      )
+    }
+
     num = textFields.length + this.getChecklist.length
 
     editChildren.splice(2, 0,
-      create('div', {class: 'tags'},
+      create('div', {class: {
+        tags: true,
+        hasContent: this.getViewTags && this.getViewTags.length > 0 
+      }},
         this.getViewTags.map(tag => {
 
           num++
@@ -230,6 +272,22 @@ export default ({
               p()
               this.$refs.checklist.editChecklist(this.activeChecklistId)
             }
+            break
+          }
+        }
+      }
+      if (allowFiles && allowFiles.storageFolder && this.isCursorInFile && !isTyping) {
+        switch (key) {
+          case "Delete": {
+            this.deleteFile(this.activeFileName)
+            break
+          }
+          case 'Enter': {
+            this.downloadFile(this.activeFileName, allowFiles.storageFolder, this.model.id)
+            break
+          }
+          case " ": {
+            this.viewFile(this.activeFileName, allowFiles.storageFolder, this.model.id)
             break
           }
         }
@@ -345,7 +403,7 @@ export default ({
     },
 
     getFirstSmartIconKeyboardActionPosition() {
-      return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0) + this.getViewTags.length
+      return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0) + this.getViewTags.length + this.getFiles.length
     },
     getCompareDate() {
       if (!this.item) return null
@@ -390,12 +448,17 @@ export default ({
       }
       
       this.getViewTags.forEach(({id}) => {
-        obj[num] = () => this.$refs[id].activate()
+        obj[num] = () => this.$refs[id].activate(null, true)
+        num++
+      })
+
+      this.getFiles.forEach(str => {
+        obj[num] = str
         num++
       })
 
       this.allSmartIcons.forEach(({id}) => {
-        obj[num] = () => this.$refs[id].activate()
+        obj[num] = () => this.$refs[id].activate(null, true)
         num++
       })
       
@@ -419,6 +482,9 @@ export default ({
     activeChecklistId() {
       return this.keyboardActions[this.cursorPos]
     },
+    activeFileName() {
+      return this.keyboardActions[this.cursorPos]
+    },
     lastKeyboardActionIndex() {
       return Object.keys(this.keyboardActions).length - 1
     },
@@ -426,6 +492,11 @@ export default ({
       if (!checklist)
         return false
       return this.model[checklist.vModel].some(el => el.id === this.activeChecklistId)
+    },
+    isCursorInFile() {
+      if (!allowFiles || !allowFiles.storageFolder)
+        return false
+      return this.getFiles.some(str => str === this.activeFileName)
     },
     getViewTags() {
       return []

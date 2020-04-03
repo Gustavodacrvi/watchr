@@ -167,6 +167,9 @@ export default EditBuilder({
     vModel: 'checklist', // this.model[option]
     order: 'order', // this.model[option]
   }, // requires removeSubtask, saveChecklist, addSubtask, isRecurringItem methods
+  allowFiles: {
+    storageFolder: 'tasks',
+  },
   instance: {
     data() {
       return {
@@ -192,6 +195,9 @@ export default EditBuilder({
     created() {
       if (this.item.calendar)
         this.fromDefaultItem = true
+    },
+    beforeSave(model) {
+
     },
     methods: {
       parseKeyword(str) {
@@ -276,10 +282,20 @@ export default EditBuilder({
               vm.$refs.checklist.pushEditString(getModel)
             },
           },
+          {
+            id: 'add_files',
+            props: {
+              disabled: true,
+              icon: 'file',
+              trigger: 'click',
+              file: true,
+              onDrop: this.onDrop,
+            },
+          },
         ]
 
         if (this.model.calendar && !this.model.calendar.evening)
-          arr.push({
+          arr.splice(1, 0, {
             id: 'evening_left_icon',
             props: {
               disabled: true,

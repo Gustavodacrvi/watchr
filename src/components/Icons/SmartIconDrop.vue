@@ -10,13 +10,19 @@
       :class="{isActive, tagMode}"
 
       @click="click"
+      @click.self='clickSelf'
     >
-      <div class="wrapper" @click="activate">
+      <div class="wrapper"
+        @click="activate"
+      >
         <div class="icon-wrapper">
           <Icon class="icon"
+            ref='icon'
             :icon='icon'
             :width='width || "16px"'
             :color='color'
+            :file='file'
+            @add='onFileDrop'
           />
         </div>
         <transition
@@ -84,7 +90,7 @@
 <script>
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop'],
   data() {
     return {
       focus: false,
@@ -109,6 +115,10 @@ export default {
     this.$parent.$el.addEventListener('click', this.hide)
   },
   methods: {
+    onFileDrop(...args) {
+      if (this.onDrop)
+        this.onDrop(...args)
+    },
     appear(el, done) {
       if (this.$parent.isFirstEdit)
         return done()
@@ -285,24 +295,34 @@ export default {
       setTimeout(done, 200)
 
     },
-    click() {
+    clickSelf() {
+      if (this.file)
+        this.$refs.icon.click()
+    },
+    click(evt) {
       if (this.tagMode) {
         if (this.trigger === 'enter')
           this.tagModeToggle = !this.tagModeToggle
         else if (this.trigger === 'click')
-          this.callback()
+          if (this.callback)
+            this.callback()
       } else {
         if (!this.disabled && this.$refs.input)
           this.$refs.input.focus()
         else if (this.trigger === 'click')
-          this.callback()
+          if (this.callback)
+            this.callback()
       }
     },
-    activate(option) {
-      if (!this.tagMode)
-        this.$emit('trigger', option || (this.trigger === 'type' ? () => this.model : null))
-      else if (!option)
-        this.click()
+    activate(option, isFromEdit) {
+      if (this.file && isFromEdit) {
+        this.$refs.icon.click()
+      } else {
+        if (!this.tagMode)
+          this.$emit('trigger', option || (this.trigger === 'type' ? () => this.model : null))
+        else if (!option)
+          this.click()
+      }
     },
 
 

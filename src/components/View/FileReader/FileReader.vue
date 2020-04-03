@@ -1,7 +1,12 @@
 
 <template>
-  <div class="FileReader" @click="hide">
-    <div class="cb rb shadow" @click.stop>
+  <div class="FileReader"
+    @click.stop='hide'
+    @pointerup.stop
+    @mouseup.stop
+    @touchend.stop.passive
+  >
+    <div class="cb rb shadow">
       <transition name="fade-t">
         <component :is="status" :hideTitle='true' :blob="blob"/>
       </transition>

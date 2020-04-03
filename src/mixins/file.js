@@ -15,14 +15,9 @@ export default {
     }
   },
   mounted() {
-    this.getDefaultFiles(true)
+    this.files = (this.defaultFiles && this.defaultFiles.slice()) || []
   },
   methods: {
-    getDefaultFiles(time) {
-      setTimeout(() => {
-        this.files = (this.defaultFiles && this.defaultFiles.slice()) || []
-      }, time ? 100 : 0)
-    },
     getFileStatus(fileName) {
       if (this.addedFiles.find(el => el.name === fileName))
         return 'update'
@@ -54,38 +49,49 @@ export default {
       }
     },
     viewFile(fileName, storageFolder, parentId) {
-      storage().ref(`attachments/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
-        this.$store.commit('readFile', url)
-      }).catch(err => {
+      const file = this.addedFiles.find(file => file.name === fileName)
+      try {
+        if (!file)
+          storage().ref(`attachments/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
+            this.$store.commit('readFile', url)
+          })
+        else this.$store.commit('readFile', URL.createObjectURL(file))
+      } catch (err) {
         this.$store.commit('pushToast', {
-          name: "An error occurred while downloading file",
+          name: "An error occurred while viewing file",
           seconds: 4,
           type: 'error',
         })
-      })
+      }
+    },
+    downloadBlog(blob, fileName) {
+      const url = window.URL.createObjectURL(blob)
+      let element = document.createElement('a')
+      element.setAttribute('href', url)
+      element.setAttribute('download', fileName)
+    
+      element.style.display = 'none'
+      document.body.appendChild(element)
+    
+      element.click()
+    
+      document.body.removeChild(element)
     },
     downloadFile(fileName, storageFolder, parentId) {
-      storage().ref(`attachments/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
-        utils.downloadBlobFromURL(url).then(blob => {
-          url = window.URL.createObjectURL(blob)
-          let element = document.createElement('a')
-          element.setAttribute('href', url)
-          element.setAttribute('download', fileName)
-        
-          element.style.display = 'none'
-          document.body.appendChild(element)
-        
-          element.click()
-        
-          document.body.removeChild(element)
-        })
-      }).catch(err => {
+      const file = this.addedFiles.find(file => file.name === fileName)
+      try {
+        if (!file) {
+          storage().ref(`attachments/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
+            utils.downloadBlobFromURL(url).then(blob => this.downloadBlog(blob, fileName))
+          })
+        } else this.downloadBlog(file, fileName)
+      } catch (err) {
         this.$store.commit('pushToast', {
           name: "An error occurred while downloading file",
           seconds: 4,
           type: 'error',
         })
-      })
+      }
     },
     saveFiles(toRemoveFiles, toAddFiles, parentId, storageFolder) {
       const rem = toRemoveFiles.slice()
@@ -180,7 +186,7 @@ export default {
   },
   watch: {
     defaultFiles() {
-      this.getDefaultFiles(false)
+      this.files = (this.defaultFiles && this.defaultFiles.slice()) || []
     },
-  }
+  },
 }
