@@ -143,7 +143,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'calendarDate', 'viewItem',
+  'calendarDate', 'viewItem', 'itemModelFallback',
   'showHeading', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
@@ -229,6 +229,11 @@ export default {
     toggleRuler() {
       this.showingRuler = !this.showingRuler
       localStorage.setItem('showingRuler', this.showingRuler)
+    },
+    fallbackToggleCompletion() {
+      if (this.$refs.extraView)
+        this.$refs.extraView.toggleCompletion(this.fallbackSelected)
+      this.$refs.taskHandler.toggleCompletion(this.fallbackSelected)
     },
     openMainComp() {
       this.$refs.mainComp.open()
@@ -487,7 +492,7 @@ export default {
                   break
                 }
                 case 'toggleCompletion': {
-                  this.$store.commit('toggleTaskCompletion', fallbackItems)
+                  this.fallbackToggleCompletion()
                   break
                 }
                 case 'toggleCancel': {
@@ -510,7 +515,7 @@ export default {
                 break
               }
               case 'toggleCompletion': {
-                this.$store.commit('toggleListCompletion', fallbackItems)
+                this.fallbackToggleCompletion()
                 break
               }
               case 'logbook': {
@@ -1479,7 +1484,7 @@ export default {
       if (!this.allowCalendar && (this.calendarDate || this.viewName === 'Upcoming')) {
         opt.push({
           name: !this.showingRuler ? 'Show timeline ruler' : 'Hide timeline ruler',
-          icon: 'clock',
+          icon: 'duration',
           callback: this.toggleRuler,
         })
         opt.push({

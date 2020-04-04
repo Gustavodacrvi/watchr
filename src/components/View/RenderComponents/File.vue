@@ -5,9 +5,8 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="File rb" :class="status"
-      @click.stop
-      @dblclick="$emit('view')"
+    <div class="File rb" :class="[status, {active: active === name}]"
+      @click.stop='$emit("view")'
 
       @mouseenter="hover = true"
       @mouseleave="hover = false"
@@ -20,7 +19,7 @@
       </span>
       <transition name="fade-t">
         <div v-if="hover || !isDesktopBreakPoint" class="info">
-          <Icon
+          <Icon v-if="status !== 'update'"
             class="icon remove-highlight cursor primary-hover"
             icon='import'
             title='Download file'
@@ -48,7 +47,7 @@ import utils from '@/utils'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['name', 'status', 'disableDelete'],
+  props: ['name', 'active', 'status', 'disableDelete'],
   data() {
     return {
       hover: false,
@@ -99,9 +98,11 @@ export default {
   height: 30px;
   transition-duration: .2s;
   position: relative;
+  font-size: 1.075em;
+  cursor: pointer;
 }
 
-.File:hover {
+.File:hover, .active {
   background-color: var(--light-gray);
 }
 
@@ -127,7 +128,11 @@ export default {
 }
 
 .update {
-  background-color: rgba(53, 73, 90, 0.6) !important;
+  background-color: var(--light-gray) !important;
+}
+
+.update.active {
+  background-color: var(--extra-light-gray) !important;
 }
 
 .remove {

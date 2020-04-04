@@ -268,6 +268,39 @@ export default {
       }
     }
   },
+  matchCalendarHelperList(search, onlySpecific = true) {
+    const specificKeywords = [
+      'next week', 'next month', 'end of month', 'end of week',
+      'end of year', 'mid month', 'next year', 'next sunday', 'next monday',
+      'next tuesday', 'next wednesday', 'next thursday', 'next friday', 'next saturday',
+    ]
+
+    const periodic = [
+      'every day', 'every day after', 'every sunday', 'every monday', 'every tuesday', 'every wednesday', 'every thursday', 'every friday', 'every saturday',
+    ]
+
+    const filter = str => str.toLowerCase().includes(search.toLowerCase())
+
+    let arr = specificKeywords.filter(filter).map(str => ({
+      id: str,
+      name: str,
+      icon: 'calendar',
+      trigger: 'enter',
+    }))
+
+    if (!onlySpecific)
+      arr = [
+        ...arr,
+        ...periodic.filter(filter).map(str => ({
+          id: str,
+          name: str,
+          icon: 'repeat',
+          trigger: 'enter',
+        }))
+      ]
+
+    return arr
+  },
   calendarObjNaturalCalendarInput(str, disablePmFormat) {
     const tod = mom()
     const TOD_STR = tod.format('Y-M-D')
@@ -813,6 +846,32 @@ export default {
 
     return {calendar: cal, matches}
   },
+  matchDuration(search) {
+    const getMatch = (regex, format) => {
+      let match = search.match(regex)
+      const getNum = str => parseInt(str, 10)
+      
+      if (match) {
+        
+        match = getNum(match)
+  
+        if (!mom(match, format).isValid())
+          return '00'
+      } else return '00'
+      return getNum(match)
+    }
+
+    const hourMatch = getMatch(/(\d)(\d)?( )?(hour|h)/gi, 'HH')
+    const minMatch = getMatch(/(\d)(\d)?( )?(minute|min|m)/gi, 'mm')
+
+    const time = mom(
+      `${hourMatch}:${minMatch}`, 'HH:mm'
+    )
+
+    if (((hourMatch !== '00') || (minMatch !== '00')) && time.isValid())
+      return time.format('HH:mm')
+    return null
+  },
   parseHTMLStr(str) {
     const escapeHTML = str => {
       let div = document.createElement("div")
@@ -1016,7 +1075,6 @@ export default {
     }
 
     if (c.time && allowHours) str += ` at ${this.parseTime(c.time, userInfo)}`
-    if (c.evening) str += ' evening'
 
     if (c.begins && c.begins !== c.editDate && (forceShowInfo || mom(c.begins, 'Y-M-D').isSameOrAfter(mom(), 'day'))) {
       str += `, begins on ${this.getHumanReadableDate(c.begins)}`

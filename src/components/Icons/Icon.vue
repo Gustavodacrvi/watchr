@@ -30,6 +30,7 @@ import plus from '@/assets/icons/plus.svg'
 import circleCheck from '@/assets/icons/circle-check.svg'
 import globe from '@/assets/icons/globe.svg'
 import heading from '@/assets/icons/heading.svg'
+import headingSlash from '@/assets/icons/heading-slash.svg'
 import envelope from '@/assets/icons/envelope.svg'
 import search from '@/assets/icons/search.svg'
 import note from '@/assets/icons/note.svg'
@@ -43,6 +44,7 @@ import heart from '@/assets/icons/heart.svg'
 import sleep from '@/assets/icons/sleep.svg'
 import deadline from '@/assets/icons/deadline.svg'
 import repeat from '@/assets/icons/repeat.svg'
+import next from '@/assets/icons/next.svg'
 import box from '@/assets/icons/box.svg'
 import boxDash from '@/assets/icons/box-dash.svg'
 import file from '@/assets/icons/file.svg'
@@ -50,6 +52,7 @@ import folder from '@/assets/icons/folder.svg'
 import filter from '@/assets/icons/filter.svg'
 import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
+import duration from '@/assets/icons/duration.svg'
 import message from '@/assets/icons/message.svg'
 import pie from '@/assets/icons/pie.svg'
 import check from '@/assets/icons/check.svg'
@@ -82,8 +85,10 @@ const icons = {
   envelope, deadline, sleep, repeat, box, file,
   folder, heart, close, filter, magic, clock,
   pie, check, group, message, crown, play,
-  comment, logbook, moon, tint,
+  comment, logbook, moon, tint, duration,
+  next,
   "later-lists": laterLists,
+  "heading-slash": headingSlash,
   "logged-lists": loggedLists,
   "faded-logged-lists": fadedLoggedLists,
   "paper-plane": paperPlane,

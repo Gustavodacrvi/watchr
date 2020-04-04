@@ -8,6 +8,9 @@ const TOD_DATE = mom().format('Y-M-D')
 import { fd } from '../utils/firestore'
 
 export default {
+  isRecurringTask(calendar) {
+    return calendar && calendar.type !== 'someday' && calendar.type !== 'specific' && calendar.type !== 'anytime'
+  },
   taskOptions(task, vm) {
 
     const dispatch = vm.$store.dispatch
@@ -447,7 +450,7 @@ export default {
     if (n.includes(' !n'))
       return {
         priority: '',
-        str: n.replace(' !no', ''),
+        str: n.replace(' !n', ''),
       }
     return {
       priority: null,

@@ -53,7 +53,7 @@
       <div class='week-day' key='f'>F</div>
       <div class='week-day' key='sa'>S</div>
 
-      <div v-for="i in firstWeekDayRange" :key="i" class="day dead">{{ i }}</div>
+      <div v-for="i in firstWeekDayRange" :key="i + 'dead'" class="day dead">{{ i }}</div>
       <Date v-for="i in daysInMonth" :key="i"
         class="day num"
         :class="{active: selectedDay === i}"
@@ -132,7 +132,7 @@ export default {
         task: {
           calendar: {
             type: 'specific',
-            specific: date,
+            specific: date.format ? date.format('Y-M-D') : date,
 
             editDate: TOD_STR,
             begins: TOD_STR,

@@ -6,18 +6,28 @@
   >
     <div class="Edit" :class="{isDesktopDevice}" @click.stop>
       <div class="wrapper rb">
-        <InputApp class='sub-edit'
-          :value='name'
-          @input='v => name = v'
-          :focus='true'
-          placeholder='Subtask name...'
+        <div class="icon-wrapper">
+          <Icon
+            class="icon primary-hover"
+            icon="circle"
+            color='var(--primary)'
+            width='15px'
+          />
+        </div>
+        <div class="input">
+          <InputApp class='sub-edit'
+            :value='name'
+            @input='v => name = v'
+            :focus='true'
+            placeholder='Subtask name...'
 
-          @keydown.native.stop='keydown'
-          @enter='addSubtask'
-          @cancel='$emit("cancel")'
-          @goup='$emit("goup")'
-          @godown='$emit("godown")'
-        />
+            @keydown.native.stop='keydown'
+            @enter='addSubtask'
+            @cancel='$emit("cancel")'
+            @goup='$emit("goup")'
+            @godown='$emit("godown")'
+          />
+        </div>
       </div>
     </div>
   </transition>
@@ -39,6 +49,9 @@ export default {
     }
   },
   methods: {
+    updateString(str) {
+      this.name = str
+    },
     keydown({key}) {
       if (key === 'ArrowUp')
         this.$emit('move-cursor-up')
@@ -111,10 +124,31 @@ export default {
 
 .Edit.isDesktopDevice .sub-edit {
   padding: 8px;
+  padding-left: 0;
+}
+
+.icon-wrapper {
+  width: 25px;
+  flex-basis: 25px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon {
+  transform: translateY(2px);
+  margin-left: 6px;
+}
+
+.input {
+  width: 100%;
+  padding: 0 8px;
 }
 
 .wrapper {
-  background-color: var(--dark);
+  display: flex;
+  background-color: var(--light-sidebar-color);
 }
 
 </style>

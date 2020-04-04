@@ -151,8 +151,6 @@ const store = new Vuex.Store({
     scheduling: scheduling && isDesktopDevice,
     isDraggingOverSidebarElement: false,
     toasts: [],
-    toggleTaskCompletion: [],
-    toggleListCompletion: [],
     windowWidth: 0,
     isScrolling: false,
     allowNavHide: true,
@@ -241,7 +239,7 @@ const store = new Vuex.Store({
       return ordered
     },
     itemHeight(s, getters) {
-      return getters.isDesktopDevice ? 28 : 50
+      return getters.isDesktopDevice ? 30 : 50
     },
     isSmartList(state, getters) {
       return getters.sidebarElements.find(el => el.name === state.viewName)
@@ -469,9 +467,6 @@ const store = new Vuex.Store({
     },
     saveCalendarColorIds(state, ids) {
       state.calendarColorIds = ids
-    },
-    toggleTaskCompletion(state, toggleTaskCompletion) {
-      state.toggleTaskCompletion = (toggleTaskCompletion || []).slice()
     },
     toggleListCompletion(state, toggleListCompletion) {
       state.toggleListCompletion = (toggleListCompletion || []).slice()

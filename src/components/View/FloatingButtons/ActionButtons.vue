@@ -269,9 +269,10 @@ export default {
 }
 
 .act-button-wrapper .main {
-  background-color: var(--sidebar-color);
+  background-color: var(--card);
   border-radius: 6px;
   transition: background-color .2s, box-shadow;
+  box-shadow: 0 0 8px rgba(0,0,0, .3);
 }
 
 .act-button-wrapper .heading {
@@ -289,7 +290,8 @@ export default {
   align-items: center !important;
   height: 100%;
   flex-basis: 100%;
-  background-color: var(--sidebar-color);
+  box-shadow: 0 0 8px rgba(0,0,0, .3);
+  background-color: var(--card);
   border-radius: 10px;
   transition: background-color .2s, box-shadow;
 }

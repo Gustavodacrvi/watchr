@@ -1,5 +1,10 @@
 <template>
-  <div class="MobileIcondrop" @click="closeIconDrop">
+  <div class="MobileIcondrop"
+    @click.stop='closeIconDrop'
+    @pointerup.stop
+    @mouseup.stop
+    @touchend.stop.passive
+  >
     <IconDrop class="central"
       :options='iconDrop'
      

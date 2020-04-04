@@ -32,9 +32,10 @@
         >
 
         </div>
-        <component v-else-if="!item.isEdit" :is='comp' :key="item.id" 
+        <component v-else-if="!item.isEdit" :is='comp'
           v-bind="$props"
           :ref='item.id'
+          :key="item.id"
 
           :itemHeight='itemHeight'
           :item='item'
@@ -59,10 +60,13 @@
         />
         <component v-else-if="item.isEdit === 'Edit'"
           :is='editComp'
-          :key="item.isEdit"
+          :key="item.isEdit + 'component eidt'"
 
           v-bind='item.propsData'
           :focusToggle='focusToggle'
+          :isAdding='true'
+          :itemHeight='itemHeight'
+          :listRenderer='true'
           :fallbackItem='fallbackItem'
 
           :data-id='item.isEdit'
@@ -74,7 +78,7 @@
         />
         <EditComp v-else
           :heading='true'
-          :key="item.isEdit"
+          :key="item.isEdit + 'editComp'"
 
           v-bind='item.propsData'
 
@@ -132,6 +136,7 @@
       :viewName='viewName'
       :viewType='viewType'
       :viewNameValue='viewNameValue'
+      :itemModelFallback='itemModelFallback'
       :showingRuler='showingRuler'
       :headings='getHeadings'
       :headingEditOptions='headingEditOptions'
@@ -164,7 +169,7 @@
 
 import Vue from 'vue'
 
-import Task from './Task.vue'
+// import Task from './Task.vue'
 import TimelineRuler from './TimelineRuler.vue'
 import List from './../Lists/List.vue'
 import TaskEdit from './Edit.vue'
@@ -172,7 +177,8 @@ import ListEdit from './../Lists/Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
-import HeadingsRenderer from './HeadingsRenderer.vue' 
+import HeadingsRenderer from './HeadingsRenderer.vue'
+import Task from "../Item/Task.vue"
 
 import { fire } from '@/store/'
 import { uid, setTask } from '@/utils/firestore'
@@ -191,11 +197,12 @@ import utils from '@/utils/'
 export default {
   mixins: [autoScheduleMixin],
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
-  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler',
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
-    Task, ButtonVue, List, ListEdit,
+    Task,
+    ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
     Illustration: IllustrationVue,
     TimelineRuler,
@@ -210,7 +217,7 @@ export default {
       droppedIds: [],
       waitingUpdateTimeout: null,
 
-      timelineIncrement: 0,
+      timelineIncrement: null,
 
       addedItem: null,
       edit: null,
@@ -271,6 +278,15 @@ export default {
     }
   },
   methods: {
+    toggleCompletion(ids) {
+      ids.forEach(id => this.findItem(id, vm => vm.toggleCompletion()))
+      if (this.$refs.headings)
+        this.$refs.headings.toggleCompletion(ids)
+    },
+    findItem(id, callback) {
+      if (this.$refs[id] && this.$refs[id][0])
+        callback(this.$refs[id][0])
+    },
     applyAutoScheduleToHeading(info, headingId, calendarDate) {
       this.$refs.headings.applyAutoScheduleToHeading(info, headingId, calendarDate)
     },
@@ -847,9 +863,7 @@ export default {
           }
         },
       }
-      if (this.isDesktopDevice) {
-        obj['multiDragKey'] = 'CTRL'
-      } else {
+      if (!this.isDesktopDevice) {
         obj.forceFallback = true
         obj.fallbackOnBody = true
       }
@@ -954,9 +968,8 @@ export default {
 
         const index = targetIndex || this.getListRendererPosition()
 
-        if (shouldRender) {
+        if (shouldRender)
           this.lazyItems.splice(index, 0, t)
-        }
         this.addedItem = t.id
 
         this.addItem({
@@ -999,7 +1012,7 @@ export default {
       if (!this.header && this.comp !== 'List') {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-        if (!isTyping && !this.isOnControl && !this.isOnAlt) {
+        if (!isTyping && !this.isOnControl && !this.isOnAlt & !this.isEditing) {
           if (!this.disableRootActions) {
             if (key === 'a')
               this.addEditComp(this.lazyItems.length)
@@ -1103,6 +1116,7 @@ export default {
   computed: {
     ...mapState({
       isDraggingOverSidebarElement: state => state.isDraggingOverSidebarElement,
+      isEditing: state => state.isEditing,
       cameFromAnotherTabHTMLElement: state => state.cameFromAnotherTabHTMLElement,
       selected: state => state.selectedItems,
 
@@ -1287,7 +1301,7 @@ export default {
 }
 
 .cameFromAnotherTab-ghost {
-  height: 28px;
+  height: 30px;
   background-color: var(--sidebar-color);
   transition: transform .2s;
 }
@@ -1375,7 +1389,7 @@ export default {
 }
 
 .add-item-wrapper {
-  height: 25px;
+  height: 30px;
   width: 100%;
 }
 
@@ -1386,19 +1400,23 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .2s;
   transform: scale(1,1);
+  transition-duration: .2s;
+  box-shadow: 0 0 0 transparent;
 }
 
 .add-item-wrapper:hover .add-item {
-  height: 25px;
+  height: 30px;
   opacity: 1;
   cursor: pointer;
   outline: none;
+  background-color: var(--card);
+  box-shadow: 0 0 8px rgba(0,0,0, .3);
 }
 
 .add-item-wrapper:active .add-item {
-  transform: scale(.95,.95);
+  transition-duration: .075s;;
+  background-color: var(--light-gray)
 }
 
 .isRootAndHaveItems {

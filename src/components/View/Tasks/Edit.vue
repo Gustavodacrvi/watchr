@@ -42,7 +42,7 @@
         <div class="tags-wrapper" :class="{showTag: atLeastOnSpecialTag || task.tags && task.tags.length > 0}">
           <div class="tags" :class="{show}">
             <Tag v-if="task.taskDuration"
-              icon="clock"
+              icon="duration"
               color="var(--purple)"
               :value="taskDurationStr"
               @click="task.taskDuration = ''"
@@ -127,7 +127,6 @@
           @remove='removeSubtask'
           @update='updateIds'
           @save-checklist='saveChecklist'
-          @convert-task='convertTask'
           @is-adding-toggle='v => isAddingChecklist = v'
         />
         <div class="files show" :class="{show, hasFiles: files.length > 0}">
@@ -192,40 +191,6 @@
                 :center='true'
               />
               <IconDrop
-                handle="tasks"
-                width="18px"
-                :box='true'
-                :options="listOptions"
-                :active='isIcon(10)'
-                ref='tasks'
-               
-                handleColor='var(--primary)'
-                title='Add to list'
-                :center='true'
-              />
-              <IconDrop
-                handle="folder"
-                width="19px"
-                :box='true'
-                :options="folderOptions"
-                :active='isIcon(9)'
-                ref='folder'
-               
-                title='Add to folder'
-                :center='true'
-              />
-              <IconDrop
-                handle="group"
-                width="19px"
-                :box='true'
-                :options="groupOptions"
-                :active='isIcon(8)'
-                ref='group'
-               
-                title='Add to group'
-                :center='true'
-              />
-              <IconDrop
                 handle="calendar"
                 width="18px"
                 :box='true'
@@ -261,11 +226,11 @@
                 :center='true'
               />
               <IconDrop
-                handle="clock"
+                handle="duration"
                 width="18px"
                 :box='true'
                 :active='isIcon(4)'
-                ref='clock'
+                ref='duration'
                 :options="durationOptions"
                
                 handleColor='var(--purple)'
@@ -705,16 +670,6 @@ export default {
       this.task.order = ids
       this.saveChecklist()
     },
-    convertTask({ids, index, id}) {
-      ids.splice(index, 0, id)
-      this.task.order = ids
-      this.task.checklist.push({
-        completed: false, id,
-        name: this.savedTasks.find(el => el.id === id).name
-      })
-
-      this.$store.dispatch('task/deleteTasks', [id])
-    },
     addSubtask({name, index, ids}) {
       const id = utils.getUid()
 
@@ -752,10 +707,6 @@ export default {
             for (const s of this.toReplace)
               if (!this.fromIconDrop && s)
                 n = n.replace(new RegExp(s), '')
-          const i = n.indexOf(' $')
-          if (i && i > -1 && t.calendar) {
-            n = n.substr(0, i)
-          }
           let heading = t.headingId
           let calendar = t.calendar
           if (heading === undefined) heading = null
@@ -864,9 +815,9 @@ export default {
       return this.task.notes.length > 0
     },
     getCompareDate() {
-      if (!this.defaultTask) return null
-      const c = this.defaultTask.calendar
-      if (!c || !this.isRecurringTask(this.defaultTask))
+      if (!this.item) return null
+      const c = this.item.calendar
+      if (!c || !this.isRecurringTask(this.item))
         return null
       return momUtils.getNextEventAfterCompletionDate(c).format('Y-M-D')
     },
@@ -905,7 +856,7 @@ export default {
 
         const icons = [
           'checklist-icon',
-          'clock',
+          'duration',
           'deadline',
           'file',
           'calendar',

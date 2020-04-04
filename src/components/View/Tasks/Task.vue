@@ -5,7 +5,7 @@
     @enter='taskEnter'
     @leave='taskLeave'
   >
-    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, isItemMainSelection}, deviceLayout, isLogbookTask]"
+    <div class="Task draggable" :class="taskClass"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
     >
@@ -20,24 +20,6 @@
         @comment="commentsPopup"
         @mouseenter.native='onHover = true'
       />
-      <div v-if="doneTransition && !isEditing && !isDesktopDevice"
-        class="back rb"
-        ref='back'
-        :style="{height: (itemHeight - 5) + 'px'}"
-      >
-        <div class="back-icons-wrapper">
-          <Icon class="back-icon"
-            icon='circle-filled'
-            color='white'
-            width="16px"
-          />
-          <Icon class="back-icon"
-            icon='circle-filled'
-            color='white'
-            width="16px"  
-          />
-        </div>
-      </div>
       <div
         class="cont-wrapper item-handle rb"
         :class='{doneTransition}'
@@ -140,12 +122,7 @@
                       @leave='infoLeave'
                       tag='span'
                     >
-                      <Icon v-if="isInbox" class="name-icon" icon="inbox" color="var(--primary)" key='1'/>
-                      <Icon v-if="isToday && !isEvening" class="name-icon" icon="star" color="var(--yellow)" key='1'/>
-                      <Icon v-else-if="isToday && isEvening" class="name-icon" icon="moon" color="var(--dark-purple)" key='2'/>
-                      <Icon v-else-if="isTomorrow && !disableCalendarStr" class="name-icon" icon="sun" color="var(--orange)" key='3'/>
-                      <Icon v-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)" key='4'/>
-                      <template v-else>
+                      <template>
                         <span v-if="deadlineStr" class="txt-str alert" key='5'>{{ deadlineStr }}</span>
                         <span v-if="calendarStr && !isToday && !isTomorrow" class="txt-str dark rb" key='6'>
                           {{ calendarStr }}
@@ -157,7 +134,6 @@
                       <span v-html="parsedName" ref='parsed-name'></span>
                     </div>
                     
-                    <span v-if="!computedShowRuler && timeStr" class="txt-icon tag dark rb">{{ timeStr }}</span>
                     <Icon v-if="haveChecklist"
                     class="txt-icon checklist-icon"
                     icon="pie"
@@ -173,8 +149,6 @@
                         {{nonReadComments}}
                       </span>
                     </span>
-                    <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
-                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="14px"/>
                     <span v-if="nextCalEvent" class="txt-icon tag dark rb">{{ nextCalEvent }}</span>
                   </span>
                 </div>
@@ -509,6 +483,16 @@ export default {
       savedTags: 'tag/sortedTagsByName',
       getTagsById: 'tag/getTagsById',
     }),
+
+    taskClass() {
+      return {
+          isItemSelected: this.isItemSelected,
+          showingIconDropContent: this.showingIconDropContent || this.isEditing,
+          isItemMainSelection: this.isItemMainSelection,
+          deviceLayout: this.deviceLayout,
+          isLogbookTask: this.isLogbookTask,
+        }
+    },
     computedShowRuler() {
       return this.showingRuler && this.calendarDate
     },
@@ -570,22 +554,6 @@ export default {
         return this.tagNames[0] !== this.viewName
       return this.item.tags && this.item.tags.length > 0
     },
-    isInbox() {
-      if (this.viewName === 'Inbox')
-        return false
-      return !this.item.calendar
-    },
-    isToday() {
-      if (this.isCalendarView) return false
-      return this.isTaskInView(this.item, 'Today')
-    },
-    isTaskOverdue() {
-      return this.isTaskInView(this.item, 'Overdue')
-    },
-    isTomorrow() {
-      if (this.isCalendarView) return false
-      return this.isTaskInView(this.item, 'Tomorrow')
-    },
     showIconDrop() {
       return this.isDesktopBreakPoint && this.onHover
     },
@@ -630,18 +598,6 @@ export default {
       if (this.taskList && this.viewName === this.taskList.name) return null
       return fold.name
     },
-    isEvening() {
-      const c = this.item.calendar
-      if (!c || !c.evening || this.isCalendarView)
-        return false
-      return true
-    },
-    isCalendarView() {
-      if (this.viewType === 'calendar')
-        return true
-      const n = this.viewName
-      return n === 'Today' || n === 'Tomorrow'
-    },
     calendarStr() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday' || c.type === 'anytime') || this.disableCalendarStr) return null
@@ -654,33 +610,6 @@ export default {
       if ((c.type === 'specific' && this.viewType === 'calendar') || str === this.viewNameValue || (str === 'Today')) return null
 
       return str
-    },
-    calendarTime() {
-      const c = this.item.calendar
-      if (!c || !c.time) return null
-      if (this.incrementedTime)
-        return this.incrementedTime
-      return c.time
-    },
-    incrementedTime() {
-      if (!this.timelineIncrement || !this.isItemSelected)
-        return null
-      const newTime = mom(this.item.calendar.time, 'HH:mm').add(this.timelineIncrement, 'm')
-      if (newTime.isValid())
-        return newTime.format('HH:mm')
-    },
-    formatedTime() {
-      if (!this.calendarTime)
-        return null
-      return mom(this.calendarTime, 'HH:mm').format(this.timeFormat)
-    },
-    timeStr() {
-      if (!this.calendarTime)
-        return null
-      return `at ${utils.parseTime(this.calendarTime, this.userInfo)}`
-    },
-    timeFormat() {
-      return this.userInfo.disablePmFormat ? 'HH:mm' : 'LT'
     },
     startHour() {
       if (!this.formatedTime)
@@ -773,18 +702,6 @@ export default {
   z-index: 2;
 }
 
-.ruler-element {
-  width: 50px;
-  flex-shrink: 0;
-}
-
-.element-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
 .timeline-line {
   display: block;
   height: 3px;
@@ -819,12 +736,6 @@ export default {
 
 .Task.showingIconDropContent {
   z-index: 5;
-}
-
-.back-icons-wrapper {
-  flex-basis: 85%;
-  justify-content: space-between;
-  display: flex;
 }
 
 .cont-wrapper {
@@ -1077,11 +988,7 @@ export default {
 
 .isItemSelected.isItemMainSelection .cont-wrapper,
 .isItemSelected:hover .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.9) !important;
-}
-
-.isItemSelected .back {
-  opacity: 0;
+  background-color: rgba(157, 209, 255, 0.9) !important;
 }
 
 .sortable-ghost {
@@ -1101,19 +1008,6 @@ export default {
 
 .isLogbookTask {
   opacity: .6 !important;
-}
-
-.back {
-  position: absolute;
-  left: 2px;
-  top: 3px;
-  background-color: var(--primary);
-  width: 98%;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  opacity: 1;
-  justify-content: center;
 }
 
 .ruler-t-enter, .ruler-t-leave-to {

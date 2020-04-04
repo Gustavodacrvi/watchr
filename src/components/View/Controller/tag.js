@@ -33,6 +33,12 @@ export default {
       }
     },
     removeHeaderTag() {},
+    itemModelFallback() {
+      if (this.viewTag)
+        return {
+          tags: [this.viewTag.id]
+        }
+    },
     
     
     icon() {return 'tag'},

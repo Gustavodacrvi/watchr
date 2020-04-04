@@ -19,6 +19,12 @@ export default {
         groupId: this.viewGroup.id,
       })
     },
+    itemModelFallback() {
+      if (this.viewGroup)
+        return {
+          group: this.viewGroup.id,
+        }
+    },
 
     saveHeaderName() {
       return name => {

@@ -81,7 +81,7 @@
         @calc='$emit("calc")'
       />
       <div class="buttons">
-        <ButtonInput
+        <ButtonInput v-if="!noTime"
           :value='getTime ? getTime : "Add time"'
           icon='clock'
           :defaultColor='getTime ? "var(--purple)" : ""'
@@ -91,7 +91,7 @@
           value='Save date'
           icon='calendar'
           defaultColor='var(--green)'
-          @click.native="saveDate"
+          @click.native="() => saveDate()"
         />
       </div>
     </div>
@@ -221,7 +221,7 @@ export default {
     },
     saveDate(specific = null) {
       this.$emit('select', this.calendar || {
-        time: this.item || null,
+        time: this.time || null,
         type: 'specific',
         editDate: TOD.format('Y-M-D'),
         specific: specific || this.selectedMoment.format('Y-M-D'),

@@ -1,5 +1,5 @@
 <template>
-  <div class="Checklist">
+  <div class="Checklist" :class="{isAddingChecklist: hasEdit}">
     <div
       class="draggable-root"
       ref="draggable-root"
@@ -101,17 +101,6 @@ export default {
 
           this.addEdit(evt.newIndex)
 
-        } else if (type === 'Task') {
-          const childs = this.draggableRoot.childNodes
-          let i = 0
-          for (const c of childs) {
-            if (c.dataset.id === item.dataset.id)
-              break
-            i++
-          }
-          this.$emit('convert-task', {
-            index: i, id: item.dataset.id, ids: this.getIds(true)
-          })
         }
         item.remove()
       },
@@ -140,6 +129,13 @@ export default {
         }
       if (!found)
         this.removeEdit()
+    },
+    pushEditString(getString) {
+      this.addEdit(this.list.length)
+      if (getString)
+        this.$nextTick(() => {
+          this.$refs.Edit[0].updateString(getString())
+        })
     },
     addEdit(i) {
       this.removeEdit()
@@ -239,8 +235,7 @@ export default {
 
 .Checklist {
   margin: 0;
-  padding: 0 8px;
-  min-height: 10px;
+  transition-duration: .2s;
 }
 
 .trans-enter, .trans-leave-to {

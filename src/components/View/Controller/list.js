@@ -34,6 +34,13 @@ export default {
     updateIds() {
       return functionFallbacks.updateOrderFunctions.List
     },
+    itemModelFallback() {
+      if (this.viewList)
+        return {
+          group: this.viewList.group || undefined,
+          list: this.viewList.id,
+        }
+    },
 
     saveHeaderName() {
       return name => {
@@ -168,6 +175,7 @@ export default {
             }),
             fallbackItem: functionFallbacks.viewPositionFallbacks.listHeading,
             updateViewIds: functionFallbacks.updateOrderFunctions.listHeading,
+            itemModelFallback: {heading: h.id},
 
             saveNotes: notes => save({notes}),
           })

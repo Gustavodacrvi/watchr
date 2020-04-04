@@ -1,0 +1,36 @@
+
+.text-fields {
+  margin-top: -8px;
+}
+
+.smart-icons {
+  padding: 0 9px;
+  padding-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.right-icons {
+  display: flex;
+}
+
+.files, .tags {
+  transition-duration: .2s;
+}
+
+.files {
+  position: relative;
+  z-index: 2;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 3;
+}
+
+.hasContent {
+  padding: 0 9px;
+  padding-bottom: 9px;
+}

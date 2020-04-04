@@ -17,6 +17,7 @@
     :progress='getPieProgress'
     :headings='headings'
     :headingsOrder='headingsOrder'
+    :itemModelFallback='itemModelFallback || {}'
     :calendarDate='calendarDate'
     :showAllHeadingsItems='showAllHeadingsItems'
     :rootFallbackItem='rootFallbackItem'
@@ -108,11 +109,11 @@ export default {
             },
           ]
     },
-    getCalObjectByView(viewName, cal) {
+    getCalObjectByView(viewName) {
       if (this.viewName === 'Today')
-        return this.getSpecificDayCalendarObj(mom(), cal)
+        return this.getSpecificDayCalendarObj(mom())
       if (this.viewName === 'Tomorrow')
-        return this.getSpecificDayCalendarObj(mom().add(1, 'day'), cal)
+        return this.getSpecificDayCalendarObj(mom().add(1, 'day'))
       if (this.viewName === 'Someday')
         return {type: 'someday'}
       if (this.viewName === 'Anytime')
@@ -204,6 +205,9 @@ export default {
         }),
         fallbackItem: o.fallbackItem ? o.fallbackItem : (t, f) => functionFallbacks.viewFallbacks.calendarOrder(t, f, date),
         updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
+        itemModelFallback: o.itemModelFallback || {
+          calendar: this.getSpecificDayCalendarObj(date),
+        },
       }
     },
   },
@@ -397,6 +401,10 @@ export default {
             }),
             updateViewIds: saveOrder,
             fallbackItem: (t, f) => functionFallbacks.viewFallbacks.List(t, f, {listId: list.id, group: list.group, list: list.tags}),
+            itemModelFallback: {
+              list: list.id,
+              group: list.group || undefined,
+            },
           })
         } else if (viewHeading.smartViewControllerType === 'folder') {
           const folder = viewHeading
@@ -472,6 +480,7 @@ export default {
             }),
             updateViewIds: saveOrder,
             fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Folder(t, f, folder.id),
+            itemModelFallback: {folder: folder.id},
           })
         } else if (viewHeading.smartViewControllerType === 'group') {
           const group = viewHeading
@@ -547,6 +556,7 @@ export default {
             }),
             updateViewIds: saveOrder,
             fallbackItem: (t, f) => functionFallbacks.viewFallbacks.Group(t, f, group.id),
+            itemModelFallback: {group: group.id},
           })
         }
       }
@@ -580,6 +590,12 @@ export default {
           order: scheduleOrder,
           updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
           fallbackItem: (t, f, c, p) => functionFallbacks.viewFallbacks.Evening(t, f, {calendarDate}, p),
+          itemModelFallback: {
+            calendar: {
+              ...this.getSpecificDayCalendarObj(calendarDate),
+              evening: true,
+            },
+          },
         })
       }
 
@@ -655,6 +671,7 @@ export default {
             filter: task => task.deadline === date,
             fallbackItem: (t, f) => functionFallbacks.viewFallbacks.deadlineOrder(t, f, date),
             updateViewIds: functionFallbacks.updateOrderFunctions.calendarOrder,
+            itemModelFallback: {deadline: date},
           })
         )
       }
@@ -1095,7 +1112,7 @@ export default {
       const dispatch = this.$store.dispatch
       const saveTasksDay = (ids, mom) => {
         dispatch('task/saveTasksById', {
-          ids, task: {calendar: this.$store.getters['task/getSpecificDayCalendarObj'](mom)}
+          ids, task: {calendar: this.getSpecificDayCalendarObj(mom)}
         })
       }
       const sort = ([], tasks) => utilsTask.sortTasksByTaskDate(tasks)
@@ -1152,6 +1169,9 @@ export default {
           name: 'Today',
           id: 'todya',
           filter: task => this.isTaskInView(task, 'Today'),
+          itemModelFallback: {
+            calendar: this.getCalObjectByView(this.viewName),
+          },
         },
       ]
     },

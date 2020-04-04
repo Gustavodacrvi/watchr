@@ -3,15 +3,15 @@
     @enter="enter"
     @leave="leave"
   >
-    <div class="wrapper" @click="$emit('click')">
-      <div class="Tag cursor"
-        :class="[{selected, disabled}, layout]"
+    <div class="wrapper">
+      <div class="Tag cursor" @click="click"
+        :class="[{selected, disabled, active}, layout]"
         :style="{border: selectedBorder}"
         @mouseenter="hover = true"
         @mouseleave="hover = false"
       >
-        <Icon class="icon" :icon="icon" :color="color" width="14px"/>
-        <span class="name">{{ value }}</span>
+        <Icon class="icon" ref='icon' :icon="icon" :color="color" width="14px"/>
+        <span class="name" ref='name'>{{ value }}</span>
         <Icon v-if="extraIcon"
           class="extra-icon"
           :icon="extraIcon"
@@ -28,12 +28,14 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['value', 'icon', 'color', 'selected', 'disabled', 'extraIcon'],
+  props: ['value', 'icon', 'color', 'selected', 'disabled', 'extraIcon', 'active', 'callback'],
   data() {
     return {
       height: 0,
       width: 0,
       hover: false,
+
+      smartIconOptions: [],
     }
   },
   methods: {
@@ -41,8 +43,11 @@ export default {
       this.height = el.offsetHeight
       this.width = el.offsetWidth
 
-      const { name, icon } = this.getContStyle()
-      const w = this.getWrapper()
+      const name = this.$refs.name.style
+      const icon = this.$refs.icon.style
+
+      const w = el.style
+      
       name.transitionDuration = '0s'
       icon.transitionDuration = '0s'
       name.opacity = '0'
@@ -64,40 +69,51 @@ export default {
             el.style.opacity = '1'
             el.style.height = 'auto'
             el.style.width = 'auto'
-          }, 300)
+          }, 200)
         })
       })
     },
     leave(el, done) {
-      const { name, icon } = this.getContStyle()
-      const w = this.getWrapper()
-      name.opacity = '0'
-      icon.opacity = '0'
-      el.style.opacity = '0'
-      w.height = el.offsetHeight + 'px'
-      w.width = el.offsetWidth + 'px'
-      
+      const name = this.$refs.name.style
+      const icon = this.$refs.icon.style
+
+      const w = el.style
+
+      const {height, width} = getComputedStyle(el)
+
+      name.opacity = 1
+      icon.opacity = 1
+
+      w.opacity = 1
+      w.height = height
+      w.width = width
+
       requestAnimationFrame(() => {
         el.style.transitionDuration = '.2s'
-        w.transitionDuration = '.35s'
-        requestAnimationFrame(() => {
-          w.height = '0px'
-          w.width = '0px'
-          setTimeout(() => {
-            done()
-            el.style.transitionDuration = '0s'
-          }, 300)
-        })
+        w.transitionDuration = '.2s'
+        name.transitionDuration = '.2s'
+        icon.transitionDuration = '.2s'
+
+        name.opacity = 0
+        icon.opacity = 0
+        w.opacity = 0
+        w.height = '0px'
+        w.width = '0px'
+
+        setTimeout(done, 205)
       })
+    },
+    activate() {
+      if (this.callback)
+        this.smartIconOptions = this.callback()
+    },
+    click(evt) {
+      this.$emit('click')
+      this.activate()
     },
     getWrapper() {
       return this.$el.style
     },
-    getContStyle() {
-      const name = this.$el.getElementsByClassName('name')[0]
-      const icon = this.$el.getElementsByClassName('icon')[0]
-      return {name: name.style, icon: icon.style}
-    }
   },
   computed: {
     ...mapGetters(['layout']),
@@ -148,7 +164,7 @@ export default {
   transition-duration: .2s;
 }
 
-.Tag:hover {
+.Tag:hover, .active {
   background-color: var(--fade);
   background-color: var(--light-gray);
 }

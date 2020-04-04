@@ -19,6 +19,12 @@ export default {
     updateIds() {
       return functionFallbacks.updateOrderFunctions.Folder
     },
+    itemModelFallback() {
+      if (this.viewFolder)
+        return {
+          folder: this.viewFolder.id,
+        }
+    },
 
     saveHeaderName() {
       return name => {

@@ -17,12 +17,14 @@
         <Icon v-if="!isTaskCompleted"
           class="icon primary-hover"
           icon="circle"
-          color='var(--fade)'
+          color='var(--primary)'
+          width='15px'
         />
         <Icon v-else
           class="icon primary-hover"
           icon="circle-check"
-          color='var(--fade)'
+          color='var(--primary)'
+          width='15px'
         />
       </span>
       <span v-if="!editing"
@@ -85,6 +87,11 @@ export default {
       this.editing = true
     },
     keydown({key}) {
+      if (key === "ArrowDown" || key === 'ArrowUp') {
+        this.str = this.name
+        this.editing = false
+      }
+      
       if (key === "ArrowUp")
         this.$emit('move-cursor-up')
       else if (key === 'ArrowDown')
@@ -103,25 +110,35 @@ export default {
 
     enter(el, done) {
       const s = el.style
+      requestAnimationFrame(() => {
+        s.transitionDuration = 0
+        s.height = 0
+        s.opacity = 0
+  
+        requestAnimationFrame(() => {
+          s.transitionDuration = '.2s'
+          s.height = '30px'
+          s.opacity = 1
+  
+          setTimeout(done, 205)
+        })
+      })
+    },
+    leave(el, done) {
+      const s = el.style
 
       s.transitionDuration = 0
-      s.height = 0
-      s.opacity = 0
+      s.height = '30px'
+      s.opacity = 1
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
-        s.height = this.isDesktopDevice ? '25px' : '30px'
-        s.opacity = 1
+        
+        s.height = 0
+        s.opacity = 0
 
-        setTimeout(done, 205)
+        setTimeout(done, 201)
       })
-    },
-    leave(el) {
-
-      const s = el.style
-
-      s.height = 0
-      s.opacity = 0
 
     },
   },
@@ -153,6 +170,7 @@ export default {
   position: relative;
   display: flex;
   transition: height .2s, background-color .2s;
+  height: 30px;
 }
 
 .name-wrapper {
@@ -242,6 +260,15 @@ export default {
 .icon {
   transform: translateY(2px);
   margin-left: 6px;
+}
+
+</style>
+
+<style>
+
+
+.isAddingChecklist .Subtask {
+  height: unset;
 }
 
 </style>

@@ -5,7 +5,7 @@
         :repeat='content.repeat'
         :onlyDates='content.onlyDates'
         :defaultTime='content.time'
-        :initalDate='content.initial'
+        :initial='content.initial'
         :noTime='content.noTime'
         :allowNull='content.allowNull'
         @repeat='openRepeatOptions'

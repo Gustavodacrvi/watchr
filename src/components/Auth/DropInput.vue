@@ -22,13 +22,13 @@
       @dragleave.stop.prevent
       @dragover.stop.prevent
       
-      :style="backColor ? `background-color: ${backColor}` : ''"
+      :style="{backgroundColor: backColor || ''}"
     ></textarea>
     <transition
       @enter="enter"
       @leave="leave"
     >
-      <div v-if="showing" class="content scroll-thin shadow cb rb">
+      <div v-if="showing" class="content scroll-thin shadow rb">
         <transition-group
           @enter='enterItems'
           @leave='leaveItems'
@@ -58,13 +58,12 @@ export default {
     }
   },
   created() {
-    if (!this.disableAutoSelect)
+    if (!this.disableAutoSelect && this.options)
       this.active = this.options[0]
   },
   mounted() {
     if (this.focus)
-      this.focusInput(200)
-    setTimeout(this.fixHeight)
+      this.focusInput(10)
   },
   methods: {
     onpaste(...args) {
@@ -80,11 +79,10 @@ export default {
       if (el)
         setTimeout(() => el.focus(), timeout)
     },
-    fixHeight() {
+    fixHeight(height) {
       const el = this.$refs.input
       if (el) {
-        el.style.height = '5px'
-        el.style.height = (el.scrollHeight) + 'px'
+        el.style.height = (height || el.scrollHeight) + 'px'
       }
     },
     enterItems(el, done) {
@@ -103,7 +101,7 @@ export default {
     },
     onFocus() {
       this.showing = true
-      if (!this.disableAutoSelect)
+      if (!this.disableAutoSelect && this.options)
         this.active = this.options[0]
       else this.active = ''
     },
@@ -213,6 +211,8 @@ export default {
       }
     },
     moveActive(key) {
+      if (!this.options)
+        return;
       if (!this.active)
         this.active = this.options[0]
       else {
@@ -287,6 +287,7 @@ export default {
   top: 43px;
   overflow: auto;
   max-height: 200px;
+  background-color: var(--light-gray);
 }
 
 .link {
@@ -300,7 +301,7 @@ export default {
 }
 
 .link.active, .link:hover {
-  background-color: var(--light-gray);
+  background-color: var(--extra-light-gray);
 }
 
 .no-back .cbd {

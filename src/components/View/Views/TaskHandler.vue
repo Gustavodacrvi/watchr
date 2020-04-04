@@ -20,7 +20,7 @@
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
       comp='Task'
-      editComp='TaskEdit'
+      editComp='Task'
       itemPlaceholder='Task name...'
 
       @update="updateIds"
@@ -61,7 +61,7 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
-    'calendarDate', 'updateViewIds', 'showingRuler',
+    'calendarDate', 'updateViewIds', 'showingRuler', 'itemModelFallback',
     'width', 'disableRootActions', 'fallbackFunctionData',
 
     'headingEditOptions', 'taskIconDropOptions', 'filterByAssigned',
@@ -84,6 +84,10 @@ export default {
     this.order = this.tasksOrder
   },
   methods: {
+    toggleCompletion(ids) {
+      this.$refs.renderer.toggleCompletion(ids)
+    },
+    
     applyAutoSchedule(autoSchedule, calendarDate) {
       this.$refs.renderer.applyAutoSchedule(autoSchedule, calendarDate)
     },
