@@ -139,9 +139,9 @@ export default EditBuilder({
           assigned: '',
           taskDuration: '',
           deadline: '',
-          folder: '',
-          group: '',
-          list: '',
+          folder: null,
+          group: null,
+          list: null,
           notes: '',
           calendar: null,
           heading: null,
@@ -968,21 +968,21 @@ export default EditBuilder({
         match('@', this.lists, list => {
           this.model.list = list.id
           this.model.group = list.group
-          this.model.folder = ''
+          this.model.folder = null
           this.model.assigned = null
         })
         match('$', this.folders, folder => {
           this.model.folder = folder.id
-          this.model.list = ''
-          this.model.group = ''
-          this.model.heading = ''
+          this.model.list = null
+          this.model.group = null
+          this.model.heading = null
           this.model.assigned = null
         })
         match('%', this.groups, group => {
-          this.model.folder = ''
-          this.model.list = ''
+          this.model.folder = null
+          this.model.list = null
           this.model.group = group.id
-          this.model.heading = ''
+          this.model.heading = null
           this.model.assigned = null
         })
 

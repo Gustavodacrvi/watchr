@@ -121,8 +121,12 @@ export default {
     ...mapMutations(['saveMainSelection']),
     
     save(obj) {
-      this.$emit('save', obj)
-      this.isEditing = false
+      if (this.isAdding)
+        this.$parent.$emit('save', obj)
+      else {
+        this.$emit('save', obj)
+        this.isEditing = false
+      }
     },
     click(evt) {
       if (!this.isSelecting && this.isDesktopDevice && !this.isEditing) {
@@ -149,7 +153,7 @@ export default {
       
       if (this.isAdding) {
         return requestAnimationFrame(() => {
-          s.transitionDuration = '.010s'
+          s.transitionDuration = '.1s'
           s.height = this.itemHeight + 'px'
           setTimeout(() => {
             s.transitionDuration = '.2s'
@@ -531,23 +535,27 @@ export default {
 
 .ItemTemplate {
   position: relative;
-  margin: 0;
-  transition-duration: .2s;
   z-index: 5;
-}
-
-.isEditing {
-  margin: 70px 0 !important;
-  transition-duration: .2s;
-  z-index: 6;
 }
 
 .cont-wrapper {
   position: relative;
   z-index: 5;
+  margin: 0;
+  transition-duration: .2s;
   height: 100%;
   user-select: none;
 }
+
+.isEditing .cont-wrapper {
+  margin: 70px 0 !important;
+}
+
+.isEditing {
+  transition-duration: .2s;
+  z-index: 6;
+}
+
 
 .desktop .cont-wrapper:hover, .desktop .cont-wrapper:active, .isItemMainSelection .cont-wrapper {
   background-color: var(--light-gray);
