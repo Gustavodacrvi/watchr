@@ -6,6 +6,8 @@
       :editRawPlaceholder='editRawPlaceholder'
       :itemHeight='itemHeight'
       :editComponent='editComponent'
+      :isAdding='isAdding'
+      :listRenderer='listRenderer'
       :itemModelFallback='itemModelFallback'
       :doneTransition='completeEditLeaveEvent'
       @save='obj => $emit("save", obj)'
@@ -25,6 +27,8 @@
     <DisplayCont v-if="showingCont && completeEditLeave"
       :class="{transitioning}"
       :itemHeight='itemHeight'
+      :isAdding='isAdding'
+      :listRenderer='listRenderer'
     
       :name='name'
       :showLine='showLine'
@@ -65,7 +69,7 @@ export default {
   components: {
     DisplayCont, EditRaw,
   },
-  props: ['name', 'isEditing', 'itemHeight', 'editComponent', 'editRawPlaceholder', 'item', 'itemModelFallback'],
+  props: ['name', 'isEditing', 'itemHeight', 'editComponent', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'listRenderer'],
   data() {
     return {
       showElements: true,

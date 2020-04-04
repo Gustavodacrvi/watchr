@@ -11,46 +11,6 @@ const TOD_STR = TOD.format('Y-M-D')
 import utils from "@/utils/"
 import taskUtils from "@/utils/task"
 
-const saveByShortcut = (type, task) => {
-  switch (type) {
-    case 'CalendarPicker': {
-      this.fromIconDrop = task !== null
-      if (task !== null)
-        this.toReplace = null
-      
-      this.task.calendar = task
-      this.fromDefaultTask = false
-      break
-    }
-    case 'save': {
-      if (task.tags && task.tags.length > 0) {
-        this.task = {
-          ...this.task,
-          tags: this.getTagsById(task.tags).map(el => el.name)
-        }
-      } else if (task.list) {
-        this.task = {
-          ...this.task,
-          list: this.getListsById([task.list]).map(el => el.name)[0],
-          heading: null,
-          group: null,
-          folder: null,
-        }
-      } else if (task.folder) {
-        this.task = {
-          ...this.task,
-          folder: this.getFoldersById([task.folder]).map(el => el.name)[0],
-          list: null,
-          group: null,
-          heading: null,
-        }
-      } else {
-        this.task = {...this.task, ...task}
-      }
-    }
-  }
-}
-
 const getMoveToListOptions = function() {
   return [
     {
@@ -128,7 +88,6 @@ const getMoveToListOptions = function() {
 
 export default EditBuilder({
   value: (v, vm) => vm.model.name = v,
-  saveByShortcut,
   textFields: [
     {
       props: {
@@ -194,17 +153,58 @@ export default EditBuilder({
       }
     },
     created() {
-      if (this.item.calendar)
-        this.fromDefaultItem = true
-
-      if (this.item.tags)
-        this.model.tags = this.item.tags.slice()
-      if (this.item.checklist)
-        this.model.checklist = this.item.checklist.slice()
-      if (this.item.order)
-        this.model.order = this.item.order.slice()
+      if (this.item) {
+        if (this.item.calendar)
+          this.fromDefaultItem = true
+  
+        if (this.item.tags)
+          this.model.tags = this.item.tags.slice()
+        if (this.item.checklist)
+          this.model.checklist = this.item.checklist.slice()
+        if (this.item.order)
+          this.model.order = this.item.order.slice()
+      }
     },
     methods: {
+      saveByShortcut(type, task) {
+        switch (type) {
+          case 'CalendarPicker': {
+            this.fromIconDrop = task !== null
+            if (task !== null)
+              this.toReplace = null
+            
+            this.model.calendar = task
+            this.fromDefaultTask = false
+            break
+          }
+          case 'save': {
+            if (task.tags && task.tags.length > 0) {
+              this.model = {
+                ...this.model,
+                tags: this.getTagsById(task.tags).map(el => el.name)
+              }
+            } else if (task.list) {
+              this.model = {
+                ...this.model,
+                list: this.getListsById([task.list]).map(el => el.name)[0],
+                heading: null,
+                group: null,
+                folder: null,
+              }
+            } else if (task.folder) {
+              this.model = {
+                ...this.model,
+                folder: this.getFoldersById([task.folder]).map(el => el.name)[0],
+                list: null,
+                group: null,
+                heading: null,
+              }
+            } else {
+              this.model = {...this.model, ...task}
+            }
+          }
+        }
+      },
       beforeSave(model) {
         const m = model
         

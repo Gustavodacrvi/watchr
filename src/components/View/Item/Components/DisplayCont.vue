@@ -1,7 +1,7 @@
 <template>
-  <div class="DisplayCont" :class="{showLine}">
+  <div class="DisplayCont rb" :class="{showLine}">
     <slot name='root'></slot>
-    <div
+    <div v-if="!isAdding"
       class="icon-wrapper"
       :style="{height: itemHeight + 'px'}"
 
@@ -10,7 +10,7 @@
     >
       <slot name="check-icon"></slot>
     </div>
-    <div class="content-name-wrapper" 
+    <div v-if="!isAdding" class="content-name-wrapper" 
       :style="{minHeight: itemHeight + 'px'}"
     >
       <div class="text">
@@ -58,7 +58,7 @@
 import utils from '@/utils'
 
 export default {
-  props: ['name', 'showLine', 'itemHeight'],
+  props: ['name', 'showLine', 'itemHeight', 'isAdding'],
   methods: {
     enterSecondRow(el, done) {
       const s = el.style

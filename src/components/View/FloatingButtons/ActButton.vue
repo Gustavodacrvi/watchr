@@ -66,10 +66,6 @@ export default {
   transition-duration: .3s;
 }
 
-.main {
-  background-color: var(--sidebar-color);
-}
-
 .cont {
   position: absolute;
   width: 100%;

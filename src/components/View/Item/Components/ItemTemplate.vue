@@ -24,6 +24,8 @@
           ref='cont'
           
           :isEditing='isEditing'
+          :isAdding='isAdding'
+          :listRenderer='listRenderer'
           :itemHeight='itemHeight'
           :editComponent='editComponent'
           :itemModelFallback='itemModelFallback'
@@ -44,7 +46,7 @@
           </template>
           <template v-slot:root>
 
-            <CommentCounter v-if="item.group && isDesktopBreakPoint && !isEditing"
+            <CommentCounter v-if="item && item.group && isDesktopBreakPoint && !isEditing"
               ref="comment-counter"
               :hover='onHover'
               :number='nonReadComments'
@@ -93,10 +95,10 @@ export default {
     ItemCont, CommentCounter,
   },
   props: [
-    'itemHeight', 'item', 'editRawPlaceholder',
+    'itemHeight', 'item', 'editRawPlaceholder', 'isAdding',
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
     'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
-    'editComponent', 'itemModelFallback',
+    'editComponent', 'itemModelFallback', 'listRenderer',
 
     'options',
   ],
@@ -128,13 +130,35 @@ export default {
         evt.stopPropagation()
       }
     },
+    cancel() {
+      this.$parent.$emit('cancel')
+    },
     close() {
       this.isEditing = false
-      this.saveMainSelection(this.item.id)
+      if (!this.isAdding)
+        this.saveMainSelection(this.item.id)
     },
     
     enter(el, done) {
       const cont = this.$refs['cont-wrapper']
+      const s = cont.style
+      
+      s.transitionDuration = '0s'
+      s.height = 0
+      s.minHeight = 0
+      
+      if (this.isAdding) {
+        return requestAnimationFrame(() => {
+          s.transitionDuration = '.010s'
+          s.height = this.itemHeight + 'px'
+          setTimeout(() => {
+            s.transitionDuration = '.2s'
+            s.height = 'auto'
+            this.isEditing = true
+            done()
+          }, 10)
+        })
+      }
       const parentIds = this.$parent.$parent.disableItemEnterTransitionIds
       
       let disableTransition = false
@@ -144,13 +168,8 @@ export default {
         disableTransition = true
       }
 
-      const s = cont.style
-
-      s.transitionDuration = '0s'
       s.opacity = 0
-      s.height = 0
-      s.minHeight = 0
-      
+
       requestAnimationFrame(() => {
         s.transitionDuration = disableTransition ? 0 : '.2s'
         s.opacity = 1
@@ -165,6 +184,8 @@ export default {
       })
     },
     leave(el, done) {
+      if (!this.item)
+        return done()
       const cont = this.$refs['cont-wrapper']
       const parentIds = this.$parent.$parent.disableItemEnterTransitionIds
       
@@ -251,6 +272,8 @@ export default {
       }
     },
     commentsPopup() {
+      if (!this.item)
+        return;
       this.$store.dispatch('pushPopup', {
         comp: "Comments",
         payload: {
@@ -428,9 +451,13 @@ export default {
     ...mapGetters(['layout', 'isDesktopDevice']),
 
     isItemSelected() {
+      if (!this.item)
+        return false
       return !this.movingItem && this.selectedItems.includes(this.item.id)
     },
     isItemMainSelection() {
+      if (!this.item)
+        return;
       return this.item.id === this.mainSelection
     },
     assignUserProfiles() {
@@ -438,13 +465,15 @@ export default {
     },
     
     nonReadComments() {
+      if (!this.item)
+        return;
       return this.nonReadCommentsById(this.item.group, this.item.id).length
     },
     isGroupOwner() {
       return (this.itemGroup && this.itemGroup.userId === this.userInfo.userId)
     },
     itemGroup() {
-      if (!this.item.group)
+      if (!this.item)
         return null
       return this.getGroupsById([this.item.group])[0]
     },
@@ -502,13 +531,14 @@ export default {
 
 .ItemTemplate {
   position: relative;
-  transition-duration: .2s;
   margin: 0;
+  transition-duration: .2s;
   z-index: 5;
 }
 
 .isEditing {
   margin: 70px 0 !important;
+  transition-duration: .2s;
   z-index: 6;
 }
 

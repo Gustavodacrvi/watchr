@@ -64,6 +64,9 @@
 
           v-bind='item.propsData'
           :focusToggle='focusToggle'
+          :isAdding='true'
+          :itemHeight='itemHeight'
+          :listRenderer='true'
           :fallbackItem='fallbackItem'
 
           :data-id='item.isEdit'
@@ -1298,7 +1301,7 @@ export default {
 }
 
 .cameFromAnotherTab-ghost {
-  height: 28px;
+  height: 30px;
   background-color: var(--sidebar-color);
   transition: transform .2s;
 }
@@ -1386,7 +1389,7 @@ export default {
 }
 
 .add-item-wrapper {
-  height: 25px;
+  height: 30px;
   width: 100%;
 }
 
@@ -1397,19 +1400,23 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .2s;
   transform: scale(1,1);
+  transition-duration: .2s;
+  box-shadow: 0 0 0 transparent;
 }
 
 .add-item-wrapper:hover .add-item {
-  height: 25px;
+  height: 30px;
   opacity: 1;
   cursor: pointer;
   outline: none;
+  background-color: var(--card);
+  box-shadow: 0 0 8px rgba(0,0,0, .3);
 }
 
 .add-item-wrapper:active .add-item {
-  transform: scale(.95,.95);
+  transition-duration: .075s;;
+  background-color: var(--light-gray)
 }
 
 .isRootAndHaveItems {

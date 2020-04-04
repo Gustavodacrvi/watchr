@@ -74,7 +74,7 @@
       <Info v-show="hasAtLeastOne"
         :isToday='isToday'
         :isTomorrow='isTomorrow'
-        :evening='item.calendar && item.evening'
+        :evening='item && item.calendar && item.evening'
 
         :calendarStr='calendarStr'
         :isRepeatingTask='isRepeatingTask'
@@ -119,6 +119,7 @@ export default {
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',
     'hideGroupName', 'hideFolderName', 'showingRuler',
     'isSelecting', 'allowLogStr', 'itemModelFallback',
+    'isAdding', 'listRenderer',
 
     'viewName', 'viewType',
   ],
@@ -133,7 +134,8 @@ export default {
       else this.$emit('save', obj)
     },
     copyItem() {
-      this.$store.dispatch('task/copyTask', this.item)
+      if (this.item)
+        this.$store.dispatch('task/copyTask', this.item)
     },
     assignUser(uid) {
       this.saveTaskContent({
@@ -232,6 +234,8 @@ export default {
     },
 
     calendarStr() {
+      if (!this.item)
+        return;
       const t = this.item
       const c = this.item.calendar
 
@@ -247,10 +251,12 @@ export default {
       return str
     },
     isRepeatingTask() {
+      if (!this.item)
+        return false
       return this.isRecurringTask(this.item)
     },
     deadlineStr() {
-      if (this.disableDeadlineStr)
+      if (this.disableDeadlineStr || !this.item)
         return null
       return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
@@ -273,7 +279,7 @@ export default {
       return c.time
     },
     timeStr() {
-      if (!this.calendarTime || this.computedShowRuler)
+      if (!this.item || !this.calendarTime || this.computedShowRuler)
         return null
       return `at ${utils.parseTime(this.calendarTime, this.userInfo)}`
     },
@@ -290,6 +296,8 @@ export default {
     },
 
     nextCalendarEvent() {
+      if (!this.item)
+        return;
       const t = this.item
       const c = t.calendar
       
@@ -303,6 +311,8 @@ export default {
       return date
     },
     folderObj() {
+      if (!this.item)
+        return;
       const folder = this.itemFolder
 
       if (!folder || this.hideFolderName || (folder.name === this.viewName)) return null
@@ -313,11 +323,13 @@ export default {
       }
     },
     itemGroup() {
-      if (!this.item.group)
+      if (!this.item || !this.item.group)
         return null
       return this.getGroupsById([this.item.group])[0]
     },
     groupObj() {
+      if (!this.item)
+        return;
       const group = this.itemGroup
 
       if (!group || this.hideGroupName || (group.name === this.viewName)) return null
@@ -333,6 +345,8 @@ export default {
       return this.getFoldersById([this.item.folder])[0]
     },
     listObj() {
+      if (!this.item)
+        return;
       const list = this.itemList
       if (!list || this.hideListName) return null
       const savedList = this.itemList
@@ -394,13 +408,17 @@ export default {
       return mom(this.timeNumbers, 'HH:mm').format('HH')
     },
     completedItem() {
-      return this.isTaskCompleted(this.item, TOD_DATE, this.itemCompletionCompareDate)
+      if (this.item)
+        return this.isTaskCompleted(this.item, TOD_DATE, this.itemCompletionCompareDate)
     },
     canceledItem() {
-      return this.isTaskCanceled(this.item)
+      if (this.item)
+        return this.isTaskCanceled(this.item)
     },
 
     hasAtLeastOne() {
+      if (!this.item)
+        return false
       return
         (this.listObj ||
         this.folderObj ||
@@ -414,13 +432,17 @@ export default {
         this.hasFiles)
     },
     options() {
-      return utilsTask.taskOptions(this.item, this)
+      if (this.item)
+        return utilsTask.taskOptions(this.item, this)
     },
 
     taskDuration() {
-      return this.item.taskDuration ? utils.formatQuantity(this.item.taskDuration) : null
+      if (this.item)
+        return this.item.taskDuration ? utils.formatQuantity(this.item.taskDuration) : null
     },
     checklistPieProgress() {
+      if (!this.item)
+        return;
       const c = this.item.calendar
       let completed
       
@@ -442,24 +464,32 @@ export default {
       return 100 * completed / this.item.checklist.length
     },
     checklistProgress() {
+      if (!this.item)
+        return;
       if (this.item.checklist && this.item.checklist.length > 0)
         return this.checklistPieProgress
     },
 
     hasFiles() {
-      return this.item.files && this.item.files.length > 0
+      if (this.item)
+        return this.item.files && this.item.files.length > 0
     },
     hasTags() {
+      if (!this.item)
+        return false
       if (this.viewType === 'tag' && this.tagNames.length === 1)
         return this.tagNames[0] !== this.viewName
       return this.item.tags && this.item.tags.length > 0
     },
     tagNames() {
-      return ['AA', "BB", "Cc"]
+      if (!this.item)
+        return;
       return this.getTagsById(this.item.tags || []).map(el => el.name)
     },
 
     isItemSelected() {
+      if (!this.item)
+        return;
       return !this.movingItem && this.selectedItems.includes(this.item.id)
     },
 
@@ -470,11 +500,13 @@ export default {
       return n === 'Today' || n === 'Tomorrow'
     },
     isInbox() {
-      if (this.viewName === 'Inbox')
+      if (!this.item || this.viewName === 'Inbox')
         return false
       return !this.item.calendar
     },
     isToday() {
+      if (!this.item)
+        return false
       if (this.isCalendarView) return false
       return this.isTaskInView(this.item, 'Today')
     },
@@ -485,9 +517,13 @@ export default {
       return true
     },
     isTaskOverdue() {
+      if (!this.item)
+        return false
       return this.isTaskInView(this.item, 'Overdue')
     },
     isTomorrow() {
+      if (!this.item)
+        return false
       if (this.isCalendarView) return false
       return this.isTaskInView(this.item, 'Tomorrow')
     },

@@ -64,10 +64,10 @@ export default {
   components: {
     Task, DropInput,
   },
-  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item', 'itemModelFallback'],
+  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding'],
   data() {
     return {
-      model: this.name,
+      model: this.name || '',
       options: [],
       iconColor: '',
 
@@ -163,7 +163,6 @@ export default {
 
       const height = getComputedStyle(this.$refs['cont']).height
 
-
       s.transitionDuration = 0
       rootS.transitionDuration = 0
       
@@ -180,14 +179,24 @@ export default {
           s.transitionDuration = '.2s'
           rootS.transitionDuration = '.2s'
           s.boxShadow = '0 0 0 transparent'
-          s.backgroundColor = 'var(--ligth-gray)'
-          rootS.backgroundColor = 'var(--ligth-gray)'
-          s.height = this.itemHeight + 'px'
-          rootS.height = this.itemHeight + 'px'
+
+          if (this.isAdding) {
+            s.height = 0
+            rootS.height = 0
+            s.backgroundColor = 'var(--back-color)'
+            rootS.backgroundColor = 'var(--back-color)'
+          } else {
+            s.backgroundColor = 'var(--ligth-gray)'
+            rootS.backgroundColor = 'var(--ligth-gray)'
+            s.height = this.itemHeight + 'px'
+            rootS.height = this.itemHeight + 'px'
+          }
   
           setTimeout(() => {
             this.beginTransition = false
             this.doneTransition()
+            if (this.isAdding)
+              this.$parent.$parent.$parent.$emit('cancel')
             done()
           }, 200)
         })

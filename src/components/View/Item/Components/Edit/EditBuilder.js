@@ -18,7 +18,6 @@ export default ({
   value,
   textFields,
   checklist, allowFiles,
-  saveByShortcut = () => {},
   instance = {},
   props = [],
 }) => ({
@@ -341,7 +340,7 @@ export default ({
         this.keyboardActions[this.cursorPos]()
       }
 
-      utils.saveByShortcut(this, true, key, p, saveByShortcut, ['CalendarPicker'])
+      utils.saveByShortcut(this, true, key, p, this.saveByShortcut || (() => {}), ['CalendarPicker'])
 
       if (!this.iconDrop && this.firstFieldOptions.length === 0) {
         if ((key === "ArrowUp" && !this.currentSmartIconHasList) || key === "ArrowLeft") {
