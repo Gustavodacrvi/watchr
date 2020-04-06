@@ -65,7 +65,7 @@ const getMoveToListOptions = function() {
           this.model.heading = null
           this.model.folder = null
           this.model.assigned = null
-          this.model.group = el.id
+          this.model.group = el.id || null
           this.$nextTick(() => {
             this.cursorPos++
           })
@@ -135,6 +135,7 @@ export default EditBuilder({
         fromIconDrop: false,
         model: {
           name: '',
+          notes: '',
           priority: '',
           assigned: '',
           taskDuration: '',
@@ -339,6 +340,7 @@ export default EditBuilder({
                   ...this.model.calendar,
                   evening: true,
                 }
+                this.fromIconDrop = true
               }
             },
           })
@@ -445,7 +447,10 @@ export default EditBuilder({
 
           arr = [...arr, ...helperList.map(el => ({
             ...el,
-            callback: () => this.model.calendar = this.parseKeyword(' ' + el.name),
+            callback: () => {
+              this.model.calendar = this.parseKeyword(' ' + el.name),
+              this.fromIconDrop = true
+            },
           }))]
 
           const calendar = this.parseKeyword(' ' + search.trim())
@@ -454,7 +459,10 @@ export default EditBuilder({
               id: 'found_match',
               name: search,
               icon: 'calendar',
-              callback: () => this.model.calendar = calendar
+              callback: () => {
+                this.fromIconDrop = true
+                this.model.calendar = calendar
+              }
             })
 
           return arr
@@ -534,16 +542,22 @@ export default EditBuilder({
             name: 'Today',
             icon: 'star',
             color: 'var(--yellow)',
-            callback: model => model.calendar = this.getSpecificDayCalendarObj(TOD_STR),
+            callback: model => {
+              this.fromIconDrop = true
+              model.calendar = this.getSpecificDayCalendarObj(TOD_STR)
+            },
           },
           {
             id: 'eve',
             name: 'This evening',
             icon: 'moon',
             color: 'var(--dark-purple)',
-            callback: model => this.model.calendar = {
-              ...this.getSpecificDayCalendarObj(TOD_STR),
-              evening: true,
+            callback: model => {
+                this.fromIconDrop = true
+                this.model.calendar = {
+                ...this.getSpecificDayCalendarObj(TOD_STR),
+                evening: true,
+              }
             },
           },
           {
@@ -551,28 +565,40 @@ export default EditBuilder({
             name: 'Tomorrow',
             icon: 'sun',
             color: 'var(--orange)',
-            callback: model => model.calendar = this.getSpecificDayCalendarObj(TOD.clone().add(1, 'd').format('Y-M-D')),
+            callback: model => {
+              this.fromIconDrop = true
+              model.calendar = this.getSpecificDayCalendarObj(TOD.clone().add(1, 'd').format('Y-M-D'))
+            },
           },
           {
             id: 'soa',
             name: 'Anytime',
             icon: 'layer-group',
             color: 'var(--olive)',
-            callback: model => model.calendar = {type: 'anytime'},
+            callback: model => {
+              this.fromIconDrop = true
+              model.calendar = {type: 'anytime'}
+            }
           },
           {
             id: 'sa',
             name: 'Someday',
             icon: 'archive',
             color: 'var(--brown)',
-            callback: model => model.calendar = {type: 'someday'},
+            callback: model => {
+              this.fromIconDrop = true
+              model.calendar = {type: 'someday'}
+            }
           },
           {
             id: 's',
             name: 'Inbox',
             icon: 'inbox',
             color: 'var(--primary)',
-            callback: model => model.calendar = null,
+            callback: model => {
+              this.fromIconDrop = true
+              model.calendar = null
+            }
           },
           {
             id: 'select_date',
@@ -585,6 +611,7 @@ export default EditBuilder({
                 content: {
                   repeat: true,
                   callback: calendar => {
+                    this.fromIconDrop = true
                     this.model.calendar = calendar
                   },
                 },
@@ -967,12 +994,12 @@ export default EditBuilder({
         match('#', this.tags, tag => this.addModelTag(tag.id))
         match('@', this.lists, list => {
           this.model.list = list.id
-          this.model.group = list.group
+          this.model.group = list.group || null
           this.model.folder = null
           this.model.assigned = null
         })
         match('$', this.folders, folder => {
-          this.model.folder = folder.id
+          this.model.folder = folder.id || null
           this.model.list = null
           this.model.group = null
           this.model.heading = null
@@ -981,7 +1008,7 @@ export default EditBuilder({
         match('%', this.groups, group => {
           this.model.folder = null
           this.model.list = null
-          this.model.group = group.id
+          this.model.group = group.id || null
           this.model.heading = null
           this.model.assigned = null
         })

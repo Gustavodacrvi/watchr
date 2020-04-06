@@ -110,7 +110,7 @@ export default {
 
 .ball-wrapper {
   margin-right: 10px;
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 4px 5px 0px 4px;
   transition-duration: .2s;
   transform: scale(1,1);

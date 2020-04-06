@@ -7,7 +7,7 @@
   >
     <div
       class="ItemTemplate item-handle draggable"
-      :class="[layout, {isItemSelected, isItemMainSelection, isEditing}]"
+      :class="[layout, {isItemSelected, isItemMainSelection, isEditing, listRenderer}]"
 
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
@@ -24,6 +24,7 @@
           ref='cont'
           
           :isEditing='isEditing'
+          :showInfo='showInfo'
           :isAdding='isAdding'
           :listRenderer='listRenderer'
           :itemHeight='itemHeight'
@@ -73,6 +74,9 @@
           <template v-slot:before-name>
             <slot name="before-name"></slot>
           </template>
+          <template v-slot:flex-end>
+            <slot name="flex-end"></slot>
+          </template>
 
         </ItemCont>
       </div>
@@ -98,7 +102,7 @@ export default {
     'itemHeight', 'item', 'editRawPlaceholder', 'isAdding',
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
     'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
-    'editComponent', 'itemModelFallback', 'listRenderer',
+    'editComponent', 'itemModelFallback', 'listRenderer', 'showInfo',
 
     'options',
   ],
@@ -184,7 +188,7 @@ export default {
           s.transitionDuration = '.2s'
           s.height = 'auto'
           done()
-        }, 205)
+        }, 201)
       })
     },
     leave(el, done) {
@@ -486,10 +490,6 @@ export default {
     isItemMainSelection() {
       this.bindMainSelection()
     },
-    completed() {
-      if (this.completed)
-        this.animate(this.completed)
-    },
     completedItem() {
       this.completed = this.completedItem
     },
@@ -535,6 +535,7 @@ export default {
 
 .ItemTemplate {
   position: relative;
+  overflow: visible;
   z-index: 5;
 }
 
@@ -547,7 +548,7 @@ export default {
   user-select: none;
 }
 
-.isEditing .cont-wrapper {
+.isEditing.listRenderer .cont-wrapper {
   margin: 70px 0 !important;
 }
 

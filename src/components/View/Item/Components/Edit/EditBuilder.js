@@ -98,18 +98,18 @@ export default ({
           const currentNumber = num
           return create(InputDrop, {
             class: 'field no-back',
-            props: el.props,
             ref: el.id,
             key: el.id,
 
-            domProps: {
+            props: {
+              ...el.props,
               enterOnShift: true,
               value: this.model[el.vModel],
               options: el.options ? this[el.options] : [],
             },
             on: {
-              input(event) {
-                this.$emit('input', event.target.value)
+              input: value => {
+                this.model[el.vModel] = value
               },
               enter: this.save,
               cancel: () => this.$parent.$emit('close'),
@@ -254,8 +254,7 @@ export default ({
             })
           } : null
         }
-          
-        this.$emit('save', obj)
+        this.$emit('save', {...obj})
 
         this.afterSave(this.model)
       }
@@ -343,14 +342,14 @@ export default ({
       utils.saveByShortcut(this, true, key, p, this.saveByShortcut || (() => {}), ['CalendarPicker'])
 
       if (!this.iconDrop && this.firstFieldOptions.length === 0) {
-        if ((key === "ArrowUp" && !this.currentSmartIconHasList) || key === "ArrowLeft") {
+        if ((key === "ArrowUp" && !this.currentSmartIconHasList) || (key === "ArrowLeft" && this.cursorPos > textFields.length + 1)) {
           p()
   
           if (this.isOnShift)
             this.cursorPos = 0
           else        
             this.incrementPos(-1)
-        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || key === "ArrowRight") {
+        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || (key === "ArrowRight" && this.cursorPos > textFields.length + 1)) {
           p()
   
           if (this.isOnShift)

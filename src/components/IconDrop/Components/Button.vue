@@ -8,7 +8,7 @@
   >
     <Icon v-if="icon"
       class="icon"
-      width='18px'
+      width='14px'
       :icon='icon'
       :color='color'
     />
@@ -46,11 +46,11 @@ export default {
 
 .Button {
   background-color: var(--dark-light-gray);
-  padding: 12px;
+  padding: 8px;
   width: 100%;
   text-align: left;
   outline: none;
-  font-size: 1.1em;
+  font-size: 1em;
   display: flex;
   align-items: center;
   white-space: nowrap;

@@ -18,13 +18,13 @@
           class="icon primary-hover"
           icon="circle"
           color='var(--primary)'
-          width='15px'
+          width='12px'
         />
         <Icon v-else
           class="icon primary-hover"
           icon="circle-check"
           color='var(--primary)'
-          width='15px'
+          width='12px'
         />
       </span>
       <span v-if="!editing"
@@ -117,7 +117,7 @@ export default {
   
         requestAnimationFrame(() => {
           s.transitionDuration = '.2s'
-          s.height = '30px'
+          s.height = '22px'
           s.opacity = 1
   
           setTimeout(done, 205)
@@ -128,7 +128,7 @@ export default {
       const s = el.style
 
       s.transitionDuration = 0
-      s.height = '30px'
+      s.height = '22px'
       s.opacity = 1
 
       requestAnimationFrame(() => {
@@ -246,7 +246,7 @@ export default {
 
 .icons {
   height: 100%;
-  flex-basis: 25px;
+  flex-basis: 20px;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -41,35 +41,35 @@ export default {
     colors() {
       return [
         {
-          color: '#DE5757',
+          color: '#ff4d4d',
           name: 'Red',
         },
         {
-          color: '#ea3a34',
+          color: '#f2241c',
           name: 'Dark Red',
         },
         {
-          color: '#5f8dc4',
+          color: '#5a81e2',
           name: 'Light Blue',
         },
         {
-          color: '#4842bd',
+          color: '#2b5cda',
           name: 'Dark Blue',
         },
         {
-          color: '#FFE366',
+          color: '#ffff4d',
           name: 'Yellow',
         },
         {
-          color: '#d29437',
+          color: '#e4944e',
           name: 'Brown',
         },
         {
-          color: '#a160eb',
+          color: '#a04dff',
           name: 'Purple',
         },
         {
-          color: '#7b29ff',
+          color: '#6b0fff',
           name: 'Dark Purple',
         },
         {
@@ -77,11 +77,11 @@ export default {
           name: 'Flamingo',
         },
         {
-          color: '#57DE5B',
+          color: '#3efe45',
           name: 'Green',
         },
         {
-          color: '#4fe39e',
+          color: '#3dffa5',
           name: 'Olive',
         },
         {
@@ -89,7 +89,7 @@ export default {
           name: 'Sage',
         },
         {
-          color: '#FFA166',
+          color: '#f68a46',
           name: 'Orange',
         },
         {
@@ -122,7 +122,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 6px;
+  border-radius: 4px;
   transition-duration: .2s;
 }
 

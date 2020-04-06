@@ -93,7 +93,7 @@ export default {
       s.height = 0
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
-        s.height = `${this.isDesktopDevice ? 25 : 35}px`
+        s.height = `${this.isDesktopDevice ? 20 : 35}px`
       })
     },
     leave(el) {
@@ -277,11 +277,11 @@ export default {
 }
 
 .cont {
-  margin: 10px;
+  margin: 8px;
 }
 
 .options {
-  margin-top: 20px;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
 }
@@ -311,12 +311,12 @@ export default {
 }
 
 .fixed {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   height: 35px;
 }
 
 .fixed.isDesktopDevice {
-  height: 25px;
+  height: 20px;
 }
 
 .name-wrapper {

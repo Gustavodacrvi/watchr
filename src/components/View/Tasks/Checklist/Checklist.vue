@@ -238,6 +238,11 @@ export default {
   transition-duration: .2s;
 }
 
+.isAddingChecklist {
+  padding: 0 9px;
+  padding-bottom: 9px;
+}
+
 .trans-enter, .trans-leave-to {
   opacity: 0;
 }
@@ -248,7 +253,7 @@ export default {
 
 .sortable-drag {
   background-color: var(--light-gray) !important; 
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .sortable-ghost {

@@ -11,7 +11,7 @@
             class="icon primary-hover"
             icon="circle"
             color='var(--primary)'
-            width='15px'
+            width='12px'
           />
         </div>
         <div class="input">
@@ -123,13 +123,13 @@ export default {
 }
 
 .Edit.isDesktopDevice .sub-edit {
-  padding: 8px;
+  padding: 6px;
   padding-left: 0;
 }
 
 .icon-wrapper {
-  width: 25px;
-  flex-basis: 25px;
+  width: 20px;
+  flex-basis: 20px;
   flex-shrink: 0;
   display: flex;
   justify-content: center;

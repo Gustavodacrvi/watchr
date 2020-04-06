@@ -1,9 +1,14 @@
 <template>
   <div class="AddTask popup cb shadow rb" :class="layout">
     <TaskEdit
+      :quickAdd='true'
+      :isAdding='true'
+      :listRenderer='false'
+      :itemHeight='itemHeight'
+      :itemModelFallback='{}'
+
       placeholder="Task name..."
       notesPlaceholder="Notes..."
-      :quickAdd='true'
       @save='add'
       @cancel="$emit('close')"
     />
@@ -12,13 +17,13 @@
 
 <script>
 
-import EditVue from '../../View/Tasks/Edit.vue'
+import TaskEdit from "@/components/View/Item/Task.vue"
 
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    TaskEdit: EditVue,
+    TaskEdit,
   },
   methods: {
     add(obj) {
@@ -33,7 +38,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['layout', 'isDesktopBreakPoint'])
+    ...mapGetters(['layout', 'isDesktopBreakPoint', 'itemHeight'])
   }
 }
 

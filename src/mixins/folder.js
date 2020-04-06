@@ -118,7 +118,7 @@ export default {
       return (this.itemHeight * this.listLength) + 'px'
     },
     itemHeight() {
-      return this.isDesktopBreakPoint ? 25 : 42
+      return this.isDesktopBreakPoint ? 19 : 42
     },
   },
   watch: {

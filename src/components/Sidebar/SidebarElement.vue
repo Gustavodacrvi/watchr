@@ -32,7 +32,7 @@
             :style="iconStyle"
             :icon="icon"
             :progress='progress'
-            :width='progress !== undefined ? null : "17px"'
+            :width='progress !== undefined ? null : "13px"'
           />
         </div>
         <div class="name-wrapper">
@@ -346,14 +346,13 @@ export default {
 
 .icon-wrapper {
   height: 100%;
-  width: 33px;
+  width: 22px;
   flex-shrink: 0;
   position: relative;
 }
 
 .inf-num {
-  font-size: 1.05em;
-  margin-right: 8px;
+  margin-right: 6px;
 }
 
 .name-wrapper {
@@ -369,10 +368,10 @@ export default {
   align-items: center;
   right: 6px;
   flex-shrink: 0;
-  margin-right: 6px;
+  margin-right: 4px;
   height: 100%;
+  font-size: .9em;
   z-index: 5;
-  font-size: .85em;
 }
 
 .name {
@@ -401,7 +400,7 @@ export default {
 }
 
 .link-wrapper {
-  height: 25px;
+  height: 19px;
   position: relative;
   transition-duration: .2s;
 }
@@ -461,7 +460,7 @@ export default {
 }
 
 .inf {
-  margin-left: 8px;
+  margin-left: 2px;
 }
 
 .faded {

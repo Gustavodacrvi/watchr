@@ -57,7 +57,7 @@ export default {
     return {
       sidebarHided: false,
       scrollTop: null,
-      width: 450,
+      width: 250,
 
       pressingHandle: false,
       handleStart: 0,
@@ -88,7 +88,7 @@ export default {
     handlePointermove(evt) {
       if (this.pressingHandle) {
         const newWidth = this.width + (evt.screenX - this.handleStart)
-        if (newWidth > 300 && newWidth < 800) {
+        if (newWidth > 225 && newWidth < 800) {
           this.width = newWidth
           localStorage.setItem('watchr_menu_width', this.width)
           this.handleStart = evt.screenX
@@ -177,6 +177,8 @@ export default {
 
 .cont {
   position: relative;
+  display: flex;
+  justify-content: center;
   flex-basis: 100%;
   flex-grow: 1;
   transition-delay: .4s;

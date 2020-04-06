@@ -61,9 +61,9 @@ export default {
 
 .Input {
   border: none;
-  padding: 12px;
+  padding: 8px;
   outline: none;
-  border-radius: 10px;
+  border-radius: 6px;
   font-size: 1em;
   width: 100%;
   box-sizing: border-box;

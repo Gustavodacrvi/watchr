@@ -257,7 +257,7 @@ export default {
   display: flex !important;
   width: 98% !important;
   box-shadow: none;
-  border-radius: 6px;
+  border-radius: 4px;
   flex-grow: 1;
 }
 
@@ -270,7 +270,7 @@ export default {
 
 .act-button-wrapper .main {
   background-color: var(--card);
-  border-radius: 6px;
+  border-radius: 4px;
   transition: background-color .2s, box-shadow;
   box-shadow: 0 0 8px rgba(0,0,0, .3);
 }

@@ -9,9 +9,9 @@
       :color="getIconColor"
       :progress='progress'
       :shadow='true'
-      width="30px"
+      :width="isDesktopBreakPoint ? '22px' : '30px'"
       @click="openMenu"
-      :style="{filter: `drop-shadow(0 0 ${isDesktopBreakPoint ? 20 : 10}px ${getIconColor})`}"
+      :style="{filter: `drop-shadow(0 0 ${isDesktopBreakPoint ? 15 : 5}px ${getIconColor})`}"
     />
     <HeaderSearch v-if="!isDesktopBreakPoint"/>
     <span v-if="!editing || !isEditable"
@@ -23,7 +23,7 @@
         class="comp-icon primary-hover cursor"
         :icon='scheduling ? "star" : "calendar-star"'
         color='var(--fade)'
-        width='18px'
+        width='14px'
         @click='$emit("open-main-comp")'
       />
     </span>
@@ -164,6 +164,8 @@ export default {
 <style scoped>
 
 .header {
+  display: flex;
+  align-items: center;
   z-index: 200;
 }
 
@@ -182,7 +184,8 @@ export default {
   position: relative;
   z-index: 1;
   margin: 0;
-  font-size: 1.6em;
+  font-size: 1.5em;
+  font-weight: bold;
   max-width: 550px;
   word-break: break-all;
   white-space: nowrap;

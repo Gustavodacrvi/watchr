@@ -44,7 +44,7 @@ export default {
 <style scoped>
 
 .SearchInput {
-  padding: 14px;
+  padding: 8px;
   width: 100%;
   outline: none;
   font-size: 1.05em;

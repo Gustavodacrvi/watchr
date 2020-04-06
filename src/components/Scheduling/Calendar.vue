@@ -21,20 +21,19 @@
         <Icon
           class="arrow-left icon cursor primary-hover"
           icon="tiny-arrow"
-          width="20px"
+          width="12px"
           @click="previousMonth"
         />
         <Icon
           class="icon cursor primary-hover"
           icon="tiny-circle"
-          width="14px"
+          width="8px"
           @click="resetDate"
-          style='transform: translateY(-2px)'
         />
         <Icon
           class="arrow-right primary-hover cursor"
           icon="tiny-arrow"
-          width="20px"
+          width="12px"
           @click="nextMonth"
         />
       </div>
@@ -276,7 +275,7 @@ export default {
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: 36px;
+  grid-auto-rows: 25px;
 }
 
 .week-day, .day {
@@ -291,7 +290,7 @@ export default {
 }
 
 .day {
-  border-radius: 6px;
+  border-radius: 4px;
   transition-duration: .2s;
   font-size: 1.15em;
 }

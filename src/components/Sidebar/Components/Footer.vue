@@ -26,7 +26,7 @@
           <Icon v-for="i in sideIcons" :key='i.icon'
             class="sect-icon passive cursor remove-highlight primary-hover"
             :icon='i.icon'
-            width='16px'
+            width='12px'
             
             :number='i.number'
             color='var(--fade)'
@@ -34,7 +34,7 @@
           />
           <transition name="icon-t">
             <IconDrop
-              width='16px'
+              width='12px'
               class="right passive"
               handle='settings-h'
               
@@ -44,8 +44,8 @@
           </transition>
         </div>
         <Icon v-if="isDesktopBreakPoint && !slimMode"
-          width='16px'
-          icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="$emit('toggle-sidebar')"/>
+          width='12px'
+          icon="arrow" id='sidebar-arrow' class="cursor passive primary-hover" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="$emit('toggle-sidebar')"/>
       </div>
     </div>
   </div>
@@ -99,7 +99,7 @@ export default {
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 40px;
+  height: 30px;
   border: none;
   z-index: 100;
 }
@@ -161,9 +161,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30px;
+  height: 20px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: background-color .2s;
 }
 
@@ -199,12 +199,12 @@ export default {
 #sidebar-arrow {
   position: absolute;
   left: 3px;
-  transform: translateY(12px) rotate(90deg);
+  transform: translateY(8px) rotate(90deg);
   transition: opacity .3s, left .3s, transform .3s;
 }
 
 #sidebar-arrow.hided {
-  transform: translateY(12px) rotate(-90deg);
+  transform: translateY(8px) rotate(-90deg);
 }
 
 </style>

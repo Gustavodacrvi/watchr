@@ -941,7 +941,7 @@ export default {
 
 .sortable-drag {
   background-color: var(--light-gray) !important; 
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .sortable-ghost .cont {

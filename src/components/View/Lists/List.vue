@@ -28,12 +28,12 @@
           <Icon class="back-icon"
             icon='circle-filled'
             color='white'
-            width="16px"
+            width="12px"
           />
           <Icon class="back-icon"
             icon='circle-filled'
             color='white'
-            width="16px"  
+            width="12px"  
           />
         </div>
       </div>
@@ -95,7 +95,7 @@
               <template>
                 <Icon v-if="deadlineStr" class="deadline list-inf icon"
                   icon='deadline'
-                  width='16px'
+                  width='12px'
                 />
                 <span v-if="deadlineStr" class='list-inf deadline'>{{ deadlineStr }}</span>
               </template>
@@ -502,7 +502,7 @@ export default {
 
 .sortable-drag {
   background-color: var(--light-gray) !important; 
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .sortable-ghost .cont {

@@ -527,7 +527,7 @@ export default {
   right: 0;
   width: 100%;
   box-sizing: border-box;
-  border-radius: 6px;
+  border-radius: 4px;
   /* background-color: var(--card); */
   border: 1px solid var(--sidebar-color);
   box-shadow: 0 0px 0px transparent;
@@ -608,7 +608,7 @@ export default {
   width: 100%;
   height: 100%;
   z-index: -1;
-  border-radius: 6px;
+  border-radius: 4px;
   opacity: .4;
   transition-duration: .2s;
 }

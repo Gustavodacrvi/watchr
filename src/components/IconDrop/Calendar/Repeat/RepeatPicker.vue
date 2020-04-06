@@ -440,8 +440,8 @@ export default {
 <style scoped>
 
 .RepeatPicker.desktop {
-  flex-basis: 450px;
-  width: 450px;
+  flex-basis: 270px;
+  width: 270px;
 }
 
 .content {

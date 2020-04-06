@@ -4,7 +4,7 @@
       <div class="icon-wrapper">
         <Icon class='adder-icon'
           :icon='adderIcon === "progress" ? "pie" : adderIcon'
-          :width='adderIcon === "progress" ? null : "17px"'
+          :width='adderIcon === "progress" ? null : "12px"'
           :progress='adderIcon === "progress" ? 0 : undefined'
           color='var(--fade)'
         />
@@ -98,7 +98,7 @@ export default {
 }
 
 .wrapper {
-  height: 25px;
+  height: 19px;
   display: flex;
 }
 
@@ -115,7 +115,7 @@ export default {
 
 .icon-wrapper {
   position: relative;
-  width: 33.5px;
+  width: 22px;
   flex-shrink: 0;
 }
 

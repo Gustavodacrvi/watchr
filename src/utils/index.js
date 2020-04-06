@@ -1012,6 +1012,8 @@ export default {
     if (sameDay(mom().add(1, 'day'), date)) return 'Tomorrow'
     if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')
     if (!tod.isSame(date, 'month')) return date.format('MMM Do, ddd')
+
+    if (date.diff(tod, 'days') <= 7) return date.format('ddd')
     return date.format('Do, ddd')
   },
   parseTime(time, userInfo) {

@@ -189,7 +189,7 @@ export default {
       requestAnimationFrame(() => {
         h.transitionDuration = '.2s'
         s.transitionDuration = '.2s'
-        h.height = (this.isDesktopBreakPoint ? 25 : 42) + 'px'
+        h.height = (this.isDesktopBreakPoint ? 19 : 42) + 'px'
         s.opacity = '1'
       })
     },

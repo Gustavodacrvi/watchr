@@ -10,18 +10,22 @@
         <div
           class="first-field"
           @pointerdown.stop
+
+          :style="{minHeight: getHeight + 'px'}"
         >
           <div v-show="!hideIcons" class="icon-wrapper" :class="{noColor: !iconColor}">
             <slot name="check-icon"
               :iconColor='iconColor'
             ></slot>
           </div>
-          <div v-show="showCont" class="input">
+          <div v-show="showCont"
+            class="input"
+          >
             <DropInput
               ref='first-field'
               v-model="model"
               :focus='true'
-              class="no-back drop-input"
+              class="no-back drop-input no-padding"
               :placeholder='editRawPlaceholder'
               :options='options'
 
@@ -64,7 +68,7 @@ export default {
   components: {
     Task, DropInput,
   },
-  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding'],
+  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'showInfo'],
   data() {
     return {
       model: this.name || '',
@@ -135,12 +139,12 @@ export default {
         s.backgroundColor = 'var(--light-gray)'
         s.overflow = 'hidden'
   
-        s.height = this.itemHeight + 'px'
+        s.height = this.getHeight + 'px'
   
         requestAnimationFrame(() => {
           s.transitionDuration = '.2s'
   
-          s.boxShadow = '0 2px 18px rgba(10,10,10,.45)'
+          s.boxShadow = '0 2px 8px rgba(10,10,10,.45)'
           s.backgroundColor = 'var(--card)'
           s.height = height + 'px'
   
@@ -168,7 +172,7 @@ export default {
       
       s.height = height
       rootS.height = height
-      s.boxShadow = '0 4px 14px rgba(10,10,10,.3)'
+      s.boxShadow = '0 2px 8px rgba(10,10,10,.45)'
       s.overflow = 'hidden'
       s.backgroundColor = 'var(--card)'
       rootS.backgroundColor = 'var(--card)'
@@ -188,8 +192,8 @@ export default {
           } else {
             s.backgroundColor = 'var(--ligth-gray)'
             rootS.backgroundColor = 'var(--ligth-gray)'
-            s.height = this.itemHeight + 'px'
-            rootS.height = this.itemHeight + 'px'
+            s.height = this.getHeight + 'px'
+            rootS.height = this.getHeight + 'px'
           }
   
           setTimeout(() => {
@@ -201,6 +205,11 @@ export default {
           }, 200)
         })
       })
+    },
+  },
+  computed: {
+    getHeight() {
+      return this.showInfo ? this.itemHeight + 6 : this.itemHeight
     },
   },
   watch: {
@@ -232,7 +241,6 @@ export default {
   position: relative;
   display: flex;
   align-items: stretch;
-  min-height: 35px;
 }
 
 .back-layer {
@@ -247,7 +255,7 @@ export default {
 .icon-wrapper {
   position: absolute;
   height: 100%;
-  width: 35px;
+  width: 25px;
   flex-grow: 0;
   opacity: .4;
 }
@@ -263,6 +271,7 @@ export default {
   width: 100%;
   font-size: 1.05m;
   margin-left: 26px;
+  transform: translate(-1px, 1px);
 }
 
 </style>

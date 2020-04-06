@@ -5,13 +5,13 @@
 }
 
 .showCont {
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .header {
   position: relative;
   display: flex;
-  height: 25px;
+  height: 19px;
   transform: scale(1,1); /* used for drag and drop */
   transition-duration: .2s;
   overflow: hidden;
@@ -43,7 +43,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 33px;
+  width: 20px;
   margin-left: 1px;
   flex-shrink: 0;
   height: 100%;

@@ -15,19 +15,19 @@ export default {
       c.push(get({
         name: p.listObj.name,
         icon: 'tasks',
-        color: p.listObj.color || 'var(--txt)',
+        color: p.listObj.color,
       }))
     if (p.folderObj)
       c.push(get({
         name: p.folderObj.name,
         icon: 'folder',
-        color: p.folderObj.color || 'var(--txt)',
+        color: p.folderObj.color,
       }))
     if (p.groupObj)
       c.push(get({
         name: p.groupObj.name,
         icon: 'group',
-        color: p.groupObj.color || 'var(--txt)',
+        color: p.groupObj.color,
       }))
     
     if (p.deadlineStr)
@@ -46,7 +46,7 @@ export default {
       c.push(get({
         name: p.calendarStr,
         icon: p.isRepeatingTask ? 'repeat' : 'calendar',
-        color: p.isRepeatingTask ? 'var(--txt)' : 'var(--green)',
+        color: p.isRepeatingTask ? 'var(--fade)' : 'var(--green)',
       }))
     if (p.nextCalendarEvent)
       c.push(get({

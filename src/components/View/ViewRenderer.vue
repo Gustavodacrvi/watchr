@@ -1584,7 +1584,8 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 75px;
+  margin: 0 50px;
+  flex-basis: 850px;
   min-height: 100%;
   position: relative;
   display: flex;
@@ -1604,6 +1605,7 @@ export default {
 
 .ViewRenderer.mobile {
   margin: 0 8px;
+  flex-basis: 100%;
   margin-top: -4px;
 }
 

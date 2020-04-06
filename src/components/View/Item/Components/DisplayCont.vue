@@ -11,44 +11,55 @@
       <slot name="check-icon"></slot>
     </div>
     <div v-if="!isAdding" class="content-name-wrapper" 
-      :style="{minHeight: itemHeight + 'px'}"
+      :style="{minHeight}"
     >
-      <div class="text">
-        <transition
-          appear
-          @enter='infoEnter'
-          @leave='infoLeave'
-        >
-          <slot name='before-name'></slot>
-        </transition>
-        <span class="name-wrapper">
-          <span class="line-wrapper">
-            <span class="line"></span>
-          </span>
-          <span class="name">
-            <span class="name-parsed" v-html="parsedName"></span>
-          </span>
-          <span class="after-name">
-            <transition
+      <div class="text-wrapper">
+        <div class="text">
+          <div class="main-cont">
+            <transition-group
               appear
               @enter='infoEnter'
               @leave='infoLeave'
             >
-              <slot name="after-name"></slot>
-            </transition>
-          </span>
-        </span>
+              <slot name='before-name'></slot>
+            </transition-group>
+            <span class="name-wrapper">
+              <span class="name">
+                <span class="line-wrapper">
+                  <span class="line"></span>
+                </span>
+                <span class="name-parsed" v-html="parsedName"></span>
+              </span>
+              <span class="after-name">
+                <transition-group
+                  appear
+                  @enter='infoEnter'
+                  @leave='infoLeave'
+                >
+                  <slot name="after-name"></slot>
+                </transition-group>
+              </span>
+            </span>
+          </div>
+          <transition-group
+            appear
+            @enter='infoEnter'
+            @leave='infoLeave'
+          >
+            <slot name='flex-end'></slot>
+          </transition-group>
+        </div>
+        <transition
+          appear
+        
+          @enter='enterSecondRow'
+          @leave='leaveSecondRow'
+        >
+          <slot v-if="showInfo"
+            name="info"
+          ></slot>
+        </transition>
       </div>
-      <transition
-        appear
-      
-        @enter='enterSecondRow'
-        @leave='leaveSecondRow'
-      >
-        <slot
-          name="info"
-        ></slot>
-      </transition>
     </div>
   </div>
 </template>
@@ -58,12 +69,12 @@
 import utils from '@/utils'
 
 export default {
-  props: ['name', 'showLine', 'itemHeight', 'isAdding'],
+  props: ['name', 'showLine', 'itemHeight', 'isAdding', 'showInfo', 'infoReady'],
   methods: {
     enterSecondRow(el, done) {
       const s = el.style
       
-      const height = getComputedStyle(el).height
+      const height = 0
 
       s.transitionDuration = 0
       s.height = 0
@@ -72,10 +83,10 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
         s.height = height
-        s.opacity = .6
+        s.opacity = .4
 
         setTimeout(() => {
-          s.height = 'auto'
+          s.height = '13px'
           done()
         }, 200)
       })
@@ -84,10 +95,11 @@ export default {
     leaveSecondRow(el, done) {
       const s = el.style
 
-      const height = getComputedStyle(el).height
+      const height = '13px'
 
       s.transitionDuration = 0
       s.height = height
+      s.opacity = .4
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
@@ -101,8 +113,9 @@ export default {
     infoEnter(el) {
       const s = el.style
 
+      const width = getComputedStyle(el).width
+
       requestAnimationFrame(() => {
-        const {width} = el.getBoundingClientRect()
         s.transitionDuration = 0
         s.width = 0
         s.opacity = 0
@@ -110,9 +123,9 @@ export default {
   
         requestAnimationFrame(() => {
           s.transitionDuration = '.2s'
-          s.width = width + 'px'
+          s.width = width
           s.marginRight = '9px'
-          s.opacity = 1
+          s.opacity = .9
         })
       })
     },
@@ -121,13 +134,18 @@ export default {
 
       s.transitionDuration = '.2s'
       s.width = 0
-      s.marginRight = 0
+      s.padding = 0
+      s.border = 'none'
+      s.margin = 0
       s.opacity = 0
     },
   },
   computed: {
     parsedName() {
       return utils.parseHTMLStr(this.name)
+    },
+    minHeight() {
+      return ((this.infoReady && this.showInfo) ? this.itemHeight + 6 : this.itemHeight) + 'px'
     },
   },
 }
@@ -136,7 +154,7 @@ export default {
 
 <style scoped>
 
-.name-wrapper, .DisplayCont, .text, .content-name-wrapper {
+.name-wrapper, .DisplayCont, .main-cont, .text, .content-name-wrapper {
   display: flex;
   align-items: center;
 }
@@ -152,17 +170,24 @@ export default {
 }
 
 .content-name-wrapper {
+  position: relative;
   width: 100%;
-  overflow: hidden;
-  justify-content: center;
+  align-items: center;
+  transition: min-height .2s;
+}
+
+.text-wrapper {
+  position: absolute;
   flex-direction: column;
-  align-items: flex-start;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .name-wrapper {
   overflow: hidden;
   height: 100%;
-  position: relative;
+  max-width: 100%;
 }
 
 .name-parsed {
@@ -180,25 +205,21 @@ export default {
 .icon-wrapper {
   position: relative;
   height: 100%;
-  width: 35px;
+  width: 25px;
   flex-shrink: 0;
   opacity: .4;
-}
-
-.name-icon {
-  transform: translateY(1px);
 }
 
 .text {
   height: 60%;
   max-width: 100%;
+  justify-content: space-between;
 }
 
 .info {
   height: 40%;
   font-size: .825em;
-  opacity: .6;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .line-wrapper {

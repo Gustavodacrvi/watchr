@@ -1,7 +1,7 @@
 
 @font-face {
   font-family: "Work Sans";
-  src: url("../WorkSans-Medium.otf");
+  src: url("../WorkSans-Regular.otf");
 }
 
 html {
@@ -9,37 +9,39 @@ html {
 }
 
 :root {
-  --back-color: #1c1c1c;
-  --primary-dark: #699bb3;
-  --primary: #5f8dc4;
-  --primary-light: #9fc4d5;
-  --sidebar-color: #171717;
-  --light-sidebar-color: #1c1c1c;
-  --card: #212121;
-  --txt: #b3b3b3;
-  --dark-txt: #A8A8A8;
-  --fade: #696969;
+  --primary-dark: #2b5cda;
+  --primary: #5a81e2;
+  --primary-light: #8aa5ea;
 
-  --dark: #1c1c1c;
-  --dark-gray: #202020;
-  --dark-light-gray: #262626;
-  --light-gray: #292929;
-  --extra-light-gray: #383838;
-  --dark-void: #121212;
+  --back-color: #232325;
+  --sidebar-color: #1e1e20;
+  --light-sidebar-color: #232325;
+  --card: #28282a;
+
+  --txt: #cccccc;
+  --dark-txt: #bdbdbd;
+  --fade: #6b6b6b;
+
+  --dark: #232325;
+  --dark-gray: #28282a;
+  --dark-light-gray: #2d2d2f;
+  --light-gray: #2f3032;
+  --extra-light-gray: #3e3f42;
+  --dark-void: #19191a;
   --extra-extra-light-gray: #888888;
 
   --font: "Work Sans";
 
-  --orange: #FFA166;
-  --green: #57DE5B;
-  --purple: #a160eb;
-  --dark-purple: #7b29ff;
-  --olive: #4fe39e;
-  --brown: #daa85d;
-  --yellow: #FFE366;
-  --dark-blue: #4842bd;
-  --red: #DE5757;
-  --dark-red: #ea3a34;
+  --orange: #f68a46;
+  --green: #3efe45;
+  --purple: #a04dff;
+  --dark-purple: #6b0fff;
+  --olive: #3dffa5;
+  --brown: #e4944e;
+  --yellow: #ffff4d;
+  --dark-blue: #5751c8;
+  --red: #ff4d4d;
+  --dark-red: #f2241c;
 }
 
 body {
@@ -62,7 +64,6 @@ body {
 
 body, input, button, textarea {
   font-family: var(--font);
-  font-weight: 425;
   caret-color: var(--primary);
   color: var(--txt);
 }
@@ -85,7 +86,7 @@ body, input, button, textarea {
 }
 
 .shadow {
-  box-shadow: 0 2px 18px rgba(10,10,10,.45);
+  box-shadow: 0 2px 8px rgba(10,10,10,.45);
 }
 
 .pc {
@@ -102,7 +103,7 @@ body, input, button, textarea {
 }
 
 .rb {
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .tac {
@@ -116,7 +117,7 @@ body, input, button, textarea {
 
 .scroll-thin::-webkit-scrollbar-thumb {
   background-color: var(--light-gray);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .scroll-thin::-webkit-scrollbar {
@@ -125,7 +126,7 @@ body, input, button, textarea {
 
 .scroll-thin-horizontal::-webkit-scrollbar-thumb {
   background-color: var(--light-gray);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .scroll-thin-horizontal::-webkit-scrollbar {
@@ -134,7 +135,7 @@ body, input, button, textarea {
 
 .scroll-main::-webkit-scrollbar-thumb {
   background-color: var(--light-gray);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .scroll-main::-webkit-scrollbar {

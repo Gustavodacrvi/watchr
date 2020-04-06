@@ -17,7 +17,7 @@
         :icon="icon"
         :title='title'
         :color='color'
-        :width='icon === "file" ? "16px" : undefined'
+        :width='icon === "file" ? "12px" : undefined'
       />
       <span v-show="content || right">
         <transition
@@ -91,9 +91,9 @@ export default {
       s.padding = '0'
       requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
-        s.height = '28px'
+        s.height = '22px'
         s.padding = '0 8px'
-        s.minWidth = '28px'
+        s.minWidth = '22px'
         s.opacity = '1'
 
         setTimeout(() => {
@@ -187,8 +187,8 @@ export default {
 }
 
 .header-info {
-  height: 28px;
-  min-width: 28px;
+  height: 22px;
+  min-width: 22px;
   position: relative;
   display: inline-flex;
   padding: 0 8px;

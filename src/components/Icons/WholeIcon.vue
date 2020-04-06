@@ -112,9 +112,9 @@ export default {
       return this.$refs['file']
     },
     getRawWidth() {
-      let defaultWidth = this.hasProgress ? 12 : 17
+      let defaultWidth = this.hasProgress ? 7 : 12
       if (!this.isDesktopDevice)
-        defaultWidth = this.hasProgress ? 17 : 20
+        defaultWidth = this.hasProgress ? 12 : 15
       return this.width ? parseInt(this.width, 10) : defaultWidth
     },
     getWidth() {

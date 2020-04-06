@@ -82,8 +82,8 @@ export default {
 .inner-ball-button {
   position: relative;
   transition-duration: .3s;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   z-index: 10;
   overflow: hidden;
   cursor: grab;

@@ -37,7 +37,7 @@
                   :mapNumbers='numberOfTasks'
                   @update='update'
                 />
-                <div v-if='showFavorites' style="margin-top: 25px"></div>
+                <div v-if='showFavorites' style="margin-top: 18px"></div>
                 <SidebarRenderer v-if="showFavorites"
                   :enableSort='true'
                   :disabled='false'
@@ -63,7 +63,7 @@
                   </div>
                   <div class="line section-line"></div>
                 </div>
-                <div v-else style="margin-top: 25px"></div>
+                <div v-else style="margin-top: 18px"></div>
                 <div class="comp-wrapper">
                   <transition name="sect-trans"
                     @leave="leave"
@@ -81,7 +81,7 @@
                     />
                   </transition>
                 </div>
-                <div class='extra-margin' style="height: 300px"></div>
+                <div class='extra-margin' style="height: 150px"></div>
               </div>
               <Scheduler
                 @scroll='scroll'
@@ -619,8 +619,9 @@ export default {
 .sidebar-handle {
   position: fixed;
   background-color: var(--card);
-  width: 8px;
+  width: 5px;
   height: 145px;
+  margin-left: 5px;
   top: 50%;
   border-radius: 100px;
   transform: translateY(-50%);
@@ -637,8 +638,8 @@ export default {
 .sidebar-handle:hover {
   cursor: grab;
   background-color: var(--light-gray);
-  width: 14px;
-  transform: translate(-6px, -50%);
+  width: 9px;
+  transform: translate(-2px, -50%);
 }
 
 .sidebar-handle:active {
@@ -704,7 +705,7 @@ export default {
 }
 
 .Sidebar-wrapper.desktop {
-  padding: 0 30px;
+  padding: 0 16px;
 }
 
 .comp-wrapper {
@@ -725,7 +726,7 @@ export default {
   left: 0;
   top: 0;
   height: 100%;
-  box-shadow: 0 -3px 4px rgba(5,5,5, .1);
+  box-shadow: 0 -2px 3px rgba(5,5,5, .8);
   transition-duration: .3s;
 }
 

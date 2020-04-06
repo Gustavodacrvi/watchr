@@ -36,7 +36,7 @@ export default {
 <style scoped>
 
 .ruler-element {
-  width: 50px;
+  width: 30px;
   flex-shrink: 0;
   height: 100%;
 }
@@ -50,6 +50,7 @@ export default {
 
 .timeline-time {
   display: flex;
+  font-size: 1.2em;
 }
 
 .hour {
