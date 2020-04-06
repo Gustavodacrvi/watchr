@@ -91,12 +91,12 @@ export default {
 }
 
 .trans-enter, .trans-leave-to {
-  transition-duration: .2s;
+  transition-duration: .175s;
   transform: scale(0,0);
 }
 
 .trans-leave, .trans-enter-to {
-  transition-duration: .2s;
+  transition-duration: .175s;
   transform: scale(1,1);
 }
 

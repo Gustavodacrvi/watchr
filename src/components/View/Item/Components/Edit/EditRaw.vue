@@ -142,7 +142,7 @@ export default {
         s.height = this.getHeight + 'px'
   
         requestAnimationFrame(() => {
-          s.transitionDuration = '.2s'
+          s.transitionDuration = '.175s'
   
           s.boxShadow = '0 2px 8px rgba(10,10,10,.45)'
           s.backgroundColor = 'var(--card)'
@@ -180,8 +180,8 @@ export default {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           
-          s.transitionDuration = '.2s'
-          rootS.transitionDuration = '.2s'
+          s.transitionDuration = '.175s'
+          rootS.transitionDuration = '.175s'
           s.boxShadow = '0 0 0 transparent'
 
           if (this.isAdding) {

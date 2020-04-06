@@ -123,7 +123,7 @@ export default {
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .fill {

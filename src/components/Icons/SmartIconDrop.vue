@@ -144,7 +144,7 @@ export default {
       }
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
 
         s.width = width
         s.opacity = 1
@@ -180,7 +180,7 @@ export default {
       }
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.width = 0
         s.opacity = 0
         s.overflow = 'hidden'
@@ -239,7 +239,7 @@ export default {
         s.opacity = 0
 
         requestAnimationFrame(() => {
-          s.transitionDuration = '.2s'
+          s.transitionDuration = '.175s'
           s.height = height
           s.opacity = 1
 
@@ -261,7 +261,7 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.height = 0
         s.opacity = 0
 
@@ -282,7 +282,7 @@ export default {
       s.padding = '0'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
 
         s.width = width
         s.opacity = 1
@@ -295,7 +295,7 @@ export default {
 
       const s = el.style
 
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.175s'
       s.width = 0
       s.opacity = 0
       s.padding = '0'
@@ -500,7 +500,7 @@ export default {
   border-radius: 4px;
   box-sizing: border-box;
   position: relative;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .tagMode + .tagMode {
@@ -564,7 +564,7 @@ export default {
   margin: 0 6px;
   height: 19px;
   padding: 0 4px;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .option:hover, .activeOption {
@@ -596,13 +596,13 @@ export default {
 }
 
 .option-t-enter, .option-t-leave-to {
-  transition-duration: .2s;
+  transition-duration: .175s;
   opacity: 0;
   height: 0;
 }
 
 .option-t-leave, .option-t-enter-to {
-  transition-duration: .2s;
+  transition-duration: .175s;
   opacity: 1;
   height: 19px;
 }

@@ -73,7 +73,7 @@ export default {
 }
 
 .Icon {
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .msg {
@@ -131,7 +131,7 @@ export default {
 
 .fade-leave, .fade-enter-to {
   opacity: 1;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 </style>

@@ -293,7 +293,7 @@ export default {
 .link {
   display: flex;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .175s;
   white-space: nowrap;
   height: 19px;
   overflow: hidden;
@@ -367,7 +367,7 @@ export default {
 .header-link {
   margin: 8px 20px;
   width: 160px;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 .input {

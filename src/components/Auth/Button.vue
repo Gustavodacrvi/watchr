@@ -24,7 +24,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.height = height
         s.opacity = 1
 
@@ -37,7 +37,7 @@ export default {
 
       const {height, width} = getComputedStyle(el)
 
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.175s'
       s.height = 0
       s.opacity = 0
 
@@ -64,7 +64,7 @@ export default {
   border-radius: 10px;
   font-size: 1.01em;
   cursor: pointer;
-  transition-duration: .2s;
+  transition-duration: .175s;
   outline: none;
   overflow: hidden;
   position: relative;
@@ -97,7 +97,7 @@ export default {
   width: unset;
   padding: 6px;
   color: var(--fade);
-  transition-duration: .2s;
+  transition-duration: .175s;
   transform: scale(1,1);
 }
 
@@ -108,7 +108,7 @@ export default {
   margin-top: 12px;
   margin-left: 6px;
   width: unset;
-  transition-duration: .2s;
+  transition-duration: .175s;
   color: var(--fade);
 }
 

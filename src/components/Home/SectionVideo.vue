@@ -112,7 +112,7 @@ export default {
   margin-right: 10px;
   border-radius: 4px;
   padding: 4px 5px 0px 4px;
-  transition-duration: .2s;
+  transition-duration: .175s;
   transform: scale(1,1);
 }
 

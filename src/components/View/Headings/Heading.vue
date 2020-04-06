@@ -196,7 +196,7 @@ export default {
       const s = el.style
       
       setTimeout(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.opacity = 1
         s.height = this.renderHeight
   
@@ -218,7 +218,7 @@ export default {
       s.overflow = 'hidden'
 
       setTimeout(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.opacity = 0
         s.height = '0px'
         s.overflow = 'hidden'
@@ -451,7 +451,7 @@ export default {
   z-index: 50;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  transition: background-color .2s;
+  transition: background-color .175s;
 }
 
 .header-wrapper:hover {

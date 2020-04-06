@@ -116,7 +116,7 @@ export default {
         s.opacity = 0
   
         requestAnimationFrame(() => {
-          s.transitionDuration = '.2s'
+          s.transitionDuration = '.175s'
           s.height = '22px'
           s.opacity = 1
   
@@ -132,7 +132,7 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         
         s.height = 0
         s.opacity = 0
@@ -169,7 +169,7 @@ export default {
 .Subtask {
   position: relative;
   display: flex;
-  transition: height .2s, background-color .2s;
+  transition: height .175s, background-color .175s;
   height: 30px;
 }
 
@@ -188,7 +188,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 .line-wrapper {
@@ -233,7 +233,7 @@ export default {
 }
 
 .delete {
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .delete:hover {
@@ -250,7 +250,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 .input {

@@ -54,7 +54,7 @@ export default {
   overflow: hidden;
   min-height: 724px;
   border-radius: 12px;
-  transition-duration: .2s;
+  transition-duration: .175s;
   transform: scale(1,1);
 }
 

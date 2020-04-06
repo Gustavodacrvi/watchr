@@ -54,7 +54,7 @@ export default {
   display: flex;
   align-items: center;
   white-space: nowrap;
-  transition-duration: .2s;;
+  transition-duration: .175s;;
 }
 
 .Button.isActive {

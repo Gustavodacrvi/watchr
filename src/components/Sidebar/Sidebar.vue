@@ -253,7 +253,7 @@ export default {
         el.classList.add('to-left')
       }
       requestAnimationFrame(() => {
-        el.style.transitionDuration = '.2s'
+        el.style.transitionDuration = '.175s'
         el.classList.remove('to-right')
         el.classList.remove('to-left')
       })
@@ -628,7 +628,7 @@ export default {
   z-index: 100px;
   cursor: pointer;
   opacity: 0 !important;
-  transition: opacity .2s, background-color .2s, width .2s, transform .2s;
+  transition: opacity .175s, background-color .175s, width .175s, transform .175s;
 }
 
 .sidebar-handle.sidebarHover {
@@ -741,7 +741,7 @@ export default {
   background-color: var(--primary);
   width: 100px;
   height: 2px;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .pressingHandle {
@@ -754,7 +754,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .175s;
   cursor: pointer;
   color: var(--fade);
   outline: none;
@@ -837,12 +837,12 @@ export default {
 
 .icon-t-enter, .icon-t-leave-to {
   opacity: 0 !important;
-  transition-duration: .2s !important;
+  transition-duration: .175s !important;
 }
 
 .icon-t-leave, .icon-t-enter-to {
   opacity: 1 !important;
-  transition-duration: .2s !important;
+  transition-duration: .175s !important;
 }
 
 .search-t-enter, .search-t-leave-to {

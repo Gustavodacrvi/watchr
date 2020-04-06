@@ -187,8 +187,8 @@ export default {
       h.transitionDuration = '0s'
       s.transitionDuration = '0s'
       requestAnimationFrame(() => {
-        h.transitionDuration = '.2s'
-        s.transitionDuration = '.2s'
+        h.transitionDuration = '.175s'
+        s.transitionDuration = '.175s'
         h.height = (this.isDesktopBreakPoint ? 19 : 42) + 'px'
         s.opacity = '1'
       })
@@ -198,8 +198,8 @@ export default {
       const s = el.style
 
       s.margin = '0'
-      h.transitionDuration = '.2s'
-      s.transitionDuration = '.2s'
+      h.transitionDuration = '.175s'
+      s.transitionDuration = '.175s'
       s.opacity = '0'
       h.height = '0'
     },

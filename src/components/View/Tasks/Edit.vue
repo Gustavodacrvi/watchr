@@ -600,7 +600,7 @@ export default {
         const y = this.isDesktopBreakPoint ? -2 : 4
         t.transform = `translate(27px, ${y}px)`
         requestAnimationFrame(() => {
-          t.transitionDuration = '.2s'
+          t.transitionDuration = '.175s'
           t.transform = `translate(0px, ${y}px)`
         })
       }
@@ -609,7 +609,7 @@ export default {
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       s.margin = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         if (height < 36)
           s.height = '35px'
         else
@@ -635,7 +635,7 @@ export default {
         const y = this.isDesktopBreakPoint ? -2 : 4
         t.transform = `translate(0px, ${y}px)`
         requestAnimationFrame(() => {
-          t.transitionDuration = '.2s'
+          t.transitionDuration = '.175s'
           t.transform = `translate(27px, ${y}px)`
         })
       }
@@ -644,7 +644,7 @@ export default {
       s.height = el.offsetHeight + 'px'
       requestAnimationFrame(() => {
         this.show = false
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'
@@ -1336,7 +1336,7 @@ export default {
 }
 
 .edit-wrapper {
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .hide {
@@ -1357,14 +1357,14 @@ export default {
   float: left;
   z-index: 5;
   position: relative;
-  transition-duration: .2s;
+  transition-duration: .175s;
   display: flex;
   flex-wrap: wrap;
 }
 
 .show {
   opacity: 1;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .tags-wrapper {
@@ -1372,7 +1372,7 @@ export default {
   width: 100%;
   height: 0;
   min-height: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .file-drag-drop-wrapper {
@@ -1407,7 +1407,7 @@ export default {
 
 .files {
   margin: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .hasFiles {
@@ -1479,7 +1479,7 @@ export default {
   min-height: 0;
   height: 0;
   overflow: visible !important;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .btn-leave, .btn-enter-to {
@@ -1488,7 +1488,7 @@ export default {
   height: 35px;
   max-height: 35px;
   overflow: visible !important;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 </style>

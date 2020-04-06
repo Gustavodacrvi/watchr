@@ -200,7 +200,7 @@ export default {
     if (!info)
       info = {time: mom().format('HH:mm'), buffer: '00:05', fallback: '00:10'}
 
-    const {time, buffer, fallback} = info
+    const {time, buffer, fallback, overwrite} = info
 
     const formatTime = time => mom(time, 'HH:mm').format(userInfo.disablePmFormat ? 'HH:mm' : 'LT')
 
@@ -228,10 +228,8 @@ export default {
             value: this.formatQuantity(buffer),
             info: 'Add some breathing room after each item for short breaks or minor delays.',
             callback: () => ({
-              comp: 'TimePicker',
+              comp: 'DurationPicker',
               content: {
-                format: '24hr',
-                msg: "Buffer time:",
                 callback: newBuffer => this.getScheduleIconDropObject({
                   time, buffer: newBuffer, fallback,
                 }, saveAutoSchedule, userInfo)
@@ -243,15 +241,22 @@ export default {
             value: this.formatQuantity(fallback),
             info: 'Items without a specific duration will adopt this value for the purpose of auto-scheduling.',
             callback: () => ({
-              comp: 'TimePicker',
+              comp: 'DurationPicker',
               content: {
-                format: '24hr',
-                msg: "Buffer time:",
                 callback: newFallback => this.getScheduleIconDropObject({
                   time, buffer, fallback: newFallback,
                 }, saveAutoSchedule, userInfo)
               }
             })
+          },
+          {
+            name: 'Overwrite task time',
+            icon: {
+              name: overwrite ? 'box-check' : 'box',
+            },
+            callback: () => this.getScheduleIconDropObject({
+              time, buffer, fallback, overwrite: !overwrite,
+            }, saveAutoSchedule, userInfo),
           },
           {
             icon: {

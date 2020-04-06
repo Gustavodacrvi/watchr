@@ -109,7 +109,7 @@ export default {
         s.width = '0px'
         s.transitionDuration = '.0s'
         setTimeout(() => {
-          s.transitionDuration = '.2s'
+          s.transitionDuration = '.175s'
           s.width = inp.offsetWidth + 'px'
           s.opacity = '1'
         })

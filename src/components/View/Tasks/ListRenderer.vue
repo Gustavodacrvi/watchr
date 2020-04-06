@@ -449,13 +449,13 @@ export default {
         const show = s => {
           if (s) {
             s.opacity = 1
-            s.transitionDuration = '.2s'
+            s.transitionDuration = '.175s'
           }
         }
         const hide = s => {
           if (s) {
             s.opacity = 0
-            s.transitionDuration = '.2s'
+            s.transitionDuration = '.175s'
           }
         }
 
@@ -1300,13 +1300,13 @@ export default {
   top: 0;
   justify-content: center;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .cameFromAnotherTab-ghost {
   height: 25px;
   background-color: var(--sidebar-color);
-  transition: transform .2s;
+  transition: transform .175s;
 }
 
 .mobile .illustration {
@@ -1356,7 +1356,7 @@ export default {
   min-height: 25px;
   z-index: 2;
   height: 100%;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .heading-add {
@@ -1365,7 +1365,7 @@ export default {
   display: flex;
   justify-content: center;
   opacity: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
   cursor: pointer;
 }
 
@@ -1404,7 +1404,7 @@ export default {
   justify-content: center;
   align-items: center;
   transform: scale(1,1);
-  transition-duration: .2s;
+  transition-duration: .175s;
   box-shadow: 0 0 0 transparent;
 }
 

@@ -796,6 +796,15 @@ export default {
         task: {list: ''},
       })
     },
+    saveNewTime(time) {
+      if (time)
+        this.$store.dispatch('task/saveTasksById', {
+          ids: this.fallbackSelectedTasks.filter(task => task.calendar).map(el => el.id),
+          task: {
+            calendar: {time},
+          },
+        })
+    },
   },
   computed: {
     ...mapState({
@@ -1144,6 +1153,29 @@ export default {
             name: 'Add tags',
             icon: 'tag',
             callback: () => this.getIconDropOptionsTags
+          },
+          {
+            name: 'Change duration',
+            icon: 'duration',
+            callback: () => ({
+              comp: 'DurationPicker',
+              content: {
+                callback: taskDuration => this.$store.dispatch('task/saveTasksById', {
+                  ids,
+                  task: {taskDuration},
+                }),
+              },
+            }),
+          },
+          {
+            name: 'Change start time',
+            icon: 'clock',
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                callback: this.saveNewTime,
+              },
+            })
           },
           {
             type: 'optionsList',

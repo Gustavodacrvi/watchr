@@ -235,7 +235,7 @@ export default {
 
 .Checklist {
   margin: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .isAddingChecklist {

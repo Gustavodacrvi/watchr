@@ -72,7 +72,7 @@ export default {
 .element {
   display: inline-block;
   padding: 6px;
-  transition-duration: .2s;
+  transition-duration: .175s;
   background-color: var(--sidebar-color);
 }
 

@@ -90,7 +90,7 @@ export default {
       s.overflow = 'hidden'
       s.padding = '0'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.height = '22px'
         s.padding = '0 8px'
         s.minWidth = '22px'
@@ -106,7 +106,7 @@ export default {
     },
     leave(el, done) {
       const s = el.style
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.175s'
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'
@@ -129,7 +129,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
 
         s.width = width
         s.marginLeft = '6px'
@@ -151,7 +151,7 @@ export default {
       s.marginLeft = '6px'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.width = 0
         s.marginLeft = 0
         s.opacity = 0
@@ -173,7 +173,7 @@ export default {
 
 .faded {
   opacity: .6;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 .number .faded {

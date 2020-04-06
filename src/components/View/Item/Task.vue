@@ -93,7 +93,7 @@
     <template v-slot:flex-end>
       <span v-if="deadlineStr"
         key='deadline'
-        class="info"
+        class="info-naked"
         style='color: var(--red)'
       >
         <span class="info-icon">
@@ -575,14 +575,15 @@ export default {
 
 <style scoped>
 
-.info, .info-box {
+.info-naked, .info-box {
   font-size: .8em;
   display: inline-flex;
   white-space: nowrap;
   padding: 3px 6px;
   align-items: center;
   overflow: hidden;
-  transition-duration: .2s;
+  transition-duration: .175s;
+  margin-right: 0;
 }
 
 .info-box {

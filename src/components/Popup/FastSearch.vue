@@ -92,7 +92,7 @@ export default {
       s.transitionDuration = 0
       s.height = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.height = `${this.isDesktopDevice ? 20 : 35}px`
       })
     },
@@ -290,7 +290,7 @@ export default {
   width: 100%;
   display: flex;
   background-color: none;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .option:hover, .active {
@@ -346,13 +346,13 @@ export default {
 .card-t-enter, .card-t-leave-to {
   transform: translateY(-70px);
   opacity: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .card-t-leave, .card-t-enter-to {
   transform: translateY(0px);
   opacity: 1;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 </style>

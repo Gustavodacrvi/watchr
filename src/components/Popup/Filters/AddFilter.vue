@@ -180,7 +180,7 @@ export default {
   justify-content: center;
   align-items: center;
   transform: scale(1,1);
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .element:hover {
