@@ -63,7 +63,7 @@ export default {
   },
   mounted() {
     if (this.focus)
-      this.focusInput(10)
+      this.focusInput(200)
   },
   methods: {
     onpaste(...args) {
@@ -138,7 +138,7 @@ export default {
       for (const l of links) {
         l.style.opacity = 0
         setTimeout(() => {
-          l.style.transitionDuration = '.2s'
+          l.style.transitionDuration = '.175s'
         })
       }
     },
@@ -268,6 +268,7 @@ export default {
   font-size: .7em;
 }
 
+
 .input {
   border: none;
   padding: 9px;
@@ -278,6 +279,12 @@ export default {
   box-sizing: border-box;
   resize: none;
   overflow: hidden;
+}
+
+.no-padding .input {
+  padding: 0;
+  margin-left: -2px;
+  padding-left: 2px;
 }
 
 .content {

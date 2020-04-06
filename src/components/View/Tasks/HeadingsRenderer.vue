@@ -229,16 +229,16 @@ export default {
       s.borderBoddom = '0px solid var(--back-color)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
-        w.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
+        w.transitionDuration = '.175s'
 
         s.marginBottom = 0
         if (!isFirst)
           w.marginTop = '65px'
-        s.height = '35px'
-        s.borderBottom = '1.5px solid var(--light-gray)'
+        s.height = '25px'
+        s.borderBottom = '1px solid var(--light-gray)'
         w.opacity = 1
-        s.padding = '0 6px'
+        s.padding = '0 4px'
         s.overflow = 'visible'
         setTimeout(() => {
           w.removeProperty('margin-top')
@@ -255,13 +255,13 @@ export default {
 
       if (c) {
         c = c.style
-        c.transitionDuration = '.2s'
+        c.transitionDuration = '.175s'
         c.height = 0
         c.overflow = 'visible'
       }
 
-      s.transitionDuration = '.2s'
-      w.transitionDuration = '.2s'
+      s.transitionDuration = '.175s'
+      w.transitionDuration = '.175s'
       w.opacity = 0
       w.height = 0
       w.overflow = 'visible'

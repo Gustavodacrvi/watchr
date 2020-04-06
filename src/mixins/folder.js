@@ -49,7 +49,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.height = this.getItemContHeight
         s.opacity = 1
 
@@ -99,7 +99,7 @@ export default {
       s.opacity = 1
       
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.height = '0px'
         s.overflow = 'visible'
         s.opacity = 0
@@ -118,7 +118,7 @@ export default {
       return (this.itemHeight * this.listLength) + 'px'
     },
     itemHeight() {
-      return this.isDesktopBreakPoint ? 25 : 42
+      return this.isDesktopBreakPoint ? 19 : 42
     },
   },
   watch: {

@@ -110,14 +110,14 @@ export default {
 }
 
 .trans-enter, .trans-leave-to {
-  transition-duration: .2s;
+  transition-duration: .175s;
   transition-timing-function: 'ease-out';
   height: 0;
   opacity: 0;
 }
 
 .trans-leave, .trans-enter-to {
-  transition-duration: .2s;
+  transition-duration: .175s;
   transition-timing-function: 'ease-in';
   height: 125px;
   opacity: 1;

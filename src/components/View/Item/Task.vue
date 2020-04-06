@@ -6,6 +6,7 @@
 
     :item='item'
     :completedItem='completedItem'
+    :showInfo='hasAtLeastOne'
     :canceledItem='canceledItem'
     :options='options'
     editRawPlaceholder='Task name...'
@@ -34,40 +35,77 @@
       />
     </template>
 
-    <template>
-      <transition name='ruler-t'>
-        <TimelineElement v-if='computedShowRuler'
-          :startHour='startHour'
-          :startMin='startMin'
-          :timePmAm='timePmAm'
-        
-          @click.native='rulerClick'
-        />
-      </transition>
+    <template v-slot:root>
+      <TimelineElement v-if='computedShowRuler'
+        :startHour='startHour'
+        :startMin='startMin'
+        :timePmAm='timePmAm'
+      
+        @click.native='rulerClick'
+      />
     </template>
 
     <template v-slot:before-name>
       <span v-if="logStr && !showCheckDate"
+        key='check-date'
         class="check-date"
       >
         {{ logStr }}
       </span>
       <Icon v-else-if="nameIcon"
         class="name-icon"
+        key='name-icon'
       
         :icon='nameIcon.name'
         :color='nameIcon.color'
 
         width='14px'
       />
+      <span v-else-if="calendarStr"
+        key='info-box'
+        class="info-box"
+      >
+        {{ calendarStr }}
+      </span>
+      <span v-if="timeStr"
+        key='info-time'
+        class="info-box"
+      >
+        {{ timeStr }}
+      </span>
     </template>
 
     <template v-slot:after-name>
-      <Icon v-if="checklistProgress" class="icon"
+      <span v-if="taskDuration"
+        key='duration'
+        class="info-box"
+      >
+        {{ taskDuration }}
+      </span>
+      <Icon v-if="checklistProgress" key="icon"
+        class="icon"
         icon='pie'
         :progress='checklistProgress'
         width='7px'
       />
+    </template>
+
+    <template v-slot:flex-end>
+      <span v-if="deadlineStr"
+        key='deadline'
+        class="info-naked"
+        style='color: var(--red)'
+      >
+        <span class="info-icon">
+          <Icon
+            icon='deadline'
+            width='11px'
+          />
+        </span>
+        <span>
+          {{ deadlineStr }}
+        </span>
+      </span>
     </template>
 
     <template v-slot:info>
@@ -76,10 +114,7 @@
         :isTomorrow='isTomorrow'
         :evening='item && item.calendar && item.evening'
 
-        :calendarStr='calendarStr'
         :isRepeatingTask='isRepeatingTask'
-        :deadlineStr='deadlineStr'
-        :timeStr='timeStr'
         :hasFiles='hasFiles'
         :nextCalendarEvent='nextCalendarEvent'
 
@@ -89,7 +124,6 @@
         
         :hasTags='hasTags'
         :tagNames='tagNames'
-        :taskDuration='taskDuration'
       />
     </template>
   </ItemTemplate>
@@ -118,7 +152,7 @@ export default {
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',
     'hideGroupName', 'hideFolderName', 'showingRuler',
-    'isSelecting', 'allowLogStr', 'itemModelFallback',
+    'isSelecting', 'allowDeadlineStr', 'allowLogStr', 'itemModelFallback',
     'isAdding', 'listRenderer',
 
     'viewName', 'viewType',
@@ -209,8 +243,6 @@ export default {
         }
     },
     nameIconName() {
-      if (this.isInbox)
-        return 'inbox'
       if (this.isToday && !this.isEvening)
         return 'star'
       if (this.isToday && this.isEvening)
@@ -221,8 +253,6 @@ export default {
         return 'star'
     },
     nameIconColor() {
-      if (this.isInbox)
-        return 'var(--primary)'
       if (this.isToday && !this.isEvening)
         return 'var(--yellow)'
       if (this.isToday && this.isEvening)
@@ -256,7 +286,7 @@ export default {
       return this.isRecurringTask(this.item)
     },
     deadlineStr() {
-      if (this.disableDeadlineStr || !this.item)
+      if (this.allowDeadlineStr && this.disableDeadlineStr || !this.item)
         return null
       return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
@@ -419,15 +449,10 @@ export default {
     hasAtLeastOne() {
       if (!this.item)
         return false
-      return
-        (this.listObj ||
+      return (this.listObj ||
         this.folderObj ||
         this.nextCalendarEvent ||
         this.groupObj ||
-        this.deadlineStr ||
-        (this.calendarStr && !this.isToday && !this.isTomorrow) ||
-        this.timeStr ||
-        this.taskDuration ||
         (this.hasTags && this.tagNames && this.tagNames.length > 0) ||
         this.hasFiles)
     },
@@ -437,8 +462,24 @@ export default {
     },
 
     taskDuration() {
-      if (this.item)
-        return this.item.taskDuration ? utils.formatQuantity(this.item.taskDuration) : null
+      const duration = this.item.taskDuration
+      if (this.item && duration) {
+        
+        if (!this.computedShowRuler)
+          return utils.formatQuantity(duration)
+        else {
+          const begin = utils.formatQuantity(duration)
+          if (!this.calendarTime)
+            return begin
+
+          const split = duration.split(':')
+          const end = utils.parseTime(mom(this.calendarTime, 'HH:mm')
+            .add(parseInt(split[0], 10), 'h')
+            .add(parseInt(split[1], 10), 'm').format('HH:mm'), this.userInfo)
+          
+          return `${begin} -> ${end}`
+        }
+      }
     },
     checklistPieProgress() {
       if (!this.item)
@@ -534,6 +575,28 @@ export default {
 
 <style scoped>
 
+.info-naked, .info-box {
+  font-size: .8em;
+  display: inline-flex;
+  white-space: nowrap;
+  padding: 3px 6px;
+  align-items: center;
+  overflow: hidden;
+  transition-duration: .175s;
+  margin-right: 0;
+}
+
+.info-box {
+  border-radius: 4px;
+  background-color: var(--dark-gray);
+  border: 1px solid var(--light-gray);
+}
+
+.info-icon {
+  transform: translateY(1px);
+  margin-right: 4px;
+}
+
 .icon {
   transform: translate(4px, 2px);
   opacity: .6;
@@ -545,23 +608,12 @@ export default {
   top: 3px;
   height: 100%;
   margin-right: 8px;
+  white-space: nowrap;
   color: var(--primary);
   font-size: .9em;
   overflow: hidden;
   transform: translateY(-2.5px);
   opacity: .4;
-}
-
-.ruler-t-enter, .ruler-t-leave-to {
-  opacity: 0;
-  width: 0;
-  transition-duration: .2s;
-}
-
-.ruler-t-leave, .ruler-t-enter-to {
-  opacity: 1;
-  width: 35px;
-  transition-duration: .2s;
 }
 
 </style>

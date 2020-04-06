@@ -1,19 +1,19 @@
 
 .cont {
   margin: 0;
-  transition: margin .2s;
+  transition: margin .175s;
 }
 
 .showCont {
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .header {
   position: relative;
   display: flex;
-  height: 25px;
+  height: 19px;
   transform: scale(1,1); /* used for drag and drop */
-  transition-duration: .2s;
+  transition-duration: .175s;
   overflow: hidden;
 }
 
@@ -32,7 +32,7 @@
 .icon {
   color: var(--fade);
   transform: translateY(2px);
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .icon.headerHover {
@@ -43,7 +43,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 33px;
+  width: 20px;
   margin-left: 1px;
   flex-shrink: 0;
   height: 100%;
@@ -65,7 +65,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transition: transform .2s;
+  transition: transform .175s;
   transform: translate(-50%,-50%) rotate(-90deg);
 }
 

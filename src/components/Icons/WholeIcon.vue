@@ -112,9 +112,9 @@ export default {
       return this.$refs['file']
     },
     getRawWidth() {
-      let defaultWidth = this.hasProgress ? 12 : 17
+      let defaultWidth = this.hasProgress ? 7 : 12
       if (!this.isDesktopDevice)
-        defaultWidth = this.hasProgress ? 17 : 20
+        defaultWidth = this.hasProgress ? 12 : 15
       return this.width ? parseInt(this.width, 10) : defaultWidth
     },
     getWidth() {
@@ -147,7 +147,7 @@ export default {
 .box {
   padding: 4px;
   background-color: transparent;
-  transition-duration: .2s;
+  transition-duration: .175s;
   border-radius: 7px;
 }
 
@@ -228,13 +228,13 @@ export default {
 .title-trans-enter, .title-trans-leave-to {
   opacity: 0;
   transform: translate(-50%, 25px);
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .title-trans-leave, .title-trans-enter-to {
   opacity: 1;
   transform: translate(-50%, 0px);
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 </style>

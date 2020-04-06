@@ -20,7 +20,7 @@
       @dragleave='dragover = false'
     >
       <span class="icon-wrapper">
-        <Icon class="icon" :class="{headerHover}" icon="folder" width='17px'/>
+        <Icon class="icon" :class="{headerHover}" icon="folder" width='12px'/>
       </span>
       <span class="name-wrapper">
         <span v-if="!editing" class="name" key="nam"><b>{{ name }}</b></span>

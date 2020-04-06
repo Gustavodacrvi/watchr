@@ -37,7 +37,7 @@ export default {
     itemModelFallback() {
       if (this.viewList)
         return {
-          group: this.viewList.group || undefined,
+          group: this.viewList.group || null,
           list: this.viewList.id,
         }
     },
@@ -244,7 +244,7 @@ export default {
       if (list)
         return {
           comments: list.group ? {
-            group: list.group,
+            group: list.group || null,
             room: list.id,
           } : undefined,
           files: {

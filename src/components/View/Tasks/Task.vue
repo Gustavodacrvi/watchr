@@ -263,9 +263,9 @@ export default {
         co.transform = `translateX(-${this.computedShowRuler ? 62 : 27}px)`
         this.deselectItem()
         requestAnimationFrame(() => {
-          c.transitionDuration = '.2s'
-          co.transitionDuration = '.2s'
-          inf.transitionDuration = '.2s'
+          c.transitionDuration = '.175s'
+          co.transitionDuration = '.175s'
+          inf.transitionDuration = '.175s'
           c.opacity = .25
           inf.opacity = 1
           co.transform = 'translateX(0px)'
@@ -289,9 +289,9 @@ export default {
         inf.opacity = 1
         co.transform = 'translateX(0px)'
         requestAnimationFrame(() => {
-          c.transitionDuration = '.2s'
-          co.transitionDuration = '.2s'
-          inf.transitionDuration = '.2s'
+          c.transitionDuration = '.175s'
+          co.transitionDuration = '.175s'
+          inf.transitionDuration = '.175s'
           c.opacity = 0
           inf.opacity = 0
           co.transform = `translateX(-${this.computedShowRuler ? 62 : 27}px)`
@@ -300,7 +300,7 @@ export default {
           }, 152)
         })
       } else {
-        el.style.transitionDuration = '.2s'
+        el.style.transitionDuration = '.175s'
       }
     },
     editCancel() {
@@ -342,10 +342,10 @@ export default {
 
       const hideTask = () => {
         if (cn) {
-          cn.transitionDuration = '.2s'
+          cn.transitionDuration = '.175s'
           cn.opacity = 0
         }
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
@@ -360,8 +360,8 @@ export default {
         if (!this.completeAnimation) {
           hideTask()
         } else {
-          l.transitionDuration = `.2s`
-          n.transitionDuration = `.2s`
+          l.transitionDuration = `.175s`
+          n.transitionDuration = `.175s`
 
           l.width = '100%'
           l.border = '2px solid var(--txt)'
@@ -406,17 +406,17 @@ export default {
           
           requestAnimationFrame(() => {
             if (cn) {
-              cn.transitionDuration = disableTransition ? 0 : '.2s'
+              cn.transitionDuration = disableTransition ? 0 : '.175s'
               cn.opacity = 1
             }
-            s.transitionDuration = disableTransition ? 0 : '.2s'
+            s.transitionDuration = disableTransition ? 0 : '.175s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
             s.minHeight = this.itemHeight + 'px'
             done()
           })
           setTimeout(() => {
-            s.transitionDuration = '.2s'
+            s.transitionDuration = '.175s'
             s.height = 'auto'
             s.minHeight = this.itemHeight + 'px'
           }, 300)
@@ -742,7 +742,7 @@ export default {
   position: relative;
   min-height: 38px;
   z-index: 5;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .mobile .cont-wrapper {
@@ -778,7 +778,7 @@ export default {
   border-radius: 100px;
   border: 0px solid transparent;
   background-color: var(--txt);
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .mobile .cont-wrapper {
@@ -887,7 +887,7 @@ export default {
   height: 100%;
   margin-left: 2px;
   flex-shrink: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
   opacity: .25;
 }
 
@@ -941,7 +941,7 @@ export default {
 
 .sortable-drag {
   background-color: var(--light-gray) !important; 
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .sortable-ghost .cont {
@@ -1013,13 +1013,13 @@ export default {
 .ruler-t-enter, .ruler-t-leave-to {
   opacity: 0;
   width: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .ruler-t-leave, .ruler-t-enter-to {
   opacity: 1;
   width: 35px;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 </style>

@@ -34,6 +34,7 @@
                 class="cursor icon"
                 :icon="l.icon"
                 :color="l.color"
+                width='12px'
               />
               <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
               <span class="name" v-html="l.name"></span>
@@ -42,6 +43,7 @@
               >
                 <Icon
                   icon='check'
+                  width='12px'
                 />
               </span>
             </div>
@@ -51,7 +53,7 @@
             <div class="values">
               <Icon v-for="l in l.options" :key="l.id" class="val primary-hover icon cursor"
                 :icon="l.icon"
-                width='18px'
+                width='14px'
                 :color="l.color"
                 @click="linkCallback(l.callback, l)"
               />
@@ -73,7 +75,7 @@
       </transition-group>
     </div>
     <div v-if="select && links.onSave" class="btn">
-      <div style="height: 48px"></div>
+      <div style="height: 38px"></div>
       <div class="absolute-btn">
         <div class="abs-wrapper">
           <div class="back-layer"></div>
@@ -236,7 +238,7 @@ export default {
       el.style.height = '0px'
       requestAnimationFrame(() => {
         el.style.opacity = 1
-        el.style.height = '25px'
+        el.style.height = '19px'
         setTimeout(() => done(), 200)
       })
     },
@@ -291,9 +293,9 @@ export default {
 .link {
   display: flex;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .175s;
   white-space: nowrap;
-  height: 26px;
+  height: 19px;
   overflow: hidden;
   position: relative;
 }
@@ -340,14 +342,14 @@ export default {
 .link .link-cont {
   display: flex;
   height: 100%;
-  margin: 0 25px;
+  margin: 0 22px;
   align-items: center;
   justify-content: center;
 }
 
 .icon {
   position: relative;
-  margin-right: 8px;
+  margin-right: 6px;
   bottom: -1.5px;
 }
 
@@ -365,7 +367,7 @@ export default {
 .header-link {
   margin: 8px 20px;
   width: 160px;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 .input {
@@ -375,13 +377,13 @@ export default {
   border: none;
   border-radius: 0;
   font-size: 1em;
-  padding: 8px;
+  padding: 4px;
   outline: none;
   border-bottom: 1px solid var(--fade);
 }
 
 .drop-division {
-  margin: 10px 24px;
+  margin: 10px 19px;
 }
 
 .division-line {
@@ -389,7 +391,7 @@ export default {
 }
 
 .btn {
-  margin: 4px 24px;
+  margin: 4px 19px;
 }
 
 .absolute-btn {
@@ -401,14 +403,14 @@ export default {
 
 .abs-wrapper {
   position: relative;
-  height: 45px;
+  height: 35px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .back-layer {
   bottom: 0;
-  height: 55px;
+  height: 45px;
   width: 100%;
   position: absolute;
 }

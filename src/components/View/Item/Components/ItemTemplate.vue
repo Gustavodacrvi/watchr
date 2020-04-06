@@ -7,7 +7,7 @@
   >
     <div
       class="ItemTemplate item-handle draggable"
-      :class="[layout, {isItemSelected, isItemMainSelection, isEditing}]"
+      :class="[layout, {isItemSelected, isItemMainSelection, isEditing, listRenderer}]"
 
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
@@ -24,6 +24,7 @@
           ref='cont'
           
           :isEditing='isEditing'
+          :showInfo='showInfo'
           :isAdding='isAdding'
           :listRenderer='listRenderer'
           :itemHeight='itemHeight'
@@ -73,6 +74,9 @@
           <template v-slot:before-name>
             <slot name="before-name"></slot>
           </template>
+          <template v-slot:flex-end>
+            <slot name="flex-end"></slot>
+          </template>
 
         </ItemCont>
       </div>
@@ -98,7 +102,7 @@ export default {
     'itemHeight', 'item', 'editRawPlaceholder', 'isAdding',
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
     'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
-    'editComponent', 'itemModelFallback', 'listRenderer',
+    'editComponent', 'itemModelFallback', 'listRenderer', 'showInfo',
 
     'options',
   ],
@@ -156,7 +160,7 @@ export default {
           s.transitionDuration = '.1s'
           s.height = this.itemHeight + 'px'
           setTimeout(() => {
-            s.transitionDuration = '.2s'
+            s.transitionDuration = '.175s'
             s.height = 'auto'
             this.isEditing = true
             done()
@@ -175,16 +179,16 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = disableTransition ? 0 : '.2s'
+        s.transitionDuration = disableTransition ? 0 : '.175s'
         s.opacity = 1
         s.height = this.itemHeight + 'px'
         s.minHeight = this.itemHeight + 'px'
         
         setTimeout(() => {
-          s.transitionDuration = '.2s'
+          s.transitionDuration = '.175s'
           s.height = 'auto'
           done()
-        }, 205)
+        }, 201)
       })
     },
     leave(el, done) {
@@ -208,7 +212,7 @@ export default {
       s.minHeight = this.itemHeight + 'px'
 
       const hideItem = () => {
-        s.transitionDuration = disableTransition ? 0 : '.2s'
+        s.transitionDuration = disableTransition ? 0 : '.175s'
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
@@ -486,10 +490,6 @@ export default {
     isItemMainSelection() {
       this.bindMainSelection()
     },
-    completed() {
-      if (this.completed)
-        this.animate(this.completed)
-    },
     completedItem() {
       this.completed = this.completedItem
     },
@@ -525,6 +525,8 @@ export default {
 
 .sortable-ghost.ItemTemplate .cont,
 .sortable-ghost.ItemTemplate .icon-wrapper,
+.sortable-ghost.ItemTemplate .ruler-element,
+.sortable-ghost.ItemTemplate .main-cont,
 .sortable-ghost.ItemTemplate .info {
   display: none;
 }
@@ -535,6 +537,7 @@ export default {
 
 .ItemTemplate {
   position: relative;
+  overflow: visible;
   z-index: 5;
 }
 
@@ -542,17 +545,17 @@ export default {
   position: relative;
   z-index: 5;
   margin: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
   height: 100%;
   user-select: none;
 }
 
-.isEditing .cont-wrapper {
+.isEditing.listRenderer .cont-wrapper {
   margin: 70px 0 !important;
 }
 
 .isEditing {
-  transition-duration: .2s;
+  transition-duration: .175s;
   z-index: 6;
 }
 

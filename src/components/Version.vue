@@ -30,7 +30,7 @@ export default {
   font-size: .85em;
   border-radius: 50px;
   padding: 8px 12px;
-  transition-duration: .2s;
+  transition-duration: .175s;
   color: var(--fade);
   transform: scale(1,1);
   display: inline-block;

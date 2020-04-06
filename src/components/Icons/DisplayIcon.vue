@@ -25,7 +25,7 @@ export default {
           {
             class: ['icon', 'remove-highlight'],
             style: {
-              width: (context.props.width ? context.props.width : (isDesktopDevice ? '15px' : '20px')),
+              width: (context.props.width ? context.props.width : (isDesktopDevice ? '12px' : '20px')),
               color: context.props.color,
             },
           },
@@ -61,7 +61,7 @@ export default {
 }
 
 .primary-hover .icon:hover {
-  transition-duration: .2s;
+  transition-duration: .175s;
   color: var(--primary) !important;
 }
 

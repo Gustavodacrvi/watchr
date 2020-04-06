@@ -84,7 +84,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 40px;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .card:hover {

@@ -298,12 +298,12 @@ export default {
       s.opacity = 0
       s.height = '0px'
       requestAnimationFrame(() => {
-        s.transitionDuration = disableTransition ? 0 : '.2s'
+        s.transitionDuration = disableTransition ? 0 : '.175s'
         s.opacity = 1
-        s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
+        s.height = (this.isDesktopDevice ? 19 : 42) + 'px'
         setTimeout(() => {
           s.height = 'auto'
-          s.transitionDuration = '.2s'
+          s.transitionDuration = '.175s'
           done()
         }, 220)
       })
@@ -313,9 +313,9 @@ export default {
       
       s.transition = 'none'
       s.opacity = 1
-      s.height = (this.isDesktopDevice ? 25 : 42) + 'px'
+      s.height = (this.isDesktopDevice ? 19 : 42) + 'px'
       requestAnimationFrame(() => {
-        s.transition = 'height .2s, opacity .2s'
+        s.transition = 'height .175s, opacity .175s'
         s.opacity = 0
         s.height = '0px'
 
@@ -424,17 +424,17 @@ export default {
 
 .add-msg-wrapper {
   position: absolute;
-  height: 25px;
+  height: 16px;
   width: 100%;
 }
 
 .empty {
-  height: 20px;
+  height: 16px;
 }
 
 .Renderer .sortable-ghost.empty {
   background-color: var(--dark-void);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .add-msg {
@@ -442,18 +442,18 @@ export default {
   justify-content: center;
   align-items: center;
   width: 100%;
-  border-radius: 6px;
+  border-radius: 4px;
   height: 0;
   opacity: 0;
   background-color: transparent;
   overflow: visible;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .add-msg-wrapper:hover .add-msg {
   opacity: 1;
   cursor: pointer;
-  height: 25px;
+  height: 16px;
   background-color: var(--dark);
 }
 

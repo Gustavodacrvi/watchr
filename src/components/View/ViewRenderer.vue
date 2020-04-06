@@ -796,6 +796,15 @@ export default {
         task: {list: ''},
       })
     },
+    saveNewTime(time) {
+      if (time)
+        this.$store.dispatch('task/saveTasksById', {
+          ids: this.fallbackSelectedTasks.filter(task => task.calendar).map(el => el.id),
+          task: {
+            calendar: {time},
+          },
+        })
+    },
   },
   computed: {
     ...mapState({
@@ -1144,6 +1153,29 @@ export default {
             name: 'Add tags',
             icon: 'tag',
             callback: () => this.getIconDropOptionsTags
+          },
+          {
+            name: 'Change duration',
+            icon: 'duration',
+            callback: () => ({
+              comp: 'DurationPicker',
+              content: {
+                callback: taskDuration => this.$store.dispatch('task/saveTasksById', {
+                  ids,
+                  task: {taskDuration},
+                }),
+              },
+            }),
+          },
+          {
+            name: 'Change start time',
+            icon: 'clock',
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                callback: this.saveNewTime,
+              },
+            })
           },
           {
             type: 'optionsList',
@@ -1584,7 +1616,8 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 75px;
+  margin: 0 50px;
+  flex-basis: 850px;
   min-height: 100%;
   position: relative;
   display: flex;
@@ -1604,6 +1637,7 @@ export default {
 
 .ViewRenderer.mobile {
   margin: 0 8px;
+  flex-basis: 100%;
   margin-top: -4px;
 }
 

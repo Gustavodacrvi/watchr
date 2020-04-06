@@ -17,7 +17,7 @@
         :icon="icon"
         :title='title'
         :color='color'
-        :width='icon === "file" ? "16px" : undefined'
+        :width='icon === "file" ? "12px" : undefined'
       />
       <span v-show="content || right">
         <transition
@@ -90,10 +90,10 @@ export default {
       s.overflow = 'hidden'
       s.padding = '0'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
-        s.height = '28px'
+        s.transitionDuration = '.175s'
+        s.height = '22px'
         s.padding = '0 8px'
-        s.minWidth = '28px'
+        s.minWidth = '22px'
         s.opacity = '1'
 
         setTimeout(() => {
@@ -106,7 +106,7 @@ export default {
     },
     leave(el, done) {
       const s = el.style
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.175s'
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'
@@ -129,7 +129,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
 
         s.width = width
         s.marginLeft = '6px'
@@ -151,7 +151,7 @@ export default {
       s.marginLeft = '6px'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.width = 0
         s.marginLeft = 0
         s.opacity = 0
@@ -173,7 +173,7 @@ export default {
 
 .faded {
   opacity: .6;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 .number .faded {
@@ -187,8 +187,8 @@ export default {
 }
 
 .header-info {
-  height: 28px;
-  min-width: 28px;
+  height: 22px;
+  min-width: 22px;
   position: relative;
   display: inline-flex;
   padding: 0 8px;

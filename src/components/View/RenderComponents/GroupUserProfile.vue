@@ -73,7 +73,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
 
         s.height = '48px'
         s.opacity = 1
@@ -86,7 +86,7 @@ export default {
 
       const s = el.style
 
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.175s'
       s.height = 0
       s.opacity = 0
 
@@ -111,14 +111,14 @@ export default {
 .GroupUserProfile {
   display: flex;
   height: 48px;
-  transition-duration: .2s;
+  transition-duration: .175s;
   align-items: center;
   overflow: hidden;
 }
 
 .options {
   display: flex;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .fade {
@@ -197,8 +197,8 @@ export default {
   display: inline-block;
   padding: 6px;
   margin-left: 4px;
-  border-radius: 6px;
-  transition-duration: .2s;
+  border-radius: 4px;
+  transition-duration: .175s;
   cursor: pointer;
 }
 

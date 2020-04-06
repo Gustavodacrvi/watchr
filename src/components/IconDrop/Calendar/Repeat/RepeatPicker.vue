@@ -440,8 +440,8 @@ export default {
 <style scoped>
 
 .RepeatPicker.desktop {
-  flex-basis: 450px;
-  width: 450px;
+  flex-basis: 270px;
+  width: 270px;
 }
 
 .content {
@@ -477,7 +477,7 @@ export default {
   display: inline-block;
   padding: 6px;
   background-color: var(--sidebar-color);
-  transition-duration: .2s;
+  transition-duration: .175s;
   background-color: none;
 }
 

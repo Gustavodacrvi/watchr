@@ -130,7 +130,7 @@ export default {
 
 .TimelineRuler {
   position: absolute;
-  left: 0;
+  left: -6px;
   top: 0;
   width: 50px;
   height: 100%;
@@ -139,6 +139,10 @@ export default {
   border-bottom: 0 solid transparent;
   background-color: rgba(161, 96, 235, .05);
   z-index: 6;
+}
+
+.mobile .TimelineRuler {
+  left: 0;
 }
 
 .wrapper {
@@ -188,7 +192,7 @@ export default {
   height: 25px;
   text-align: center;
   bottom: 100%;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .save:hover {

@@ -92,8 +92,8 @@ export default {
       s.transitionDuration = 0
       s.height = 0
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
-        s.height = `${this.isDesktopDevice ? 25 : 35}px`
+        s.transitionDuration = '.175s'
+        s.height = `${this.isDesktopDevice ? 20 : 35}px`
       })
     },
     leave(el) {
@@ -277,11 +277,11 @@ export default {
 }
 
 .cont {
-  margin: 10px;
+  margin: 8px;
 }
 
 .options {
-  margin-top: 20px;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
 }
@@ -290,7 +290,7 @@ export default {
   width: 100%;
   display: flex;
   background-color: none;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .option:hover, .active {
@@ -311,12 +311,12 @@ export default {
 }
 
 .fixed {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   height: 35px;
 }
 
 .fixed.isDesktopDevice {
-  height: 25px;
+  height: 20px;
 }
 
 .name-wrapper {
@@ -346,13 +346,13 @@ export default {
 .card-t-enter, .card-t-leave-to {
   transform: translateY(-70px);
   opacity: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .card-t-leave, .card-t-enter-to {
   transform: translateY(0px);
   opacity: 1;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 </style>

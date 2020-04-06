@@ -7,6 +7,7 @@
       :itemHeight='itemHeight'
       :editComponent='editComponent'
       :isAdding='isAdding'
+      :showInfo='showInfo'
       :listRenderer='listRenderer'
       :itemModelFallback='itemModelFallback'
       :doneTransition='completeEditLeaveEvent'
@@ -27,6 +28,8 @@
     <DisplayCont v-if="showingCont && completeEditLeave"
       :class="{transitioning}"
       :itemHeight='itemHeight'
+      :showInfo='showInfo'
+      :infoReady='infoReady'
       :isAdding='isAdding'
       :listRenderer='listRenderer'
     
@@ -41,17 +44,20 @@
         <slot name="check-icon"></slot>
       </template>
 
-      <template v-if="showElements" v-slot:root>
+      <template v-if="infoReady && showElements" v-slot:root>
         <slot name="root"></slot>
       </template>
       <template v-if="showElements" v-slot:after-name>
         <slot name="after-name"></slot>
       </template>
-      <template v-if="showElements" v-slot:info>
+      <template v-if="infoReady && showElements" v-slot:info>
         <slot name="info"></slot>
       </template>
-      <template v-if="showElements" v-slot:before-name>
+      <template v-if="infoReady && showElements" v-slot:before-name>
         <slot name="before-name"></slot>
+      </template>
+      <template v-if="infoReady && showElements" v-slot:flex-end>
+        <slot name="flex-end"></slot>
       </template>
     
     </DisplayCont>
@@ -69,17 +75,21 @@ export default {
   components: {
     DisplayCont, EditRaw,
   },
-  props: ['name', 'isEditing', 'itemHeight', 'editComponent', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'listRenderer'],
+  props: ['name', 'isEditing', 'itemHeight', 'editComponent',  'showInfo', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'listRenderer'],
   data() {
     return {
       showElements: true,
       showLine: false,
+      infoReady: false,
       transitioning: false,
       showingCont: true,
       completeEditLeave: true,
 
       showingEdit: false,
     }
+  },
+  created() {
+    setTimeout(() => this.infoReady = true, 300)
   },
   methods: {
     completeEditLeaveEvent() {

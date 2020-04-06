@@ -19,7 +19,7 @@
           <Icon class="icon"
             ref='icon'
             :icon='icon'
-            :width='width || "16px"'
+            :width='width || "13px"'
             :color='color'
             :file='file'
             @add='onFileDrop'
@@ -74,7 +74,7 @@
                   <Icon class="option-icon"
                     :icon='o.icon'
                     :color='o.color'
-                    width='14px'
+                    width='12px'
                   />
                 </div>
                 <div class="option-name">
@@ -144,21 +144,21 @@ export default {
       }
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
 
         s.width = width
         s.opacity = 1
 
         if (this.tagMode) {
-          s.height = '25px'
+          s.height = '19px'
           s.border = '1px solid var(--light-gray)'
+          s.marginLeft = '4px'
         }
 
         setTimeout(() => {
           s.width = 'auto'
           s.overflow = 'unset'
           s.whiteSpace = 'unset'
-          s.marginLeft = '4px'
           done()
         }, 200)
       })
@@ -180,7 +180,7 @@ export default {
       }
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.width = 0
         s.opacity = 0
         s.overflow = 'hidden'
@@ -239,7 +239,7 @@ export default {
         s.opacity = 0
 
         requestAnimationFrame(() => {
-          s.transitionDuration = '.2s'
+          s.transitionDuration = '.175s'
           s.height = height
           s.opacity = 1
 
@@ -261,7 +261,7 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.height = 0
         s.opacity = 0
 
@@ -282,11 +282,11 @@ export default {
       s.padding = '0'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
 
         s.width = width
         s.opacity = 1
-        s.padding = '0 4px'
+        s.padding = '0 2px'
 
         setTimeout(done, 200)
       })
@@ -295,7 +295,7 @@ export default {
 
       const s = el.style
 
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.175s'
       s.width = 0
       s.opacity = 0
       s.padding = '0'
@@ -494,13 +494,13 @@ export default {
 <style scoped>
 
 .SmartIconDrop {
-  height: 25px;
-  padding: 4px;
+  height: 19px;
+  padding: 2px;
   display: inline-block;
-  border-radius: 6px;
+  border-radius: 4px;
   box-sizing: border-box;
   position: relative;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .tagMode + .tagMode {
@@ -525,14 +525,6 @@ export default {
   justify-content: center;
 }
 
-.icon {
-  transform: translateX(-1px);
-}
-
-.tagMode .icon {
-  transform: translateY(-1.5px);
-}
-
 .wrapper {
   width: 100%;
   height: 100%;
@@ -540,7 +532,7 @@ export default {
 }
 
 .placeholder {
-  padding: 0 4px;
+  padding: 0 2px;
   height: 100%;
 }
 
@@ -570,9 +562,9 @@ export default {
 
 .option {
   margin: 0 6px;
-  height: 25px;
-  padding: 0 6px;
-  transition-duration: .2s;
+  height: 19px;
+  padding: 0 4px;
+  transition-duration: .175s;
 }
 
 .option:hover, .activeOption {
@@ -604,15 +596,15 @@ export default {
 }
 
 .option-t-enter, .option-t-leave-to {
-  transition-duration: .2s;
+  transition-duration: .175s;
   opacity: 0;
   height: 0;
 }
 
 .option-t-leave, .option-t-enter-to {
-  transition-duration: .2s;
+  transition-duration: .175s;
   opacity: 1;
-  height: 25px;
+  height: 19px;
 }
 
 </style>

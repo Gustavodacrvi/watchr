@@ -29,7 +29,7 @@
               <Icon v-else-if="icon" class="icon"
                 :icon='icon'
                 :color='getHeadingColor'
-                width='16px'
+                width='13px'
               />
               <h3 class="name" :class="{hasIcon}" :style="{color: getHeadingColor}">{{ name }}</h3>
             </span>
@@ -196,7 +196,7 @@ export default {
       const s = el.style
       
       setTimeout(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.opacity = 1
         s.height = this.renderHeight
   
@@ -218,7 +218,7 @@ export default {
       s.overflow = 'hidden'
 
       setTimeout(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         s.opacity = 0
         s.height = '0px'
         s.overflow = 'hidden'
@@ -441,17 +441,17 @@ export default {
 }
 
 .header-wrapper {
-  padding: 0 6px;
+  padding: 0 4px;
   display: flex;
   align-items: center;
   margin-bottom: 0px;
-  border-bottom: 1.5px solid var(--light-gray);
-  height: 35px;
+  border-bottom: 1px solid var(--light-gray);
+  height: 25px;
   opacity: 1;
   z-index: 50;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  transition: background-color .2s;
+  transition: background-color .175s;
 }
 
 .header-wrapper:hover {
@@ -490,7 +490,7 @@ export default {
 }
 
 .input-wrapper {
-  height: 35px;
+  height: 25px;
   display: flex;
   align-items: center;
   border-top-left-radius: 6px;
@@ -504,12 +504,14 @@ export default {
   outline: none;
   background-color: transparent;
   font-weight: bold;
-  padding-left: 6px;
+  padding-left: 4px;
+  padding-right: 28px;
+  width: 100%;
 }
 
 .sortable-ghost {
   background-color: var(--sidebar-color);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .sortable-ghost .header-wrapper {

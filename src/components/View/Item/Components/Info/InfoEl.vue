@@ -4,7 +4,7 @@
   >
     <Icon class="txt-icon"
       :icon='props.icon'
-      :color='props.color'
+      :color='props.color || "var(--fade)"'
       width='10px'
     />
     <span class="txt-name">

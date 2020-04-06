@@ -41,6 +41,7 @@
           :item='item'
           :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
+          :listRenderer='true'
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
           :comp='comp'
@@ -66,6 +67,7 @@
           :focusToggle='focusToggle'
           :isAdding='true'
           :itemHeight='itemHeight'
+          :itemModelFallback='itemModelFallback'
           :listRenderer='true'
           :fallbackItem='fallbackItem'
 
@@ -447,13 +449,13 @@ export default {
         const show = s => {
           if (s) {
             s.opacity = 1
-            s.transitionDuration = '.2s'
+            s.transitionDuration = '.175s'
           }
         }
         const hide = s => {
           if (s) {
             s.opacity = 0
-            s.transitionDuration = '.2s'
+            s.transitionDuration = '.175s'
           }
         }
 
@@ -1085,7 +1087,7 @@ export default {
     },
     updateHeadings() {
       this.clearHeadingsTimeout()
-      this.updateChangedItems('slicedHeadings', 'lazyHeadings', 'lazyHeadingsSetTimeouts', this.isDesktopDevice ? 80 : 230)
+      this.updateChangedItems('slicedHeadings', 'lazyHeadings', 'lazyHeadingsSetTimeouts', this.isDesktopDevice ? 175 : 250)
     },
     updateItems() {
       this.clearItemsTimeout()
@@ -1098,7 +1100,7 @@ export default {
         }
       }
 
-      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 5 : length * 5)
+      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 14 : length * 5)
 
       if (foundEdit) {
         const itemIndex = this.lazyItems.findIndex(el => el.id === this.addedItem)
@@ -1132,6 +1134,7 @@ export default {
       moving: state => state.moving,
     }),
     ...mapGetters({
+      calendarDate: 'calendarDate',
       itemHeight: 'itemHeight',
       savedTasks: 'task/tasks',
       layout: 'layout',
@@ -1143,7 +1146,7 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     showTimelineRuler() {
-      return this.comp === "Task" && this.showingRuler && this.selected.length > 0 && this.selected.every(id => this.getItems.some(item => item.id === id))
+      return this.comp === "Task" && this.calendarDate && this.showingRuler && this.selected.length > 0 && this.selected.every(id => this.getItems.some(item => item.id === id))
     },
     slicedHeadings() {
       return this.showEmptyHeadings ? this.headings.slice() : this.headings.filter(this.filterHeading)
@@ -1297,13 +1300,13 @@ export default {
   top: 0;
   justify-content: center;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .cameFromAnotherTab-ghost {
-  height: 30px;
+  height: 25px;
   background-color: var(--sidebar-color);
-  transition: transform .2s;
+  transition: transform .175s;
 }
 
 .mobile .illustration {
@@ -1339,7 +1342,7 @@ export default {
 
 .illus-trans-enter, .illus-trans-leave-to {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(25px);
 }
 
 .illus-trans-leave, .illus-trans-enter-to {
@@ -1353,7 +1356,7 @@ export default {
   min-height: 25px;
   z-index: 2;
   height: 100%;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .heading-add {
@@ -1362,7 +1365,7 @@ export default {
   display: flex;
   justify-content: center;
   opacity: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
   cursor: pointer;
 }
 
@@ -1389,7 +1392,7 @@ export default {
 }
 
 .add-item-wrapper {
-  height: 30px;
+  height: 25px;
   width: 100%;
 }
 
@@ -1401,12 +1404,12 @@ export default {
   justify-content: center;
   align-items: center;
   transform: scale(1,1);
-  transition-duration: .2s;
+  transition-duration: .175s;
   box-shadow: 0 0 0 transparent;
 }
 
 .add-item-wrapper:hover .add-item {
-  height: 30px;
+  height: 25px;
   opacity: 1;
   cursor: pointer;
   outline: none;

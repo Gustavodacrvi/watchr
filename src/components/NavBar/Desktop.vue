@@ -99,7 +99,7 @@ export default {
   display: inline-block;
   padding: 0 14px;
   outline: none;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .link:hover {
@@ -122,7 +122,7 @@ export default {
   height: 3px;
   width: 20px;
   bottom: 0;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .icons {

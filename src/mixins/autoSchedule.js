@@ -9,7 +9,7 @@ export default {
     autoScheduleItems(vm, calendarDate, obj, tasks) {
       if (!calendarDate)
         return;
-      const {time, buffer, fallback} = obj
+      const {time, buffer, fallback, overwrite} = obj
       
       const batch = fire.batch()
       
@@ -27,7 +27,7 @@ export default {
     
           specific: calendarDate,
         })}
-        if (c.time)
+        if (c.time && !overwrite)
           continue
         
         c.time = init.format('HH:mm')

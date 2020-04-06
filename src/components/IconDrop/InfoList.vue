@@ -18,7 +18,7 @@
           <span v-if="l.icon">
             <Icon class="icon"
               :icon='l.icon.name'
-              :color='l.color'
+              :color='l.icon.color'
               width='16px'
             />
           </span>
@@ -63,7 +63,7 @@ export default {
   padding: 10px;
   user-select: none;
   cursor: pointer;
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .option:hover {

@@ -11,7 +11,7 @@
       <div class="fast-icons">
         <Icon
           class="cursor icon-box"
-          width="20px"
+          width="14px"
           icon="star"
           color='var(--yellow)'
           ref='tod'
@@ -22,7 +22,7 @@
         />
         <Icon
           class="cursor icon-box"
-          width="20px"
+          width="14px"
           icon="sun"
           color='var(--orange)'
           ref='tom'
@@ -33,7 +33,7 @@
         />
         <Icon v-if="allowSomeday"
           class="cursor icon-box"
-          width="20px"
+          width="14px"
           ref='any'
           color='var(--olive)'
           icon="layer-group"
@@ -44,7 +44,7 @@
         />
         <Icon v-if="allowSomeday"
           class="cursor icon-box"
-          width="20px"
+          width="14px"
           ref='som'
           icon="archive"
           color='var(--brown)'
@@ -56,7 +56,7 @@
         <Icon v-if="allowBloqued"
           class="cursor icon-box"
           ref='bloq'
-          width="20px"
+          width="14px"
           icon="bloqued"
           color='var(--red)'
           :active='selectionPos === 5 && isDesktopBreakPoint'
@@ -67,7 +67,7 @@
         <Icon v-if="allowRepeat"
           class="cursor icon-box"
           ref='rep'
-          width="20px"
+          width="14px"
           icon="repeat"
           title='Recurring dates'
           :active='selectionPos === 6 && isDesktopBreakPoint'
@@ -99,7 +99,7 @@
       <Icon
         icon='calendar'
         color='var(--green)'
-        width='20px'
+        width='14px'
       />
       <span class="calendar-str">
         {{ calendarStr }}
@@ -327,9 +327,9 @@ export default {
 <style scoped>
 
 .CalendarPicker {
-  width: 280px;
+  width: 220px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .fast-icons {

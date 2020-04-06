@@ -18,13 +18,13 @@
           class="icon primary-hover"
           icon="circle"
           color='var(--primary)'
-          width='15px'
+          width='12px'
         />
         <Icon v-else
           class="icon primary-hover"
           icon="circle-check"
           color='var(--primary)'
-          width='15px'
+          width='12px'
         />
       </span>
       <span v-if="!editing"
@@ -116,8 +116,8 @@ export default {
         s.opacity = 0
   
         requestAnimationFrame(() => {
-          s.transitionDuration = '.2s'
-          s.height = '30px'
+          s.transitionDuration = '.175s'
+          s.height = '22px'
           s.opacity = 1
   
           setTimeout(done, 205)
@@ -128,11 +128,11 @@ export default {
       const s = el.style
 
       s.transitionDuration = 0
-      s.height = '30px'
+      s.height = '22px'
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.175s'
         
         s.height = 0
         s.opacity = 0
@@ -169,7 +169,7 @@ export default {
 .Subtask {
   position: relative;
   display: flex;
-  transition: height .2s, background-color .2s;
+  transition: height .175s, background-color .175s;
   height: 30px;
 }
 
@@ -188,7 +188,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 .line-wrapper {
@@ -233,7 +233,7 @@ export default {
 }
 
 .delete {
-  transition-duration: .2s;
+  transition-duration: .175s;
 }
 
 .delete:hover {
@@ -246,11 +246,11 @@ export default {
 
 .icons {
   height: 100%;
-  flex-basis: 25px;
+  flex-basis: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity .2s;
+  transition: opacity .175s;
 }
 
 .input {
