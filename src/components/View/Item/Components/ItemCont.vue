@@ -44,7 +44,7 @@
         <slot name="check-icon"></slot>
       </template>
 
-      <template v-if="showElements" v-slot:root>
+      <template v-if="infoReady && showElements" v-slot:root>
         <slot name="root"></slot>
       </template>
       <template v-if="showElements" v-slot:after-name>

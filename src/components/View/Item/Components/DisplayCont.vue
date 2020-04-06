@@ -70,6 +70,11 @@ import utils from '@/utils'
 
 export default {
   props: ['name', 'showLine', 'itemHeight', 'isAdding', 'showInfo', 'infoReady'],
+  data() {
+    return {
+      width: 0,
+    }
+  },
   methods: {
     enterSecondRow(el, done) {
       const s = el.style
@@ -126,18 +131,27 @@ export default {
           s.width = width
           s.marginRight = '9px'
           s.opacity = .9
+          this.width = width
+
+          setTimeout(() => {
+            s.width = 'auto'
+          }, 200)
         })
       })
     },
     infoLeave(el) {
       const s = el.style
 
-      s.transitionDuration = '.2s'
-      s.width = 0
-      s.padding = 0
-      s.border = 'none'
-      s.margin = 0
-      s.opacity = 0
+      s.width = this.width
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.2s'
+        s.width = 0
+        s.padding = 0
+        s.border = 'none'
+        s.margin = 0
+        s.opacity = 0
+      })
     },
   },
   computed: {

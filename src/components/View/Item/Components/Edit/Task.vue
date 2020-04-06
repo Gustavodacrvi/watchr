@@ -155,8 +155,10 @@ export default EditBuilder({
     },
     created() {
       if (this.item) {
-        if (this.item.calendar)
+        if (this.item.calendar) {
           this.fromDefaultItem = true
+          this.item.calendar = {...this.item.calendar}
+        }
   
         if (this.item.tags)
           this.model.tags = this.item.tags.slice()
@@ -274,7 +276,7 @@ export default EditBuilder({
     computed: {
       calendarStr() {
         if (this.model.calendar)
-          return utils.parseCalendarObjectToString(this.model.calendar, this.userInfo, true)
+          return utils.parseCalendarObjectToString(this.model.calendar, this.userInfo, true, false)
         return "Inbox"
       },
       getCalendarStrColor() {
@@ -436,6 +438,34 @@ export default EditBuilder({
           return arr
         }
       },
+      timeComposer() {
+        const disablePmFormat = this.userInfo.disablePmFormat
+        const format = disablePmFormat ? 'HH:mm' : 'LT'
+        return (list, search) => {
+          if (!search)
+            return list
+          
+          const arr = list.filter(el => el.name.toLowerCase().includes(search.toLowerCase()), this.userInfo.disablePmFormat)
+
+          let match = search.match(!disablePmFormat ? /(at )?(([2-9]|1[0-2]?)|(1[0-2]|0?[1-9]):([0-5][0-9]))(pm|am)/gi : /(at )?(2[0-3]|[01]?[0-9]):([0-5]?[0-9])/gi)
+
+          match = (match && match[0]) || null
+
+          const time = mom(match, format)
+          if (time.isValid())
+            arr.unshift({
+              id: 'found_match',
+              name: match,
+              icon: 'clock',
+              trigger: 'enter',
+              callback: () => {
+                this.model.calendar.time = time.format('HH:mm')
+              }
+            })
+
+          return arr
+        }
+      },
       composeCalendarListHelper() {
         return (list, search) => {
           if (!search)
@@ -489,6 +519,32 @@ export default EditBuilder({
 
           return arr
         }
+      },
+      defaultTimeInputList() {
+        const getObj = time => ({
+          id: time,
+          name: utils.parseTime(time, this.userInfo),
+          icon: 'clock',
+          color: 'var(--brown)',
+          trigger: 'enter',
+          callback: () => {
+            this.model.calendar.time = time
+          },
+        })
+
+        const arr = [
+          '06:00', '07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','24:00',
+        ]
+        
+        return [
+          {
+            id: 'No time',
+            name: 'No time',
+            icon: 'clock',
+            callback: model => model.calendar.time = null
+          },
+          ...arr.map(getObj),
+        ]
       },
       deadlineIconOptions() {
         return [
@@ -729,6 +785,20 @@ export default EditBuilder({
             },
           })
 
+        if (this.model.calendar && !this.model.calendar.time)
+          arr.unshift({
+            id: 'calendar_time',
+            props: {
+              placeholder: 'Time...',
+              icon: 'clock',
+              color: 'var(--brown)',
+              listWidth: '180px',
+              trigger: 'enter',
+              compose: this.timeComposer,
+              list: this.defaultTimeInputList,
+            },
+          })
+
         const listObj = this.getListObj
 
         if (!this.model.assigned && listObj && (listObj.group || this.model.group))
@@ -885,6 +955,19 @@ export default EditBuilder({
         const tags = []
 
         tags.push(this.calendarTagObj)
+        
+        if (this.model.calendar && this.model.calendar.time)
+          tags.push({
+            id: 'time',
+            props: {
+              icon: 'clock',
+              name: utils.parseTime(this.model.calendar.time, this.userInfo),
+              color: 'var(--brown)',
+              trigger: 'enter',
+              compose: this.timeComposer,
+              list: this.defaultTimeInputList,
+            },
+          })
 
         if (this.model.calendar && this.model.calendar.evening)
           tags.push({

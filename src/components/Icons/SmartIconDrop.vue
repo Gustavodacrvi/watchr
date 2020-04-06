@@ -152,13 +152,13 @@ export default {
         if (this.tagMode) {
           s.height = '19px'
           s.border = '1px solid var(--light-gray)'
+          s.marginLeft = '4px'
         }
 
         setTimeout(() => {
           s.width = 'auto'
           s.overflow = 'unset'
           s.whiteSpace = 'unset'
-          s.marginLeft = '4px'
           done()
         }, 200)
       })

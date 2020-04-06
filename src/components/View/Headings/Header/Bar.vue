@@ -9,7 +9,7 @@
       :color="getIconColor"
       :progress='progress'
       :shadow='true'
-      :width="isDesktopBreakPoint ? '22px' : '30px'"
+      :width="isDesktopBreakPoint ? (!progress ? '22px' : '15px') : '30px'"
       @click="openMenu"
       :style="{filter: `drop-shadow(0 0 ${isDesktopBreakPoint ? 15 : 5}px ${getIconColor})`}"
     />

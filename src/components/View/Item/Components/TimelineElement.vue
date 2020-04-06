@@ -1,28 +1,33 @@
 <template>
-  <div
-    class="ruler-element"
+  <transition
+    appear
+    name='ruler-t'
   >
-    <div class="element-wrapper">
-      <span v-if='startHour'
-        class="timeline-time"
-      >
-        <span class="hour">
-          {{startHour}}
-        </span>
-        <span class="timeline-info">
-          <span>
-            {{startMin}}
+    <div
+      class="ruler-element"
+    >
+      <div class="element-wrapper">
+        <span v-if='startHour'
+          class="timeline-time"
+        >
+          <span class="hour">
+            {{startHour}}
           </span>
-          <span class="pm-am">
-            {{timePmAm}}
+          <span class="timeline-info">
+            <span>
+              {{startMin}}
+            </span>
+            <span class="pm-am">
+              {{timePmAm}}
+            </span>
           </span>
         </span>
-      </span>
-      <span v-else class='timeline-line'>
-        
-      </span>
+        <span v-else class='timeline-line'>
+          
+        </span>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -46,6 +51,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
+  margin-left: 4px;
 }
 
 .timeline-time {
@@ -75,6 +81,18 @@ export default {
 
 .pm-am {
   font-size: .8em;
+}
+
+.ruler-t-enter, .ruler-t-leave-to {
+  opacity: 0;
+  width: 0;
+  transition-duration: .2s;
+}
+
+.ruler-t-leave, .ruler-t-enter-to {
+  opacity: 1;
+  width: 35px;
+  transition-duration: .2s;
 }
 
 </style>

@@ -36,15 +36,13 @@
     </template>
 
     <template v-slot:root>
-      <transition name='ruler-t'>
-        <TimelineElement v-if='computedShowRuler'
-          :startHour='startHour'
-          :startMin='startMin'
-          :timePmAm='timePmAm'
-        
-          @click.native='rulerClick'
-        />
-      </transition>
+      <TimelineElement v-if='computedShowRuler'
+        :startHour='startHour'
+        :startMin='startMin'
+        :timePmAm='timePmAm'
+      
+        @click.native='rulerClick'
+      />
     </template>
 
     <template v-slot:before-name>
@@ -154,7 +152,7 @@ export default {
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',
     'hideGroupName', 'hideFolderName', 'showingRuler',
-    'isSelecting', 'allowLogStr', 'itemModelFallback',
+    'isSelecting', 'allowDeadlineStr', 'allowLogStr', 'itemModelFallback',
     'isAdding', 'listRenderer',
 
     'viewName', 'viewType',
@@ -288,7 +286,7 @@ export default {
       return this.isRecurringTask(this.item)
     },
     deadlineStr() {
-      if (this.disableDeadlineStr || !this.item)
+      if (this.allowDeadlineStr && this.disableDeadlineStr || !this.item)
         return null
       return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
     },
@@ -464,8 +462,24 @@ export default {
     },
 
     taskDuration() {
-      if (this.item && !this.computedShowRuler)
-        return this.item.taskDuration ? utils.formatQuantity(this.item.taskDuration) : null
+      const duration = this.item.taskDuration
+      if (this.item && duration) {
+        
+        if (!this.computedShowRuler)
+          return utils.formatQuantity(duration)
+        else {
+          const begin = utils.formatQuantity(duration)
+          if (!this.calendarTime)
+            return begin
+
+          const split = duration.split(':')
+          const end = utils.parseTime(mom(this.calendarTime, 'HH:mm')
+            .add(parseInt(split[0], 10), 'h')
+            .add(parseInt(split[1], 10), 'm').format('HH:mm'), this.userInfo)
+          
+          return `${begin} -> ${end}`
+        }
+      }
     },
     checklistPieProgress() {
       if (!this.item)
@@ -599,18 +613,6 @@ export default {
   overflow: hidden;
   transform: translateY(-2.5px);
   opacity: .4;
-}
-
-.ruler-t-enter, .ruler-t-leave-to {
-  opacity: 0;
-  width: 0;
-  transition-duration: .2s;
-}
-
-.ruler-t-leave, .ruler-t-enter-to {
-  opacity: 1;
-  width: 35px;
-  transition-duration: .2s;
 }
 
 </style>
