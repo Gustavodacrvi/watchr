@@ -422,6 +422,8 @@ export default ({
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTagsById: 'tag/getTagsById',
 
+      colors: 'colors',
+
       getListsById: 'list/getListsById',
       getFoldersById: 'folder/getFoldersById',
       getGroupsById: 'group/getGroupsById',
@@ -441,6 +443,12 @@ export default ({
         ...this.leftSmartIconDrops,
         ...this.rightSmartIconDrops,
       ]
+    },
+    leftSmartIconDrops() {
+      return []
+    },
+    rightSmartIconDrops() {
+      return []
     },
 
     getFirstSmartIconKeyboardActionPosition() {

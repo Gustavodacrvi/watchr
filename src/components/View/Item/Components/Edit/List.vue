@@ -86,8 +86,6 @@ export default EditBuilder({
     },
     computed: {
       ...mapGetters({
-        colors: 'colors',
-
         isRecurringList: 'list/isRecurringList',
       }),
 

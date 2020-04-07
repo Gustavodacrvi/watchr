@@ -250,6 +250,30 @@ export default {
         },
       }
     },
+    selectedColorObj() {
+      return this.colors.find(el => el.color === this.model.color)
+    },
+    getColorArr() {
+      const getObj = item => ({
+        id: item.name,
+        name: item.name,
+        icon: 'tint',
+        color: item.color,
+        trigger: 'enter',
+        callback: () => this.model.color = item.color
+      })
+
+      return [
+        {
+          id: 'no_color',
+          name: 'No color',
+          icon: 'tint',
+          trigger: 'enter',
+          callback: () => this.model.color = null,
+        },
+        ...this.colors.map(getObj),
+      ]
+    },
     getSmartIconTags() {
       return {
         id: 'tag',
