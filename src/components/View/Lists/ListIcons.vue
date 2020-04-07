@@ -21,36 +21,36 @@
     />
     <Icon v-else-if="props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="3"
       icon="circle-check-filled"
-      width='15px'
+      width='14px'
     />
-    <Icon v-else-if="!props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="4"
+    <Icon v-else-if="!props.co && !props.se && props.so" class="tra-icon cursor remove-highlight dash" key="4"
       icon="circle-dash"
-      width='8px'
+      width='14px'
     />
-    <Icon v-else-if="props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="5"
+    <Icon v-else-if="props.co && !props.se && props.so" class="tra-icon cursor remove-highlight dash" key="5"
       icon="circle-check-dash"
-      width='8px'
+      width='14px'
     />
     <Icon v-else-if="!props.co && props.ac && props.se && !props.so" class="tra-icon cursor remove-highlight" key="6"
       icon="circle-filled"
       color='var(--primary)'
-      width='15px'
+      width='14px'
     />
     <Icon v-else-if="!props.co && !props.ac && props.se && !props.so" class="tra-icon cursor remove-highlight" key="68"
       icon="circle"
-      width='15px'
+      width='14px'
     />
     <Icon v-else-if="!props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="7"
       icon="circle-dash"
-      width='15px'
+      width='14px'
     />
     <Icon v-else-if="props.co && props.se && !props.so" class="tra-icon cursor remove-highlight" key="9"
       icon="circle-check"
-      width='15px'
+      width='14px'
     />
     <Icon v-else-if="props.co && props.se && props.so" class="tra-icon cursor remove-highlight" key="10"
       icon="circle-check-dash"
-      width='15px'
+      width='14px'
     />
   </transition-group>
 </template>
@@ -74,6 +74,10 @@ export default {
   padding-left: 1.5px;
   justify-content: center;
   align-items: center;
+}
+
+.dash {
+  transform: translateY(-1.5px);
 }
 
 .tra-icon {

@@ -250,6 +250,53 @@ export default {
         },
       }
     },
+    getSmartIconTags() {
+      return {
+        id: 'tag',
+        props: {
+          placeholder: 'Tags...',
+          icon: 'tag',
+          color: 'var(--red)',
+          trigger: 'enter',
+          list: this.tags.map(el => ({
+            id: el.id,
+            name: el.name,
+            icon: 'tag',
+            color: 'var(--red)',
+            callback: model => {
+              if (model.tags.includes(el.id)) {
+                const i = model.tags.findIndex(id => el.id)
+                model.tags.splice(i, 1)
+                this.cursorPos--
+              } else {
+                this.cursorPos++
+                model.tags.push(el.id)
+              }
+            },
+          })),
+        },
+      }
+    },
+    getTagsLabels() {
+      return utils.sortListByName(
+          this.getTagsById(
+            this.model.tags
+          )
+        ).map(tag => ({
+          id: tag.id,
+          props: {
+            icon: 'tag',
+            color: 'var(--red)',
+            name: tag.name,
+            trigger: 'click',
+            callback: () => {
+              const i = this.model.tags.findIndex(el => el === tag.id)
+              if (i > -1)
+                this.model.tags.splice(i, 1)
+            },
+          },
+        }))
+    },
     deadlineTagObj() {
       return {
         id: 'deadline',

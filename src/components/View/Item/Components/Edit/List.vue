@@ -18,9 +18,9 @@ export default EditBuilder({
       vModel: 'notes', // this.model[vModel],
     },
   ],
-  /* allowFiles: {
+  allowFiles: {
     storageFolder: 'lists',
-  }, */
+  },
   instance: {
     data() {
       return {
@@ -34,10 +34,11 @@ export default EditBuilder({
           folder: null,
           group: null,
           list: null,
-          calendar: '',
+          calendar: null,
           color: '',
           headings: [],
           tags: [],
+          files: [],
           headingsOrder: [],
           tasks: [],
         },
@@ -57,6 +58,30 @@ export default EditBuilder({
     methods: {
       isRecurringItem(item) {
         return this.isRecurringList(item)
+      },
+      beforeSave(model) {
+        const m = model
+        
+        if (m.name) {
+          if (m.group)
+            m.tags = []
+
+          let n = m.name
+          if (this.toReplace)
+            for (const s of this.toReplace)
+              if (!this.fromIconDrop && s)
+                n = n.replace(new RegExp(s), '')
+
+          return {
+            ...m,
+            name: n.trim(),
+            notes: m.notes.trim(),
+          }
+        }
+      },
+      afterSave(model) {
+        model.notes = ''
+        model.name = ''
       },
     },
     computed: {
@@ -92,7 +117,16 @@ export default EditBuilder({
       },
       
       leftSmartIconDrops() {
-        return []
+        return [          {
+          id: 'add_files',
+          props: {
+            disabled: true,
+            icon: 'file',
+            trigger: 'click',
+            file: true,
+            onDrop: this.onDrop,
+          },
+        }]
       },
       rightSmartIconDrops() {
         const arr = []
@@ -108,6 +142,9 @@ export default EditBuilder({
               list: this.getFilteredMoveToListOptions,
             },
           })
+
+        if (!this.model.group)
+          arr.push(this.getSmartIconTags)
 
         if (!this.model.color)
           arr.push({
@@ -190,7 +227,7 @@ export default EditBuilder({
             },
           })
 
-        if (this.model.color)
+        if (this.model.color && this.selectedColorObj)
           arr.push({
             id: 'color_tint',
             props: {
@@ -202,7 +239,7 @@ export default EditBuilder({
             },
           })
 
-        return arr
+        return arr.concat(this.model.group ? [] : this.getTagsLabels)
       },
     },
   },

@@ -146,7 +146,7 @@ export default {
         requestAnimationFrame(() => {
           s.transitionDuration = '.175s'
   
-          s.boxShadow = '0 2px 8px rgba(10,10,10,.45)'
+          s.boxShadow = '0 2px 8px rgba(15,15,15,.3)'
           s.backgroundColor = 'var(--card)'
           s.height = height + 'px'
   
@@ -174,7 +174,7 @@ export default {
       
       s.height = height
       rootS.height = height
-      s.boxShadow = '0 2px 8px rgba(10,10,10,.45)'
+      s.boxShadow = '0 2px 8px rgba(15,15,15,.3)'
       s.overflow = 'hidden'
       s.backgroundColor = 'var(--card)'
       rootS.backgroundColor = 'var(--card)'

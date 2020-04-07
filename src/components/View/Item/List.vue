@@ -175,6 +175,7 @@ export default {
       this.$store.dispatch('list/uncancelLists', [this.item.id])
     },
     async getListOptions() {
+      if (!this.item) return;
       this.options = await this.getOptions(utilsList.listOptions(this, this.item))
       if (this.item.group) {
         this.options.splice(1, 0, {

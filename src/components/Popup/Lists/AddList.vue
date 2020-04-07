@@ -1,31 +1,29 @@
 <template>
   <div class="AddList popup cb shadow rb" :class="layout">
-    <DropInput
-      back-color='var(--card)'
-      :disable-auto-select='true'
-      placeholder="List name..."
-      :value='name'
-      @input='v => name = v'
-      :focus="true"
-      :options='options'
-      @select="select"
+    <ListEdit
+      :quickAdd='true'
+      :isAdding='true'
+      :listRenderer='false'
+      :itemHeight='itemHeight'
+      :itemModelFallback='{}'
+
+      placeholder="Task name..."
+      notesPlaceholder="Notes..."
+      @save='addList'
       @cancel="$emit('close')"
-      @enter='addList'
     />
   </div>
 </template>
 
 <script>
 
-import DropInputVue from '../../Auth/DropInput.vue'
-import ButtonVue from '../../Auth/Button.vue'
+import ListEdit from "@/components/View/Item/List.vue"
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    DropInput: DropInputVue,
-    ButtonApp: ButtonVue,
+    ListEdit,
   },
   data() {
     return {
@@ -38,6 +36,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      itemHeight: 'itemHeight',
       layout: 'layout',
       isSmartList: 'isSmartList',
       lists: 'list/lists',

@@ -37,10 +37,13 @@ export default {
     }),
 
     isSomeday() {
+      if (!this.item)
+        return false
       return this.isListSomeday(this.item)
     },
     getListProgress() {
-      if (!this.item) return 0
+      if (!this.item)
+        return false
       return this.pieProgress(this.item.id)
     },
   },

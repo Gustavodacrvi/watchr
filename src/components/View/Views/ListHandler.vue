@@ -18,7 +18,7 @@
       :onSortableAdd='onSortableAdd'
       
       comp='List'
-      editComp='ListEdit'
+      editComp='List'
       itemPlaceholder='List name...'
 
       @update="updateListIds"
