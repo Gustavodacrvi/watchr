@@ -122,6 +122,7 @@ import { mapGetters, mapState, mapActions } from 'vuex'
 import mom from 'moment'
 
 const tod = mom()
+const TOD_DATE = tod.format('Y-M-D')
 
 import ListItemMixin from "@/mixins/listItem"
 
@@ -320,7 +321,7 @@ export default {
     deadlineStr() {
       const list = this.item
       if (!list.deadline || this.disableDeadlineStr) return null
-      return this.getListDeadlineStr(list, tod.format('Y-M-D'))
+      return this.getListDeadlineStr(list, TOD_DATE)
     },
     listTasks() {
       return this.getListTasks(this.item.id)

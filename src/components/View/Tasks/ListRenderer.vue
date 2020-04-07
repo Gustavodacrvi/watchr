@@ -173,7 +173,6 @@ import Vue from 'vue'
 
 // import Task from './Task.vue'
 import TimelineRuler from './TimelineRuler.vue'
-import List from './../Lists/List.vue'
 import TaskEdit from './Edit.vue'
 import ListEdit from './../Lists/Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
@@ -181,6 +180,7 @@ import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import HeadingsRenderer from './HeadingsRenderer.vue'
 import Task from "../Item/Task.vue"
+import List from "../Item/List.vue"
 
 import { fire } from '@/store/'
 import { uid, setTask } from '@/utils/firestore'

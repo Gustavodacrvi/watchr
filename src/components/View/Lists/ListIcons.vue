@@ -21,7 +21,7 @@
     />
     <Icon v-else-if="props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="3"
       icon="circle-check-filled"
-      width='8px'
+      width='15px'
     />
     <Icon v-else-if="!props.co && !props.se && props.so" class="tra-icon cursor remove-highlight" key="4"
       icon="circle-dash"
@@ -34,7 +34,7 @@
     <Icon v-else-if="!props.co && props.ac && props.se && !props.so" class="tra-icon cursor remove-highlight" key="6"
       icon="circle-filled"
       color='var(--primary)'
-      width='8px'
+      width='15px'
     />
     <Icon v-else-if="!props.co && !props.ac && props.se && !props.so" class="tra-icon cursor remove-highlight" key="68"
       icon="circle"

@@ -26,6 +26,7 @@
       <CheckIcon
         v-bind="{...{...$attrs, ...$props}, ...item}"
 
+        :isItemSelected='isItemSelected'
         :completed='props.completed'
         :canceled='props.canceled'
         :color='props.color'
@@ -286,7 +287,7 @@ export default {
     deadlineStr() {
       if (this.allowDeadlineStr && this.disableDeadlineStr || !this.item)
         return null
-      return this.getTaskDeadlineStr(this.item, tod.format('Y-M-D'))
+      return this.getTaskDeadlineStr(this.item, TOD_DATE)
     },
 
     logStr() {
@@ -571,47 +572,4 @@ export default {
 
 </script>
 
-<style scoped>
-
-.info-naked, .info-box {
-  font-size: .8em;
-  display: inline-flex;
-  white-space: nowrap;
-  padding: 3px 6px;
-  align-items: center;
-  overflow: hidden;
-  transition-duration: .175s;
-  margin-right: 0;
-}
-
-.info-box {
-  border-radius: 4px;
-  background-color: var(--dark-gray);
-  border: 1px solid var(--light-gray);
-}
-
-.info-icon {
-  transform: translateY(1px);
-  margin-right: 4px;
-}
-
-.icon {
-  transform: translate(4px, 2px);
-  opacity: .6;
-}
-
-.check-date {
-  display: inline-block;
-  position: relative;
-  top: 3px;
-  height: 100%;
-  margin-right: 8px;
-  white-space: nowrap;
-  color: var(--primary);
-  font-size: .9em;
-  overflow: hidden;
-  transform: translateY(-2.5px);
-  opacity: .4;
-}
-
-</style>
+<style scoped src="@/assets/css/itemTemplate.css"></style>
