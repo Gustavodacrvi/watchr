@@ -143,7 +143,6 @@ export default EditBuilder({
           folder: null,
           group: null,
           list: null,
-          notes: '',
           calendar: null,
           heading: null,
           tags: [],
