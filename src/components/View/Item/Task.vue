@@ -11,8 +11,6 @@
     :options='options'
     editRawPlaceholder='Task name...'
 
-    ref='template'
-
     @copy-item='copyItem'
 
     @assign-user='assignUser'

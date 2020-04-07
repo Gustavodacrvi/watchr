@@ -170,7 +170,7 @@ export default {
   position: relative;
   display: flex;
   transition: height .175s, background-color .175s;
-  height: 30px;
+  height: 22px;
 }
 
 .name-wrapper {
@@ -253,13 +253,12 @@ export default {
   transition: opacity .175s;
 }
 
-.input {
-  padding-left: 8px;
+.icon {
+  transform: translateY(1px);
 }
 
-.icon {
-  transform: translateY(2px);
-  margin-left: 6px;
+.input {
+  padding-left: 8px;
 }
 
 </style>
