@@ -62,6 +62,7 @@
 
 import Task from "./Task.vue"
 import List from "./List.vue"
+import Tag from "./Tag.vue"
 import Heading from "./Heading.vue"
 
 import DropInput from "@/components/Auth/DropInput.vue"
@@ -70,6 +71,7 @@ export default {
   components: {
     List, Heading,
     Task, DropInput,
+    Tag,
   },
   props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'showInfo'],
   data() {

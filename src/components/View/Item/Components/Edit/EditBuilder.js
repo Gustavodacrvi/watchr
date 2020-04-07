@@ -450,6 +450,9 @@ export default ({
     rightSmartIconDrops() {
       return []
     },
+    getViewTags() {
+      return []
+    },
 
     getFirstSmartIconKeyboardActionPosition() {
       return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0) + this.getViewTags.length + this.getFiles.length

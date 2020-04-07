@@ -959,7 +959,7 @@ export default {
     
     saveList({rootState}, list) {
       const b = fire.batch()
-      
+
       setList(b, list, list.id, rootState)
 
       b.commit()
