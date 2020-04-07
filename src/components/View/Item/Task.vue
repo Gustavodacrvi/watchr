@@ -87,6 +87,16 @@
         :progress='checklistProgress'
         width='7px'
       />
+      <span v-if="hasFiles"
+        key="file"
+        class="info-box"
+      >
+        <Icon
+          icon='file'
+          :color='hasFiles'
+          width='8px'
+        />
+      </span>
     </template>
 
     <template v-slot:flex-end>
@@ -114,7 +124,6 @@
         :evening='item && item.calendar && item.evening'
 
         :isRepeatingTask='isRepeatingTask'
-        :hasFiles='hasFiles'
         :nextCalendarEvent='nextCalendarEvent'
 
         :listObj='listObj'
@@ -452,8 +461,7 @@ export default {
         this.folderObj ||
         this.nextCalendarEvent ||
         this.groupObj ||
-        (this.hasTags && this.tagNames && this.tagNames.length > 0) ||
-        this.hasFiles)
+        (this.hasTags && this.tagNames && this.tagNames.length > 0))
     },
     options() {
       if (this.item)
@@ -511,8 +519,7 @@ export default {
     },
 
     hasFiles() {
-      if (this.item)
-        return this.item.files && this.item.files.length > 0
+      return this.item && this.item.files && this.item.files.length > 0
     },
     hasTags() {
       if (!this.item)

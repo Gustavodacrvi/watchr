@@ -141,10 +141,11 @@ export default {
   height: 22px;
   display: inline-flex;
   align-items: center;
-  padding: 10px 8px;
+  padding: 8px 6px;
   position: relative;
   overflow: hidden;
   border-radius: 4px;
+  font-size: .9em;
 }
 
 .icon {

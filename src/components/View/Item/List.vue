@@ -57,6 +57,26 @@
       >
         {{ listTasksLength }}
       </span>
+      <span v-if="listColor"
+        key="color"
+        class="info-box"
+      >
+        <Icon
+          icon='tint'
+          :color='listColor'
+          width='8px'
+        />
+      </span>
+      <span v-if="hasFiles"
+        key="file"
+        class="info-box"
+      >
+        <Icon
+          icon='file'
+          :color='hasFiles'
+          width='8px'
+        />
+      </span>
     </template>
 
     <template v-slot:flex-end>
@@ -76,6 +96,16 @@
         </span>
       </span>
     </template>
+
+    <template v-slot:info>
+      <Info v-show="hasAtLeastOne"
+        :tagNames='tagNames'
+        :hasTags='hasTags'
+        :folderObj='folderObj'
+        :groupObj='groupObj'
+      />
+    </template>
+    
   </ItemTemplate>
 </template>
 
@@ -83,15 +113,19 @@
 
 import CheckIcon from "./Components/CheckIcons/List.vue"
 import ItemTemplate from "./Components/ItemTemplate.vue"
+import Info from "./Components/Info/List.vue"
+
+import utilsList from "@/utils/list"
 
 import mom from 'moment'
 
 const tod = mom()
 
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
+    Info,
     CheckIcon, ItemTemplate,
   },
   props: [
@@ -100,27 +134,68 @@ export default {
     'isSelecting', 'allowDeadlineStr', 'allowLogStr', 'itemModelFallback',
     'isAdding', 'listRenderer', 'viewName', 'viewType',
   ],
+  data() {
+    return {
+      options: [],
+    }
+  },
+  mounted() {
+    this.getListOptions()
+  },
   methods: {
+    ...mapActions(['getOptions']),
+    
     copyItem() {
-
+      this.$store.dispatch('list/duplicateList', {
+        list: this.item, rootTasks: this.tasks.filter(el => !el.heading && el.list === this.item.id), headingTasks: this.tasks.filter(el => el.heading && el.list === this.item.id),
+      })
     },
     assignUser() {
-
+      this.$store.dispatch('list/saveList', {
+        id: this.item.id,
+        assigned: uid,
+      })
     },
     completeItem() {
-
+      this.$store.dispatch('list/completeLists', [this.item])
     },
     unCompleteItem() {
-
+      this.$store.dispatch('list/uncompleteLists', [this.item])
     },
     cancelItem() {
-
+      this.$store.dispatch('list/cancelLists', [this.item.id])
     },
-    save() {
-
+    save(obj) {
+      this.$store.dispatch('list/saveList', {
+        id: this.item.id,
+        ...obj,
+      })
     },
     unCancelItem() {
-
+      this.$store.dispatch('list/uncancelLists', [this.item.id])
+    },
+    async getListOptions() {
+      this.options = await this.getOptions(utilsList.listOptions(this, this.item))
+      if (this.item.group) {
+        this.options.splice(1, 0, {
+          name: 'Add comments',
+          icon: 'comment',
+          callback: this.commentsPopup,
+        })
+        if (this.isGroupOwner)
+          this.options.splice(2, 0, this.assignUserProfiles)
+      }
+    },
+    commentsPopup() {
+      if (!this.item)
+        return;
+      this.$store.dispatch('pushPopup', {
+        comp: "Comments",
+        payload: {
+          groupId: this.item.group,
+          id: this.item.id,
+        },
+      })
     },
   },
   computed: {
@@ -132,25 +207,65 @@ export default {
       getListTasks: 'list/getTasks',
       getListDeadlineStr: 'list/getListDeadlineStr',
       getListCalendarStr: 'list/getListCalendarStr',
+      isListCompleted: 'list/isListCompleted',
+      isListCanceled: 'list/isListCanceled',
+
+      getTagsById: 'tag/getTagsById',
+
+      getFoldersById: 'folder/getFoldersById',
+      getGroupsById: 'group/getGroupsById',
     }),
     
+    folderObj() {
+      if (!this.item || !this.item.folder)
+        return false
+      const folder = this.getFoldersById([this.item.folder])[0]
+      if (folder.name === this.viewName)
+        return null
+      return folder
+    },
+    groupObj() {
+      if (!this.item || !this.item.group)
+        return false
+      const group = this.getGroupsById([this.item.group])[0]
+      if (group.name === this.viewName)
+        return null
+      return group
+    },
+    isGroupOwner() {
+      return (this.itemGroup && this.itemGroup.userId === this.userInfo.userId)
+    },
+    itemGroup() {
+      if (!this.item)
+        return null
+      return this.getGroupsById([this.item.group])[0]
+    },
+    assignUserProfiles() {
+      return this.getAssigneeIconDrop(this.item, uid => this.assignUser(uid))
+    },
     listTasks() {
+      if (!this.item) return null
       return this.getListTasks(this.item.id)
     },
     listTasksLength() {
       return this.listTasks.length
     },
     completedItem() {
-
+      if (!this.item) return null
+      return this.isListCompleted(this.item)
     },
     hasAtLeastOne() {
-
+      return this.hasTags || this.groupObj || this.folderObj
+    },
+    hasTags() {
+      return this.item && this.item.tags && this.item.tags.length > 0
+    },
+    tagNames() {
+      return this.getTagsById((this.item && this.item.tags) || []).map(el => el.name)
     },
     canceledItem() {
-
-    },
-    options() {
-
+      if (!this.item) return null
+      return this.isListCanceled(this.item)
     },
     deadlineStr() {
       if (!this.item) return null
@@ -175,6 +290,12 @@ export default {
         return null
       return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate)
     },
+    hasFiles() {
+      return this.item && this.item.files && this.item.files.length > 0
+    },
+    listColor() {
+      return this.item && this.item.color
+    },
     calendarStr() {
       if (!this.item && this.disableCalendarStr)
         return null
@@ -184,6 +305,11 @@ export default {
       const res = this.getListCalendarStr(this.item, this.userInfo)
       if (res === 'Someday') return null
       return res
+    },
+  },
+  watch: {
+    item() {
+      this.getListOptions()
     },
   },
 }

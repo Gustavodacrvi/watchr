@@ -39,6 +39,8 @@
 
           :itemHeight='itemHeight'
           :item='item'
+          :viewName='viewName'
+          :viewType='viewType'
           :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
           :listRenderer='true'
