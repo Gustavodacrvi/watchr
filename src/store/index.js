@@ -354,6 +354,70 @@ const store = new Vuex.Store({
         },
       ]
     },
+    colors() {
+      return [
+        {
+          color: '#ff4d4d',
+          name: 'Red',
+        },
+        {
+          color: '#f2241c',
+          name: 'Dark Red',
+        },
+        {
+          color: '#5a81e2',
+          name: 'Light Blue',
+        },
+        {
+          color: '#2b5cda',
+          name: 'Dark Blue',
+        },
+        {
+          color: '#ffff4d',
+          name: 'Yellow',
+        },
+        {
+          color: '#e4944e',
+          name: 'Brown',
+        },
+        {
+          color: '#a04dff',
+          name: 'Purple',
+        },
+        {
+          color: '#6b0fff',
+          name: 'Dark Purple',
+        },
+        {
+          color: '#E67C73',
+          name: 'Flamingo',
+        },
+        {
+          color: '#3efe45',
+          name: 'Green',
+        },
+        {
+          color: '#3dffa5',
+          name: 'Olive',
+        },
+        {
+          color: '#33B679',
+          name: 'Sage',
+        },
+        {
+          color: '#f68a46',
+          name: 'Orange',
+        },
+        {
+          color: '#F4511E',
+          name: 'Tangerine',
+        },
+        {
+          color: '#616161',
+          name: 'Graphine',
+        },
+      ]
+    },
     getIcon(state, getters) {
       const n = state.viewName
       
