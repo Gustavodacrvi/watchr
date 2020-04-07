@@ -18,7 +18,7 @@
       :onSortableAdd='onSortableAdd'
       
       comp='List'
-      editComp='ListEdit'
+      editComp='List'
       itemPlaceholder='List name...'
 
       @update="updateListIds"
@@ -52,7 +52,7 @@ export default {
     HandlerMixin,
   ],
   props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday',
-  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'filterByAssigned'],
+  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'filterByAssigned', 'viewName', 'viewType'],
   components: {
     ListRendererVue,
   },

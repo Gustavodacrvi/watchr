@@ -39,6 +39,8 @@
 
           :itemHeight='itemHeight'
           :item='item'
+          :viewName='viewName'
+          :viewType='viewType'
           :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
           :listRenderer='true'
@@ -59,8 +61,8 @@
           :data-name='item.name'
           :data-type='comp'
         />
-        <component v-else-if="item.isEdit === 'Edit'"
-          :is='editComp'
+        <component v-else
+          :is='item.editComp || editComp'
           :key="item.isEdit + 'component eidt'"
 
           v-bind='item.propsData'
@@ -70,19 +72,6 @@
           :itemModelFallback='itemModelFallback'
           :listRenderer='true'
           :fallbackItem='fallbackItem'
-
-          :data-id='item.isEdit'
-
-          @save='item.onSave'
-          @goup='moveEdit(-1)'
-          @godown='moveEdit(1)'
-          @cancel='removeEdit'
-        />
-        <EditComp v-else
-          :heading='true'
-          :key="item.isEdit + 'editComp'"
-
-          v-bind='item.propsData'
 
           :data-id='item.isEdit'
 
@@ -173,14 +162,16 @@ import Vue from 'vue'
 
 // import Task from './Task.vue'
 import TimelineRuler from './TimelineRuler.vue'
-import List from './../Lists/List.vue'
 import TaskEdit from './Edit.vue'
 import ListEdit from './../Lists/Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import HeadingsRenderer from './HeadingsRenderer.vue'
+
 import Task from "../Item/Task.vue"
+import List from "../Item/List.vue"
+import Heading from "../Item/Heading.vue"
 
 import { fire } from '@/store/'
 import { uid, setTask } from '@/utils/firestore'
@@ -203,11 +194,10 @@ export default {
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
-    Task,
-    ButtonVue, List, ListEdit,
-    EditComp, HeadingsRenderer, TaskEdit,
+    Task, ButtonVue, List, ListEdit,
+    HeadingsRenderer, TaskEdit,
     Illustration: IllustrationVue,
-    TimelineRuler,
+    TimelineRuler, Heading,
   },
   data() {
     return {
@@ -526,12 +516,13 @@ export default {
         this.edit = null
       }
     },
-    addEdit(isEdit, index, onSave, propsData) {
+    addEdit(isEdit, index, onSave, propsData, editComp = undefined) {
       this.removeEdit()
       const edit = {
         isEdit,
         onSave,
         propsData,
+        editComp,
       }
       this.lazyItems.splice(index, 0, edit)
       this.edit = {...edit}
@@ -552,17 +543,17 @@ export default {
     },
     addHeadingsEdit(index) {
       const h = this.headingEditOptions
-      const onSave = name => {
-        this.addHeading(name)
+      const onSave = obj => {
+        this.addHeading(obj)
         setTimeout(() => {
           this.removeEdit()
         }, 50)
       }
-      this.addEdit('EditComp', index, onSave, {
-          key: 'EditComp',
+      this.addEdit('Heading', index, onSave, {
+          key: 'Heading',
           ...h,
           names: h.excludeNames,
-        })
+        }, 'Heading')
     },
 
     destroySortables() {
@@ -871,18 +862,18 @@ export default {
       }
       this.sortable = new Sortable(this.draggableRoot, obj)
     },
-    addHeading(name, ...args) {
-      if (name) {
+    addHeading(obj, ...args) {
+      if (obj) {
         const i = this.getListRendererPosition()
         const ids = this.getIds(true)
         const headings = this.isRoot ? this.getHeadingsIds() : this.rootHeadings
         this.$emit('add-heading', {
           ids: ids.slice(i),
-          name, index: this.headingPosition,
+          obj, index: this.headingPosition,
           headings,
         })
         if (this.isRoot)
-          this.justAddedHeading = name
+          this.justAddedHeading = obj.name
       }
     },
     click(event) {
@@ -1004,7 +995,7 @@ export default {
         if (el.dataset)
           ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit' && id !== 'EditComp' && id !== undefined)
+        ids = ids.filter(id => id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined)
       return ids
     },
     contWrapper(el) {

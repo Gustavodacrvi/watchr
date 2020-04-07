@@ -9,6 +9,7 @@ import FileDragDrop from '@/components/View/RenderComponents/FileDragDrop.vue'
 import momUtils from '@/utils/moment'
 
 import FileMixin from '@/mixins/file.js'
+import EditBuilderMixin from '@/mixins/editBuilder.js'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -22,7 +23,7 @@ export default ({
   props = [],
 }) => ({
   props: ['item', 'firstFieldOptions', 'itemModelFallback', 'value', ...props],
-  mixins: [FileMixin],
+  mixins: [FileMixin, EditBuilderMixin],
   data() {
     return {
       currentPrefix: '',
@@ -121,8 +122,7 @@ export default ({
               },
             },
           })
-        }
-        )
+        })
       ),
       create('div', {class: 'smart-icons'}, [
           create('div', {class: 'left-icons'}, leftComponents),
@@ -190,7 +190,7 @@ export default ({
 
     num = textFields.length + this.getChecklist.length
 
-    editChildren.splice(2, 0,
+    editChildren.splice(2 - (checklist ? 0 : 1), 0,
       create('div', {class: {
         tags: true,
         hasContent: this.getViewTags && this.getViewTags.length > 0 
@@ -342,14 +342,14 @@ export default ({
       utils.saveByShortcut(this, true, key, p, this.saveByShortcut || (() => {}), ['CalendarPicker'])
 
       if (!this.iconDrop && this.firstFieldOptions.length === 0) {
-        if ((key === "ArrowUp" && !this.currentSmartIconHasList) || (key === "ArrowLeft" && this.cursorPos > textFields.length + 1)) {
+        if ((key === "ArrowUp" && !this.currentSmartIconHasList) || (key === "ArrowLeft" && this.cursorPos > textFields.length)) {
           p()
   
           if (this.isOnShift)
             this.cursorPos = 0
           else        
             this.incrementPos(-1)
-        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || (key === "ArrowRight" && this.cursorPos > textFields.length + 1)) {
+        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || (key === "ArrowRight" && this.cursorPos > textFields.length)) {
           p()
   
           if (this.isOnShift)
@@ -422,6 +422,8 @@ export default ({
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTagsById: 'tag/getTagsById',
 
+      colors: 'colors',
+
       getListsById: 'list/getListsById',
       getFoldersById: 'folder/getFoldersById',
       getGroupsById: 'group/getGroupsById',
@@ -441,6 +443,15 @@ export default ({
         ...this.leftSmartIconDrops,
         ...this.rightSmartIconDrops,
       ]
+    },
+    leftSmartIconDrops() {
+      return []
+    },
+    rightSmartIconDrops() {
+      return []
+    },
+    getViewTags() {
+      return []
     },
 
     getFirstSmartIconKeyboardActionPosition() {

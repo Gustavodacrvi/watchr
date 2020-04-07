@@ -25,8 +25,9 @@ export default {
     TaskIcons,
   },
   props: [
-    'movingItem', 'isSelecting', 'completed',
+    'isSelecting', 'completed',
     'canceled', 'forceDefault', 'color',
+    'isItemSelected',
     
     'name', 'priority', 'id', 'calendar',
   ],
@@ -43,9 +44,6 @@ export default {
         'High priority': 'var(--red)',
       }
       return obj[this.priority]
-    },
-    isItemSelected() {
-      return !this.movingItem && this.selectedItems.includes(this.id)
     },
     isSomeday() {
       return this.calendar && this.calendar.type === 'someday'

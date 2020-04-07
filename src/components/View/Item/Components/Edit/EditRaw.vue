@@ -61,12 +61,17 @@
 <script>
 
 import Task from "./Task.vue"
+import List from "./List.vue"
+import Tag from "./Tag.vue"
+import Heading from "./Heading.vue"
 
 import DropInput from "@/components/Auth/DropInput.vue"
 
 export default {
   components: {
+    List, Heading,
     Task, DropInput,
+    Tag,
   },
   props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'showInfo'],
   data() {
@@ -144,7 +149,7 @@ export default {
         requestAnimationFrame(() => {
           s.transitionDuration = '.175s'
   
-          s.boxShadow = '0 2px 8px rgba(10,10,10,.45)'
+          s.boxShadow = '0 2px 8px rgba(15,15,15,.3)'
           s.backgroundColor = 'var(--card)'
           s.height = height + 'px'
   
@@ -172,7 +177,7 @@ export default {
       
       s.height = height
       rootS.height = height
-      s.boxShadow = '0 2px 8px rgba(10,10,10,.45)'
+      s.boxShadow = '0 2px 8px rgba(15,15,15,.3)'
       s.overflow = 'hidden'
       s.backgroundColor = 'var(--card)'
       rootS.backgroundColor = 'var(--card)'

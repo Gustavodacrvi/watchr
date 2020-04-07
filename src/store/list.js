@@ -959,7 +959,7 @@ export default {
     
     saveList({rootState}, list) {
       const b = fire.batch()
-      
+
       setList(b, list, list.id, rootState)
 
       b.commit()
@@ -1086,7 +1086,7 @@ export default {
 
     // HEADING
     
-    addHeading({getters, rootState}, {ids, name, headings, listId, index}) {
+    addHeading({getters, rootState}, {ids, obj, headings, listId, index}) {
       const list = getters.getListsById([listId])[0]
       const b = fire.batch()
       const headindgId = utils.getUid()
@@ -1098,7 +1098,12 @@ export default {
       }, ids, rootState, writes)
 
       const listHeadings = list.headings.slice()
-      listHeadings.push({name, tasks: ids, id: headindgId})
+      listHeadings.push({
+        name: obj.name,
+        color: obj.color,
+        notes: obj.notes,
+        tasks: ids, id: headindgId
+      })
       headings.splice(index, 0, headindgId)
       
       setList(b, {
