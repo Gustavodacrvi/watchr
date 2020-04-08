@@ -5,6 +5,7 @@
       :item='item'
       :editRawPlaceholder='editRawPlaceholder'
       :itemHeight='itemHeight'
+      :editAction='editAction'
       :editComponent='editComponent'
       :isAdding='isAdding'
       :showInfo='showInfo'
@@ -21,6 +22,7 @@
         <slot name="check-icon"
           :iconColor='slotProps.iconColor'
           :forceDefault='true'
+          :itemModel='slotProps.itemModel'
         ></slot>
       </template>
       
@@ -75,7 +77,8 @@ export default {
   components: {
     DisplayCont, EditRaw,
   },
-  props: ['name', 'isEditing', 'itemHeight', 'editComponent',  'showInfo', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'listRenderer'],
+  props: ['name', 'isEditing', 'itemHeight', 'editComponent',  'showInfo', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'listRenderer',
+  'editAction'],
   data() {
     return {
       showElements: true,

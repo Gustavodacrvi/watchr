@@ -587,6 +587,8 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
         }
       }
 
+      console.warn('setTask ', getObj())
+
       solve()
     }
     if (task.handleFiles)

@@ -4,6 +4,8 @@
     class='List'
     editComponent='Heading'
     editRawPlaceholder='Heading name...'
+    
+    ref='template'
 
     :item='item'
   >

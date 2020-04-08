@@ -4,6 +4,8 @@
     class="Task"
     editComponent='Task'
 
+    ref='template'
+
     :item='item'
     :completedItem='completedItem'
     :showInfo='hasAtLeastOne'
@@ -28,6 +30,7 @@
 
         :isItemSelected='isItemSelected'
         :completed='props.completed'
+        :itemModel='props.itemModel'
         :canceled='props.canceled'
         :color='props.color'
         :forceDefault='props.forceDefault'
@@ -66,6 +69,12 @@
       >
         {{ calendarStr }}
       </span>
+      <span v-if="nextCalendarEvent && !isDesktopBreakPoint"
+        key='next-box'
+        class="info-box"
+      >
+        {{ nextCalendarEvent }}
+      </span>
       <span v-if="timeStr"
         key='info-time'
         class="info-box"
@@ -82,10 +91,11 @@
         {{ taskDuration }}
       </span>
       <Icon v-if="checklistProgress" key="icon"
-        class="icon"
+        class="icon name-icon"
         icon='pie'
         :progress='checklistProgress'
         width='7px'
+        data-isfirstcontelement='first'
       />
       <span v-if="hasFiles"
         key="file"
@@ -115,6 +125,12 @@
           {{ deadlineStr }}
         </span>
       </span>
+      <span v-if="nextCalendarEvent && isDesktopBreakPoint"
+        key='next-box'
+        class="info-box"
+      >
+        {{ nextCalendarEvent }}
+      </span>
     </template>
 
     <template v-slot:info>
@@ -122,9 +138,6 @@
         :isToday='isToday'
         :isTomorrow='isTomorrow'
         :evening='item && item.calendar && item.evening'
-
-        :isRepeatingTask='isRepeatingTask'
-        :nextCalendarEvent='nextCalendarEvent'
 
         :listObj='listObj'
         :folderObj='folderObj'
@@ -459,7 +472,6 @@ export default {
         return false
       return (this.listObj ||
         this.folderObj ||
-        this.nextCalendarEvent ||
         this.groupObj ||
         (this.hasTags && this.tagNames && this.tagNames.length > 0))
     },

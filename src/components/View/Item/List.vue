@@ -3,6 +3,8 @@
     v-bind="{...$attrs, ...$props}"
     class='List'
     editComponent='List'
+
+    ref='template'
     
     :item='item'
     :completedItem='completedItem'
@@ -31,6 +33,7 @@
         :completed='props.completed'
         :canceled='props.canceled'
         :color='props.color'
+        :itemModel='props.itemModel'
         :forceDefault='props.forceDefault'
       />
     </template>

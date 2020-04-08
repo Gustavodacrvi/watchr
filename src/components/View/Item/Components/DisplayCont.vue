@@ -78,7 +78,7 @@ export default {
   methods: {
     enterSecondRow(el, done) {
       const s = el.style
-      
+
       const height = 0
 
       s.transitionDuration = 0
@@ -91,7 +91,7 @@ export default {
         s.opacity = .4
 
         setTimeout(() => {
-          s.height = '13px'
+          s.height = '10px'
           done()
         }, 200)
       })
@@ -100,7 +100,7 @@ export default {
     leaveSecondRow(el, done) {
       const s = el.style
 
-      const height = '13px'
+      const height = '10px'
 
       s.transitionDuration = 0
       s.height = height
@@ -118,18 +118,25 @@ export default {
     infoEnter(el) {
       const s = el.style
 
-      const width = getComputedStyle(el).width
+      const width = el.offsetWidth + 'px'
+
+      const isFirst = el.dataset.isfirstcontelement = 'isfirstcontelement'
 
       requestAnimationFrame(() => {
         s.transitionDuration = 0
         s.width = 0
         s.opacity = 0
         s.marginRight = 0
+
+        if (isFirst)
+          s.marginLeft = 0
   
         requestAnimationFrame(() => {
           s.transitionDuration = '.175s'
           s.width = width
-          s.marginRight = '9px'
+          s.marginRight = '6px'
+          if (isFirst)
+            s.marginLeft = '2px'
           s.opacity = .9
           this.width = width
 
@@ -159,7 +166,7 @@ export default {
       return utils.parseHTMLStr(this.name)
     },
     minHeight() {
-      return ((this.infoReady && this.showInfo) ? this.itemHeight + 6 : this.itemHeight) + 'px'
+      return ((this.infoReady && this.showInfo) ? this.itemHeight + 8 : this.itemHeight) + 'px'
     },
   },
 }
@@ -205,7 +212,10 @@ export default {
 }
 
 .name-parsed {
+  position: relative;
   transition: 0;
+  z-index: 2;
+  padding-right: 1px;
 }
 
 .name {
@@ -225,14 +235,14 @@ export default {
 }
 
 .text {
-  height: 60%;
+  height: 11.5px;
   max-width: 100%;
   justify-content: space-between;
 }
 
 .info {
   height: 40%;
-  font-size: .825em;
+  font-size: .95em;
   overflow: hidden;
 }
 
@@ -242,6 +252,7 @@ export default {
   position: absolute;
   display: flex;
   align-items: center;
+  z-index: 1;
 }
 
 .line {

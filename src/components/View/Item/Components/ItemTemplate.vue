@@ -1,87 +1,82 @@
 <template>
-  <transition
-    appear
-    :css='false'
-    @enter='enter'
-    @leave='leave'
+  <div
+    class="ItemTemplate item-handle draggable"
+    :class="[layout, {isItemSelected, isItemMainSelection, isEditing, listRenderer}]"
+
+    @mouseenter="onHover = true"
+    @mouseleave="onHover = false"
+
+    @click='click'
   >
     <div
-      class="ItemTemplate item-handle draggable"
-      :class="[layout, {isItemSelected, isItemMainSelection, isEditing, listRenderer}]"
-
-      @mouseenter="onHover = true"
-      @mouseleave="onHover = false"
-
-      @click='click'
+      class="cont-wrapper item-handle rb"
+      ref='cont-wrapper'
     >
-      <div
-        class="cont-wrapper item-handle rb"
-        ref='cont-wrapper'
+      <ItemCont
+        v-bind="item"
+        :item='item'
+        ref='cont'
+        
+        :isEditing='isEditing'
+        :showInfo='showInfo'
+        :isAdding='isAdding'
+        :listRenderer='listRenderer'
+        :itemHeight='itemHeight'
+        :editAction='editAction'
+        :editComponent='editComponent'
+        :itemModelFallback='itemModelFallback'
+        :editRawPlaceholder='editRawPlaceholder'
+
+        @toggle-complete='toggleComplete'
+        @save='save'
+        @toggle-cancel='toggleCancel'
+        @close="close"
       >
-        <ItemCont
-          v-bind="item"
-          :item='item'
-          ref='cont'
-          
-          :isEditing='isEditing'
-          :showInfo='showInfo'
-          :isAdding='isAdding'
-          :listRenderer='listRenderer'
-          :itemHeight='itemHeight'
-          :editComponent='editComponent'
-          :itemModelFallback='itemModelFallback'
-          :editRawPlaceholder='editRawPlaceholder'
+        <template v-slot:check-icon='props'>
+          <slot name="check-icon"
+            :completed='completed'
+            :canceled='canceled'
+            :color='props.iconColor'
+            :itemModel='props.itemModel'
+            :forceDefault='props.forceDefault'
+          ></slot>
+        </template>
+        <template v-slot:root>
 
-          @toggle-complete='toggleComplete'
-          @save='save'
-          @toggle-cancel='toggleCancel'
-          @close="close"
-        >
-          <template v-slot:check-icon='props'>
-            <slot name="check-icon"
-              :completed='completed'
-              :canceled='canceled'
-              :color='props.iconColor'
-              :forceDefault='props.forceDefault'
-            ></slot>
-          </template>
-          <template v-slot:root>
-
-            <CommentCounter v-if="item && item.group && isDesktopBreakPoint && !isEditing"
-              ref="comment-counter"
-              :hover='onHover'
-              :number='nonReadComments'
-              :isOwner='isGroupOwner'
-              :assigned='item.assigned'
-              :groupId='item.group'
-              
-              @assign="assignItem"
-              @comment="commentsPopup"
-              @mouseenter.native='onHover = true'
-            />
+          <CommentCounter v-if="item && item.group && isDesktopBreakPoint && !isEditing"
+            ref="comment-counter"
+            :hover='onHover'
+            :number='nonReadComments'
+            :isOwner='isGroupOwner'
+            :assigned='item.assigned'
+            :groupId='item.group'
             
-            <slot name="root"
-              :isEditing='isEditing'
-              :onHover='onHover'
-            ></slot>
-          </template>
-          <template v-slot:after-name>
-            <slot name="after-name"></slot>
-          </template>
-          <template v-slot:info>
-            <slot name="info"></slot>
-          </template>
-          <template v-slot:before-name>
-            <slot name="before-name"></slot>
-          </template>
-          <template v-slot:flex-end>
-            <slot name="flex-end"></slot>
-          </template>
+            @assign="assignItem"
+            @comment="commentsPopup"
+            @mouseenter.native='onHover = true'
+          />
+          
+          <slot name="root"
+            :isEditing='isEditing'
+            :onHover='onHover'
+          ></slot>
+        </template>
+        <template v-slot:after-name>
+          <slot name="after-name"></slot>
+        </template>
+        <template v-slot:info>
+          <slot name="info"></slot>
+        </template>
+        <template v-slot:before-name>
+          <slot name="before-name"></slot>
+        </template>
+        <template v-slot:flex-end>
+          <slot name="flex-end"></slot>
+        </template>
 
-        </ItemCont>
-      </div>
+      </ItemCont>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -112,6 +107,7 @@ export default {
       isEditing: false,
       completeAnimation: false,
       onHover: false,
+      editAction: null,
       
       completed: false,
       canceled: false,
@@ -147,88 +143,6 @@ export default {
         this.saveMainSelection(this.item.id)
     },
     
-    enter(el, done) {
-      const cont = this.$refs['cont-wrapper']
-      const s = cont.style
-      
-      s.transitionDuration = '0s'
-      s.height = 0
-      s.minHeight = 0
-      
-      if (this.isAdding) {
-        return requestAnimationFrame(() => {
-          s.transitionDuration = '.1s'
-          s.height = this.itemHeight + 'px'
-          setTimeout(() => {
-            s.transitionDuration = '.175s'
-            s.height = 'auto'
-            this.isEditing = true
-            done()
-          }, 10)
-        })
-      }
-      const parentIds = this.$parent.$parent.disableItemEnterTransitionIds
-      
-      let disableTransition = false
-      if (parentIds.includes(this.item.id)) {
-        const i = parentIds.findIndex(id => id === this.item.id)
-        parentIds.splice(i, 1)
-        disableTransition = true
-      }
-
-      s.opacity = 0
-
-      requestAnimationFrame(() => {
-        s.transitionDuration = disableTransition ? 0 : '.175s'
-        s.opacity = 1
-        s.height = this.itemHeight + 'px'
-        s.minHeight = this.itemHeight + 'px'
-        
-        setTimeout(() => {
-          s.transitionDuration = '.175s'
-          s.height = 'auto'
-          done()
-        }, 201)
-      })
-    },
-    leave(el, done) {
-      if (!this.item)
-        return done()
-      const cont = this.$refs['cont-wrapper']
-      const parentIds = this.$parent.$parent.disableItemEnterTransitionIds
-      
-      let disableTransition = false
-      if (parentIds.includes(this.item.id)) {
-        const i = parentIds.findIndex(id => id === this.item.id)
-        parentIds.splice(i, 1)
-        disableTransition = true
-      }
-
-      const s = cont.style
-
-      s.transitionDuration = '0s'
-      s.opacity = 1
-      s.height = this.itemHeight + 'px'
-      s.minHeight = this.itemHeight + 'px'
-
-      const hideItem = () => {
-        s.transitionDuration = disableTransition ? 0 : '.175s'
-        s.opacity = 0
-        s.height = 0
-        s.minHeight = 0
-
-        setTimeout(done, disableTransition ? 0 : 201)
-      }
-
-      requestAnimationFrame(() => {
-        if (!this.completeAnimation) {
-          hideItem()
-        } else {
-          this.waitForAnotherItemComplete(hideItem)
-        }
-      })
-    },
-
     animate(animate) {
       this.completeAnimation = animate
       if (animate)
@@ -344,11 +258,13 @@ export default {
           break
         }}
       }
+      
       if (this.isOnShift && !isTyping && !this.isEditingComp && !this.iconDrop) {
         switch (key) {
           case "C": {
             if (!this.isEditing && this.comp === 'Task') {
               this.isEditing = true
+              this.editAction = vm => vm.$refs.checklist.addEdit()
             }
             break
           }
@@ -472,6 +388,7 @@ export default {
       return this.getAssigneeIconDrop(this.item, uid => this.assignUser(uid))
     },
     
+    
     nonReadComments() {
       if (!this.item)
         return;
@@ -525,6 +442,7 @@ export default {
 
 .sortable-ghost.ItemTemplate .cont,
 .sortable-ghost.ItemTemplate .icon-wrapper,
+.sortable-ghost.ItemTemplate .CheckIcon,
 .sortable-ghost.ItemTemplate .ruler-element,
 .sortable-ghost.ItemTemplate .main-cont,
 .sortable-ghost.ItemTemplate .info {

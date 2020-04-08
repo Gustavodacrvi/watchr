@@ -1,8 +1,8 @@
 <template>
-  <div class="CheckIcons">
+  <div class="CheckIcon">
     <ListIcons
       :co='completed'
-      :se='isSelecting'
+      :se='false'
       :ca='canceled'
       :ac='isItemSelected'
       :so='isSomeday'
@@ -25,7 +25,7 @@ export default {
   },
   props: [
     'isItemSelected', 'isSelecting', 'completed',
-    'canceled', 'forceDefault', 'item',
+    'canceled', 'item', 'itemModel',
   ],
   computed: {
     ...mapState({
@@ -37,9 +37,9 @@ export default {
     }),
 
     isSomeday() {
-      if (!this.item)
+      if (!this.item && !this.itemModel)
         return false
-      return this.isListSomeday(this.item)
+      return this.isListSomeday(this.itemModel || this.item)
     },
     getListProgress() {
       if (!this.item)
@@ -53,7 +53,7 @@ export default {
 
 <style scoped>
 
-.CheckIcons {
+.CheckIcon {
   height: 100%;
   transform: translate(-1px, 2px);
 }

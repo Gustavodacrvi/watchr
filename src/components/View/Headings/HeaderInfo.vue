@@ -17,7 +17,7 @@
         :icon="icon"
         :title='title'
         :color='color'
-        :width='icon === "file" ? "12px" : undefined'
+        :width='icon === "file" ? "13px" : "14px"'
       />
       <span v-show="content || right">
         <transition

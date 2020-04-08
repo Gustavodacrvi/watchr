@@ -1,5 +1,5 @@
 <template functional>
-  <div class="HeadingIcon">
+  <div class="CheckIcon">
     <Icon
       icon='tag'
       width='14px'
@@ -15,7 +15,7 @@ export default {}
 
 <style scoped>
 
-.HeadingIcon {
+.CheckIcon {
   height: 100%;
   display: flex;
   justify-content: center;

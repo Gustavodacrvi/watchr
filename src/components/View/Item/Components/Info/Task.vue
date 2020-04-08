@@ -29,30 +29,12 @@ export default {
         icon: 'group',
         color: p.groupObj.color,
       }))
-    
-    if (p.deadlineStr)
-      c.push(get({
-        name: p.deadlineStr,
-        icon: 'deadline',
-        color: 'var(--red)',
-      }))
+
     if (p.evening)
       c.push(get({
         name: '',
         icon: 'moon',
         color: 'var(--dark-purple)',
-      }))
-    if (p.calendarStr && !p.isToday && !p.isTomorrow)
-      c.push(get({
-        name: p.calendarStr,
-        icon: p.isRepeatingTask ? 'repeat' : 'calendar',
-        color: p.isRepeatingTask ? 'var(--fade)' : 'var(--green)',
-      }))
-    if (p.nextCalendarEvent)
-      c.push(get({
-        name: p.nextCalendarEvent,
-        icon: 'next',
-        color: 'var(--yellow)',
       }))
     if (p.timeStr)
       c.push(get({
@@ -79,13 +61,12 @@ export default {
         color: 'var(--txt)',
       }))
 
-
     return create('div', {class: 'info'}, c)
   },
   props: [
-    'isToday', 'isTomorrow', 'isRepeatingTask', 'calendarStr', 'deadlineStr',
+    'isToday', 'isTomorrow',
     'timeStr', 'hasTags', 'tagNames', 'hasFiles', 'taskDuration', 'listObj',
-    'folderObj', 'groupObj', 'nextCalendarEvent', 'evening',
+    'folderObj', 'groupObj', 'evening',
   ]
 }
 

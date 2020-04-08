@@ -4,11 +4,13 @@
         appear
         class="front headings-root"
         tag="div"
+        ref='headings-root'
         @enter='enter'
         @leave='leave'
       >
       <HeadingVue v-for="(h, i) in headings" :key="h.id"
         :header='h'
+        :ref='h.id'
 
         v-bind="h"
 
@@ -124,8 +126,8 @@ export default {
       this.findHeading(headingId, vm => vm.applyAutoSchedule(obj, calendarDate))
     },
     findHeading(headingId, callback) {
-      if (this.$refs[headingId] && this.$refs[headingId][0])
-        callback(this.$refs[headingId][0])
+      if (this.$refs[headingId] && this.$refs[headingId][1])
+        callback(this.$refs[headingId][1])
     },
     applyAutoSchedule(obj, calendarDate) {
       this.forEachRenderer(vm => vm.applyAutoSchedule(obj, calendarDate))
@@ -136,8 +138,8 @@ export default {
     forEachRenderer(callback) {
       const keys = Object.keys(this.$refs)
       keys.forEach(k => {
-        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].selectAll)
-          callback(this.$refs[k][0])
+        if (this.$refs[k] && this.$refs[k][1] && this.$refs[k][1].selectAll)
+          callback(this.$refs[k][1])
       })
     },
     getContHeight(h) {
@@ -157,7 +159,7 @@ export default {
     },
     mountSortable() {
       if (this.displayPriority > 2) {
-        const el = this.$el.getElementsByClassName('headings-root')[0]
+        const el = this.$refs['headings-root'].$el
         if (el) {
           this.sortable = new Sortable(el, {
             disabled: !this.updateHeadingIds,
@@ -182,7 +184,7 @@ export default {
       }
     },
     getHeadingsIds() {
-      const el = this.$el.getElementsByClassName('headings-root')[0]
+      const el = this.$refs['headings-root'].$el
       if (el) {
         const childs = el.childNodes
         const arr = []
@@ -215,7 +217,10 @@ export default {
       if (!this.isDesktopBreakPoint)
         return done()
       const w = el.style
-      const s = el.getElementsByClassName('header-wrapper')[0].style
+
+      const vm = this.$refs[el.dataset.id][0]
+
+      const s = vm.$refs['header-wrapper'].style
 
       const isFirst = this.headings[0].id === el.dataset.id
 
@@ -250,28 +255,51 @@ export default {
       if (!this.isDesktopBreakPoint)
         return done()
       const w = el.style
-      const s = el.getElementsByClassName('header-wrapper')[0].style
-      let c = el.getElementsByClassName('cont')[0]
 
-      if (c) {
-        c = c.style
-        c.transitionDuration = '.175s'
-        c.height = 0
-        c.overflow = 'visible'
-      }
+      const vm = this.$refs[el.dataset.id][0]
 
-      s.transitionDuration = '.175s'
-      w.transitionDuration = '.175s'
-      w.opacity = 0
-      w.height = 0
-      w.overflow = 'visible'
-      s.height = 0
-      s.overflow = 'visible'
-      s.margin = 0
-      s.padding = 0
-      s.borderBoddom = '0px solid var(--back-color)'
+      const s = vm.$refs['header-wrapper'].style
+      let c = vm.$refs['cont'].style
 
-      setTimeout(done, 205)
+      const isFirst = this.headings[0].id === el.dataset.id
+
+      if (c)
+        c.transitionDuration = 0
+      s.transitionDuration = 0
+      w.transitionDuration = 0
+      
+      s.marginBottom = 0
+      if (!isFirst)
+        w.marginTop = '65px'
+      s.height = '25px'
+      s.borderBottom = '1px solid var(--light-gray)'
+      w.height = el.offsetHeight + 'px'
+      w.opacity = 1
+      s.padding = '0 4px'
+      s.overflow = 'hidden'
+
+      requestAnimationFrame(() => {
+        if (c) {
+          c.transitionDuration = '.175s'
+          c.height = 0
+          c.overflow = 'hidden'
+        }
+  
+        s.transitionDuration = '.175s'
+        w.transitionDuration = '.175s'
+        w.opacity = 0
+        w.height = 0
+        w.overflow = 'hidden'
+        w.margin = 0
+        s.height = 0
+        s.overflow = 'hidden'
+        s.margin = 0
+        s.padding = 0
+        s.borderBoddom = '0px solid var(--back-color)'
+  
+        setTimeout(done, 175)
+      })
+
     },
   },
   computed: {

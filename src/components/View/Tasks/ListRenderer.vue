@@ -11,7 +11,9 @@
         <Icon :icon='(icon === "logged-lists" ? "faded-logged-lists" : icon)' color='var(--sidebar-color)' width="100px"/>
       </div>
     </transition>
-    <div
+    <transition-group
+      appear
+      :css='false'
       class="front item-renderer-root"
       :class="{isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
@@ -25,9 +27,13 @@
       @dragover='dragover'
       @drop='drop'
       @dragleave.stop
+
+      @enter='enter'
+      @leave='leave'
     >
       <template v-for="item of getItems">
-        <div v-if='item.cameFromAnotherTab' :key="item.cameFromAnotherTab + 'fdskçalsdf'"
+        <div v-if='item.cameFromAnotherTab'
+          :key="item.cameFromAnotherTab + 'fdskçalsdf'"
           class='cameFromAnotherTab-ghost rb'
         >
 
@@ -48,7 +54,6 @@
           :multiSelectOptions='itemIconDropOptions'
           :comp='comp'
           :movingItem='movingItem'
-          :waitForAnotherItemComplete='waitForAnotherTaskCompleteAnimation'
 
           @de-select='deSelectItem'
           @select='selectItem'
@@ -56,14 +61,16 @@
           @add-heading-after='addHeadingAfterSelection'
           @go='moveItemHandlerSelection'
 
-
           :data-id='item.id'
           :data-name='item.name'
           :data-type='comp'
+          data-transition='display'
         />
         <component v-else
           :is='item.editComp || editComp'
           :key="item.isEdit + 'component eidt'"
+          :ref="item.isEdit + 'component eidt'"
+          :data-id="item.isEdit + 'component eidt'"
 
           v-bind='item.propsData'
           :focusToggle='focusToggle'
@@ -73,19 +80,20 @@
           :listRenderer='true'
           :fallbackItem='fallbackItem'
 
-          :data-id='item.isEdit'
-
           @save='item.onSave'
           @goup='moveEdit(-1)'
           @godown='moveEdit(1)'
           @cancel='removeEdit'
+          data-transition='edit'
         />
       </template>
       <TimelineRuler v-if='showTimelineRuler'
+        key='TIMELINE_RULER'
         v-model="timelineIncrement"
         @save='saveTimelineIncrement'
       />
       <div v-if="!moving && !hasEdit"
+        key='LIST_IFON_SHOWSOMEDAYiTEMS'
         class='list-info'
       >
         <transition name="fade-t">
@@ -120,7 +128,7 @@
           </span>
         </div>
       </div>
-    </div>
+    </transition-group>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
       ref='headings'
       
@@ -270,13 +278,110 @@ export default {
     }
   },
   methods: {
+    enter(el, done) {
+      const id = el.dataset.id
+      const type = el.dataset.transition
+      if (!type || !id)
+        return done()
+
+      const isAdding = type !== 'display'
+
+      const vm = this.$refs[id][0].$refs.template
+
+      const cont = vm.$refs['cont-wrapper']
+      const s = cont.style
+      
+      s.transitionDuration = '0s'
+      s.height = 0
+      s.minHeight = 0
+      
+      if (isAdding) {
+        return requestAnimationFrame(() => {
+          s.transitionDuration = '.1s'
+          s.height = this.itemHeight + 'px'
+          setTimeout(() => {
+            s.transitionDuration = '.175s'
+            s.height = 'auto'
+            vm.isEditing = true
+            done()
+          }, 10)
+        })
+      }
+      const parentIds = this.disableItemEnterTransitionIds
+      
+      let disableTransition = false
+      if (parentIds.includes(id)) {
+        const i = parentIds.findIndex(id => id === id)
+        parentIds.splice(i, 1)
+        disableTransition = true
+      }
+
+      s.opacity = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = disableTransition ? 0 : '.175s'
+        s.opacity = 1
+        s.height = this.itemHeight + 'px'
+        s.minHeight = this.itemHeight + 'px'
+        
+        setTimeout(() => {
+          s.transitionDuration = '.175s'
+          s.height = 'auto'
+          done()
+        }, 201)
+      })
+    },
+    leave(el, done) {
+      const id = el.dataset.id
+      const type = el.dataset.transition
+      if (!id || !type || (type === 'edit'))
+        return done()
+
+      const vm = this.$refs[id][0].$refs.template
+
+      const cont = vm.$refs['cont-wrapper']
+      const parentIds = this.disableItemEnterTransitionIds
+      
+      let disableTransition = false
+      if (parentIds.includes(id)) {
+        const i = parentIds.findIndex(id => id === id)
+        parentIds.splice(i, 1)
+        disableTransition = true
+      }
+
+      const s = cont.style
+
+      s.transitionDuration = '0s'
+      s.opacity = 1
+      s.height = this.itemHeight + 'px'
+      s.minHeight = this.itemHeight + 'px'
+
+      const hideItem = () => {
+        s.transitionDuration = disableTransition ? 0 : '.175s'
+        s.opacity = 0
+        s.height = 0
+        s.minHeight = 0
+
+        setTimeout(done, disableTransition ? 0 : 201)
+      }
+
+      requestAnimationFrame(() => {
+        if (!vm.completeAnimation) {
+          hideItem()
+        } else {
+          this.waitForAnotherTaskCompleteAnimation(hideItem)
+        }
+      })
+    },
+      
+
     toggleCompletion(ids) {
       ids.forEach(id => this.findItem(id, vm => vm.toggleCompletion()))
       if (this.$refs.headings)
         this.$refs.headings.toggleCompletion(ids)
     },
     findItem(id, callback) {
-      if (this.$refs[id] && this.$refs[id][0])
+      if (this.$refs[id] && this.$refs[id][0] && this.$refs[id][0].template)
         callback(this.$refs[id][0])
     },
     applyAutoScheduleToHeading(info, headingId, calendarDate) {
@@ -296,9 +401,10 @@ export default {
     },
     forEachItem(callback) {
       const keys = Object.keys(this.$refs)
-      for (const k of keys)
-        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].$el)
-          callback(this.$refs[k][0])
+      for (const k of keys) {
+        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].template &&  this.$refs[k][0].$el)
+          callback(this.$refs[k][0].template)
+      }
     },
     selectAll() {
       if (this.isRoot && this.$refs.headings)
@@ -995,7 +1101,7 @@ export default {
         if (el.dataset)
           ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined)
+        ids = ids.filter(id => id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined && id !== 'Headingcomponent eidt')
       return ids
     },
     contWrapper(el) {
@@ -1091,7 +1197,7 @@ export default {
         }
       }
 
-      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 14 : length * 5)
+      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 75 : length * 5)
 
       if (foundEdit) {
         const itemIndex = this.lazyItems.findIndex(el => el.id === this.addedItem)
@@ -1188,7 +1294,7 @@ export default {
       return this.items.filter(el => !el.isEdit)
     },
     computedShowSomedayButton() {
-      return this.isRoot & this.showSomedayButton && this.getItems.filter(el => !el.isEdit).length > 0
+      return this.isRoot & this.showSomedayButton
     },
     showMoreItemsMessage() {
       return `Show ${this.items.length - 3} more items...`
@@ -1222,7 +1328,7 @@ export default {
         return this.pressingSelectKeys
     },
     draggableRoot() {
-      return this.$refs['item-renderer-root']
+      return this.$refs['item-renderer-root'].$el
     },
     showIllustration() {
       const getHeadings = this.getHeadings
@@ -1348,6 +1454,11 @@ export default {
   z-index: 2;
   height: 100%;
   transition-duration: .175s;
+  margin: 35px 0;
+}
+
+.isHeading .item-renderer-root {
+  margin: 0;
 }
 
 .heading-add {

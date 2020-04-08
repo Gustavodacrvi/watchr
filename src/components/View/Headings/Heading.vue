@@ -8,6 +8,7 @@
       <div v-if="!editing">
         <div class="header-wrapper handle remove-highlight" key="wr"
           :class="{notRendering: !renderCont}"
+          ref='header-wrapper'
         
           @click.stop="click"
           @touchstart.passive='touchStart'
@@ -68,7 +69,7 @@
 
           @leave='leaveCont'
         >
-          <div v-if="renderCont" class="cont">
+          <div v-if="renderCont" class="cont" ref='cont'>
             <slot></slot>
           </div>
         </transition>
@@ -229,7 +230,7 @@ export default {
     
     bindOptions() {
       if (this.isDesktopDevice) {
-        const header = this.$el.getElementsByClassName('header-wrapper')[0]
+        const header = this.$refs['header-wrapper']
         if (header)
           utils.bindOptionsToEventListener(header, this.options(this.nonFiltered, this.autoSchedule), this)
       }
@@ -400,6 +401,20 @@ export default {
 
 </script>
 
+<style>
+
+.Heading.sortable-ghost .header,
+.Heading.sortable-ghost .ItemTemplate,
+.Heading.sortable-ghost .CheckIcon {
+  display: none !important;
+}
+
+.Heading.sortable-ghost .header-wrapper {
+  background-color: var(--sidebar-color) !important;
+}
+
+</style>
+
 <style scoped>
 
 .icons {
@@ -451,7 +466,6 @@ export default {
   z-index: 50;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  transition: background-color .175s;
 }
 
 .header-wrapper:hover {
@@ -516,10 +530,6 @@ export default {
 
 .sortable-ghost .header-wrapper {
   border-bottom: none !important;
-}
-
-.sortable-ghost .header {
-  display: none;
 }
 
 </style>

@@ -134,7 +134,7 @@ export default {
       s.transitionDuration = 0
       s.width = 0
       s.opacity = 0
-      s.overflow = 'hidden'
+      s.overflow = 'visible'
       s.whiteSpace = 'nowrap'
 
       if (this.tagMode) {
@@ -175,7 +175,7 @@ export default {
       s.opacity = 1
 
       if (this.tagMode) {
-        s.height = '25px'
+        s.height = '19px'
         s.border = '1px solid var(--light-gray)'
       }
 
@@ -183,7 +183,7 @@ export default {
         s.transitionDuration = '.175s'
         s.width = 0
         s.opacity = 0
-        s.overflow = 'hidden'
+        s.overflow = 'visible'
         s.whiteSpace = 'nowrap'
 
         if (this.tagMode) {
@@ -192,7 +192,7 @@ export default {
           s.marginLeft = 0
         }
 
-        setTimeout(done, 200)
+        setTimeout(done, 175)
       })
 
 

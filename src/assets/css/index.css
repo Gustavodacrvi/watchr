@@ -69,12 +69,15 @@ body, input, button, textarea {
 }
 
 .parsed-link {
-  color: var(--dark-blue);
-  text-decoration: none;
+  color: var(--dark-blue) !important;
+  text-decoration: none !important;
+  user-select: unset !important;
+  pointer-events: all !important;
+  cursor: pointer;
 }
 
 .parsed-link:hover {
-  text-decoration: underline;
+  text-decoration: underline !important;
 }
 
 .cb {

@@ -26,7 +26,7 @@
         @dragleave='dragover = false'
         @drop='dragover = false'
       >
-        <div class="icon-wrapper" @click="clickIcon">
+        <div class="icon-wrapper" :class="{hasProgress: progress !== undefined}" @click="clickIcon">
           <Icon class="main-icon"
             :class="{cursor: icon === 'tasks', fadeIconColor}"
             :style="iconStyle"
@@ -349,6 +349,10 @@ export default {
   width: 22px;
   flex-shrink: 0;
   position: relative;
+}
+
+.hasProgress {
+  margin-top: 1px;
 }
 
 .inf-num {

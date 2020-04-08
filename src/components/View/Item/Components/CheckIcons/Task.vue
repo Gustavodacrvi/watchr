@@ -1,11 +1,10 @@
 <template>
-  <TaskIcons
+  <TaskIcons class="CheckIcon"
     :co='completed'
     :ca='canceled'
-    :forceDefault='forceDefault'
 
     :color='color || circleColor'
-    :se='isSelecting'
+    :se='false'
     :ac='isItemSelected'
     :so='isSomeday'
     :re='isRepeatingItem'
@@ -27,7 +26,7 @@ export default {
   props: [
     'isSelecting', 'completed',
     'canceled', 'forceDefault', 'color',
-    'isItemSelected',
+    'isItemSelected', 'itemModel',
     
     'name', 'priority', 'id', 'calendar',
   ],
@@ -46,6 +45,8 @@ export default {
       return obj[this.priority]
     },
     isSomeday() {
+      if (this.itemModel)
+        return this.itemModel.calendar && this.itemModel.calendar.type === 'someday'
       return this.calendar && this.calendar.type === 'someday'
     },
     isRepeatingItem() {

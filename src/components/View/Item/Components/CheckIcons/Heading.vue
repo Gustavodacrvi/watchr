@@ -1,5 +1,5 @@
 <template functional>
-  <div class="HeadingIcon">
+  <div class="CheckIcon HeadingIcon">
     <Icon
       icon='heading'
       width='14px'

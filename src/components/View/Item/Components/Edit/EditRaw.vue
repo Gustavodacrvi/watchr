@@ -16,6 +16,7 @@
           <div v-show="!hideIcons" class="icon-wrapper" :class="{noColor: !iconColor}">
             <slot name="check-icon"
               :iconColor='iconColor'
+              :itemModel='itemModel'
             ></slot>
           </div>
           <div v-show="showCont"
@@ -37,11 +38,12 @@
           </div>
         </div>
         <transition name="fade-t">
-          <component :is="editComponent"
+          <component :is="editComponent" class="component"
             ref='comp'
             v-model="model"
             :item='item'
             :itemModelFallback='itemModelFallback'
+            :editAction='editAction'
             :firstFieldOptions='options'
             
             @save='obj => $emit("save", obj)'
@@ -50,6 +52,7 @@
             @focus-on-field='focus'
             @remove-focus='removeFocus'
             @cancel='close'
+            @model='v => itemModel = v'
             @set-first-field-options='v => options = v'
           />
         </transition>
@@ -73,12 +76,13 @@ export default {
     Task, DropInput,
     Tag,
   },
-  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'showInfo'],
+  props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editAction', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'showInfo'],
   data() {
     return {
       model: this.name || '',
       options: [],
       iconColor: '',
+      itemModel: null,
 
       showCont: false,
       hideIcons: false,
@@ -214,7 +218,7 @@ export default {
   },
   computed: {
     getHeight() {
-      return this.showInfo ? this.itemHeight + 6 : this.itemHeight
+      return this.showInfo ? this.itemHeight + 8 : this.itemHeight
     },
   },
   watch: {
@@ -246,6 +250,12 @@ export default {
   position: relative;
   display: flex;
   align-items: stretch;
+  z-index: 2;
+}
+
+.component {
+  position: relative;
+  z-index: 1;
 }
 
 .back-layer {

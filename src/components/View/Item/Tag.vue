@@ -4,6 +4,8 @@
     editComponent='Tag'
     editRawPlaceholder='Tag name...'
 
+    ref='template'
+
     :item='item'
   >
   

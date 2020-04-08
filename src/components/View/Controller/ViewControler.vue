@@ -704,7 +704,7 @@ export default {
         directFiltering: true,
 
         comp: 'List',
-        editComp: 'ListEdit',
+        editComp: 'List',
         itemPlaceholder: 'List name...',
 
         sort: this.sortArray,
@@ -727,7 +727,7 @@ export default {
         directFiltering: true,
 
         comp: 'List',
-        editComp: 'ListEdit',
+        editComp: 'List',
         itemPlaceholder: 'List name...',
 
         sort: this.sortArray,
@@ -771,7 +771,7 @@ export default {
         directFiltering: true,
 
         comp: 'List',
-        editComp: 'ListEdit',
+        editComp: 'List',
         itemPlaceholder: 'List name...',
         
         sort: this.sortArray,
@@ -803,7 +803,7 @@ export default {
         directFiltering: true,
 
         comp: 'List',
-        editComp: 'ListEdit',
+        editComp: 'List',
         itemPlaceholder: 'List name...',
         
         sort: this.sortArray,
@@ -853,7 +853,7 @@ export default {
             directFiltering: true,
 
             comp: 'List',
-            editComp: 'ListEdit',
+            editComp: 'List',
             itemPlaceholder: 'List name...',
             
             sort: this.sortArray,
@@ -1014,7 +1014,7 @@ export default {
           directFiltering: true,
 
           comp: 'List',
-          editComp: 'ListEdit',
+          editComp: 'List',
           itemPlaceholder: 'List name...',
 
           sort, 
@@ -1037,7 +1037,7 @@ export default {
         directFiltering: true,
 
         comp: 'List',
-        editComp: 'ListEdit',
+        editComp: 'List',
         itemPlaceholder: 'List name...',
         options,
         filter: t => this.wasTaskLoggedLastWeek(t),
@@ -1057,7 +1057,7 @@ export default {
         directFiltering: true,
 
         comp: 'List',
-        editComp: 'ListEdit',
+        editComp: 'List',
         itemPlaceholder: 'List name...',
         sort,
         options,
@@ -1079,7 +1079,7 @@ export default {
           directFiltering: true,
 
           comp: 'List',
-          editComp: 'ListEdit',
+          editComp: 'List',
           itemPlaceholder: 'List name...',
           sort,
           options,
@@ -1099,7 +1099,7 @@ export default {
         directFiltering: true,
 
         comp: 'List',
-        editComp: 'ListEdit',
+        editComp: 'List',
         itemPlaceholder: 'List name...',
         log: true,
         sort,
@@ -1196,7 +1196,7 @@ export default {
           directFiltering: true,
 
           comp: 'List',
-          editComp: 'ListEdit',
+          editComp: 'List',
           itemPlaceholder: 'List name...',
           
           sort: this.sortArray,
@@ -1246,7 +1246,7 @@ export default {
           directFiltering: true,
 
           comp: 'List',
-          editComp: 'ListEdit',
+          editComp: 'List',
           itemPlaceholder: 'List name...',
           
           sort: this.sortArray,
@@ -1381,7 +1381,7 @@ export default {
         directFiltering: true,
 
         comp: 'List',
-        editComp: 'ListEdit',
+        editComp: 'List',
         itemPlaceholder: 'List name...',
         
         sort: this.sortArray,

@@ -127,4 +127,8 @@ export default {
   margin-top: 1.5px;
 }
 
+.adder-icon {
+  margin-top: 2px;
+}
+
 </style>

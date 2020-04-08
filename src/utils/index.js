@@ -851,13 +851,15 @@ export default {
 
     return {calendar: cal, matches}
   },
-  matchDuration(search) {
+  matchDuration(search, matches = []) {
     const getMatch = (regex, format) => {
       let match = search.match(regex)
       const getNum = str => parseInt(str, 10)
       
       if (match) {
         
+        if (match[0])
+          matches.push(match[0])
         match = getNum(match)
   
         if (!mom(match, format).isValid())
@@ -866,6 +868,7 @@ export default {
       return getNum(match)
     }
 
+    
     const hourMatch = getMatch(/(\d)(\d)?( )?(hour|h)/gi, 'HH')
     const minMatch = getMatch(/(\d)(\d)?( )?(minute|min|m)/gi, 'mm')
 

@@ -5,7 +5,7 @@
     <Icon class="txt-icon"
       :icon='props.icon'
       :color='props.color || "var(--fade)"'
-      width='10px'
+      width='9px'
     />
     <span class="txt-name">
       {{ props.name }}

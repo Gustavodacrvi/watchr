@@ -538,7 +538,7 @@ export default {
     },
     Lists() {
       const dispatch = this.$store.dispatch
-      const arr = [
+/*       const arr = [
         {
           name: 'Import from template',
           icon: 'import',
@@ -561,23 +561,42 @@ export default {
             }).catch(bug)
           }
         },
-        {
-          name: 'Add folder',
-          icon: 'folder',
-          callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
-        },
-        {
-          name: 'Add group',
-          icon: 'group',
-          callback: () => dispatch('pushPopup', {comp: 'AddGroup', naked: true}),
-        },
-        {
-          name: 'Add list',
-          icon: 'tasks',
-          callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),
-        },
-      ]
-      return arr
+      ] */
+      return {
+        comp: 'InfoList',
+        content: {
+          width: '200px',
+          links: [
+            {
+              name: 'Add folder',
+              icon: {
+                name: 'folder',
+                color: 'var(--txt)',
+              },
+              info: `Keep your lists and tasks organized using folders.`,
+              callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
+            },
+            {
+              name: 'Add group',
+              icon: {
+                name: 'group',
+                color: 'var(--yellow)',
+              },
+              info: `Share and assign your tasks and lists to other users.`,
+              callback: () => dispatch('pushPopup', {comp: 'AddGroup', naked: true}),
+            },
+            {
+              name: 'Add list',
+              icon: {
+                name: 'tasks',
+                color: 'var(--primary)',
+              },
+              info: `Divide and conquer your tasks, you can also group them using headings.`,
+              callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),
+            },
+          ],
+        }
+      }
     },
     Filters() {
       const dispatch = this.$store.dispatch

@@ -147,7 +147,7 @@ export default EditBuilder({
 
           return {
             ...m,
-            name: m.name.trim(),
+            name: n.trim(),
             notes: m.notes.trim(),
           }
         }
@@ -479,17 +479,7 @@ export default EditBuilder({
         const listObj = this.getListObj
 
         if (!this.model.assigned && listObj && (listObj.group || this.model.group))
-          arr.unshift({
-            id: 'fdjkasçlasdf',
-            props: {
-              placeholder: 'Assign to...',
-              icon: 'plus',
-              listWidth: '180px',
-              color: '',
-              trigger: 'enter',
-              list: this.getAssigneeIconDropLinks,
-            },
-          })
+          arr.unshift(this.getAssigneSmartIconObj)
         
         if (!this.model.heading && listObj && listObj.headings && listObj.headings.length > 0)
           arr.unshift({
@@ -505,11 +495,6 @@ export default EditBuilder({
           })
         
         return arr
-      },
-      getAssignedName() {
-        const iconDropObj = this.getAssignees
-        if (iconDropObj)
-          return iconDropObj.links.find(el => el.id === this.model.assigned).name
       },
       listHeadings() {
         const listObj = this.getListObj
@@ -532,18 +517,6 @@ export default EditBuilder({
             }))
           ]
       },
-      getAssigneeIconDropLinks() {
-        const iconDropObj = this.getAssignees
-        if (iconDropObj)
-          return iconDropObj.links.map(el => ({
-                ...el,
-                callback: () => {
-                  if (el.name === "Remove assignee")
-                    this.model.assigned = null
-                  else this.model.assigned = el.id
-                }
-              }))
-      },
       calendarTagObj() {
         const name = this.calendarStr
         
@@ -558,18 +531,6 @@ export default EditBuilder({
             list: this.calendarSmartIconOptions,
           },
         }
-      },
-      getAssignees() {
-        let group
-        const listObj = this.getListObj
-
-        if (this.model.group)
-          group = this.model.group
-        else if (listObj.group)
-          group = listObj.group
-
-        if (group)
-          return this.getAssigneeIconDrop({group})
       },
       durationStr() {
         if (this.model.taskDuration)
@@ -628,16 +589,7 @@ export default EditBuilder({
           })
 
         if (this.model.assigned)
-          tags.push({
-            id: 'assigned',
-            props: {
-              name: this.getAssignedName,
-              icon: 'user',
-              listWidth: '180px',
-              trigger: 'enter',
-              list: this.getAssigneeIconDropLinks,
-            },
-          })
+          tags.push(this.getAssigneTagObj)
 
         if (this.model.heading && listObj && listObj.headings && listObj.headings.length > 0)
           tags.push({
@@ -723,6 +675,10 @@ export default EditBuilder({
             this.model.calendar = null
           }
         }
+
+        const matches = []
+        this.model.taskDuration = utils.matchDuration(n, matches)
+        this.toReplace = [...(this.toReplace || []), ...matches]
 
         if (!changedOptions) send([])
         if (this.model.name !== this.value)

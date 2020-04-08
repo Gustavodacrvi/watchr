@@ -109,6 +109,16 @@ export default {
         return undefined
       
       return {
+        files: {
+          names: folder.files || [],
+          storageFolder: 'folders',
+          id: folder.id,
+          save: files => this.foldersaveFolder({files}),
+        },
+        notes: {
+          name: folder.notes || null,
+          save: notes => this.foldersaveFolder({notes}),
+        },
         icons: [
           {
             icon: 'tint',

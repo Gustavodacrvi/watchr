@@ -39,6 +39,60 @@ export default {
         return 'sun'
       return 'calendar'
     },
+    getAssigneeIconDropLinks() {
+      const iconDropObj = this.getAssignees
+      if (iconDropObj)
+        return iconDropObj.links.map(el => ({
+              ...el,
+              callback: () => {
+                if (el.name === "Remove assignee")
+                  this.model.assigned = null
+                else this.model.assigned = el.id
+              }
+            }))
+    },
+    getAssignees() {
+      let group
+      const listObj = this.getListObj
+
+      if (this.model.group)
+        group = this.model.group
+      else if (listObj.group)
+        group = listObj.group
+
+      if (group)
+        return this.getAssigneeIconDrop({group})
+    },
+    getAssigneTagObj() {
+      return {
+        id: 'assigned',
+        props: {
+          name: this.getAssignedName,
+          icon: 'user',
+          listWidth: '180px',
+          trigger: 'enter',
+          list: this.getAssigneeIconDropLinks,
+        },
+      }
+    },
+    getAssigneSmartIconObj() {
+      return {
+        id: 'fdjkasçlasdf',
+        props: {
+          placeholder: 'Assign to...',
+          icon: 'plus',
+          listWidth: '180px',
+          color: '',
+          trigger: 'enter',
+          list: this.getAssigneeIconDropLinks,
+        },
+      }
+    },
+    getAssignedName() {
+      const iconDropObj = this.getAssignees
+      if (iconDropObj)
+        return iconDropObj.links.find(el => el.id === this.model.assigned).name
+    },
     composeCalendarListHelper() {
       return (list, search) => {
         if (!search)
