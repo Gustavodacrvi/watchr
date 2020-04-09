@@ -73,7 +73,7 @@
         class="toggle-icon cursor remove-highlight primary-hover"
         :class="{showingSublist}"
         icon="tiny-arrow"
-        width="22px"
+        width="14px"
         :circle="true"
         @click="showingSublist = !showingSublist"
       />
@@ -261,7 +261,7 @@ export default {
       getAssignedTasksByList: 'task/getAssignedTasksByList',
     }),
     sublistHeight() {
-      return ((this.subList.length) * (this.isDesktopDevice ? 25 : 42)) + 'px'
+      return ((this.subList.length) * (this.isDesktopDevice ? 19 : 42)) + 'px'
     },
     hasSubList() {
       return this.subList && this.subList.length > 0
@@ -341,7 +341,7 @@ export default {
 }
 
 .desktop .toggle-icon {
-  left: -24px;
+  left: -14px;
 }
 
 .icon-wrapper {

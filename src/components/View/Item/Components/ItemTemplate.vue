@@ -116,6 +116,10 @@ export default {
   created() {
     this.completed = this.completedItem
     this.canceled = this.canceledItem
+    setTimeout(() => {
+      if (!this.listRenderer)
+        this.isEditing = true
+    }, 50)
   },
   methods: {
     ...mapMutations(['saveMainSelection']),
@@ -455,7 +459,7 @@ export default {
 
 .ItemTemplate {
   position: relative;
-  overflow: visible;
+  height: auto;
   z-index: 5;
 }
 

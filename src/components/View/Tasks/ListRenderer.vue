@@ -11,6 +11,11 @@
         <Icon :icon='(icon === "logged-lists" ? "faded-logged-lists" : icon)' color='var(--sidebar-color)' width="100px"/>
       </div>
     </transition>
+    <TimelineRuler v-if='showTimelineRuler'
+      key='TIMELINE_RULER'
+      v-model="timelineIncrement"
+      @save='saveTimelineIncrement'
+    />
     <transition-group
       appear
       :css='false'
@@ -87,11 +92,6 @@
           data-transition='edit'
         />
       </template>
-      <TimelineRuler v-if='showTimelineRuler'
-        key='TIMELINE_RULER'
-        v-model="timelineIncrement"
-        @save='saveTimelineIncrement'
-      />
       <div v-if="!moving && !hasEdit"
         key='LIST_IFON_SHOWSOMEDAYiTEMS'
         class='list-info'
@@ -381,17 +381,17 @@ export default {
         this.$refs.headings.toggleCompletion(ids)
     },
     findItem(id, callback) {
-      if (this.$refs[id] && this.$refs[id][0] && this.$refs[id][0].template)
-        callback(this.$refs[id][0])
+      if (this.$refs[id] && this.$refs[id][0] && this.$refs[id][0].$refs.template)
+        callback(this.$refs[id][0].$refs.template)
     },
     applyAutoScheduleToHeading(info, headingId, calendarDate) {
       this.$refs.headings.applyAutoScheduleToHeading(info, headingId, calendarDate)
     },
     applyAutoSchedule(obj, calendarDate) {
       if (this.comp === 'Task') {
-        this.autoScheduleItems(this, calendarDate, obj, this.getItems)
         if (this.$refs.headings)
           this.$refs.headings.applyAutoSchedule(obj, calendarDate)
+        return this.autoScheduleItems(this, calendarDate, obj, this.getItems)
       }
     },
     saveTimelineIncrement() {
@@ -402,8 +402,8 @@ export default {
     forEachItem(callback) {
       const keys = Object.keys(this.$refs)
       for (const k of keys) {
-        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].template &&  this.$refs[k][0].$el)
-          callback(this.$refs[k][0].template)
+        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].$refs.template &&  this.$refs[k][0].$el)
+          callback(this.$refs[k][0].$refs.template)
       }
     },
     selectAll() {

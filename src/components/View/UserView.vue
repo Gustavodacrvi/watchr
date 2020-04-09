@@ -20,7 +20,7 @@
         :view-type="viewType"
         :sidebarHided='sidebarHided'
         :width='getNavWidth'
-        @sidebar="toggleSidebar"
+        :MINIMUM_WIDTH='MINIMUM_WIDTH'
         @section="v => section = v"
 
         @handle-pointerdown='pointerdown'
@@ -34,7 +34,6 @@
         :isSmart="isSmartList"
         :viewType='viewType'
         :viewName='viewName'
-        @sidebar='toggleSidebar'
       />
     </div>
   </div>
@@ -47,6 +46,8 @@ import ViewControlerVue from '../View/Controller/ViewControler.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
+const DEFAULT_WIDTH = 250
+
 export default {
   props: ['hideNavbar'],
   components: {
@@ -55,15 +56,18 @@ export default {
   },
   data() {
     return {
+      MINIMUM_WIDTH: 135,
       sidebarHided: false,
       scrollTop: null,
-      width: 250,
+      width: DEFAULT_WIDTH,
 
       pressingHandle: false,
       handleStart: 0,
+      wasHidedBeforePointerDown: false,
 
       interval: null,
       navObj: {},
+      pointerTimeout: null,
     }
   },
   created() {
@@ -86,28 +90,53 @@ export default {
   },
   methods: {
     handlePointermove(evt) {
+      if (this.pointerTimeout)
+        return;
+      
       if (this.pressingHandle) {
-        const newWidth = this.width + (evt.screenX - this.handleStart)
-        if (newWidth > 225 && newWidth < 800) {
-          this.width = newWidth
-          localStorage.setItem('watchr_menu_width', this.width)
-          this.handleStart = evt.screenX
-        } else this.pressingHandle = false
+        this.pointerTimeout = setTimeout(() => {
+          this.pointerTimeout = null
+
+          const newWidth = this.width + (evt.screenX - this.handleStart)
+          if (newWidth < 800) {
+            this.sidebarHided = false
+            this.width = newWidth
+            localStorage.setItem('watchr_menu_width', this.width)
+            this.handleStart = evt.screenX
+          } else this.pressingHandle = false
+
+        }, 10)
       }
     },
     pointerdown(evt) {
+      this.wasHidedBeforePointerDown = this.sidebarHided
       this.pressingHandle = true
       this.handleStart = evt.screenX
     },
     pointerup() {
       this.pressingHandle = false
+
+      this.$nextTick(() => {
+        const sensitiveArea = (this.width < this.MINIMUM_WIDTH)
+
+        if (sensitiveArea && !this.wasHidedBeforePointerDown) {
+          this.sidebarHided = true
+          this.width = 0
+          localStorage.setItem('watchr_menu_width', this.width)
+          localStorage.setItem('watchr_slim_mode', true)
+        } else if (this.wasHidedBeforePointerDown && !sensitiveArea) {
+          this.sidebarHided = false
+          this.width = this.width
+          localStorage.setItem('watchr_menu_width', this.width)
+          localStorage.setItem('watchr_slim_mode', false)
+        } else if (sensitiveArea) {
+          this.sidebarHided = true
+          this.width = 0
+        }
+      })
     },
     getScrollTop(evt) {
       this.scrollTop = window.scrollY
-    },
-    toggleSidebar() {
-      this.sidebarHided = !this.sidebarHided
-      localStorage.setItem('watchr_slim_mode', this.sidebarHided)
     },
     getNavTopPosition() {
       setTimeout(() => {
@@ -164,7 +193,7 @@ export default {
 .nav-shadow {
   flex-grow: 0;
   flex-shrink: 0;
-  transition-duration: .6s;
+  transition-duration: .4s;
   transition-delay: 0s;
 }
 
@@ -175,6 +204,10 @@ export default {
   z-index: 5;
 }
 
+.pressingHandle {
+  transition-duration: none !important;
+}
+
 .cont {
   position: relative;
   display: flex;
@@ -182,15 +215,15 @@ export default {
   flex-basis: 100%;
   flex-grow: 1;
   transition-delay: .4s;
-  transition-duration: .6s;
+  transition-duration: .4s;
   z-index: 4;
 }
 
 .sidebarHided .nav-shadow {
   flex-basis: 0 !important;
   max-width: 0 !important;
-  transition-delay: .6s;
-  transition-duration: .6s;
+  transition-delay: .4s;
+  transition-duration: .4s;
 }
 
 .sidebarHided .cont {

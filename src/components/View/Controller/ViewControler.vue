@@ -403,7 +403,7 @@ export default {
             fallbackItem: (t, f) => functionFallbacks.viewFallbacks.List(t, f, {listId: list.id, group: list.group, list: list.tags}),
             itemModelFallback: {
               list: list.id,
-              group: list.group || undefined,
+              group: list.group || null,
             },
           })
         } else if (viewHeading.smartViewControllerType === 'folder') {
@@ -573,7 +573,7 @@ export default {
         const calendarDate = this.getCalendarOrderDate
         let scheduleOrder = this.getCurrentScheduleTasksOrder.slice()
 
-        arr.unshift({
+        arr.push({
           name: 'Evening',
           id: 'EVENING_SMART_VIEW',
           color: 'var(--dark-purple)',

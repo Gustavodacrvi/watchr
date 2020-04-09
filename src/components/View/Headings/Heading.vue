@@ -25,7 +25,7 @@
                 icon="tasks"
                 :color='getHeadingColor'
                 :progress="progress"
-                width='10px'
+                width='7px'
               />
               <Icon v-else-if="icon" class="icon"
                 :icon='icon'
@@ -406,7 +406,10 @@ export default {
 .Heading.sortable-ghost .header,
 .Heading.sortable-ghost .ItemTemplate,
 .Heading.sortable-ghost .CheckIcon {
-  display: none !important;
+  visibility: hidden;
+  opacity: 0;
+  transition: none !important;
+  transition-duration: none !important;
 }
 
 .Heading.sortable-ghost .header-wrapper {

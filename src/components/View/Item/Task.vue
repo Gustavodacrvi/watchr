@@ -201,9 +201,6 @@ export default {
       if (!this.isSelecting)
         this.selectItem()
     },
-    toggleCompletion() {
-      this.$refs.template.toggleCompletion()
-    },
     selectItem() {
       this.$refs.template.selectItem()
     },

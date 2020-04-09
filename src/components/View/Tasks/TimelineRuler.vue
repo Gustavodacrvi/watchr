@@ -11,6 +11,7 @@
       @pointerup.stop
       @mouseup.stop
       @touchend.stop.passive
+      @pointerdown.stop
     >
       <span v-if="getNewValue" class="save" @click="$emit('save')">Save</span>
       <div :class="{touch: !isDesktopDevice}"

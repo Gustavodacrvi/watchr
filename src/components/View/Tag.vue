@@ -141,7 +141,7 @@ export default {
   height: 22px;
   display: inline-flex;
   align-items: center;
-  padding: 8px 6px;
+  padding: 4px;
   position: relative;
   overflow: hidden;
   border-radius: 4px;

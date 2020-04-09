@@ -15,7 +15,6 @@ export default {
       
       const writes = []
 
-      const tod = mom()
       const init = mom(time, 'HH:mm')
 
       for (const t of tasks) {
@@ -54,6 +53,7 @@ export default {
       cacheBatchedItems(batch, writes)
 
       batch.commit()
+      return init.format('HH:mm')
     },
   },
 }

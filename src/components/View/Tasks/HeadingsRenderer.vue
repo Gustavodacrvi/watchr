@@ -130,7 +130,11 @@ export default {
         callback(this.$refs[headingId][1])
     },
     applyAutoSchedule(obj, calendarDate) {
-      this.forEachRenderer(vm => vm.applyAutoSchedule(obj, calendarDate))
+      let endTime = obj.time
+      this.forEachRenderer(vm => {
+        const res = vm.applyAutoSchedule({...obj, time: endTime}, calendarDate)
+        if (res) endTime = res
+      })
     },
     selectAll() {
       this.forEachRenderer(vm => vm.selectAll())

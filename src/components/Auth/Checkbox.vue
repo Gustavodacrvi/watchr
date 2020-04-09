@@ -1,6 +1,6 @@
 
 <template>
-  <div class="Checkbox cursor" :class="[{fade: !toggle}, deviceLayout]" @click="toggle = !toggle">
+  <div class="Checkbox cursor" :class="[{fade: !toggle, hasIcon: icon}, deviceLayout]" @click="toggle = !toggle">
       <Icon v-if="icon" class="behind-icon"
         :icon='icon'
         :color='color'
@@ -42,20 +42,24 @@ export default {
 <style scoped>
 
 .Checkbox.desktop {
-  min-height: 25px;
+  min-height: 20px;
 }
 
-.Checkbox.mobile {
+.Checkbox.mobile {  
   min-height: 35px;
 }
 
 .Checkbox {
-  padding: 0 26px;
+  padding: 0 6px;
   display: flex;
   align-items: center;
   transition-duration: .175s;
   position: relative;
   overflow: hidden;
+}
+
+.hasIcon {
+  padding-left: 20px;
 }
 
 .Checkbox:hover {

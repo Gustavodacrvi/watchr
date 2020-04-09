@@ -328,10 +328,10 @@ export default {
 <style scoped>
 
 .Profile.desktop {
-  flex-basis: 1050px;
+  flex-basis: 600px;
   margin-left: 12px;
   margin-right: 12px;
-  height: 600px;
+  height: 500px;
 }
 
 .Profile {
@@ -353,7 +353,7 @@ export default {
   position: sticky;
   left: 0;
   top: 0;
-  width: 300px;
+  width: 210px;
   height: 100%;
   background-color: var(--dark);
   border-top-right-radius: 14px;
@@ -402,7 +402,7 @@ export default {
 }
 
 .option {
-  height: 30px;
+  height: 22px;
   display: flex;
   align-items: center;
   padding: 0 18px;
@@ -413,6 +413,7 @@ export default {
 
 .mobile .option {
   display: inline-flex;
+  height: 30px;
 }
 
 .option:hover, .option.active {
