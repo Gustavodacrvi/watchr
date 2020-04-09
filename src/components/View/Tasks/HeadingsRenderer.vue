@@ -33,6 +33,7 @@
           :items='h.items'
           :headings='emptyHeadings'
           :isSmart='isSmart'
+          :rootItemsObj='newItemsObj'
           :mainFallbackItem='mainFallbackItem'
           :showAllHeadingsItems='showAllHeadingsItems'
           :itemIconDropOptions='itemIconDropOptions'
@@ -96,8 +97,8 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems'
-  , 'justAddedHeading', 'showingRuler', 'itemModelFallback',
+  props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'newItemsObj',
+  , 'justAddedHeading', 'showingRuler', 'itemModelFallback', 'rootItemsObj',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {

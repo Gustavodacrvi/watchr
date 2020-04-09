@@ -17,11 +17,14 @@
       @save='saveTimelineIncrement'
     />
     <transition name='new-items-t'>
-      <div v-if='isRoot && newItemsObj' class='new-items'>
+      <div v-if='isRoot && newItemsArr.length' class='new-items'>
         <span>
-          You have X new items.
+          You have {{ newItemsArr.length }} new items.
         </span>
-        <button class='new-items-btn'>
+        <button
+          class='new-items-btn'
+          @click='newItemsButtonClick'
+        >
           OK
         </button>
       </div>
@@ -64,7 +67,7 @@
           :viewType='viewType'
           :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
-          :newItemsObj='newItemsObj'
+          :newItemsObj='rootItemsObj || newItemsObj'
           :listRenderer='true'
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
@@ -151,6 +154,7 @@
       :headings='getHeadings'
       :headingEditOptions='headingEditOptions'
       :isSmart='isSmart'
+      :newItemsObj='newItemsObj'
       :comp='comp'
       :editComp='editComp'
       :itemIconDropOptions='itemIconDropOptions'
@@ -209,7 +213,7 @@ import utils from '@/utils/'
 export default {
   mixins: [autoScheduleMixin],
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
-  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback',
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback', 'rootItemsObj',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'newItemsViewAlert', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
@@ -251,6 +255,7 @@ export default {
       sourceVueInstance: null,
       justAddedHeading: false,
       isAddingHeadings: false,
+      newItemsStorageSave: false,
 
       completeAnimationStack: [],
       completeAnimationSettimeout: null,
@@ -384,8 +389,15 @@ export default {
         }
       })
     },
-      
 
+
+    newItemsButtonClick() {
+      this.saveNewItemsIds(this.allItemsIds)
+      this.newItemsStorageSave = !this.newItemsStorageSave
+    },
+    saveNewItemsIds(ids) {
+      localStorage.setItem(this.newItemStorageKey, JSON.stringify(ids))
+    },
     toggleCompletion(ids) {
       ids.forEach(id => this.findItem(id, vm => vm.toggleCompletion()))
       if (this.$refs.headings)
@@ -471,6 +483,9 @@ export default {
       } else {
         this.cameFromAnotherTab = false
       }
+    },
+    filterValidItemId(id) {
+      return id && id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined && id !== 'Headingcomponent eidt'
     },
     drop(evt) {
       try {
@@ -1078,8 +1093,10 @@ export default {
 
         const index = targetIndex || this.getListRendererPosition()
 
-        if (shouldRender)
+        if (shouldRender) {
+          this.saveNewItemsIds([...this.allItemsIds, t.id])
           this.lazyItems.splice(index, 0, t)
+        }
         this.addedItem = t.id
 
         this.addItem({
@@ -1112,7 +1129,7 @@ export default {
         if (el.dataset)
           ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined && id !== 'Headingcomponent eidt')
+        ids = ids.filter(this.filterValidItemId)
       return ids
     },
     contWrapper(el) {
@@ -1253,8 +1270,14 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    newItemStorageKey() {
+      return `watchr.listNewItemsIds-${this.viewType}-${this.viewName}`
+    },
     newItemsArr() {
-      const savedItems = JSON.parse(localStorage.getItem(`watchr.listNewItemsIds-${this.viewType}-${this.viewName}`) || "[]")
+      if (!this.newItemsViewAlert || !this.newItemsViewAlert.includes(this.viewName))
+        return []
+      this.newItemsStorageSave
+      const savedItems = JSON.parse(localStorage.getItem(this.newItemStorageKey) || "[]")
 
       return this.allItemsIds.filter(id => !savedItems.includes(id))
     },
@@ -1287,8 +1310,8 @@ export default {
     },
     allItemsIds() {
       if (!this.isRoot)
-        return this.getItems.map(el => el.id)
-      return [...this.getItems.map(el => el.id), ...this.headingsItemsIds].flat()
+        return this.getItems.map(el => el.id).filter(this.filterValidItemId)
+      return [...this.getItems.map(el => el.id), ...this.headingsItemsIds].flat().filter(this.filterValidItemId)
     },
     getMainSelectionIndex() {
       return this.lazyItems.findIndex(i => i.id === this.mainSelection)
@@ -1431,6 +1454,7 @@ export default {
   height: 28px;
   width: 100%;
   display: flex;
+  overflow: hidden;
   justify-content: space-between;
   align-items: center;
   padding: 0 6px;

@@ -20,7 +20,7 @@
           @mouseleave="onHover = false"
         >
           <div v-if="!dateType || !isValidMom" class="header">
-            <span>
+            <span class='name-wrapper'>
               <Icon v-if="hasProgress" class="icon"
                 icon="tasks"
                 :color='getHeadingColor'
@@ -485,13 +485,19 @@ export default {
 }
 
 .icon {
-  transform: translate(-5px, 3px);
+  transform: translate(-5px, 2px);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+}
+
+.name-wrapper {
+  display: flex;
+  align-items: center;  
   width: 100%;
 }
 

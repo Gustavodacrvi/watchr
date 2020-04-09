@@ -65,7 +65,7 @@ export default {
     },
     
     newItemsViewAlert() {
-      return ['Inbobx', 'Today']
+      return ['Inbox', 'Today']
     },
     updateHeadingIds() {
       const n = this.viewName
