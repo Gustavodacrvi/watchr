@@ -12,6 +12,7 @@
 
       :addItem='addTask'
       :showSomedayButton='showSomedayButton'
+      :newItemsViewAlert='newItemsViewAlert'
       :rootFilterFunction='rootFilterFunction'
       :headingEditOptions='headingEditOptions'
       :itemIconDropOptions='taskIconDropOptions'
@@ -59,7 +60,7 @@ export default {
   ],
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
-    'pipeFilterOptions', 'showCompleted', 'showSomeday', 
+    'pipeFilterOptions', 'showCompleted', 'showSomeday', 'newItemsViewAlert',
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
     'calendarDate', 'updateViewIds', 'showingRuler', 'itemModelFallback',
     'width', 'disableRootActions', 'fallbackFunctionData',

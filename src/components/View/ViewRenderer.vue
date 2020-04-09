@@ -71,6 +71,7 @@
           :showCompleted='showCompleted'
           :showSomeday='passSomedayTasks'
           :pipeFilterOptions='pipeFilterOptions'
+          :newItemsViewAlert='newItemsViewAlert'
           :taskIconDropOptions='taskIconDropOptions'
           :filterByAssigned='filterByAssigned'
           :showingRuler='showingRuler'
@@ -144,7 +145,7 @@ export default {
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'calendarDate', 'viewItem', 'itemModelFallback',
-  'showHeading', 'viewComponent',
+  'showHeading', 'viewComponent', 'newItemsViewAlert',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
   components: {

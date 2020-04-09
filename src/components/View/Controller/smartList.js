@@ -64,7 +64,9 @@ export default {
       }
     },
     
-    
+    newItemsViewAlert() {
+      return ['Inbobx', 'Today']
+    },
     updateHeadingIds() {
       const n = this.viewName
       if (this.isFixedHeadingsView)

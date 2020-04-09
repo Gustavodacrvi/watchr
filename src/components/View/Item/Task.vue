@@ -48,6 +48,14 @@
     </template>
 
     <template v-slot:before-name>
+      <Icon v-if="isNewItem"
+        class="name-icon"
+        key='new-item-icon'
+      
+        icon='circle-full-filled'
+        color='var(--yellow)'
+        width='9px'
+      />
       <span v-if="logStr && !showCheckDate"
         key='check-date'
         class="check-date"
@@ -163,12 +171,15 @@ import utilsMoment from "@/utils/moment"
 
 import { mapGetters, mapState } from 'vuex'
 
+import templateMixin from "@/mixins/itemTemplate"
+
 import mom from 'moment'
 
 const tod = mom()
 const TOD_DATE = tod.format('Y-M-D')
 
 export default {
+  mixins: [templateMixin],
   props: [
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',

@@ -16,6 +16,16 @@
       v-model="timelineIncrement"
       @save='saveTimelineIncrement'
     />
+    <transition name='new-items-t'>
+      <div v-if='isRoot && newItemsObj' class='new-items'>
+        <span>
+          You have X new items.
+        </span>
+        <button class='new-items-btn'>
+          OK
+        </button>
+      </div>
+    </transition>
     <transition-group
       appear
       :css='false'
@@ -54,6 +64,7 @@
           :viewType='viewType'
           :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
+          :newItemsObj='newItemsObj'
           :listRenderer='true'
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
@@ -199,7 +210,7 @@ export default {
   mixins: [autoScheduleMixin],
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback',
-  'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
+  'rootHeadings', 'viewType', 'itemIconDropOptions', 'newItemsViewAlert', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
@@ -1242,6 +1253,14 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    newItemsArr() {
+      const savedItems = JSON.parse(localStorage.getItem(`watchr.listNewItemsIds-${this.viewType}-${this.viewName}`) || "[]")
+
+      return this.allItemsIds.filter(id => !savedItems.includes(id))
+    },
+    newItemsObj() {
+      return this.newItemsArr.reduce((obj, id) => ({...obj, [id]: true}), {})
+    },
     showTimelineRuler() {
       return this.comp === "Task" && this.calendarDate && this.showingRuler && this.selected.length > 0 && this.selected.every(id => this.getItems.some(item => item.id === id))
     },
@@ -1404,6 +1423,46 @@ export default {
   height: 25px;
   background-color: var(--sidebar-color);
   transition: transform .175s;
+}
+
+.new-items {
+  background-color: rgba(255, 255, 77, .2);
+  color: var(--yellow);
+  height: 28px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 4px;
+  opacity: 1;
+  border: 1px solid var(--yellow);
+  transition-duration: .2s;
+  margin-top: 65px;
+}
+
+.new-items-btn {
+  background-color: var(--yellow);
+  color: var(--dark);
+  border-radius: 4px;
+  padding: 1px 8px;
+  transition-duration: .2s;
+}
+
+.new-items-btn:hover {
+  background-color: white;
+}
+
+.new-items-t-enter, .new-items-t-leave-to {
+  opacity: 0;
+  height: 0;
+  margin-top: 0;
+}
+
+.new-items-t-leave, .new-items-t-enter-to {
+  opacity: 1;
+  height: 28px;
+  margin-top: 65px;
 }
 
 .mobile .illustration {

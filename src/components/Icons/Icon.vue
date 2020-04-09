@@ -72,6 +72,7 @@ import fadedLoggedLists from '@/assets/icons/faded-logged-lists.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 import paperPlane from '@/assets/icons/paper-plane.svg'
 import laterLists from '@/assets/icons/later-lists.svg'
+import circleFullFilled from '@/assets/icons/circle-full-filled.svg'
 import group from '@/assets/icons/group.svg'
 import moon from '@/assets/icons/moon.svg'
 import crown from '@/assets/icons/crown.svg'
@@ -88,6 +89,7 @@ const icons = {
   comment, logbook, moon, tint, duration,
   next,
   "later-lists": laterLists,
+  "circle-full-filled": circleFullFilled,
   "heading-slash": headingSlash,
   "logged-lists": loggedLists,
   "faded-logged-lists": fadedLoggedLists,

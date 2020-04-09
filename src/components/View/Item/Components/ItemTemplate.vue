@@ -94,7 +94,7 @@ export default {
     ItemCont, CommentCounter,
   },
   props: [
-    'itemHeight', 'item', 'editRawPlaceholder', 'isAdding',
+    'itemHeight', 'item', 'editRawPlaceholder', 'isAdding', 
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
     'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
     'editComponent', 'itemModelFallback', 'listRenderer', 'showInfo',

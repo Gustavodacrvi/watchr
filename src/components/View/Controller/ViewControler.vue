@@ -11,6 +11,7 @@
     :icon='icon'
     :showEmptyHeadings='showEmptyHeadings'
     :updateHeadingIds='updateHeadingIds'
+    :newItemsViewAlert='newItemsViewAlert'
     :headingEditOptions='headingEditOptions'
     :headerOptions='headerOptions'
     :notes='getViewNotes'
