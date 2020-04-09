@@ -117,6 +117,13 @@
             <ButtonVue type="no-padding" value="Show someday items..."/>
           </div>
         </transition>
+        <transition name="fade-t">
+          <div v-if="computedShowArchivedHeadings && !isElementFromAnotherTabHovering"
+            @click="showArchived = true"
+          >
+            <ButtonVue type="no-padding" value="Show archived headings..."/>
+          </div>
+        </transition>
         <ButtonVue v-if="showMoreItemsButton && !isElementFromAnotherTabHovering"
           type="no-padding"
           :value='showMoreItemsMessage'
@@ -248,6 +255,7 @@ export default {
       lazyItemsSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
       oldRemovedIndicies: [],
+      showArchived: false,
       cameFromAnotherTab: false,
       cameFromAnotherTabIndex: null,
 
@@ -438,7 +446,12 @@ export default {
       this.addEditComp(this.nonEditGetItems.length)
     },
     filterHeading(h) {
-      if (this.showHeading && this.showHeading(h)) {
+      const showArchivedHeading = this.isSmart || this.showArchived || !h.archive
+      if (!showArchivedHeading)
+        return false
+      if (
+        this.showHeading && this.showHeading(h)
+      ) {
         return true
       }
 
@@ -1335,6 +1348,9 @@ export default {
     nonEditItems() {
       return this.items.filter(el => !el.isEdit)
     },
+    computedShowArchivedHeadings() {
+      return this.isRoot && !this.isSmart && this.hasArchivedHeading && !this.showArchived
+    },
     computedShowSomedayButton() {
       return this.isRoot & this.showSomedayButton
     },
@@ -1343,6 +1359,9 @@ export default {
     },
     showMoreItemsButton() {
       return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditItems.length > 3
+    },
+    hasArchivedHeading() {
+      return this.lazyHeadings.some(h => h.archive)
     },
     getHeadings() {
       return this.lazyHeadings.filter(this.filterHeading)

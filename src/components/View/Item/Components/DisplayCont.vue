@@ -202,7 +202,7 @@ export default {
   flex-direction: column;
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: calc(100% - 10px);
 }
 
 .name-wrapper {

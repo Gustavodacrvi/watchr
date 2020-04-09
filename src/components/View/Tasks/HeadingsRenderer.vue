@@ -17,6 +17,7 @@
         :headingEditOptions='headingEditOptions'
         :color='h.color ? h.color : ""'
         :options='h.options'
+        :archive='h.archive'
         :autoSchedule='h.autoSchedule'
         :length='getContHeight(h)'
 
@@ -227,6 +228,8 @@ export default {
 
       const s = vm.$refs['header-wrapper'].style
 
+      const heading = this.headings.find(head => head.id === el.dataset.id) || {}
+
       const isFirst = this.headings[0].id === el.dataset.id
 
       s.transitionDuration = 0
@@ -236,7 +239,7 @@ export default {
       s.height = 0
       s.margin = 0
       s.padding = 0
-      s.borderBoddom = '0px solid var(--back-color)'
+      s.borderBottom = `0px ${heading.archive ? "dashed" : "solid"} var(--back-color)`
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.175s'
@@ -246,7 +249,7 @@ export default {
         if (!isFirst)
           w.marginTop = '65px'
         s.height = '25px'
-        s.borderBottom = '1px solid var(--light-gray)'
+        s.borderBottom = `1px ${heading.archive ? "dashed" : "solid"} var(--light-gray)`
         w.opacity = 1
         s.padding = '0 4px'
         s.overflow = 'visible'
@@ -266,6 +269,8 @@ export default {
       const s = vm.$refs['header-wrapper'].style
       let c = vm.$refs['cont'].style
 
+      const heading = this.headings.find(head => head.id === el.dataset.id) || {}
+
       const isFirst = this.headings[0].id === el.dataset.id
 
       if (c)
@@ -277,7 +282,7 @@ export default {
       if (!isFirst)
         w.marginTop = '65px'
       s.height = '25px'
-      s.borderBottom = '1px solid var(--light-gray)'
+      s.borderBottom = `1px ${heading.archive ? "dashed" : "solid"} var(--light-gray)`
       w.height = el.offsetHeight + 'px'
       w.opacity = 1
       s.padding = '0 4px'
@@ -300,7 +305,7 @@ export default {
         s.overflow = 'hidden'
         s.margin = 0
         s.padding = 0
-        s.borderBoddom = '0px solid var(--back-color)'
+        s.borderBoddom = `0px ${heading.archive ? "dashed" : "solid"} var(--back-color)`
   
         setTimeout(done, 175)
       })

@@ -7,7 +7,7 @@
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
         <div class="header-wrapper handle remove-highlight" key="wr"
-          :class="{notRendering: !renderCont}"
+          :class="{notRendering: !renderCont, archive}"
           ref='header-wrapper'
         
           @click.stop="click"
@@ -35,7 +35,9 @@
               <h3 class="name" :class="{hasIcon}" :style="{color: getHeadingColor}">{{ name }}</h3>
             </span>
             <template v-if="icons">
-              <span v-for="i in icons" :key="i.name">
+              <span v-for="i in icons" :key="i.name"
+                @click.stop
+              >
                 <Icon
                   class="hover primary-hover cursor"
                   :color='i.color'
@@ -43,7 +45,7 @@
                   :icon='i.icon'
                   :box='true'
                   boxColor='var(--sidebar-color)'
-                  @click="openOptions(i.options)"
+                  @click="i.click ? i.click() : openOptions(i.options)"
                 />
               </span>
             </template>
@@ -111,7 +113,7 @@ export default {
   mixins: [
     Defer(),
   ],
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon', 'nonFiltered', 'autoSchedule', 'icons'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon', 'nonFiltered', 'autoSchedule', 'icons', 'archive'],
   components: {
     CalendarEvents,
     EditHeading: EditVue,
@@ -141,7 +143,7 @@ export default {
   },
   methods: {
     openOptions(opt) {
-      this.$store.commit('pushIconDrop', opt)
+      this.$store.commit('pushIconDrop', opt || null)
     },
     keydown({key}) {
       if (key === "Enter")
@@ -463,12 +465,16 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 0px;
-  border-bottom: 1px solid var(--light-gray);
+  border-bottom: 1px solid var(--light-gray) !important;
   height: 25px;
   opacity: 1;
   z-index: 50;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+}
+
+.archive {
+  border-bottom: 1px dashed var(--light-gray) !important;
 }
 
 .header-wrapper:hover {
