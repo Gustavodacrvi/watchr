@@ -7,7 +7,8 @@
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
         <div class="header-wrapper handle remove-highlight" key="wr"
-          :class="{notRendering: !renderCont}"
+          :class="{notRendering: !renderCont, archive}"
+          ref='header-wrapper'
         
           @click.stop="click"
           @touchstart.passive='touchStart'
@@ -19,12 +20,12 @@
           @mouseleave="onHover = false"
         >
           <div v-if="!dateType || !isValidMom" class="header">
-            <span>
+            <span class='name-wrapper'>
               <Icon v-if="hasProgress" class="icon"
                 icon="tasks"
                 :color='getHeadingColor'
                 :progress="progress"
-                width='10px'
+                width='7px'
               />
               <Icon v-else-if="icon" class="icon"
                 :icon='icon'
@@ -34,7 +35,9 @@
               <h3 class="name" :class="{hasIcon}" :style="{color: getHeadingColor}">{{ name }}</h3>
             </span>
             <template v-if="icons">
-              <span v-for="i in icons" :key="i.name">
+              <span v-for="i in icons" :key="i.name"
+                @click.stop
+              >
                 <Icon
                   class="hover primary-hover cursor"
                   :color='i.color'
@@ -42,7 +45,7 @@
                   :icon='i.icon'
                   :box='true'
                   boxColor='var(--sidebar-color)'
-                  @click="openOptions(i.options)"
+                  @click="i.click ? i.click() : openOptions(i.options)"
                 />
               </span>
             </template>
@@ -68,7 +71,7 @@
 
           @leave='leaveCont'
         >
-          <div v-if="renderCont" class="cont">
+          <div v-if="renderCont" class="cont" ref='cont'>
             <slot></slot>
           </div>
         </transition>
@@ -110,7 +113,7 @@ export default {
   mixins: [
     Defer(),
   ],
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon', 'nonFiltered', 'autoSchedule', 'icons'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'dateType', 'calendarEvents', 'headingEditOptions', 'save', 'notes', 'progress', 'icon', 'nonFiltered', 'autoSchedule', 'icons', 'archive'],
   components: {
     CalendarEvents,
     EditHeading: EditVue,
@@ -140,7 +143,7 @@ export default {
   },
   methods: {
     openOptions(opt) {
-      this.$store.commit('pushIconDrop', opt)
+      this.$store.commit('pushIconDrop', opt || null)
     },
     keydown({key}) {
       if (key === "Enter")
@@ -229,7 +232,7 @@ export default {
     
     bindOptions() {
       if (this.isDesktopDevice) {
-        const header = this.$el.getElementsByClassName('header-wrapper')[0]
+        const header = this.$refs['header-wrapper']
         if (header)
           utils.bindOptionsToEventListener(header, this.options(this.nonFiltered, this.autoSchedule), this)
       }
@@ -400,6 +403,23 @@ export default {
 
 </script>
 
+<style>
+
+.Heading.sortable-ghost .header,
+.Heading.sortable-ghost .ItemTemplate,
+.Heading.sortable-ghost .CheckIcon {
+  visibility: hidden;
+  opacity: 0;
+  transition: none !important;
+  transition-duration: none !important;
+}
+
+.Heading.sortable-ghost .header-wrapper {
+  background-color: var(--sidebar-color) !important;
+}
+
+</style>
+
 <style scoped>
 
 .icons {
@@ -445,13 +465,16 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 0px;
-  border-bottom: 1px solid var(--light-gray);
+  border-bottom: 1px solid var(--light-gray) !important;
   height: 25px;
   opacity: 1;
   z-index: 50;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  transition: background-color .175s;
+}
+
+.archive {
+  border-bottom: 1px dashed var(--light-gray) !important;
 }
 
 .header-wrapper:hover {
@@ -468,13 +491,19 @@ export default {
 }
 
 .icon {
-  transform: translate(-5px, 3px);
+  transform: translate(-5px, 2px);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+}
+
+.name-wrapper {
+  display: flex;
+  align-items: center;  
   width: 100%;
 }
 
@@ -516,10 +545,6 @@ export default {
 
 .sortable-ghost .header-wrapper {
   border-bottom: none !important;
-}
-
-.sortable-ghost .header {
-  display: none;
 }
 
 </style>

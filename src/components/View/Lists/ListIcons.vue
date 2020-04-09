@@ -8,16 +8,16 @@
     <Icon v-if="props.re && !props.se" class="tra-icon cursor remove-highlight" key="0"
       icon="repeat"
       :color='props.color'
-      width="8px"
+      width="12px"
     />
     <Icon v-else-if="!props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="1"
       icon="pie"
-      width="8px"
+      width="6px"
       :progress='props.progress'
     />
     <Icon v-else-if="props.ca && !props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="2"
       icon="circle-close"
-      width='8px'
+      width='12px'
     />
     <Icon v-else-if="props.co && !props.se && !props.so" class="tra-icon cursor remove-highlight" key="3"
       icon="circle-check-filled"

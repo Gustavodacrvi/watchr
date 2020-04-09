@@ -19,7 +19,7 @@
             <Icon class="icon"
               :icon='l.icon.name'
               :color='l.icon.color'
-              width='16px'
+              width='13px'
             />
           </span>
           {{ l.name }}
@@ -67,8 +67,7 @@ export default {
 }
 
 .option:hover {
-  background-color: rgba(87,160,222,.1) !important;
-  color: var(--primary);
+  background-color: var(--light-gray);
 }
 
 .name-wrapper {
@@ -82,8 +81,8 @@ export default {
 }
 
 .icon {
-  margin-right: 8px;
-  transform: translateY(3px);
+  margin-right: 4px;
+  transform: translateY(1px);
 }
 
 .hasIcon {
@@ -91,7 +90,7 @@ export default {
 }
 
 .info {
-  font-size: .9em;
+  font-size: .95em;
   opacity: .8;
 }
 

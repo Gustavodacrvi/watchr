@@ -17,7 +17,7 @@
         <transition
           name="bar-trans"
         >
-          <div v-if="!isDesktopBreakPoint || showing" class="sidebar-content">
+          <div v-if="showSidebarStuff && (!isDesktopBreakPoint || showing)" class="sidebar-content">
             <transition
               :name='isScheduling ? "mr": "ml"'
             >
@@ -37,7 +37,7 @@
                   :mapNumbers='numberOfTasks'
                   @update='update'
                 />
-                <div v-if='showFavorites' style="margin-top: 18px"></div>
+                <div class='favorites-div' :class='{showFavorites}'></div>
                 <SidebarRenderer v-if="showFavorites"
                   :enableSort='true'
                   :disabled='false'
@@ -92,21 +92,20 @@
         </transition>
         <SidebarFooter
           :class="[layout]"
-          :render='showing'
+          :render='showing && showSidebarStuff'
           :style="{width}"
           :slimMode='slimMode'
           :showIconDropdown='showIconDropdown'
           :scheduling='isScheduling'
           :getSectionOptions='getSectionOptions'
           :sideIcons='sideIcons'
-          @toggle-sidebar='toggleSidebar'
           @toggle-scheduling='toggleScheduling'
         />
       </div>
     </div>
-    <div v-if="isDesktopBreakPoint && !sidebarHided && !removeHandle"
+    <div v-if="isDesktopBreakPoint && !removeHandle"
       class="sidebar-handle passive"
-      :class="{sidebarHover}"
+      :class="{sidebarHover, sidebarHided}"
       :style="sidebarHandle"
 
       @pointerdown.prevent='pointerdown'
@@ -137,7 +136,7 @@ import utilsGroup from '@/utils/group'
 export default {
   props: ['value', 'width', 'sidebarHided', 'pressingHandle',
     'disableSearch', 'removeHandle', 'removeBacklayer',
-    'slimMode',
+    'slimMode', 'MINIMUM_WIDTH',
   ],
   components: {
     SidebarElement: SidebarElementVue,
@@ -268,9 +267,6 @@ export default {
       }
       return obj[name]
     },
-    toggleSidebar() {
-      this.$emit('sidebar')
-    },
     scroll(num) {
       this.$el.scrollTop += num
     },
@@ -364,6 +360,9 @@ export default {
       favGroups: 'group/getFavoriteGroups',
       favTags: 'tag/getFavoriteTags',
     }),
+    showSidebarStuff() {
+      return parseInt(this.width, 10) > this.MINIMUM_WIDTH
+    },
     isScheduling() {
       return !this.slimMode && this.scheduling
     },
@@ -538,7 +537,7 @@ export default {
     },
     Lists() {
       const dispatch = this.$store.dispatch
-      const arr = [
+/*       const arr = [
         {
           name: 'Import from template',
           icon: 'import',
@@ -561,23 +560,42 @@ export default {
             }).catch(bug)
           }
         },
-        {
-          name: 'Add folder',
-          icon: 'folder',
-          callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
-        },
-        {
-          name: 'Add group',
-          icon: 'group',
-          callback: () => dispatch('pushPopup', {comp: 'AddGroup', naked: true}),
-        },
-        {
-          name: 'Add list',
-          icon: 'tasks',
-          callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),
-        },
-      ]
-      return arr
+      ] */
+      return {
+        comp: 'InfoList',
+        content: {
+          width: '200px',
+          links: [
+            {
+              name: 'Add folder',
+              icon: {
+                name: 'folder',
+                color: 'var(--txt)',
+              },
+              info: `Keep your lists and tasks organized using folders.`,
+              callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
+            },
+            {
+              name: 'Add group',
+              icon: {
+                name: 'group',
+                color: 'var(--yellow)',
+              },
+              info: `Share and assign your tasks and lists to other users.`,
+              callback: () => dispatch('pushPopup', {comp: 'AddGroup', naked: true}),
+            },
+            {
+              name: 'Add list',
+              icon: {
+                name: 'tasks',
+                color: 'var(--primary)',
+              },
+              info: `Divide and conquer your tasks, you can also group them using headings.`,
+              callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),
+            },
+          ],
+        }
+      }
     },
     Filters() {
       const dispatch = this.$store.dispatch
@@ -621,7 +639,7 @@ export default {
   background-color: var(--card);
   width: 5px;
   height: 145px;
-  margin-left: 5px;
+  margin-left: 6px;
   top: 50%;
   border-radius: 100px;
   transform: translateY(-50%);
@@ -631,13 +649,19 @@ export default {
   transition: opacity .175s, background-color .175s, width .175s, transform .175s;
 }
 
+.sidebar-handle.sidebarHided {
+  margin-left: 30px;
+  opacity: 1;
+  background-color: var(--extra-light-gray);
+}
+
 .sidebar-handle.sidebarHover {
   opacity: 1 !important;
 }
 
 .sidebar-handle:hover {
   cursor: grab;
-  background-color: var(--light-gray);
+  background-color: var(--extra-light-gray);
   width: 9px;
   transform: translate(-2px, -50%);
 }
@@ -671,6 +695,15 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+.favorites-div {
+  transition-duration: .2x;
+  margin: 0;
+}
+
+.favorites-div.showFavorites {
+  margin-top: 18px;
 }
 
 .inner-wrapper {
@@ -811,7 +844,7 @@ export default {
 }
 
 .bar-trans-enter-to {
-  transition-delay: .6s;
+  transition-delay: .4s;
 }
 
 .component {

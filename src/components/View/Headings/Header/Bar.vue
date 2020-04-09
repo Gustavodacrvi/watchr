@@ -5,11 +5,12 @@
     @click="click"
   >
     <Icon class="icon"
+      :class="{progress: progress !== undefined}"
       :icon="getIcon"
       :color="getIconColor"
       :progress='progress'
       :shadow='true'
-      :width="isDesktopBreakPoint ? (!progress ? '22px' : '15px') : '30px'"
+      :width="isDesktopBreakPoint ? ((progress === undefined) ? '18px' : '14px') : '30px'"
       @click="openMenu"
       :style="{filter: `drop-shadow(0 0 ${isDesktopBreakPoint ? 15 : 5}px ${getIconColor})`}"
     />
@@ -172,11 +173,17 @@ export default {
 .icon {
   position: relative;
   z-index: 2;
-  margin-right: 16px;
+  margin-right: 6px;
+  transform: translateY(.5px);
+}
+
+.progress {
+  margin-right: 10px;
+  transform: translateY(2px);
 }
 
 .comp-icon {
-  margin-left: 8px;
+  margin-left: 4px;
   transform: translateY(2.5px);
 }
 

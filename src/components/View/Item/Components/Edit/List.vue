@@ -2,6 +2,8 @@
 <script>
 
 import EditBuilder from './EditBuilder.js'
+import taskUtils from "@/utils/task"
+import utils from "@/utils/"
 
 import { mapGetters } from 'vuex'
 
@@ -83,6 +85,12 @@ export default EditBuilder({
         model.notes = ''
         model.name = ''
       },
+      addModelTag(id) {
+        if (!this.model.tags)
+          this.model.tags = []
+        if (!this.model.tags.some(e => e === id))
+          this.model.tags.push(id)
+      },
     },
     computed: {
       ...mapGetters({
@@ -144,6 +152,9 @@ export default EditBuilder({
         if (!this.model.group)
           arr.push(this.getSmartIconTags)
 
+        if (this.model.assigned)
+          tags.push(this.getAssigneTagObj)
+
         if (!this.model.color)
           arr.push({
             id: 'duration_clock',
@@ -171,6 +182,11 @@ export default EditBuilder({
               list: this.calendarOptions,
             },
           })
+
+        const listObj = this.getListObj
+
+        if (!this.model.assigned && listObj && (listObj.group || this.model.group))
+          arr.unshift(this.getAssigneSmartIconObj)
         
 
         return arr
@@ -238,6 +254,50 @@ export default EditBuilder({
           })
 
         return arr.concat(this.model.group ? [] : this.getTagsLabels)
+      },
+    },
+    watch: {
+      'model.name'() {
+        const n = this.model.name
+        let changedOptions = false
+
+        const send = arr => this.$emit('set-first-field-options', arr) // Show options array dropdown
+        // this.currentPrefix - Used when selecting an options array element
+
+        const match = (prefix, arr, onFind) => {
+          const didChange = this.match(n, prefix, arr, onFind)
+          if (didChange)
+            changedOptions = true
+        }
+
+        match('#', this.tags, tag => this.addModelTag(tag.id))
+        match('$', this.folders, folder => {
+          this.model.folder = folder.id || null
+          this.model.group = null
+          this.model.assigned = null
+        })
+        match('%', this.groups, group => {
+          this.model.folder = null
+          this.model.group = group.id || null
+          this.model.assigned = null
+        })
+
+        if (!this.isFirstEdit) {
+          const res = utils.calendarObjNaturalCalendarInput(n, this.userInfo.disablePmFormat)
+          this.toReplace = res.matches
+          if (res && res.calendar) {
+            this.model.calendar = res.calendar
+            this.fromDefaultItem = false
+            this.fromIconDrop = null
+          } else if (!this.fromIconDrop && !this.fromDefaultItem) {
+            this.fromDefaultItem = false
+            this.model.calendar = null
+          }
+        }
+
+        if (!changedOptions) send([])
+        if (this.model.name !== this.value)
+          this.$emit('input', this.model.name)
       },
     },
   },

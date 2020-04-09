@@ -11,7 +11,27 @@
         <Icon :icon='(icon === "logged-lists" ? "faded-logged-lists" : icon)' color='var(--sidebar-color)' width="100px"/>
       </div>
     </transition>
-    <div
+    <TimelineRuler v-if='showTimelineRuler'
+      key='TIMELINE_RULER'
+      v-model="timelineIncrement"
+      @save='saveTimelineIncrement'
+    />
+    <transition name='new-items-t'>
+      <div v-if='isRoot && newItemsArr.length' class='new-items'>
+        <span>
+          You have {{ newItemsArr.length }} new items.
+        </span>
+        <button
+          class='new-items-btn'
+          @click='newItemsButtonClick'
+        >
+          OK
+        </button>
+      </div>
+    </transition>
+    <transition-group
+      appear
+      :css='false'
       class="front item-renderer-root"
       :class="{isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
@@ -25,9 +45,13 @@
       @dragover='dragover'
       @drop='drop'
       @dragleave.stop
+
+      @enter='enter'
+      @leave='leave'
     >
       <template v-for="item of getItems">
-        <div v-if='item.cameFromAnotherTab' :key="item.cameFromAnotherTab + 'fdskçalsdf'"
+        <div v-if='item.cameFromAnotherTab'
+          :key="item.cameFromAnotherTab + 'fdskçalsdf'"
           class='cameFromAnotherTab-ghost rb'
         >
 
@@ -43,12 +67,12 @@
           :viewType='viewType'
           :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
+          :newItemsObj='rootItemsObj || newItemsObj'
           :listRenderer='true'
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
           :comp='comp'
           :movingItem='movingItem'
-          :waitForAnotherItemComplete='waitForAnotherTaskCompleteAnimation'
 
           @de-select='deSelectItem'
           @select='selectItem'
@@ -56,14 +80,16 @@
           @add-heading-after='addHeadingAfterSelection'
           @go='moveItemHandlerSelection'
 
-
           :data-id='item.id'
           :data-name='item.name'
           :data-type='comp'
+          data-transition='display'
         />
         <component v-else
           :is='item.editComp || editComp'
           :key="item.isEdit + 'component eidt'"
+          :ref="item.isEdit + 'component eidt'"
+          :data-id="item.isEdit + 'component eidt'"
 
           v-bind='item.propsData'
           :focusToggle='focusToggle'
@@ -73,19 +99,15 @@
           :listRenderer='true'
           :fallbackItem='fallbackItem'
 
-          :data-id='item.isEdit'
-
           @save='item.onSave'
           @goup='moveEdit(-1)'
           @godown='moveEdit(1)'
           @cancel='removeEdit'
+          data-transition='edit'
         />
       </template>
-      <TimelineRuler v-if='showTimelineRuler'
-        v-model="timelineIncrement"
-        @save='saveTimelineIncrement'
-      />
       <div v-if="!moving && !hasEdit"
+        key='LIST_IFON_SHOWSOMEDAYiTEMS'
         class='list-info'
       >
         <transition name="fade-t">
@@ -93,6 +115,13 @@
             @click="$emit('allow-someday')"
           >
             <ButtonVue type="no-padding" value="Show someday items..."/>
+          </div>
+        </transition>
+        <transition name="fade-t">
+          <div v-if="computedShowArchivedHeadings && !isElementFromAnotherTabHovering"
+            @click="showArchived = true"
+          >
+            <ButtonVue type="no-padding" value="Show archived headings..."/>
           </div>
         </transition>
         <ButtonVue v-if="showMoreItemsButton && !isElementFromAnotherTabHovering"
@@ -120,7 +149,7 @@
           </span>
         </div>
       </div>
-    </div>
+    </transition-group>
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
       ref='headings'
       
@@ -132,6 +161,7 @@
       :headings='getHeadings'
       :headingEditOptions='headingEditOptions'
       :isSmart='isSmart'
+      :newItemsObj='newItemsObj'
       :comp='comp'
       :editComp='editComp'
       :itemIconDropOptions='itemIconDropOptions'
@@ -190,8 +220,8 @@ import utils from '@/utils/'
 export default {
   mixins: [autoScheduleMixin],
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
-  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback',
-  'rootHeadings', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback', 'rootItemsObj',
+  'rootHeadings', 'viewType', 'itemIconDropOptions', 'newItemsViewAlert', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
     Task, ButtonVue, List, ListEdit,
@@ -225,6 +255,7 @@ export default {
       lazyItemsSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
       oldRemovedIndicies: [],
+      showArchived: false,
       cameFromAnotherTab: false,
       cameFromAnotherTabIndex: null,
 
@@ -232,6 +263,7 @@ export default {
       sourceVueInstance: null,
       justAddedHeading: false,
       isAddingHeadings: false,
+      newItemsStorageSave: false,
 
       completeAnimationStack: [],
       completeAnimationSettimeout: null,
@@ -270,23 +302,127 @@ export default {
     }
   },
   methods: {
+    enter(el, done) {
+      const id = el.dataset.id
+      const type = el.dataset.transition
+      if (!type || !id)
+        return done()
+
+      const isAdding = type !== 'display'
+
+      const vm = this.$refs[id][0].$refs.template
+
+      const cont = vm.$refs['cont-wrapper']
+      const s = cont.style
+      
+      s.transitionDuration = '0s'
+      s.height = 0
+      s.minHeight = 0
+      
+      if (isAdding) {
+        return requestAnimationFrame(() => {
+          s.transitionDuration = '.1s'
+          s.height = this.itemHeight + 'px'
+          setTimeout(() => {
+            s.transitionDuration = '.175s'
+            s.height = 'auto'
+            vm.isEditing = true
+            done()
+          }, 10)
+        })
+      }
+      const parentIds = this.disableItemEnterTransitionIds
+      
+      let disableTransition = false
+      if (parentIds.includes(id)) {
+        const i = parentIds.findIndex(id => id === id)
+        parentIds.splice(i, 1)
+        disableTransition = true
+      }
+
+      s.opacity = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = disableTransition ? 0 : '.175s'
+        s.opacity = 1
+        s.height = this.itemHeight + 'px'
+        s.minHeight = this.itemHeight + 'px'
+        
+        setTimeout(() => {
+          s.transitionDuration = '.175s'
+          s.height = 'auto'
+          done()
+        }, 201)
+      })
+    },
+    leave(el, done) {
+      const id = el.dataset.id
+      const type = el.dataset.transition
+      if (!id || !type || (type === 'edit'))
+        return done()
+
+      const vm = this.$refs[id][0].$refs.template
+
+      const cont = vm.$refs['cont-wrapper']
+      const parentIds = this.disableItemEnterTransitionIds
+      
+      let disableTransition = false
+      if (parentIds.includes(id)) {
+        const i = parentIds.findIndex(id => id === id)
+        parentIds.splice(i, 1)
+        disableTransition = true
+      }
+
+      const s = cont.style
+
+      s.transitionDuration = '0s'
+      s.opacity = 1
+      s.height = this.itemHeight + 'px'
+      s.minHeight = this.itemHeight + 'px'
+
+      const hideItem = () => {
+        s.transitionDuration = disableTransition ? 0 : '.175s'
+        s.opacity = 0
+        s.height = 0
+        s.minHeight = 0
+
+        setTimeout(done, disableTransition ? 0 : 201)
+      }
+
+      requestAnimationFrame(() => {
+        if (!vm.completeAnimation) {
+          hideItem()
+        } else {
+          this.waitForAnotherTaskCompleteAnimation(hideItem)
+        }
+      })
+    },
+
+
+    newItemsButtonClick() {
+      this.saveNewItemsIds(this.allItemsIds)
+      this.newItemsStorageSave = !this.newItemsStorageSave
+    },
+    saveNewItemsIds(ids) {
+      localStorage.setItem(this.newItemStorageKey, JSON.stringify(ids))
+    },
     toggleCompletion(ids) {
       ids.forEach(id => this.findItem(id, vm => vm.toggleCompletion()))
       if (this.$refs.headings)
         this.$refs.headings.toggleCompletion(ids)
     },
     findItem(id, callback) {
-      if (this.$refs[id] && this.$refs[id][0])
-        callback(this.$refs[id][0])
+      if (this.$refs[id] && this.$refs[id][0] && this.$refs[id][0].$refs.template)
+        callback(this.$refs[id][0].$refs.template)
     },
     applyAutoScheduleToHeading(info, headingId, calendarDate) {
       this.$refs.headings.applyAutoScheduleToHeading(info, headingId, calendarDate)
     },
     applyAutoSchedule(obj, calendarDate) {
       if (this.comp === 'Task') {
-        this.autoScheduleItems(this, calendarDate, obj, this.getItems)
         if (this.$refs.headings)
           this.$refs.headings.applyAutoSchedule(obj, calendarDate)
+        return this.autoScheduleItems(this, calendarDate, obj, this.getItems)
       }
     },
     saveTimelineIncrement() {
@@ -296,9 +432,10 @@ export default {
     },
     forEachItem(callback) {
       const keys = Object.keys(this.$refs)
-      for (const k of keys)
-        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].$el)
-          callback(this.$refs[k][0])
+      for (const k of keys) {
+        if (this.$refs[k] && this.$refs[k][0] && this.$refs[k][0].$refs.template &&  this.$refs[k][0].$el)
+          callback(this.$refs[k][0].$refs.template)
+      }
     },
     selectAll() {
       if (this.isRoot && this.$refs.headings)
@@ -309,7 +446,12 @@ export default {
       this.addEditComp(this.nonEditGetItems.length)
     },
     filterHeading(h) {
-      if (this.showHeading && this.showHeading(h)) {
+      const showArchivedHeading = this.isSmart || this.showArchived || !h.archive
+      if (!showArchivedHeading)
+        return false
+      if (
+        this.showHeading && this.showHeading(h)
+      ) {
         return true
       }
 
@@ -354,6 +496,9 @@ export default {
       } else {
         this.cameFromAnotherTab = false
       }
+    },
+    filterValidItemId(id) {
+      return id && id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined && id !== 'Headingcomponent eidt'
     },
     drop(evt) {
       try {
@@ -961,8 +1106,10 @@ export default {
 
         const index = targetIndex || this.getListRendererPosition()
 
-        if (shouldRender)
+        if (shouldRender) {
+          this.saveNewItemsIds([...this.allItemsIds, t.id])
           this.lazyItems.splice(index, 0, t)
+        }
         this.addedItem = t.id
 
         this.addItem({
@@ -995,7 +1142,7 @@ export default {
         if (el.dataset)
           ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined)
+        ids = ids.filter(this.filterValidItemId)
       return ids
     },
     contWrapper(el) {
@@ -1091,7 +1238,7 @@ export default {
         }
       }
 
-      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 14 : length * 5)
+      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 75 : length * 5)
 
       if (foundEdit) {
         const itemIndex = this.lazyItems.findIndex(el => el.id === this.addedItem)
@@ -1136,6 +1283,20 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    newItemStorageKey() {
+      return `watchr.listNewItemsIds-${this.viewType}-${this.viewName}`
+    },
+    newItemsArr() {
+      if (!this.newItemsViewAlert || !this.newItemsViewAlert.includes(this.viewName))
+        return []
+      this.newItemsStorageSave
+      const savedItems = JSON.parse(localStorage.getItem(this.newItemStorageKey) || "[]")
+
+      return this.allItemsIds.filter(id => !savedItems.includes(id))
+    },
+    newItemsObj() {
+      return this.newItemsArr.reduce((obj, id) => ({...obj, [id]: true}), {})
+    },
     showTimelineRuler() {
       return this.comp === "Task" && this.calendarDate && this.showingRuler && this.selected.length > 0 && this.selected.every(id => this.getItems.some(item => item.id === id))
     },
@@ -1162,8 +1323,8 @@ export default {
     },
     allItemsIds() {
       if (!this.isRoot)
-        return this.getItems.map(el => el.id)
-      return [...this.getItems.map(el => el.id), ...this.headingsItemsIds].flat()
+        return this.getItems.map(el => el.id).filter(this.filterValidItemId)
+      return [...this.getItems.map(el => el.id), ...this.headingsItemsIds].flat().filter(this.filterValidItemId)
     },
     getMainSelectionIndex() {
       return this.lazyItems.findIndex(i => i.id === this.mainSelection)
@@ -1187,14 +1348,20 @@ export default {
     nonEditItems() {
       return this.items.filter(el => !el.isEdit)
     },
+    computedShowArchivedHeadings() {
+      return this.isRoot && !this.isSmart && this.hasArchivedHeading && !this.showArchived
+    },
     computedShowSomedayButton() {
-      return this.isRoot & this.showSomedayButton && this.getItems.filter(el => !el.isEdit).length > 0
+      return this.isRoot & this.showSomedayButton
     },
     showMoreItemsMessage() {
       return `Show ${this.items.length - 3} more items...`
     },
     showMoreItemsButton() {
       return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditItems.length > 3
+    },
+    hasArchivedHeading() {
+      return this.lazyHeadings.some(h => h.archive)
     },
     getHeadings() {
       return this.lazyHeadings.filter(this.filterHeading)
@@ -1222,7 +1389,7 @@ export default {
         return this.pressingSelectKeys
     },
     draggableRoot() {
-      return this.$refs['item-renderer-root']
+      return this.$refs['item-renderer-root'].$el
     },
     showIllustration() {
       const getHeadings = this.getHeadings
@@ -1300,6 +1467,47 @@ export default {
   transition: transform .175s;
 }
 
+.new-items {
+  background-color: rgba(255, 255, 77, .2);
+  color: var(--yellow);
+  height: 28px;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 4px;
+  opacity: 1;
+  border: 1px solid var(--yellow);
+  transition-duration: .2s;
+  margin-top: 65px;
+}
+
+.new-items-btn {
+  background-color: var(--yellow);
+  color: var(--dark);
+  border-radius: 4px;
+  padding: 1px 8px;
+  transition-duration: .2s;
+}
+
+.new-items-btn:hover {
+  background-color: white;
+}
+
+.new-items-t-enter, .new-items-t-leave-to {
+  opacity: 0;
+  height: 0;
+  margin-top: 0;
+}
+
+.new-items-t-leave, .new-items-t-enter-to {
+  opacity: 1;
+  height: 28px;
+  margin-top: 65px;
+}
+
 .mobile .illustration {
   transform: translateX(-7px);
 }
@@ -1348,6 +1556,11 @@ export default {
   z-index: 2;
   height: 100%;
   transition-duration: .175s;
+  margin: 35px 0;
+}
+
+.isHeading .item-renderer-root {
+  margin: 0;
 }
 
 .heading-add {

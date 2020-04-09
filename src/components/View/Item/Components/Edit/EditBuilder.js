@@ -22,7 +22,7 @@ export default ({
   instance = {},
   props = [],
 }) => ({
-  props: ['item', 'firstFieldOptions', 'itemModelFallback', 'value', ...props],
+  props: ['item', 'firstFieldOptions', 'itemModelFallback', 'editAction', 'value', ...props],
   mixins: [FileMixin, EditBuilderMixin],
   data() {
     return {
@@ -47,6 +47,9 @@ export default ({
 
     if (instance.created)
       instance.created.apply(this)
+  },
+  mounted() {
+    this.handleEditAction()
   },
   beforeDestroy() {
     this.$store.commit('isEditing', false)
@@ -225,6 +228,10 @@ export default ({
     }, editChildren)
   },
   methods: {
+    handleEditAction() {
+      if (this.editAction)
+        this.editAction(this)
+    },
     save() {
       const model = this.beforeSave(this.model, this)
       if (model) {
@@ -557,6 +564,15 @@ export default ({
     ...(instance.computed || {}),
   },
   watch: {
+    model: {
+      deep: true,
+      handler() {
+        this.$emit('model', this.model)
+      },
+    },
+    editAction() {
+      this.handleEditAction()
+    },
     value() {
       if (value) {
         value(this.value, this)

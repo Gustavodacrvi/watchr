@@ -3,7 +3,7 @@
   font-size: .8em;
   display: inline-flex;
   white-space: nowrap;
-  padding: 3px 6px;
+  padding: 1px 4px;
   align-items: center;
   overflow: hidden;
   transition-duration: .175s;
@@ -24,6 +24,10 @@
 .icon {
   transform: translate(4px, 2px);
   opacity: .6;
+}
+
+.name-icon {
+  transform: translateY(1.5px);
 }
 
 .check-date {

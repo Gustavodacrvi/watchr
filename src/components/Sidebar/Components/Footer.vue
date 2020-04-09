@@ -43,9 +43,6 @@
             />
           </transition>
         </div>
-        <Icon v-if="isDesktopBreakPoint && !slimMode"
-          width='12px'
-          icon="arrow" id='sidebar-arrow' class="cursor passive primary-hover" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true"  @click="$emit('toggle-sidebar')"/>
       </div>
     </div>
   </div>
@@ -154,10 +151,10 @@ export default {
 
 .scheduler-toggle {
   position: absolute;
-  left: 50%;
+  left: -15px;
   user-select: none;
   top: 50%;
-  transform: translate(-50%, -50%) scale(1,1);
+  transform: translateY(-50%) scale(1,1);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -194,17 +191,6 @@ export default {
   display: flex;
   align-items: center;
   white-space: nowrap;
-}
-
-#sidebar-arrow {
-  position: absolute;
-  left: 3px;
-  transform: translateY(8px) rotate(90deg);
-  transition: opacity .3s, left .3s, transform .3s;
-}
-
-#sidebar-arrow.hided {
-  transform: translateY(8px) rotate(-90deg);
 }
 
 </style>

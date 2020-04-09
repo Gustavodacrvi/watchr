@@ -1105,7 +1105,7 @@ export default {
         tasks: ids, id: headindgId
       })
       headings.splice(index, 0, headindgId)
-      
+
       setList(b, {
         headings: listHeadings,
         headingsOrder: headings,

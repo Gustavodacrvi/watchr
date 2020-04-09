@@ -58,6 +58,7 @@ export default {
           createdFire: new Date(),
           created: mom().format('Y-M-D HH:mm ss'),
           ...newTag,
+          ...this.payload,
         })
         toast({
           name: `Tag added successfully!`,

@@ -26,7 +26,7 @@
         @dragleave='dragover = false'
         @drop='dragover = false'
       >
-        <div class="icon-wrapper" @click="clickIcon">
+        <div class="icon-wrapper" :class="{hasProgress: progress !== undefined}" @click="clickIcon">
           <Icon class="main-icon"
             :class="{cursor: icon === 'tasks', fadeIconColor}"
             :style="iconStyle"
@@ -73,7 +73,7 @@
         class="toggle-icon cursor remove-highlight primary-hover"
         :class="{showingSublist}"
         icon="tiny-arrow"
-        width="22px"
+        width="14px"
         :circle="true"
         @click="showingSublist = !showingSublist"
       />
@@ -261,7 +261,7 @@ export default {
       getAssignedTasksByList: 'task/getAssignedTasksByList',
     }),
     sublistHeight() {
-      return ((this.subList.length) * (this.isDesktopDevice ? 25 : 42)) + 'px'
+      return ((this.subList.length) * (this.isDesktopDevice ? 19 : 42)) + 'px'
     },
     hasSubList() {
       return this.subList && this.subList.length > 0
@@ -341,7 +341,7 @@ export default {
 }
 
 .desktop .toggle-icon {
-  left: -24px;
+  left: -14px;
 }
 
 .icon-wrapper {
@@ -349,6 +349,10 @@ export default {
   width: 22px;
   flex-shrink: 0;
   position: relative;
+}
+
+.hasProgress {
+  margin-top: 1px;
 }
 
 .inf-num {

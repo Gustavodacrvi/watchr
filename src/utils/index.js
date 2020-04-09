@@ -218,7 +218,7 @@ export default {
               content: {
                 msg: 'Start schedule from:',
                 callback: newTime => this.getScheduleIconDropObject({
-                  time: newTime, buffer, fallback,
+                  time: newTime, buffer, fallback, overwrite,
                 }, saveAutoSchedule, userInfo)
               }
             })
@@ -231,7 +231,7 @@ export default {
               comp: 'DurationPicker',
               content: {
                 callback: newBuffer => this.getScheduleIconDropObject({
-                  time, buffer: newBuffer, fallback,
+                  time, buffer: newBuffer, fallback, overwrite,
                 }, saveAutoSchedule, userInfo)
               }
             })
@@ -244,7 +244,7 @@ export default {
               comp: 'DurationPicker',
               content: {
                 callback: newFallback => this.getScheduleIconDropObject({
-                  time, buffer, fallback: newFallback,
+                  time, buffer, fallback: newFallback, overwrite,
                 }, saveAutoSchedule, userInfo)
               }
             })
@@ -851,13 +851,15 @@ export default {
 
     return {calendar: cal, matches}
   },
-  matchDuration(search) {
+  matchDuration(search, matches = []) {
     const getMatch = (regex, format) => {
       let match = search.match(regex)
       const getNum = str => parseInt(str, 10)
       
       if (match) {
         
+        if (match[0])
+          matches.push(match[0])
         match = getNum(match)
   
         if (!mom(match, format).isValid())
@@ -866,6 +868,7 @@ export default {
       return getNum(match)
     }
 
+    
     const hourMatch = getMatch(/(\d)(\d)?( )?(hour|h)/gi, 'HH')
     const minMatch = getMatch(/(\d)(\d)?( )?(minute|min|m)/gi, 'mm')
 
@@ -964,8 +967,13 @@ export default {
             if (type === 'object') {
               if (val && Array.isArray(val))
                 Vue.set(oldObj, k, val)
-              else if (val)
-                Vue.set(oldObj, k, {...oldObj[k], ...val})
+              else if (val) {
+                let final = Object.assign({}, oldObj[k], val)
+                Object.keys(final).forEach(key => {
+                    final[key] = (typeof final[key] === 'object') ? Object.assign(final[key], oldObj[k][key], val[key]) : final[key]
+                })
+                Vue.set(oldObj, k, final)
+              }
               else Vue.set(oldObj, k, null)
             } else {
               Vue.set(oldObj, k, val)

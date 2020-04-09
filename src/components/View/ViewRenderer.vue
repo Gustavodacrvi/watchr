@@ -71,6 +71,7 @@
           :showCompleted='showCompleted'
           :showSomeday='passSomedayTasks'
           :pipeFilterOptions='pipeFilterOptions'
+          :newItemsViewAlert='newItemsViewAlert'
           :taskIconDropOptions='taskIconDropOptions'
           :filterByAssigned='filterByAssigned'
           :showingRuler='showingRuler'
@@ -144,7 +145,7 @@ export default {
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'calendarDate', 'viewItem', 'itemModelFallback',
-  'showHeading', 'viewComponent',
+  'showHeading', 'viewComponent', 'newItemsViewAlert',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
   components: {
@@ -364,7 +365,7 @@ export default {
   
         const fallbackItems = this.fallbackSelected
 
-        if (!isTyping && (!this.mainSelection || this.mainSelectionIsNotInView)) {
+        if (!isTyping && !this.isEditingComp && (!this.mainSelection || this.mainSelectionIsNotInView)) {
           switch (key) {
             case 'ArrowDown': {
               this.go(true)

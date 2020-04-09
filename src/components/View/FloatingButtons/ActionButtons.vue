@@ -25,7 +25,7 @@
         >
           <Icon
             icon='inbox'
-            width='22px'
+            width='16px'
             color='white'
           />
         </div>
@@ -166,8 +166,8 @@ export default {
 <style scoped>
 
 .inbox-wrapper {
-  width: 55px;
-  height: 55px;
+  width: 45px;
+  height: 45px;
   display: flex;
   overflow: visible;
   position: relative;
@@ -175,7 +175,7 @@ export default {
 
 .inbox {
   background-color: var(--dark-void);
-  width: 55px;
+  width: 45px;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -185,7 +185,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 55px;
+  height: 45px;
   overflow: hidden;
   transition-duration: .175s;
 }

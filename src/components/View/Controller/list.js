@@ -128,6 +128,7 @@ export default {
       const viewList = this.viewList
       if (viewList) {
         const headings = this.$store.getters['list/getListHeadingsById'](viewList.id)
+        
         for (const h of headings) {
           const pipedFilter = task => this.isTaskInHeading(task, h)
 
@@ -138,7 +139,7 @@ export default {
               heading: obj,
             })
           }
-          
+
           arr.push({
             name: h.name,
             id: h.id,
@@ -146,9 +147,14 @@ export default {
             showHeadingName: false,
             notes: h.notes,
             calendarStr: true,
+            archive: h.archive,
 
             color: h.color,
             icons: [
+              {
+                icon: 'archive',
+                click: () => save({archive: !h.archive}),
+              },
               {
                 icon: 'tint',
                 color: h.color,

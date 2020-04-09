@@ -215,7 +215,7 @@ export default {
 <style scoped>
 
 .Shortcuts {
-  flex-basis: 1000px;
+  flex-basis: 600px;
 }
 
 .line {
