@@ -65,7 +65,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.175s'
         s.opacity = 1
-        s.height = '30px'
+        s.height = '22px'
 
         setTimeout(done, 205);
         
@@ -95,7 +95,7 @@ export default {
 .File {
   display: flex;
   align-items: center;
-  height: 30px;
+  height: 22px;
   transition-duration: .175s;
   position: relative;
   font-size: 1.075em;

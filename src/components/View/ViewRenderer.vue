@@ -12,6 +12,8 @@
       <Header
         v-bind="$props"
 
+        ref='header'
+
         :inclusiveTags='inclusiveTags'
         :exclusiveTags='exclusiveTags'
         :inclusivePriority='inclusivePriority'
@@ -24,6 +26,7 @@
         :exclusiveGroups='exclusiveGroups'
 
         :extraIcons='extraIcons'
+        :headerConfig='headerConfig'
 
         :removeHeaderTag='removeHeaderTag'
         :priorities='priorityOptions'
@@ -144,7 +147,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
-  'calendarDate', 'viewItem', 'itemModelFallback',
+  'calendarDate', 'viewItem', 'itemModelFallback', 'headerConfig',
   'showHeading', 'viewComponent', 'newItemsViewAlert',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],
@@ -227,6 +230,12 @@ export default {
     ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
 
+    addFiles(files) {
+      this.$refs.info.addFiles(files)
+    },
+    openNotes() {
+      this.$refs.info.openNotes()
+    },
     toggleRuler() {
       this.showingRuler = !this.showingRuler
       localStorage.setItem('showingRuler', this.showingRuler)

@@ -6,16 +6,10 @@
       @leave='leave'
       tag="div"
     >
-      <div v-if="headerInfo && (headerInfo.icons || hasFileHandler || headerInfo.comments)" class="icons">
+      <div v-if="headerInfo && (headerInfo.icons || headerInfo.comments)" class="icons">
         <HeaderInfo v-for="item in headerInfo.icons"
           :key="item.icon"
           v-bind="item"
-        />
-        <HeaderInfo v-if="hasFileHandler"
-          :key="hasFileHandler + 'asdf'"
-          icon='file'
-          title='Add file'
-          @add='getHeaderInfoFile'
         />
         <HeaderInfo v-if="headerInfo.comments"
           :key="'faskasdf' + false"
@@ -42,8 +36,10 @@
         />
       </div>
     </transition>
-    <Notes v-if="headerInfo && headerInfo.notes && headerInfo.notes.name !== undefined"
+    <Notes v-if="(focus || !isAddingNotes) && hasNotes"
+      v-model="focus"
       :notes='headerInfo.notes.name'
+      :focusOnMount='isAddingNotes'
       @save='headerInfo.notes.save'
     />
     <FileHandler v-if='hasFileHandler'
@@ -73,9 +69,24 @@ export default {
     FileHandler,
   },
   props: ['headerInfo'],
+  created() {
+    if (this.hasNotes && !this.isAddingNotes)
+      this.focus = true
+  },
+  data() {
+    return {
+      focus: false,
+    }
+  },
   methods: {
+    openNotes() {
+      this.focus = true
+    },
     getHeaderInfoFile(files) {
       this.$refs['file-handler'].onDrop(files)
+    },
+    addFiles(files) {
+      this.getHeaderInfoFile(files)
     },
     
     enter(el, done) {
@@ -156,6 +167,13 @@ export default {
     ...mapGetters({
       nonReadCommentsById: 'group/nonReadCommentsById',
     }),
+
+    hasNotes() {
+      return this.headerInfo && this.headerInfo.notes && this.headerInfo.notes.save
+    },
+    isAddingNotes() {
+      return this.hasNotes && this.headerInfo.notes && this.headerInfo.notes.name === null
+    },
     getNonReadComments() {
       return this.nonReadCommentsById(this.headerInfo.comments.group, this.headerInfo.comments.room).length
     },

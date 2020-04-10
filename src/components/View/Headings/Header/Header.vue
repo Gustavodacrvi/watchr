@@ -15,7 +15,7 @@ export default {
       },
       [
         createElement(HeaderBar, {...context.data, props: context.props}),
-        createElement(Info, {...context.data, props: context.props}),
+        createElement(Info, {...{...context.data, ref: 'info'}, props: context.props}),
         createElement(FilterTags, {...context.data, props: context.props}),
       ],
     )

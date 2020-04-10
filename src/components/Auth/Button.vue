@@ -61,7 +61,7 @@ export default {
   width: 100%;
   border: none;
   padding: 8px;
-  border-radius: 10px;
+  border-radius: 6px;
   font-size: 1.01em;
   cursor: pointer;
   transition-duration: .175s;
