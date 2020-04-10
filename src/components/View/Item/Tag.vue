@@ -21,11 +21,13 @@
 <script>
 
 import CheckIcon from "./Components/CheckIcons/Tag.vue"
-import ItemTemplate from "./Components/ItemTemplate.vue"
+
+import templateMixin from "@/mixins/itemTemplate"
 
 export default {
+  mixins: [templateMixin],
   components: {
-    CheckIcon, ItemTemplate,
+    CheckIcon,
   },
   props: [
     'item', 'movingItem', 'disableCalendarStr',

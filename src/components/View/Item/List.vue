@@ -115,21 +115,22 @@
 <script>
 
 import CheckIcon from "./Components/CheckIcons/List.vue"
-import ItemTemplate from "./Components/ItemTemplate.vue"
 import Info from "./Components/Info/List.vue"
 
 import utilsList from "@/utils/list"
 
 import mom from 'moment'
 
+import templateMixin from "@/mixins/itemTemplate"
+
 const tod = mom()
 
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
+  mixins: [templateMixin],
   components: {
-    Info,
-    CheckIcon, ItemTemplate,
+    Info, CheckIcon,
   },
   props: [
     'item', 'movingItem', 'disableCalendarStr',

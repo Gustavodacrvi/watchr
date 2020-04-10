@@ -17,7 +17,6 @@
         <div class="text">
           <div class="main-cont">
             <transition-group
-              appear
               @enter='infoEnter'
               @leave='infoLeave'
             >
@@ -32,7 +31,6 @@
               </span>
               <span class="after-name">
                 <transition-group
-                  appear
                   @enter='infoEnter'
                   @leave='infoLeave'
                 >
@@ -42,7 +40,6 @@
             </span>
           </div>
           <transition-group
-            appear
             @enter='infoEnter'
             @leave='infoLeave'
           >

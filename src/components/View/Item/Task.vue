@@ -161,7 +161,6 @@
 <script>
 
 import CheckIcon from "./Components/CheckIcons/Task.vue"
-import ItemTemplate from "./Components/ItemTemplate.vue"
 import Info from "./Components/Info/Task.vue"
 import TimelineElement from "./Components/TimelineElement.vue"
 
@@ -190,7 +189,7 @@ export default {
     'viewName', 'viewType',
   ],
   components: {
-    ItemTemplate, Info,
+    Info,
     CheckIcon, TimelineElement,
   },
   methods: {

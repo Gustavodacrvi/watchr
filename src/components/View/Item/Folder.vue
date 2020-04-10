@@ -1,10 +1,9 @@
 <template>
   <ItemTemplate
     v-bind="{...$attrs, ...$props}"
-    class='List'
-    editComponent='Heading'
-    editRawPlaceholder='Heading name...'
-    
+    editComponent='Folder'
+    editRawPlaceholder='Folder name...'
+
     ref='template'
 
     :item='item'
@@ -21,7 +20,7 @@
 
 <script>
 
-import CheckIcon from "./Components/CheckIcons/Heading.vue"
+import CheckIcon from "./Components/CheckIcons/Folder.vue"
 
 import templateMixin from "@/mixins/itemTemplate"
 
@@ -36,11 +35,6 @@ export default {
     'isSelecting', 'allowDeadlineStr', 'allowLogStr', 'itemModelFallback',
     'isAdding', 'listRenderer', 'viewName', 'viewType',
   ],
-  methods: {
-    save(obj) {
-
-    },
-  },
 }
 
 </script>
