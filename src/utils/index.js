@@ -968,9 +968,9 @@ export default {
               if (val && Array.isArray(val))
                 Vue.set(oldObj, k, val)
               else if (val) {
-                let final = Object.assign({}, oldObj[k], val)
+                let final = Object.assign(oldObj[k], val)
                 Object.keys(final).forEach(key => {
-                    final[key] = (typeof final[key] === 'object') ? Object.assign(final[key], oldObj[k][key], val[key]) : final[key]
+                  final[key] = (typeof final[key] === 'object') ? Object.assign(final[key], oldObj[k][key], val[key]) : final[key]
                 })
                 Vue.set(oldObj, k, final)
               }

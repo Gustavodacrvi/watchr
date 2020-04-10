@@ -55,6 +55,8 @@ export const setInfo = (batch, info, rootState, writes) => {
     userId: uid(),
   }
 
+  console.log(info)
+  
   utils.findChangesBetweenObjs(rootState.userInfo, obj)
   
   if (!writes)

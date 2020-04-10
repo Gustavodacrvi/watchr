@@ -1,7 +1,6 @@
 <template>
   <div v-if="defer(2)" class="HeadingsWrapper">
     <transition-group
-        appear
         class="front headings-root"
         tag="div"
         ref='headings-root'
