@@ -183,6 +183,7 @@
       @added-heading-complete-mount='justAddedHeading = null'
       @go='moveItemHandlerSelection'
       @add-heading='addHeadingFromRootHeadings'
+      @set-changing-view-timeout='setChangingViewTimeout'
       @headings-items-ids='getHeadingsItemsIds'
     />
   </div>
@@ -307,15 +308,15 @@ export default {
   },
   methods: {
     setChangingViewTimeout() {
-      if (this.isRoot) {
-        if (this.changingViewTimeout)
-          clearTimeout(this.changingViewTimeout)
-  
+      if (this.changingViewTimeout)
+        clearTimeout(this.changingViewTimeout)
+
+      if (this.isRoot)
         this.changingViewTimeout = setTimeout(() => {
           this.changingView = false
           this.changingViewTimeout = null
         }, 100)
-      }
+      else this.$parent.$emit('set-changing-view-timeout')
     },
     
     enter(el, done) {

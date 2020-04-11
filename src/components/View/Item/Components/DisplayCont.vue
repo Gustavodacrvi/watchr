@@ -1,9 +1,12 @@
 <template>
-  <div class="DisplayCont rb" :class="{showLine}">
+  <div class="DisplayCont rb" :class="{showLine, iconHover}">
     <slot name='root'></slot>
     <div v-if="!isAdding"
       class="icon-wrapper"
       :style="{height: itemHeight + 'px'}"
+
+      @mouseenter="iconHover = true"
+      @mouseleave="iconHover = false"
 
       @click.stop="$emit('toggle-complete')"
       @contextmenu="$emit('toggle-cancel')"
@@ -70,6 +73,7 @@ export default {
   data() {
     return {
       width: 0,
+      iconHover: false,
     }
   },
   methods: {
@@ -229,6 +233,11 @@ export default {
   width: 25px;
   flex-shrink: 0;
   opacity: .4;
+  transition-duration: .2s;
+}
+
+.iconHover .icon-wrapper {
+  opacity: 1;
 }
 
 .text {
