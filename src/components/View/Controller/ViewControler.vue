@@ -4,6 +4,8 @@
 
     :width='width'
 
+    ref='renderer'
+
     :prefix='prefix'
     :viewName='viewName'
     :viewType='viewType'
@@ -12,8 +14,10 @@
     :showEmptyHeadings='showEmptyHeadings'
     :updateHeadingIds='updateHeadingIds'
     :newItemsViewAlert='newItemsViewAlert'
+    :enableLogbook='enableLogbook'
     :headingEditOptions='headingEditOptions'
     :headerOptions='headerOptions'
+    :headerConfig='headerConfig'
     :notes='getViewNotes'
     :progress='getPieProgress'
     :headings='headings'

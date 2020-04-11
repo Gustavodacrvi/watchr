@@ -2,7 +2,6 @@
   <div
     class="header"
     :class="layout"
-    @click="click"
   >
     <Icon class="icon"
       :class="{progress: progress !== undefined}"
@@ -15,9 +14,9 @@
       :style="{filter: `drop-shadow(0 0 ${isDesktopBreakPoint ? 15 : 5}px ${getIconColor})`}"
     />
     <HeaderSearch v-if="!isDesktopBreakPoint"/>
-    <span v-if="!editing || !isEditable"
+    <span
       class="name"
-      @click.stop="editing = true"
+      @click.stop
     >
       {{ getViewName }}
       <Icon v-if="scheduling || calendarDate"
@@ -27,22 +26,14 @@
         width='14px'
         @click='$emit("open-main-comp")'
       />
+      <Icon v-else-if="headerConfig && headerConfig.length"
+        class="comp-icon primary-hover cursor"
+        icon='cog'
+        color='var(--fade)'
+        width='14px'
+        @click='viewConfig'
+      />
     </span>
-    <input v-else-if="isEditable"
-      class="input"
-      autocomplete="off"
-      :value="title"
-      @input='v => title = v.target.value'
-      ref='input'
-      @click.stop
-      @keydown="keydown"
-    >
-    <transition name="line-t"
-      @enter="lineEnter"
-      @leave="lineLeave"
-    >
-      <div v-if="isEditable && editing" class="line"></div>
-    </transition>
     <div class="drop passive">
       <Icon v-for="i in extraIcons" :key="i.icon"
         class="cursor opt remove-highlight primary-hover"
@@ -56,7 +47,6 @@
         :handle="optionsHandle"
         handleColor="var(--fade)"
         :options="options"
-       
       />
     </div>
   </div>
@@ -76,70 +66,19 @@ export default {
     HeaderSearch,
     IconDrop,
   },
-  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
-  data() {
-    return {
-      editing: false,
-      title: this.viewNameValue,
-    }
-  },
-  created() {
-    window.addEventListener('click', this.hide)
-  },
-  beforeDestroy() {
-    window.removeEventListener('click', this.hide)
-  },
+  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'headerConfig','viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
   methods: {
-    click(event) {
-      if (this.selectedItems.length > 0) event.stopPropagation()
-    },
-    hide() {
-      this.editing = false
-    },
     openMenu() {
       if (!this.isDesktopBreakPoint)
         this.$router.push('/menu')
     },
-    lineEnter(el) {
-      const s = el.style
-      
-      const inp = this.$refs.input
-      if (inp) {
-        s.left = inp.offsetLeft + 'px'
-        s.opacity = '0'
-        s.width = '0px'
-        s.transitionDuration = '.0s'
-        setTimeout(() => {
-          s.transitionDuration = '.175s'
-          s.width = inp.offsetWidth + 'px'
-          s.opacity = '1'
-        })
-      }
-    },
-    keydown({key}) {
-      if (key === "Enter" && this.isEditable) {
-        if (this.saveHeaderName)
-          this.saveHeaderName(this.title.trim())
-        this.editing = false
-      }
-    },
-    focusOnInput() {
-      setTimeout(() => {
-        const inp = this.$refs.input
-        if (inp) inp.focus()
-      }, 100)
-    },
-    lineLeave(el) {
-      el.style.width = '0px'
-      el.style.opacity = '0'
+    viewConfig() {
+      this.$store.commit('pushIconDrop', this.headerConfig)
     },
   },
   computed: {
     ...mapState(['selectedItems', 'scheduling']),
     ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor', 'isSmartList', 'calendarDate']),
-    isEditable() {
-      return !this.isSmartList && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder' || this.viewType === 'group') && this.isDesktopBreakPoint
-    },
     getViewName() {
       if (this.calendarDate)
         return utils.getHumanReadableDate(this.calendarDate)
@@ -147,15 +86,8 @@ export default {
     },
   },
   watch: {
-    viewName() {
-      this.editing = false
-    },
     viewNameValue() {
       this.title = this.viewNameValue
-    },
-    editing() {
-      if (this.editing)
-        this.focusOnInput()
     },
   },
 }
@@ -178,7 +110,7 @@ export default {
 }
 
 .progress {
-  margin-right: 10px;
+  margin-right: 12px;
   transform: translateY(2px);
 }
 

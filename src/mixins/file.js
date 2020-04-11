@@ -187,6 +187,7 @@ export default {
   watch: {
     defaultFiles() {
       this.files = (this.defaultFiles && this.defaultFiles.slice()) || []
+      this.addedFiles = []
     },
   },
 }

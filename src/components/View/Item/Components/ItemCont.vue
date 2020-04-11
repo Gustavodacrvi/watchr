@@ -78,12 +78,12 @@ export default {
     DisplayCont, EditRaw,
   },
   props: ['name', 'isEditing', 'itemHeight', 'editComponent',  'showInfo', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'listRenderer',
-  'editAction'],
+  'editAction', 'changingView'],
   data() {
     return {
       showElements: true,
       showLine: false,
-      infoReady: false,
+      infoReady: this.changingView,
       transitioning: false,
       showingCont: true,
       completeEditLeave: true,

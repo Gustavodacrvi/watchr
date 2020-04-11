@@ -36,7 +36,7 @@ export default {
   components: {
     AuthButton,
   },
-  props: ['notes', 'heading'],
+  props: ['notes', 'heading', 'focusOnMount', 'value'],
   data() {
     return {
       name: this.notes,
@@ -46,13 +46,17 @@ export default {
   mounted() {
     setTimeout(() => {
       this.fixHeight()
+      if (this.focusOnMount && this.$refs.text)
+        this.$refs.text.focus()
     }, 80)
   },
   methods: {
     focus() {
       this.editing = true
+      this.$emit('input', true)
     },
     blur() {
+      this.$emit('input', false)
       this.editing = false
     },
     keydown(evt) {

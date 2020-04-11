@@ -103,10 +103,56 @@ export default {
     headingsOptions() {
       return []
     },
+    enableLogbook() {
+      return true
+    },
+    headerConfig() {
+      const folder = this.viewFolder
+      if (!folder) return null
+      const arr = []
+
+      if (!folder.color)
+        arr.push({
+          name: 'Add theme color',
+          icon: 'tint',
+          color: 'var(--yellow)',
+          callback: () => ({
+            comp: 'ColorPicker',
+            content: {
+              color: folder.color,
+              callback: this.foldersaveFolder,
+            },
+          })
+        })
+
+      if (!folder.notes)
+        arr.push({
+          name: 'Add notes',
+          icon: 'note',
+          callback: () => this.$refs.renderer.openNotes()
+        })
+
+      return arr
+    },
     headerInfo() {
       const folder = this.viewFolder
-      if (!folder)
-        return undefined
+      if (!folder) return null
+
+      const icons = []
+
+      if (folder.color)
+        icons.push({
+            icon: 'tint',
+            title: 'Folder color',
+            color: folder.color,
+            options: {
+              comp: 'ColorPicker',
+              content: {
+                color: folder.color,
+                callback: this.foldersaveFolder,
+              },
+            },
+          })
       
       return {
         files: {
@@ -119,20 +165,7 @@ export default {
           name: folder.notes || null,
           save: notes => this.foldersaveFolder({notes}),
         },
-        icons: [
-          {
-            icon: 'tint',
-            title: 'Folder color',
-            color: folder.color,
-            options: {
-              comp: 'ColorPicker',
-              content: {
-                color: folder.color,
-                callback: this.foldersaveFolder,
-              },
-            },
-          },
-        ],
+        icons,
       }
     },
     headerOptions() {

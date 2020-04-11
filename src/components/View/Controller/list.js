@@ -221,6 +221,9 @@ export default {
     showEmptyHeadings() {
       return true
     },
+    enableLogbook() {
+      return true
+    },
     showAllHeadingsItems() {
       return true
     },
@@ -229,6 +232,94 @@ export default {
       if (list && list.tags)
         return this.getTagsById(list.tags)
       return []
+    },
+    headerConfig() {
+      const list = this.viewList
+      const save = this.listsaveList
+      if (!list)
+        return null
+      
+      const arr = []
+
+      if (!list.deadline)
+        arr.unshift({
+          name: 'Add deadline',
+          icon: 'deadline',
+          color: 'var(--red)',
+          callback: () => ({
+            comp: 'CalendarPicker',
+            content: {
+              onlyDates: true,
+              noTime: true,
+              allowNull: true,
+              callback: date => save({deadline: (date && date.specific) || null}),
+            },
+          })
+        })
+      
+      if (!list.calendar)
+        arr.push({
+          name: 'Defer list',
+          icon: 'calendar',
+          color: 'var(--green)',
+          callback: () => ({
+            comp: "CalendarPicker",
+            content: {repeat: true, disableDaily: true, callback: calendar => save({calendar})},
+          })
+        })
+
+      
+      if (!list.notes)
+        arr.push({
+          name: 'Add notes',
+          icon: 'note',
+          callback: () => this.$refs.renderer.openNotes()
+        })
+      
+      arr.push(        {
+        name: 'Add tags',
+        icon: 'tag',
+        color: 'var(--red)',
+        callback: () => ({
+          allowSearch: true,
+          select: true,
+          onSave: names => {
+            dispatch('list/editListTags', {
+              tagIds: this.tags.filter(el => names.includes(el.name)).map(el => el.id),
+              listId,
+            })
+          },
+          selected: (list.tags && list.tags.map(id => this.tags.find(el => el.id === id).name)) || [],
+          links: this.tags.map(el => ({
+            name: el.name,
+            icon: 'tag',
+          })),
+        })
+      })
+
+      if (!list.color)
+        arr.push({
+          name: 'Add theme color',
+          icon: 'tint',
+          color: 'var(--yellow)',
+          callback: () => ({
+            comp: 'ColorPicker',
+            content: {
+              color: list.color,
+              callback: this.listsaveList,
+            },
+          })
+        })
+        
+      arr.push({
+        name: "Upload files",
+        icon: 'file',
+        file: true,
+        multiple: true,
+        handleFiles: files => this.$refs.renderer.addFiles(files)
+      })
+
+      return arr
     },
     headerInfo() {
       const list = this.viewList
@@ -246,87 +337,78 @@ export default {
 
       const save = this.listsaveList
       const dispatch = this.$store.dispatch
-      
-      if (list)
-        return {
-          comments: list.group ? {
-            group: list.group || null,
-            room: list.id,
-          } : undefined,
-          files: {
-            names: list.files || [],
-            storageFolder: 'lists',
-            id: list.id,
-            save: files => save({files}),
-          },
-          notes: {
-            name: list.notes || null,
-            save: this.listsaveNotes,
-          },
-          tags: {
-            names: this.listgetListTags.map(el => el.name),
-            remove: name => dispatch('list/removeListTag', {
-              list,
-              tagId: this.listgetListTags.find(el => el.name === name).id
-            }),
-          },
-          icons: [
-            {
-              icon: 'deadline',
-              content: deadlineStr,
-              title: 'Add deadline',
-              right: list.deadline ? this.getListDeadlineDaysLeftStr(list.deadline, TOD_DATE) : null,
-              options: {
-                comp: 'CalendarPicker',
-                content: {
-                  onlyDates: true,
-                  noTime: true,
-                  allowNull: true,
-                  callback: ({specific}) => save({deadline: specific})
-                },
-              },
+
+      const icons = []
+
+      if (list.deadline)
+        icons.unshift({
+          icon: 'deadline',
+          content: deadlineStr,
+          color: 'var(--red)',
+          right: list.deadline ? this.getListDeadlineDaysLeftStr(list.deadline, TOD_DATE) : null,
+          options: {
+            comp: 'CalendarPicker',
+            content: {
+              onlyDates: true,
+              noTime: true,
+              allowNull: true,
+              callback: date => save({deadline: (date && date.specific) || null}),
             },
-            {
-              icon: 'calendar',
-              content: specificDate,
-              title: 'Add date',
-              options: {
-                comp: "CalendarPicker",
-                content: {repeat: true, disableDaily: true, callback: calendar => save({calendar})}},
-            },
-            {
-              icon: 'tag',
-              title: 'Add tags',
-              options: {
-                allowSearch: true,
-                select: true,
-                onSave: names => {
-                  dispatch('list/editListTags', {
-                    tagIds: this.tags.filter(el => names.includes(el.name)).map(el => el.id),
-                    listId,
-                  })
-                },
-                selected: (list.tags && list.tags.map(id => this.tags.find(el => el.id === id).name)) || [],
-                links: this.tags.map(el => ({
-                  name: el.name,
-                  icon: 'tag',
-                })),
-              },
-            },
-            {
-              icon: 'tint',
-              title: 'List color',
+          },
+        })
+        
+      if (list.calendar)
+        icons.push({
+          icon: 'calendar',
+          content: specificDate,
+          color: 'var(--green)',
+          options: {
+            comp: "CalendarPicker",
+            content: {repeat: true, disableDaily: true,
+              callback: calendar => save({calendar})
+            }},
+        })
+
+      if (list.tint)
+        icons.push({
+          icon: 'tint',
+          title: 'List color',
+          color: list.color,
+          options: {
+            comp: 'ColorPicker',
+            content: {
               color: list.color,
-              options: {
-                comp: 'ColorPicker',
-                content: {
-                  color: list.color,
-                  callback: this.listsaveList,
-                },
-              },
+              callback: this.listsaveList,
             },
-          ]
-        }
+          },
+        })
+
+      const obj = {
+        comments: list.group ? {
+          group: list.group || null,
+          room: list.id,
+        } : undefined,
+        files: {
+          names: list.files || [],
+          storageFolder: 'lists',
+          id: list.id,
+          save: files => save({files}),
+        },
+        notes: {
+          name: list.notes || null,
+          save: this.listsaveNotes,
+        },
+        tags: {
+          names: this.listgetListTags.map(el => el.name),
+          remove: name => dispatch('list/removeListTag', {
+            list,
+            tagId: this.listgetListTags.find(el => el.name === name).id
+          }),
+        },
+        icons,
+      }
+      
+      return obj
     },
     saveHeaderContent() {
       const save = obj => {

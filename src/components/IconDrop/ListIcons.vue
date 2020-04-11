@@ -36,7 +36,7 @@
                 :color="l.color"
                 width='12px'
               />
-              <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
+              <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" :multiple='l.multiple' style="display: none" @change='handleFiles(l)'>
               <span class="name" v-html="l.name"></span>
               <span v-if="select && selected.includes(l.name)"
                 class='check-icon'
@@ -283,7 +283,7 @@ export default {
 }
 
 .ListIcons {
-  max-height: 430px;
+  max-height: 250px;
   padding: 8px 0;
 }
 

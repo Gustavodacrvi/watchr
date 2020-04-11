@@ -75,6 +75,7 @@ import laterLists from '@/assets/icons/later-lists.svg'
 import circleFullFilled from '@/assets/icons/circle-full-filled.svg'
 import group from '@/assets/icons/group.svg'
 import moon from '@/assets/icons/moon.svg'
+import cog from '@/assets/icons/cog.svg'
 import crown from '@/assets/icons/crown.svg'
 import play from '@/assets/icons/play.svg'
 
@@ -87,7 +88,7 @@ const icons = {
   folder, heart, close, filter, magic, clock,
   pie, check, group, message, crown, play,
   comment, logbook, moon, tint, duration,
-  next,
+  next, cog,
   "later-lists": laterLists,
   "circle-full-filled": circleFullFilled,
   "heading-slash": headingSlash,

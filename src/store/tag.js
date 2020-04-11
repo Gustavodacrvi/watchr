@@ -93,7 +93,15 @@ export default {
         ],
         getter({}, ids) {
           const arr = []
-          for (const id of ids) {
+          const set = new Set()
+          const uniqueIds = ids.filter(id => {
+            if (!set.has(id)) {
+              set.add(id)
+              return true
+            }
+          })
+
+          for (const id of uniqueIds) {
             const tag = this['tag/tags'].find(el => el.id === id)
             if (tag) arr.push(tag)
           }

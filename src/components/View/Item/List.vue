@@ -41,13 +41,13 @@
     <template v-slot:before-name>
       <span v-if="logStr && !showCheckDate"
         key='check-date'
-        class="check-date"
+        class="slot-el check-date"
       >
         {{ logStr }}
       </span>
       <span v-else-if="calendarStr"
         key='info-box'
-        class="info-box"
+        class="slot-el info-box"
       >
         {{ calendarStr }}
       </span>
@@ -56,13 +56,13 @@
     <template v-slot:after-name>
       <span v-if="listTasksLength"
         key='duration'
-        class="info-box"
+        class="slot-el info-box"
       >
         {{ listTasksLength }}
       </span>
       <span v-if="listColor"
         key="color"
-        class="info-box"
+        class="slot-el info-box"
       >
         <Icon
           icon='tint'
@@ -72,7 +72,7 @@
       </span>
       <span v-if="hasFiles"
         key="file"
-        class="info-box"
+        class="slot-el info-box"
       >
         <Icon
           icon='file'
@@ -85,7 +85,7 @@
     <template v-slot:flex-end>
       <span v-if="deadlineStr"
         key='deadline'
-        class="info-naked"
+        class="slot-el info-naked"
         style='color: var(--red)'
       >
         <span class="info-icon">
@@ -115,21 +115,22 @@
 <script>
 
 import CheckIcon from "./Components/CheckIcons/List.vue"
-import ItemTemplate from "./Components/ItemTemplate.vue"
 import Info from "./Components/Info/List.vue"
 
 import utilsList from "@/utils/list"
 
 import mom from 'moment'
 
+import templateMixin from "@/mixins/itemTemplate"
+
 const tod = mom()
 
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
+  mixins: [templateMixin],
   components: {
-    Info,
-    CheckIcon, ItemTemplate,
+    Info, CheckIcon,
   },
   props: [
     'item', 'movingItem', 'disableCalendarStr',

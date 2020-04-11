@@ -16,6 +16,12 @@
   border: 1px solid var(--light-gray);
 }
 
+.slot-el {
+  opacity: 1;  
+  margin-right: 6px;
+  margin-left: 2px;
+}
+
 .info-icon {
   transform: translateY(1px);
   margin-right: 4px;

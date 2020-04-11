@@ -59,6 +59,21 @@ export default {
         return tag.tasks
       return []
     },
+    headerConfig() {
+      const tag = this.viewTag
+      if (!tag) return null
+
+      const arr = []
+
+      if (!tag.notes)
+        arr.push({
+          name: 'Add notes',
+          icon: 'note',
+          callback: () => this.$refs.renderer.openNotes(),
+        })
+      
+      return arr
+    },
     headerInfo() {
       return {
         notes: {

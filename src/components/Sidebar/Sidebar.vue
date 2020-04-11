@@ -543,7 +543,7 @@ export default {
           icon: 'import',
           file: true,
           accept: '.json',
-          handleFiles: (files, promise) => {
+          handleFiles: (files, promise // read txt file promise) => {
             const bug = () => {
               this.$store.commit('pushToast', {
                 name: "An error ocurred while importing the JSON file, the file is corrupted.",

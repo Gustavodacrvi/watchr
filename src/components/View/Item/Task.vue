@@ -11,6 +11,7 @@
     :showInfo='hasAtLeastOne'
     :canceledItem='canceledItem'
     :options='options'
+    :isRepeatingItem='isRepeatingTask'
     editRawPlaceholder='Task name...'
 
     @copy-item='copyItem'
@@ -49,21 +50,21 @@
 
     <template v-slot:before-name>
       <Icon v-if="isNewItem"
-        class="name-icon"
+        class="name-icon slot-el"
         key='new-item-icon'
       
         icon='circle-full-filled'
         color='var(--yellow)'
         width='9px'
       />
-      <span v-if="logStr && !showCheckDate"
+      <span v-if="logStr && showCheckDate"
         key='check-date'
-        class="check-date"
+        class="check-date slot-el"
       >
         {{ logStr }}
       </span>
       <Icon v-else-if="nameIcon"
-        class="name-icon"
+        class="name-icon slot-el"
         key='name-icon'
       
         :icon='nameIcon.name'
@@ -73,19 +74,19 @@
       />
       <span v-else-if="calendarStr"
         key='info-box'
-        class="info-box"
+        class="info-box slot-el"
       >
         {{ calendarStr }}
       </span>
       <span v-if="nextCalendarEvent && !isDesktopBreakPoint"
         key='next-box'
-        class="info-box"
+        class="info-box slot-el"
       >
         {{ nextCalendarEvent }}
       </span>
       <span v-if="timeStr"
         key='info-time'
-        class="info-box"
+        class="info-box slot-el"
       >
         {{ timeStr }}
       </span>
@@ -94,12 +95,12 @@
     <template v-slot:after-name>
       <span v-if="taskDuration"
         key='duration'
-        class="info-box"
+        class="info-box slot-el"
       >
         {{ taskDuration }}
       </span>
       <Icon v-if="checklistProgress" key="icon"
-        class="icon name-icon"
+        class="icon name-icon slot-el"
         icon='pie'
         :progress='checklistProgress'
         width='7px'
@@ -107,7 +108,7 @@
       />
       <span v-if="hasFiles"
         key="file"
-        class="info-box"
+        class="info-box slot-el"
       >
         <Icon
           icon='file'
@@ -120,7 +121,7 @@
     <template v-slot:flex-end>
       <span v-if="deadlineStr"
         key='deadline'
-        class="info-naked"
+        class="info-naked slot-el"
         style='color: var(--red)'
       >
         <span class="info-icon">
@@ -135,7 +136,7 @@
       </span>
       <span v-if="nextCalendarEvent && isDesktopBreakPoint"
         key='next-box'
-        class="info-box"
+        class="info-box slot-el"
       >
         {{ nextCalendarEvent }}
       </span>
@@ -161,7 +162,6 @@
 <script>
 
 import CheckIcon from "./Components/CheckIcons/Task.vue"
-import ItemTemplate from "./Components/ItemTemplate.vue"
 import Info from "./Components/Info/Task.vue"
 import TimelineElement from "./Components/TimelineElement.vue"
 
@@ -184,13 +184,13 @@ export default {
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'timelineIncrement', 'hideListName',
     'hideGroupName', 'hideFolderName', 'showingRuler',
-    'isSelecting', 'allowDeadlineStr', 'allowLogStr', 'itemModelFallback',
+    'isSelecting', 'allowDeadlineStr', 'disableLogStr', 'itemModelFallback',
     'isAdding', 'listRenderer',
 
     'viewName', 'viewType',
   ],
   components: {
-    ItemTemplate, Info,
+    Info,
     CheckIcon, TimelineElement,
   },
   methods: {
@@ -321,7 +321,7 @@ export default {
     },
 
     logStr() {
-      if (!this.allowLogStr || !this.item.logDate) return null
+      if (this.disableLogStr || !this.item.logDate) return null
       return utils.getHumanReadableDate(this.item.logDate)
     },
     showCheckDate() {

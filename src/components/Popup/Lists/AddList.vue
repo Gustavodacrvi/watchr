@@ -7,8 +7,6 @@
       :itemHeight='itemHeight'
       :itemModelFallback='{}'
 
-      placeholder="Task name..."
-      notesPlaceholder="Notes..."
       @save='addList'
       @cancel="$emit('close')"
     />
@@ -40,14 +38,6 @@ export default {
       popup: state => state.popup,
       payload: state => state.popup.payload,
     }),
-    isEditing() {
-      if (!this.payload) return false
-      return this.payload.editing === true
-    },
-    title() {
-      if (!this.isEditing) return 'Add list'
-      return 'Edit list'
-    },
   },
   methods: {
     addList(newList) {

@@ -2,15 +2,24 @@
 import mom from 'moment'
 
 export default {
+  round(num, toRound, next) {
+    toRound = next ? (toRound + num) : toRound
+    const round = Math.floor(toRound)
+    const rest = round % num
+
+    if (rest === 0)
+      return Math.floor(toRound)
+    return Math.floor(round - rest)
+  },
   convertOffsetToMin(offset, height) {
     return offset * 1440 / height
   },
   convertMinToOffset(min, height) {
     return height * min / 1440
   },
-  formatMin(min, autoTimeStyleFormat = true) {
+  formatMin(min, autoTimeStyleFormat = true, format) {
     return mom(`${Math.floor(min / 60)}-${min % 60}`, 'HH:mm').format(
-      autoTimeStyleFormat ? this.format : 'HH:mm',
+      autoTimeStyleFormat ? (format || this.format) : 'HH:mm',
     )
   },
   getFullMin(str) {

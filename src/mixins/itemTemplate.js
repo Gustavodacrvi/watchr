@@ -1,7 +1,11 @@
 
+import ItemTemplate from "@/components/View/Item/Components/ItemTemplate.vue"
 
 export default {
-  props: ['newItemsObj'],
+  components: {
+    ItemTemplate,
+  },
+  props: ['newItemsObj', 'changingView'],
   computed: {
     isNewItem() {
       return this.item && this.newItemsObj[this.item.id]
