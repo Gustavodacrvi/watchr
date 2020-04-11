@@ -856,6 +856,10 @@ export default {
           c.lastCompleteDate = null
         }
         setList(b, {
+          logbook: false,
+          logFire: null,
+          logDate: null,
+          fullLogDate: null,
           completedFire: null,
           completeDate: null,
           completed: false,
@@ -903,6 +907,10 @@ export default {
         canceled: false,
         cancelDate: null,
         checkDate: null,
+        logbook: false,
+        logFire: null,
+        logDate: null,
+        fullLogDate: null,
         fullCancelDate: null,
         fullCheckDate: null,
       }, ids, rootState)

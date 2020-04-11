@@ -14,6 +14,7 @@
     :showEmptyHeadings='showEmptyHeadings'
     :updateHeadingIds='updateHeadingIds'
     :newItemsViewAlert='newItemsViewAlert'
+    :enableLogbook='enableLogbook'
     :headingEditOptions='headingEditOptions'
     :headerOptions='headerOptions'
     :headerConfig='headerConfig'

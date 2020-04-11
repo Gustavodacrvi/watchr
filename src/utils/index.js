@@ -2,6 +2,7 @@
 import mom from 'moment'
 import utilsMoment from "./moment"
 import utilsTask from "./task"
+import timelineUtils from "@/utils/timeline"
 import firebase from 'firebase/app'
 
 import Vue from 'vue'
@@ -197,8 +198,19 @@ export default {
     }
   },
   getScheduleIconDropObject(info, saveAutoSchedule, userInfo) {
+
+
     if (!info)
-      info = {time: mom().format('HH:mm'), buffer: '00:05', fallback: '00:10'}
+      info = {
+        time: timelineUtils.formatMin(
+          timelineUtils.round(5,
+            timelineUtils.getFullMin(mom().format('HH:mm')),
+            true,
+          ),
+        ),
+        buffer: localStorage.getItem('watchr.autoSchedule.buffer') || '00:05',
+        fallback: localStorage.getItem('watchr.autoSchedule.fallback') || '00:10',
+      }
 
     const {time, buffer, fallback, overwrite} = info
 
@@ -265,6 +277,8 @@ export default {
             },
             name: 'Start auto-schedule',
             callback: () => {
+              localStorage.setItem('watchr.autoSchedule.buffer', info.buffer)
+              localStorage.setItem('watchr.autoSchedule.fallback', info.fallback)
               saveAutoSchedule({...info})
               return null
             },
@@ -968,9 +982,15 @@ export default {
               if (val && Array.isArray(val))
                 Vue.set(oldObj, k, val)
               else if (val) {
-                let final = Object.assign(oldObj[k], val)
+                const old = {...oldObj}
+                let final = Object.assign(old || {}, val)
                 Object.keys(final).forEach(key => {
-                  final[key] = (typeof final[key] === 'object') ? Object.assign(final[key], oldObj[k][key], val[key]) : final[key]
+                  const bothObjects = typeof final[key] === 'object' && typeof val[key] === 'object'
+
+                  if (bothObjects)
+                    final[key] = Object.assign(final[key], old[key], val[key])
+                  else
+                    final[key] = val[key]
                 })
                 Vue.set(oldObj, k, final)
               }

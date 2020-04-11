@@ -6,7 +6,7 @@ import { cacheBatchedItems, setTask } from '@/utils/firestore'
 
 export default {
   methods: {
-    autoScheduleItems(vm, calendarDate, obj, tasks) {
+    async autoScheduleItems(vm, calendarDate, obj, tasks) {
       if (!calendarDate)
         return;
       const {time, buffer, fallback, overwrite} = obj
@@ -44,7 +44,7 @@ export default {
         if (!mom(c.time, 'HH:mm').isValid() || !mom(duration, 'HH:mm').isValid())
           break
 
-        setTask(batch, {
+        await setTask(batch, {
           taskDuration: duration,
           calendar: c,
         }, vm.$store.state, t.id, writes)

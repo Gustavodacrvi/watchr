@@ -5,7 +5,7 @@
       class="icon-wrapper"
       :style="{height: itemHeight + 'px'}"
 
-      @click="$emit('toggle-complete')"
+      @click.stop="$emit('toggle-complete')"
       @contextmenu="$emit('toggle-cancel')"
     >
       <slot name="check-icon"></slot>
@@ -16,6 +16,9 @@
       <div class="text-wrapper">
         <div class="text">
           <div class="main-cont">
+            <span class="line-wrapper">
+              <span class="line"></span>
+            </span>
             <transition-group
               @enter='infoEnter'
               @leave='infoLeave'
@@ -24,9 +27,6 @@
             </transition-group>
             <span class="name-wrapper">
               <span class="name">
-                <span class="line-wrapper">
-                  <span class="line"></span>
-                </span>
                 <span class="name-parsed" v-html="parsedName"></span>
               </span>
               <span class="after-name">
@@ -134,7 +134,7 @@ export default {
           s.marginRight = '6px'
           if (isFirst)
             s.marginLeft = '2px'
-          s.opacity = .9
+          s.opacity = 1
           this.width = width
 
           setTimeout(() => {
@@ -234,6 +234,7 @@ export default {
 .text {
   height: 11.5px;
   max-width: 100%;
+  position: relative;
   justify-content: space-between;
 }
 
@@ -256,7 +257,7 @@ export default {
   width: 0;
 
   height: 3px;
-  background-color: var(--txt);
+  background-color: var(--fade);
   border-radius: 8px;
   transition-duration: .175s;
 }

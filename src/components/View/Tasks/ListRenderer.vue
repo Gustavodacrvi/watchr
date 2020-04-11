@@ -67,6 +67,7 @@
           :viewType='viewType'
           :timelineIncrement='timelineIncrement'
           :isRoot='isRoot'
+          :changingView='changingRootView || changingView'
           :newItemsObj='rootItemsObj || newItemsObj'
           :listRenderer='true'
           :isSelecting='isSelecting'
@@ -163,6 +164,7 @@
       :isSmart='isSmart'
       :newItemsObj='newItemsObj'
       :comp='comp'
+      :changingView='changingView'
       :editComp='editComp'
       :itemIconDropOptions='itemIconDropOptions'
       :showAllHeadingsItems='showAllHeadingsItems'
@@ -219,7 +221,7 @@ import utils from '@/utils/'
 
 export default {
   mixins: [autoScheduleMixin],
-  props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
+  props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'changingRootView', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback', 'rootItemsObj',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'newItemsViewAlert', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
@@ -238,6 +240,8 @@ export default {
       disableItemEnterTransitionIds: [],
       droppedIds: [],
       waitingUpdateTimeout: null,
+      changingView: true,
+      changingViewTimeout: null,
 
       timelineIncrement: null,
 
@@ -302,11 +306,25 @@ export default {
     }
   },
   methods: {
+    setChangingViewTimeout() {
+      if (this.isRoot) {
+        if (this.changingViewTimeout)
+          clearTimeout(this.changingViewTimeout)
+  
+        this.changingViewTimeout = setTimeout(() => {
+          this.changingView = false
+          this.changingViewTimeout = null
+        }, 100)
+      }
+    },
+    
     enter(el, done) {
       const id = el.dataset.id
       const type = el.dataset.transition
-      if (!type || !id)
+      if (!type || !id) {
+        this.setChangingViewTimeout()
         return done()
+      }
 
       const isAdding = type !== 'display'
 
@@ -327,6 +345,7 @@ export default {
             s.transitionDuration = '.175s'
             s.height = 'auto'
             vm.isEditing = true
+            this.setChangingViewTimeout()
             done()
           }, 10)
         })
@@ -351,6 +370,7 @@ export default {
         setTimeout(() => {
           s.transitionDuration = '.175s'
           s.height = 'auto'
+          this.setChangingViewTimeout()
           done()
         }, 201)
       })
@@ -730,7 +750,7 @@ export default {
         direction: 'vertical',
 
         animation: 200,
-        delay: this.isDesktopDevice ? 10 : 100,
+        delay: this.isDesktopDevice ? 5 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -1238,7 +1258,7 @@ export default {
         }
       }
 
-      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 75 : length * 5)
+      this.updateChangedItems('slicedItems', 'lazyItems', 'lazyItemsSetTimeouts', this.isDesktopDevice ? 15 : length * 5)
 
       if (foundEdit) {
         const itemIndex = this.lazyItems.findIndex(el => el.id === this.addedItem)
@@ -1399,9 +1419,6 @@ export default {
     },
   },
   watch: {
-    viewName() {
-      this.deselectAll()
-    },
     selected() {
       const ids = this.selected
       const removedEls = this.selectedElements.filter(el => el && !ids.find(id => id === el.dataset.id))
@@ -1430,6 +1447,9 @@ export default {
       }
     },
     viewName() {
+      if (this.isRoot)
+        this.changingView = true
+      this.deselectAll()
       if (this.sortable)
         this.sortable.options.disabled = this.disableSortableMount
     },

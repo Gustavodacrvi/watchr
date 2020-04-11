@@ -55,8 +55,6 @@ export const setInfo = (batch, info, rootState, writes) => {
     userId: uid(),
   }
 
-  console.log(info)
-  
   utils.findChangesBetweenObjs(rootState.userInfo, obj)
   
   if (!writes)
@@ -366,6 +364,7 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
   return new Promise((solve, reject) => {
     const save = () => {
 
+      
       id = id ? id : utils.getUid()
       
       const groupTasks = rootState.task.groupTasks
@@ -380,6 +379,7 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
         ...(oldTask || {}),
         ...task,
       }
+
 
       const getGroupId = restrict => hydratedTask.group || (savedGroupTask && !restrict && savedGroupTask.group)
   
@@ -457,15 +457,11 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
         return task.calendar.specific
       }
 
-      // if the old task does not exist AND the new task is calendar order type, save the order.
-      // if the old task does exist AND the new date is not the same to the old date, save the order.
-
       const newDate = specificDate(hydratedTask) // Y-M-D
       if (newDate && specificDate(oldTask) !== newDate) {
-
         saveCalendarOrder(batch, rootState, [id], newDate, writes)
-        
       }
+
 
       const getProperty = (oldTask, name) => {
         if (!oldTask || !oldTask[name])
@@ -485,11 +481,13 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
       if (newGroup && getProperty(oldTask, 'group') !== newGroup) {
         saveGroupOrder(batch, rootState, [id], newGroup, writes)
       }
+
   
       const isNewTask = !savedGroupTask && !savedIndividualTask
       const updatingGroupTask = !isNewTask && savedGroupTask && savedGroupTask.group === getGroupId()
       const updatingPersonalTask = !isNewTask && savedIndividualTask && savedIndividualTask.group === null
       const isChangingGroups = savedGroupTask && savedGroupTask.group !== getGroupId(true)
+
 
       if (getGroupId(true)) {
 
@@ -557,7 +555,6 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
             [id]: getObj(),
           }
 
-        
         if (isNewTask || updatingPersonalTask) { // Create and add task to personal/update.
 
           setPersonalTask()

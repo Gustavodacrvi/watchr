@@ -103,6 +103,9 @@ export default {
     headingsOptions() {
       return []
     },
+    enableLogbook() {
+      return true
+    },
     headerConfig() {
       const folder = this.viewFolder
       if (!folder) return null

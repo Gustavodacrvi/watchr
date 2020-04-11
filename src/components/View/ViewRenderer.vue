@@ -146,7 +146,7 @@ export default {
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
-  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
+  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName', 'enableLogbook',
   'calendarDate', 'viewItem', 'itemModelFallback', 'headerConfig',
   'showHeading', 'viewComponent', 'newItemsViewAlert',
   

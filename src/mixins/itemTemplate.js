@@ -5,7 +5,7 @@ export default {
   components: {
     ItemTemplate,
   },
-  props: ['newItemsObj'],
+  props: ['newItemsObj', 'changingView'],
   computed: {
     isNewItem() {
       return this.item && this.newItemsObj[this.item.id]

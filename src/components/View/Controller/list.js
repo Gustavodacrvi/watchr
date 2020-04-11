@@ -221,6 +221,9 @@ export default {
     showEmptyHeadings() {
       return true
     },
+    enableLogbook() {
+      return true
+    },
     showAllHeadingsItems() {
       return true
     },

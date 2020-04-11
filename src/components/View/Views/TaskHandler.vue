@@ -67,7 +67,7 @@ export default {
 
     'headingEditOptions', 'taskIconDropOptions', 'filterByAssigned',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
-    'itemCompletionCompareDate', 'rootFallbackItem',
+    'itemCompletionCompareDate', 'rootFallbackItem', 'enableLogbook',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
   components: {
@@ -230,14 +230,13 @@ export default {
     laserHeadings() {
       const headings = this.headings
       if (!headings) return []
-      const mainTasks = this.mainTasks
 
       return headings.map(head => {
         const nonFiltered = !head.directFiltering ?
           head.sort(this.tempoOrder[head.id] || head.order || [],
-            (!head.log ? mainTasks : this.logTasks).filter(task => head.filter(task))
+            ((!head.log || (this.enableLogbook && this.showCompleted)) ? this.mainTasks : this.logTasks).filter(task => head.filter(task))
           )
-          : head.sort(this.tempoOrder[head.id] || head.order || [], (!head.listType ? this.storeTasks : (!head.log ? this.lists : this.logLists)).filter(item => head.filter(item)))
+          : head.sort(this.tempoOrder[head.id] || head.order || [], (!head.listType ? this.mainTasks : (!head.log ? this.lists : this.logLists)).filter(item => head.filter(item)))
 
         if (head.react)
           for (const p of head.react) nonFiltered[p]
@@ -424,8 +423,11 @@ export default {
     rootNonFiltered() {
       return this.sortTasksFunction(this.mainTasks.filter(task => this.rootFilter(task)))
     },
+    getViewTasks() {
+      return (this.showCompleted && this.enableLogbook) ? [...this.storeTasks, ...this.logTasks] : this.storeTasks
+    },
     mainTasks() {
-      return this.storeTasks.filter(task => this.mainFilter(task))
+      return this.getViewTasks.filter(task => this.mainFilter(task))
     },
 
     sortHeadingsFunction() {

@@ -1310,6 +1310,10 @@ export default {
           completedFire: null,
           completeDate: null,
           completed: false,
+          logbook: false,
+          logFire: null,
+          logDate: null,
+          fullLogDate: null,
           checked: false,
           checkDate: null,
           fullCheckDate: null,
@@ -1355,6 +1359,10 @@ export default {
       const b = fire.batch()
 
       await batchSetTasks(b, {
+        logbook: false,
+        logFire: null,
+        logDate: null,
+        fullLogDate: null,
         canceled: false,
         checked: false,
         cancelDate: null,

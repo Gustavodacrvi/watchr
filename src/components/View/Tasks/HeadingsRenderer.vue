@@ -50,6 +50,7 @@
           :hideGroupName="h.hideGroupName"
           :viewName='viewName'
           :viewType='viewType'
+          :changingRootView='changingView'
           :rootHeadings='getLazyHeadingsIds'
           :headingFilterFunction='h.filterFunction'
           :headingFallbackItem='h.fallbackItem'
@@ -97,7 +98,7 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'newItemsObj',
+  props: ['headings', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'newItemsObj', 'changingView',
   , 'justAddedHeading', 'showingRuler', 'itemModelFallback', 'rootItemsObj',
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'disableFallback', 'isRootAddingHeadings', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {

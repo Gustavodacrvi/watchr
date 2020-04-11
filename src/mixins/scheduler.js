@@ -8,14 +8,6 @@ import { mapState } from "vuex"
 export default {
   methods: {
     ...timeline,
-    round(num, toRound) {
-      const round = Math.floor(toRound)
-      const rest = round % num
-      
-      if (rest === 0)
-        return Math.floor(toRound)
-      return Math.floor(round - rest)
-    },
     formatTime(time) {
       return mom(time, 'HH:mm').format(this.format)
     },

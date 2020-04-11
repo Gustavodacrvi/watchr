@@ -14,6 +14,9 @@ export default {
     updateIds() {
       return functionFallbacks.updateOrderFunctions.Group
     },
+    enableLogbook() {
+      return true
+    },
     fallbackFunctionData() {
       return () => ({
         groupId: this.viewGroup.id,

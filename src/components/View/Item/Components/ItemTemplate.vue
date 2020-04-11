@@ -25,6 +25,7 @@
         :editAction='editAction'
         :editComponent='editComponent'
         :itemModelFallback='itemModelFallback'
+        :changingView='changingView'
         :editRawPlaceholder='editRawPlaceholder'
 
         @toggle-complete='toggleComplete'
@@ -98,6 +99,7 @@ export default {
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
     'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
     'editComponent', 'itemModelFallback', 'listRenderer', 'showInfo',
+    'isRepeatingItem', 'changingView',
 
     'options',
   ],
@@ -175,7 +177,7 @@ export default {
         this.cancelItem(true)
       } else {
         this.animate(!this.completed)
-        const anticipate = (this.viewName !== 'Today' && this.comp === "Task")
+        const anticipate = (this.isRepeatingItem && this.viewName !== 'Today' && this.comp === "Task")
         this.completed = !this.completed || anticipate
         this.$nextTick(() => {
           if (this.completed || anticipate)
