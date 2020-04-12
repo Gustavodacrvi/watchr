@@ -68,6 +68,7 @@
           @add-heading='addHeading'
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
+          @save-new-items-ids='id => $emit("save-new-items-ids", id)'
           @items-ids='ids => getItemsIds(ids, i)'
           @added-heading-complete-mount='addedHeadingCompleteMount'
 

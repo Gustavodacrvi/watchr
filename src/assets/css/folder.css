@@ -107,4 +107,5 @@
 
 .sortable-ghost .header {
   background-color: var(--dark-void) !important;
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7);
 }

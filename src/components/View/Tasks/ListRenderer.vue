@@ -1,5 +1,5 @@
 <template>
-  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot}]' @click='click'>
+  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot, moving}]' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration"
         class="illustration"
@@ -93,7 +93,6 @@
           :data-id="item.isEdit + 'component eidt'"
 
           v-bind='item.propsData'
-          :focusToggle='focusToggle'
           :isAdding='true'
           :itemHeight='itemHeight'
           :itemModelFallback='itemModelFallback'
@@ -183,6 +182,7 @@
       @added-heading-complete-mount='justAddedHeading = null'
       @go='moveItemHandlerSelection'
       @add-heading='addHeadingFromRootHeadings'
+      @save-new-items-ids='saveNewItemsIds'
       @set-changing-view-timeout='setChangingViewTimeout'
       @headings-items-ids='getHeadingsItemsIds'
     />
@@ -247,7 +247,6 @@ export default {
 
       addedItem: null,
       edit: null,
-      focusToggle: false,
       movingItem: false,
 
       hasEdit: null,
@@ -424,7 +423,12 @@ export default {
       this.newItemsStorageSave = !this.newItemsStorageSave
     },
     saveNewItemsIds(ids) {
-      localStorage.setItem(this.newItemStorageKey, JSON.stringify(ids))
+      const save = ids => localStorage.setItem(this.newItemStorageKey, JSON.stringify(ids))
+      
+      if (Array.isArray(ids))
+        save(ids)
+      else
+        save([...this.allItemsIds, ids])
     },
     toggleCompletion(ids) {
       ids.forEach(id => this.findItem(id, vm => vm.toggleCompletion()))
@@ -672,7 +676,6 @@ export default {
         move()
       else if ((index + offset) > -1)
         move()
-      setTimeout(() => this.focusToggle = !this.focusToggle, 10)
     },
     removeEdit() {
       const i = this.lazyItems.findIndex(el => el.isEdit)
@@ -1127,7 +1130,9 @@ export default {
         const index = targetIndex || this.getListRendererPosition()
 
         if (shouldRender) {
-          this.saveNewItemsIds([...this.allItemsIds, t.id])
+          if (this.isRoot)
+            this.saveNewItemsIds([...this.allItemsIds, t.id])
+          else this.$emit('save-new-items-ids', t.id)
           this.lazyItems.splice(index, 0, t)
         }
         this.addedItem = t.id

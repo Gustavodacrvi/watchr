@@ -484,9 +484,10 @@ export default {
       return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.smartMargins)
     },
     smartMargins() {
+      const nonHidedLinks = this.nonHidedLinks
       if (this.userInfo && this.userInfo.margins)
-        return [...this.nonHidedLinks, ...this.userInfo.margins.map(el => ({id: el, isEmpty: true}))]
-      return this.nonHidedLinks
+        return [...nonHidedLinks, ...this.userInfo.margins.map(el => ({id: el, isEmpty: true}))].slice(0, (nonHidedLinks.length > 3) ? 0 : 1)
+      return nonHidedLinks
     },
     nonHidedLinks() {
       if (!this.userInfo.hidedViews) return this.links

@@ -512,6 +512,7 @@ export default {
 
 .sortable-ghost .cont-wrapper {
   background-color: var(--sidebar-color) !important;
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7);
   transition-duration: 0;
   height: 38px;
   padding: 0;

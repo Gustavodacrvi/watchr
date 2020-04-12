@@ -34,6 +34,8 @@
               @enter='save'
               @select='select'
               @cancel='$emit("close")'
+              @goup='goup'
+              @godown='godown'
             />
           </div>
         </div>
@@ -102,6 +104,19 @@ export default {
     window.addEventListener('click', this.windowClick)
   },
   methods: {
+    goup() {
+      this.$parent.$parent.$parent.$emit('goup')
+      setTimeout(() => {
+        this.focus()
+      })
+    },
+    godown() {
+      this.$parent.$parent.$parent.$emit('godown')
+      setTimeout(() => {
+        this.focus()
+      })
+    },
+    
     save() {
       this.$refs.comp.save()
     },

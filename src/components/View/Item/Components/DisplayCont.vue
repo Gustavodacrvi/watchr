@@ -266,7 +266,7 @@ export default {
   width: 0;
 
   height: 3px;
-  background-color: var(--fade);
+  background-color: var(--sidebar-color);
   border-radius: 8px;
   transition-duration: .15s;
 }

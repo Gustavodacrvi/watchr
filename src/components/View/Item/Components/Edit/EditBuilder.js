@@ -114,6 +114,18 @@ export default ({
               input: value => {
                 this.model[el.vModel] = value
               },
+              goup: () => {
+                this.$parent.$parent.$parent.$parent.$emit('goup')
+                setTimeout(() => {
+                  this.$refs[el.id].focusInput()
+                })
+              },
+              godown: () => {
+                this.$parent.$parent.$parent.$parent.$emit('godown')
+                setTimeout(() => {
+                  this.$refs[el.id].focusInput()
+                })
+              },
               cancel: () => this.$parent.$emit('close'),
             },
             nativeOn: {
