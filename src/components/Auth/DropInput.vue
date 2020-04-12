@@ -138,7 +138,7 @@ export default {
       for (const l of links) {
         l.style.opacity = 0
         setTimeout(() => {
-          l.style.transitionDuration = '.175s'
+          l.style.transitionDuration = '.15s'
         })
       }
     },

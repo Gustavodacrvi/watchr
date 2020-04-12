@@ -176,13 +176,13 @@ export default {
       if (this.canceled && !force) {
         this.cancelItem(true)
       } else {
-        this.animate(!this.completed)
         const anticipate = (this.isRepeatingItem && this.viewName !== 'Today' && this.comp === "Task")
         this.completed = !this.completed || anticipate
+        this.animate(this.completed || anticipate)
         this.$nextTick(() => {
-          if (this.completed || anticipate)
+          if (this.completed || anticipate) {
             this.$emit('complete-item')
-          else this.$emit('uncomplete-item')
+          } else this.$emit('uncomplete-item')
         })
       }
     },
@@ -469,7 +469,7 @@ export default {
   position: relative;
   z-index: 5;
   margin: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
   height: 100%;
   user-select: none;
 }
@@ -479,7 +479,7 @@ export default {
 }
 
 .isEditing {
-  transition-duration: .175s;
+  transition-duration: .15s;
   z-index: 6;
 }
 

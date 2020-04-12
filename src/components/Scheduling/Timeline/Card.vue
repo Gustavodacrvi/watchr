@@ -478,11 +478,11 @@ export default {
   position: absolute;
   z-index: 1;
   transform: scale(1,1);
-  transition: top .175s, transform .3s;
+  transition: top .15s, transform .3s;
 }
 
 .drag {
-  transition: top .175s, transform .3s;
+  transition: top .15s, transform .3s;
   transform: scale(1.05, 1.05);
 }
 
@@ -531,7 +531,7 @@ export default {
   /* background-color: var(--card); */
   border: 1px solid var(--sidebar-color);
   box-shadow: 0 0px 0px transparent;
-  transition: background-color .175s, width .175s, height .175s, box-shadow .3s;
+  transition: background-color .15s, width .15s, height .15s, box-shadow .3s;
   user-select: none;
 }
 
@@ -540,7 +540,7 @@ export default {
 }
 
 .resize .card, .drag .card {
-  transition: background-color .175s, width .175s;
+  transition: background-color .15s, width .15s;
 }
 
 .resize {
@@ -580,7 +580,7 @@ export default {
   top: 0;
   height: 100%;
   width: 5px;
-  transition-duration: .175s;
+  transition-duration: .15s;
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
 }
@@ -610,7 +610,7 @@ export default {
   z-index: -1;
   border-radius: 4px;
   opacity: .4;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .card:hover .card-back-color {

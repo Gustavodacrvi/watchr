@@ -199,7 +199,7 @@ export default {
       const s = el.style
       
       setTimeout(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.opacity = 1
         s.height = this.renderHeight
   
@@ -221,7 +221,7 @@ export default {
       s.overflow = 'hidden'
 
       setTimeout(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.opacity = 0
         s.height = '0px'
         s.overflow = 'hidden'

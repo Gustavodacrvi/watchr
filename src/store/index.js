@@ -79,6 +79,9 @@ const getDefaultInfo = () => ({
         'Recurring',
         'Logged lists',
       ],
+      hidedSections: [
+        "Tags", "Filters",
+      ],
     }
   },
 })

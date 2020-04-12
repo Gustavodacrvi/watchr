@@ -123,7 +123,7 @@ export default {
       s.transform = 'translate(0px, 0px) scale(1,1)'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = this.isDesktopBreakPoint ? '.175s' : '.175s'
+        s.transitionDuration = this.isDesktopBreakPoint ? '.15s' : '.15s'
         s.transitionTimingFunction = 'ease-out'
 
         s.transform = `translate(${xDiff}px, ${yDiff}px) scale(.95,.95)`
@@ -187,7 +187,7 @@ export default {
   align-items: center;
   height: 45px;
   overflow: hidden;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .inboxHover {
@@ -214,7 +214,7 @@ export default {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
-  transition: opacity .175s;
+  transition: opacity .15s;
   opacity: 1;
   pointer-events: none;
 }
@@ -271,7 +271,7 @@ export default {
 .act-button-wrapper .main {
   background-color: var(--card);
   border-radius: 4px;
-  transition: background-color .175s, box-shadow;
+  transition: background-color .15s, box-shadow;
   box-shadow: 0 0 8px rgba(0,0,0, .3);
 }
 
@@ -293,7 +293,7 @@ export default {
   box-shadow: 0 0 8px rgba(0,0,0, .3);
   background-color: var(--card);
   border-radius: 10px;
-  transition: background-color .175s, box-shadow;
+  transition: background-color .15s, box-shadow;
 }
 
 .floating-btn-container .floating-btn-msg {

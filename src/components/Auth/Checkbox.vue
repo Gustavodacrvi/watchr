@@ -53,7 +53,7 @@ export default {
   padding: 0 6px;
   display: flex;
   align-items: center;
-  transition-duration: .175s;
+  transition-duration: .15s;
   position: relative;
   overflow: hidden;
 }

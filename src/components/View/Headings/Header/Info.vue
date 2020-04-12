@@ -6,7 +6,7 @@
       @leave='leave'
       tag="div"
     >
-      <div v-if="headerInfo && (headerInfo.icons || headerInfo.comments)" class="icons">
+      <div v-if="headerInfo && ((headerInfo.icons && headerInfo.icons.length) || headerInfo.comments)" class="icons">
         <HeaderInfo v-for="item in headerInfo.icons"
           :key="item.icon"
           v-bind="item"
@@ -98,7 +98,7 @@ export default {
       s.margin = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
 
         s.height = '25px'
         s.opacity = 1
@@ -112,7 +112,7 @@ export default {
       
       const s = el.style
 
-      s.transitionDuration = '.175s'
+      s.transitionDuration = '.15s'
 
       s.height = 0
       s.width = 0
@@ -132,7 +132,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
 
         s.height = '22px'
         s.margin = '10px 0'
@@ -145,7 +145,7 @@ export default {
     tagsLeave(el, done) {
       const s = el.style
       
-      s.transitionDuration = '.175s'
+      s.transitionDuration = '.15s'
 
       s.height = 0
       s.opacity = 0

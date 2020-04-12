@@ -134,7 +134,7 @@ export default {
 
     const ball = this.$refs['ball'].style
     setTimeout(() => {
-      ball.transitionDuration = '.175s'
+      ball.transitionDuration = '.15s'
     }, 1000)
   },
   beforeDestroy() {
@@ -158,8 +158,8 @@ export default {
       w.height = 0
 
       requestAnimationFrame(() => {
-        r.transitionDuration = '.175s'
-        w.transitionDuration = '.175s'
+        r.transitionDuration = '.15s'
+        w.transitionDuration = '.15s'
 
         r.margin = '8px 0'
         r.opacity = 1
@@ -171,8 +171,8 @@ export default {
       const r = root.style
       const w = this.$refs['wrapper'].style
 
-      r.transitionDuration = '.175s'
-      w.transitionDuration = '.175s'
+      r.transitionDuration = '.15s'
+      w.transitionDuration = '.15s'
 
       r.margin = 0
       r.height = 0
@@ -463,7 +463,7 @@ export default {
   height: 30px;
   border-radius: 1000px;
   overflow: hidden;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .btn:hover {
@@ -530,7 +530,7 @@ export default {
   height: 45px;
   border-radius: 1000px;
   overflow: hidden;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .mobile .day-wrapper {

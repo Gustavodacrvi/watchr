@@ -107,7 +107,6 @@ export default ({
 
             props: {
               ...el.props,
-              enterOnShift: true,
               value: this.model[el.vModel],
               options: el.options ? this[el.options] : [],
             },
@@ -115,7 +114,6 @@ export default ({
               input: value => {
                 this.model[el.vModel] = value
               },
-              enter: this.save,
               cancel: () => this.$parent.$emit('close'),
             },
             nativeOn: {
@@ -297,6 +295,9 @@ export default ({
 
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+
+      if (this.isOnShift && key === 'Enter')
+        return this.save()
 
       if (checklist && this.isCursorInChecklist && !isTyping) {
         switch (key) {

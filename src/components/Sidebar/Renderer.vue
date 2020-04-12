@@ -298,12 +298,12 @@ export default {
       s.opacity = 0
       s.height = '0px'
       requestAnimationFrame(() => {
-        s.transitionDuration = disableTransition ? 0 : '.175s'
+        s.transitionDuration = disableTransition ? 0 : '.15s'
         s.opacity = 1
         s.height = (this.isDesktopDevice ? 19 : 42) + 'px'
         setTimeout(() => {
           s.height = 'auto'
-          s.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
           done()
         }, 220)
       })
@@ -315,7 +315,7 @@ export default {
       s.opacity = 1
       s.height = (this.isDesktopDevice ? 19 : 42) + 'px'
       requestAnimationFrame(() => {
-        s.transition = 'height .175s, opacity .175s'
+        s.transition = 'height .15s, opacity .15s'
         s.opacity = 0
         s.height = '0px'
 
@@ -447,7 +447,7 @@ export default {
   opacity: 0;
   background-color: transparent;
   overflow: visible;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .add-msg-wrapper:hover .add-msg {

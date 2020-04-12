@@ -92,7 +92,7 @@ export default {
       s.marginTop = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = height
         s.opacity = 1
         s.marginTop = this.heading ? 0 : '10px'
@@ -105,7 +105,7 @@ export default {
     leave(el, done) {
       const s = el.style
 
-      s.transitionDuration = '.175s'
+      s.transitionDuration = '.15s'
       s.height = 0
       s.minHeight = 0
       s.opacity = 0
@@ -135,7 +135,7 @@ export default {
 .Notes {
   position: relative;
   min-height: 25px;
-  transition-duration: .175s;
+  transition-duration: .15s;
   margin-top: 10px;
 }
 
@@ -156,7 +156,7 @@ export default {
   padding: 0;
   border: 0 none white;
   outline: none;
-  transition: margin-top .175s;
+  transition: margin-top .15s;
 }
 
 .save-msg {

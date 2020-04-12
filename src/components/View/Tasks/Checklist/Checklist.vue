@@ -132,10 +132,10 @@ export default {
     },
     pushEditString(getString) {
       this.addEdit(this.list.length)
-      if (getString)
-        this.$nextTick(() => {
+      this.$nextTick(() => {
+        if (getString)
           this.$refs.Edit[0].updateString(getString())
-        })
+      })
     },
     addEdit(i) {
       this.removeEdit()
@@ -235,7 +235,7 @@ export default {
 
 .Checklist {
   margin: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .isAddingChecklist {

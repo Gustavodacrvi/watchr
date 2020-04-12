@@ -7,7 +7,7 @@
   >
     <div class="SmartIconDrop cursor"
 
-      :class="{isActive, tagMode}"
+      :class="{isActive, tagMode, isTyping: !disabled && (isActive || tagMode) && (!tagMode || tagModeToggle)}"
 
       @click="click"
       @click.self='clickSelf'
@@ -144,7 +144,7 @@ export default {
       }
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
 
         s.width = width
         s.opacity = 1
@@ -180,7 +180,7 @@ export default {
       }
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.width = 0
         s.opacity = 0
         s.overflow = 'visible'
@@ -239,7 +239,7 @@ export default {
         s.opacity = 0
 
         requestAnimationFrame(() => {
-          s.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
           s.height = height
           s.opacity = 1
 
@@ -261,7 +261,7 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = 0
         s.opacity = 0
 
@@ -282,7 +282,7 @@ export default {
       s.padding = '0'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
 
         s.width = width
         s.opacity = 1
@@ -295,7 +295,7 @@ export default {
 
       const s = el.style
 
-      s.transitionDuration = '.175s'
+      s.transitionDuration = '.15s'
       s.width = 0
       s.opacity = 0
       s.padding = '0'
@@ -500,11 +500,15 @@ export default {
   border-radius: 4px;
   box-sizing: border-box;
   position: relative;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .tagMode + .tagMode {
   margin-left: 4px;
+}
+
+.isTyping {
+  box-shadow: inset 0 10px 6px -13px rgba(10,10,10, .8);
 }
 
 .SmartIconDrop.isActive, .SmartIconDrop:hover {
@@ -564,7 +568,7 @@ export default {
   margin: 0 6px;
   height: 19px;
   padding: 0 4px;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .option:hover, .activeOption {
@@ -596,13 +600,13 @@ export default {
 }
 
 .option-t-enter, .option-t-leave-to {
-  transition-duration: .175s;
+  transition-duration: .15s;
   opacity: 0;
   height: 0;
 }
 
 .option-t-leave, .option-t-enter-to {
-  transition-duration: .175s;
+  transition-duration: .15s;
   opacity: 1;
   height: 19px;
 }

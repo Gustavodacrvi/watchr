@@ -106,33 +106,13 @@ export default {
     enableLogbook() {
       return true
     },
-    headerConfig() {
+    headerPopup() {
       const folder = this.viewFolder
-      if (!folder) return null
-      const arr = []
-
-      if (!folder.color)
-        arr.push({
-          name: 'Add theme color',
-          icon: 'tint',
-          color: 'var(--yellow)',
-          callback: () => ({
-            comp: 'ColorPicker',
-            content: {
-              color: folder.color,
-              callback: this.foldersaveFolder,
-            },
-          })
-        })
-
-      if (!folder.notes)
-        arr.push({
-          name: 'Add notes',
-          icon: 'note',
-          callback: () => this.$refs.renderer.openNotes()
-        })
-
-      return arr
+      if (folder)
+        return {
+          comp: 'AddFolder',
+          payload: folder,
+        }
     },
     headerInfo() {
       const folder = this.viewFolder

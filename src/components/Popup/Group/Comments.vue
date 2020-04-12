@@ -110,14 +110,14 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = height
         s.opacity = 1
 
         setTimeout(() => {
           s.height = 'auto'
           done()
-        }, 210)
+        }, 151)
       })
       
     },
@@ -131,10 +131,10 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = 0
         s.opacity = 0
-        setTimeout(done, 205)
+        setTimeout(done, 151)
       })
       
     },
@@ -282,7 +282,7 @@ export default {
 .button {
   background-color: var(--sidebar-color);
   padding: 8px;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .button:hover {

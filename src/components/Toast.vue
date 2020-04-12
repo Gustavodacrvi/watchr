@@ -73,7 +73,7 @@ export default {
   position: fixed;
   bottom: 40px;
   pointer-events: all;
-  transition: background-color .175s;
+  transition: background-color .15s;
 }
 
 .bubble {

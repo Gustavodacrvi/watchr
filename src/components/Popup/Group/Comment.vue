@@ -72,7 +72,7 @@ export default {
 .info-icon {
   transform: translateY(-1.5px);
   opacity: 0;
-  transition: opacity .175s;
+  transition: opacity .15s;
 }
 
 .Comment {

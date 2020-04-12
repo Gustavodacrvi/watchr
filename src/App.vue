@@ -371,7 +371,7 @@ export default {
 
 .menu {
   transform: translateX(-100%);
-  transition: transform .175s;
+  transition: transform .15s;
   transition-timing-function: ease-in;
 }
 
@@ -398,12 +398,12 @@ export default {
 
 .fade-t-enter, .fade-t-leave-to {
   opacity: 0;
-  transition: opacity .175s;
+  transition: opacity .15s;
 }
 
 .fade-t-leave, .fade-t-enter-to {
   opacity: 1;
-  transition: opacity .175s;
+  transition: opacity .15s;
 }
 
 .passive {

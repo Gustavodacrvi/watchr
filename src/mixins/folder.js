@@ -49,7 +49,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = this.getItemContHeight
         s.opacity = 1
 
@@ -99,7 +99,7 @@ export default {
       s.opacity = 1
       
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = '0px'
         s.overflow = 'visible'
         s.opacity = 0

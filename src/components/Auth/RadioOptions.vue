@@ -47,7 +47,7 @@ export default {
 .opt {
   display: inline-block;
   padding: 8px;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .opt:hover {

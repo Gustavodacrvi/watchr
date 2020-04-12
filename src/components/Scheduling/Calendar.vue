@@ -291,7 +291,7 @@ export default {
 
 .day {
   border-radius: 4px;
-  transition-duration: .175s;
+  transition-duration: .15s;
   font-size: 1.15em;
 }
 

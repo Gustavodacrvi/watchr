@@ -26,7 +26,7 @@ export default EditBuilder({
         model: {
           name: '',
           notes: '',
-          color: '',
+          color: null,
         },
       }
     },
@@ -50,7 +50,7 @@ export default EditBuilder({
       rightSmartIconDrops() {
         const arr = []
 
-        if (!this.model.color)
+        if (!this.model.color || !this.selectedColorObj)
           arr.push({
             id: 'duration_clock',
             props: {

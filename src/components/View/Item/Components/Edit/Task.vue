@@ -57,7 +57,7 @@ export default EditBuilder({
     data() {
       return {
         toReplace: [],
-        fromIconDrop: false,
+        fromIconDrop: true,
         model: {
           name: '',
           notes: '',

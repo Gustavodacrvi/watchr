@@ -39,7 +39,7 @@ export default {
   flex-wrap: wrap;
   position: relative;
   margin: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .tags {

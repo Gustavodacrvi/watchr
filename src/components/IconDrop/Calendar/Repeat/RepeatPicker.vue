@@ -477,7 +477,7 @@ export default {
   display: inline-block;
   padding: 6px;
   background-color: var(--sidebar-color);
-  transition-duration: .175s;
+  transition-duration: .15s;
   background-color: none;
 }
 

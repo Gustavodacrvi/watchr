@@ -132,7 +132,7 @@ export default {
   opacity: .8;
   user-select: none;
   cursor: grab;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .active {

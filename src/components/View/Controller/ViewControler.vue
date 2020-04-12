@@ -17,7 +17,7 @@
     :enableLogbook='enableLogbook'
     :headingEditOptions='headingEditOptions'
     :headerOptions='headerOptions'
-    :headerConfig='headerConfig'
+    :headerPopup='headerPopup'
     :notes='getViewNotes'
     :progress='getPieProgress'
     :headings='headings'

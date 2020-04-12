@@ -154,7 +154,10 @@ export default {
     },
     saveFolder({rootState}, fold) {
       const b = fire.batch()
-      
+
+      if (fold.comp)
+        delete fold.comp
+
       setFolder(b, fold, fold.id, rootState)
 
       b.commit()

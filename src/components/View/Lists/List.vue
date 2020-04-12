@@ -188,7 +188,7 @@ export default {
           s.height = 0
           
           requestAnimationFrame(() => {
-            s.transitionDuration = '.175s'
+            s.transitionDuration = '.15s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
             setTimeout(() => this.doneTransition = true, 155)
@@ -221,7 +221,7 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.opacity = 0
         s.height = 0
 
@@ -414,7 +414,7 @@ export default {
   transform: translateY(-50%);
   border-radius: 100px;
   border: 0 solid transparent;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .check-date {
@@ -443,7 +443,7 @@ export default {
 .progress-icon {
   opacity: .6;
   transform: translate(2px, 2px) scale(1,1);
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .progress-icon:hover {

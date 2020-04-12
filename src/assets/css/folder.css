@@ -1,7 +1,7 @@
 
 .cont {
   margin: 0;
-  transition: margin .175s;
+  transition: margin .15s;
 }
 
 .showCont {
@@ -13,7 +13,7 @@
   display: flex;
   height: 19px;
   transform: scale(1,1); /* used for drag and drop */
-  transition-duration: .175s;
+  transition-duration: .15s;
   overflow: hidden;
 }
 
@@ -32,7 +32,7 @@
 .icon {
   color: var(--fade);
   transform: translateY(2px);
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .icon.headerHover {
@@ -65,7 +65,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transition: transform .175s;
+  transition: transform .15s;
   transform: translate(-50%,-50%) rotate(-90deg);
 }
 

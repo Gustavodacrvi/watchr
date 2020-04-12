@@ -26,9 +26,9 @@
         width='14px'
         @click='$emit("open-main-comp")'
       />
-      <Icon v-else-if="headerConfig && headerConfig.length"
+      <Icon v-else-if="headerPopup"
         class="comp-icon primary-hover cursor"
-        icon='cog'
+        icon='pen'
         color='var(--fade)'
         width='14px'
         @click='viewConfig'
@@ -66,14 +66,14 @@ export default {
     HeaderSearch,
     IconDrop,
   },
-  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'headerConfig','viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
+  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'headerPopup','viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
   methods: {
     openMenu() {
       if (!this.isDesktopBreakPoint)
         this.$router.push('/menu')
     },
     viewConfig() {
-      this.$store.commit('pushIconDrop', this.headerConfig)
+      this.$store.dispatch('pushPopup', this.headerPopup)
     },
   },
   computed: {

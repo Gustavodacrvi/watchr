@@ -407,7 +407,7 @@ export default {
   align-items: center;
   padding: 0 18px;
   transform: scale(1,1);
-  transition-duration: .175s;
+  transition-duration: .15s;
   position: relative;
 }
 
@@ -442,11 +442,11 @@ export default {
   opacity: 0;
   height: 0;
   margin-top: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .btn-trans-leave, .btn-trans-enter-to {
-  transition-duration: .175s;
+  transition-duration: .15s;
   opacity: 1;
   margin-top: 12px;
   height: 35px;

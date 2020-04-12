@@ -16,7 +16,7 @@
 }
 
 .files, .tags {
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .files {

@@ -87,7 +87,7 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = height
         s.opacity = .4
 
@@ -108,7 +108,7 @@ export default {
       s.opacity = .4
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = 0
         s.opacity = 0
 
@@ -133,7 +133,7 @@ export default {
           s.marginLeft = 0
   
         requestAnimationFrame(() => {
-          s.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
           s.width = width
           s.marginRight = '6px'
           if (isFirst)
@@ -153,7 +153,7 @@ export default {
       s.width = this.width
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.width = 0
         s.padding = 0
         s.border = 'none'
@@ -195,7 +195,7 @@ export default {
   position: relative;
   width: 100%;
   align-items: center;
-  transition: min-height .175s;
+  transition: min-height .15s;
 }
 
 .text-wrapper {
@@ -268,7 +268,7 @@ export default {
   height: 3px;
   background-color: var(--fade);
   border-radius: 8px;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .showLine .line {

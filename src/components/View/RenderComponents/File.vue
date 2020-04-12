@@ -63,11 +63,11 @@ export default {
       s.height = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.opacity = 1
         s.height = '22px'
 
-        setTimeout(done, 205);
+        setTimeout(done, 151);
         
       })
 
@@ -76,11 +76,11 @@ export default {
 
       const s = el.style
 
-      s.transitionDuration = '.175s'
+      s.transitionDuration = '.15s'
       s.opacity = 0
       s.height = 0
 
-      setTimeout(done, 205)
+      setTimeout(done, 151)
     },
   },
   computed: {
@@ -96,7 +96,7 @@ export default {
   display: flex;
   align-items: center;
   height: 22px;
-  transition-duration: .175s;
+  transition-duration: .15s;
   position: relative;
   font-size: 1.075em;
   cursor: pointer;

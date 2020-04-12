@@ -84,8 +84,8 @@ export default {
       c.height = 0
       c.opacity = 0
       requestAnimationFrame(() => {
-        c.transitionDuration = '.175s'
-        s.transitionDuration = '.175s'
+        c.transitionDuration = '.15s'
+        s.transitionDuration = '.15s'
         s.height = height
         c.height = height
         c.opacity = 1

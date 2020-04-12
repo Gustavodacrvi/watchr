@@ -80,7 +80,7 @@ export default {
       s.opacity = 0
       s.borderBottom = '0px solid transparent'
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         if (height < 36)
           s.height = '35px'
         else

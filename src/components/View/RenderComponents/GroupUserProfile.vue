@@ -73,12 +73,12 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
 
         s.height = '48px'
         s.opacity = 1
 
-        setTimeout(done, 205)
+        setTimeout(done, 151)
       })
 
     },
@@ -86,11 +86,11 @@ export default {
 
       const s = el.style
 
-      s.transitionDuration = '.175s'
+      s.transitionDuration = '.15s'
       s.height = 0
       s.opacity = 0
 
-      setTimeout(done, 205)
+      setTimeout(done, 151)
 
     },
   },
@@ -111,14 +111,14 @@ export default {
 .GroupUserProfile {
   display: flex;
   height: 48px;
-  transition-duration: .175s;
+  transition-duration: .15s;
   align-items: center;
   overflow: hidden;
 }
 
 .options {
   display: flex;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .fade {
@@ -198,7 +198,7 @@ export default {
   padding: 6px;
   margin-left: 4px;
   border-radius: 4px;
-  transition-duration: .175s;
+  transition-duration: .15s;
   cursor: pointer;
 }
 

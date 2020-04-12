@@ -193,7 +193,7 @@ export default {
   height: 25px;
   text-align: center;
   bottom: 100%;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .save:hover {

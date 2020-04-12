@@ -102,7 +102,7 @@ export const setFolder = (batch, folder, id, rootState, writes) => {
       ...allFolders,
       [ref.id]: obj,
     }
-  
+
   if (!writes)
     batch.set(cacheRef(), {
       folders: {
