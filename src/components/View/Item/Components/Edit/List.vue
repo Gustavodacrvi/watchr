@@ -171,17 +171,7 @@ export default EditBuilder({
           arr.unshift(this.deadlineSmartIconObj)
 
         if (!this.model.calendar)
-          arr.unshift({
-            id: 'calendar_icon',
-            props: {
-              placeholder: 'Defer...',
-              icon: 'calendar',
-              color: 'var(--green)',
-              trigger: 'enter',
-              compose: this.composeCalendarListHelper,
-              list: this.calendarOptions,
-            },
-          })
+          arr.unshift(this.calendarSmartIconObj)
 
         const listObj = this.getListObj
 
@@ -194,34 +184,11 @@ export default EditBuilder({
       selectedColorObj() {
         return this.colors.find(el => el.color === this.model.color)
       },
-      calendarOptions() {
-        const arr = this.calendarSmartIconOptions
-          .filter(el => el.name !== 'Inbox' && el.name !== 'This evening' && el.name !== 'Anytime')
-
-        arr.unshift({
-          id: 'no date',
-          name: 'No date',
-          icon: 'bloqued',
-          callback: model => model.calendar = null,
-        })
-
-        return arr
-      },
       getViewTags() {
         const arr = []
 
         if (this.model.calendar)
-          arr.push({
-            id: 'smart_icon_calendar',
-            props: {
-              name: this.calendarStr,
-              icon: this.getCalendarStrIcon,
-              color: this.getCalendarStrColor,
-              trigger: 'enter',
-              compose: this.composeCalendarListHelper,
-              list: this.calendarOptions,
-            },
-          })
+          arr.push(this.calendarTagObj)
         
         if (this.model.deadline)
           arr.push(this.deadlineTagObj)

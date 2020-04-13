@@ -208,7 +208,7 @@ export default {
 }
 
 .ActionButtons {
-  bottom: 16px;
+  bottom: 44px;
   z-index: 15;
   position: sticky;
   display: flex;
@@ -231,6 +231,7 @@ export default {
 
 .ActionButtons.mobile .right-action-floating-button {
   transform: translateX(-8px);
+  bottom: 16px;
 }
 
 /* .ActionButtons.mobile .left-act {

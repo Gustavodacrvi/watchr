@@ -3,6 +3,8 @@ import utils from "@/utils"
 
 import mom from 'moment'
 
+import { mapGetters, mapState } from "vuex"
+
 const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
 
@@ -14,6 +16,36 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      userInfo: state => state.userInfo,
+      iconDrop: state => state.iconDrop,
+      user: state => state.user,
+
+      viewName: state => state.viewName,
+      viewType: state => state.viewType,
+
+      isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
+      isOnAlt: state => state.isOnAlt,
+    }),
+    ...mapGetters({
+      lists: 'list/sortedLists',
+      folders: 'folder/sortedFolders',
+      groups: 'group/sortedGroupsByName',
+      tags: 'tag/sortedTagsByName',
+      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
+      getTagsById: 'tag/getTagsById',
+
+      colors: 'colors',
+
+      getListsById: 'list/getListsById',
+      getFoldersById: 'folder/getFoldersById',
+      getGroupsById: 'group/getGroupsById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
+
+      isRecurringTask: 'task/isRecurringTask',
+    }),
+    
     getCalendarStrColor() {
       switch (this.getCalendarStrIcon) {
         case 'inbox': return 'var(--primary)'
@@ -92,6 +124,45 @@ export default {
       const iconDropObj = this.getAssignees
       if (iconDropObj)
         return iconDropObj.links.find(el => el.id === this.model.assigned).name
+    },
+    calendarOptions() {
+      const arr = this.calendarSmartIconOptions
+        .filter(el => el.name !== 'Inbox' && el.name !== 'This evening' && el.name !== 'Anytime')
+
+      arr.unshift({
+        id: 'no date',
+        name: 'No date',
+        icon: 'bloqued',
+        callback: model => model.calendar = null,
+      })
+
+      return arr
+    },
+    calendarTagObj() {
+      return {
+        id: 'smart_icon_calendar',
+        props: {
+          name: this.calendarStr,
+          icon: this.getCalendarStrIcon,
+          color: this.getCalendarStrColor,
+          trigger: 'enter',
+          compose: this.composeCalendarListHelper,
+          list: this.calendarOptions,
+        },
+      }
+    },
+    calendarSmartIconObj() {
+      return {
+        id: 'calendar_icon',
+        props: {
+          placeholder: 'Defer...',
+          icon: 'calendar',
+          color: 'var(--green)',
+          trigger: 'enter',
+          compose: this.composeCalendarListHelper,
+          list: this.calendarOptions,
+        },
+      }
     },
     composeCalendarListHelper() {
       return (list, search) => {

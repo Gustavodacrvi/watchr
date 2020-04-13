@@ -422,36 +422,6 @@ export default ({
     ...(instance.methods || {}),
   },
   computed: {
-    ...mapState({
-      userInfo: state => state.userInfo,
-      iconDrop: state => state.iconDrop,
-      user: state => state.user,
-
-      viewName: state => state.viewName,
-      viewType: state => state.viewType,
-
-      isOnControl: state => state.isOnControl,
-      isOnShift: state => state.isOnShift,
-      isOnAlt: state => state.isOnAlt,
-    }),
-    ...mapGetters({
-      lists: 'list/sortedLists',
-      folders: 'folder/sortedFolders',
-      groups: 'group/sortedGroupsByName',
-      tags: 'tag/sortedTagsByName',
-      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
-      getTagsById: 'tag/getTagsById',
-
-      colors: 'colors',
-
-      getListsById: 'list/getListsById',
-      getFoldersById: 'folder/getFoldersById',
-      getGroupsById: 'group/getGroupsById',
-      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
-
-      isRecurringTask: 'task/isRecurringTask',
-    }),
-
     currentSmartIconHasList() {
       if (this.cursorPos < this.getFirstSmartIconKeyboardActionPosition)
         return false

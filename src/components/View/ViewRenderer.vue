@@ -100,6 +100,9 @@
         @add-task='addTask'
       />
     </transition>
+    <HeaderIcons
+      :width='width'
+    />
   </div>
 </template>
 
@@ -111,6 +114,7 @@ import SlimModeNav from './SlimModeNav.vue'
 import TaskHandler from './Views/TaskHandler.vue'
 import ListHandler from './Views/ListHandler.vue'
 import CalendarEvents from './RenderComponents/CalendarEvents.vue'
+import HeaderIcons from './HeaderIcons/HeaderIcons.vue'
 
 import Defer from '@/mixins/defer'
 import autoScheduleMixin from "@/mixins/autoSchedule"
@@ -153,7 +157,7 @@ export default {
   components: {
     ListHandler, CalendarEvents,
     TaskHandler, ViewRendererLongCalendarPicker,
-    Header: HeaderVue,
+    Header: HeaderVue, HeaderIcons,
     ActionButtons: ActionButtonsVue,
     SlimModeNav,
   },
