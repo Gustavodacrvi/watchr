@@ -120,12 +120,12 @@ export default {
   flex-wrap: wrap;
   position: relative;
   margin: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
   z-index: 199;
 }
 
 .margins {
-  transition-duration: .175s;
+  transition-duration: .15s;
   margin-top: 30px;
 }
 

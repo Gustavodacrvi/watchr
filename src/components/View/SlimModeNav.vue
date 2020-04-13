@@ -115,13 +115,13 @@ export default {
 .side-t-enter, .side-t-leave-to {
   transform: translateY(0px);
   opacity: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .side-t-leave, .side-t-enter-to {
   transform: translateY(5px);
   opacity: 1;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .mobile {

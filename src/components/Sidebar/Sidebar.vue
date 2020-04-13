@@ -192,10 +192,10 @@ export default {
   mounted() {
     setInterval(() => {
       this.moveLineToActive()
-    }, 200)
+    }, 1000)
     this.moveLineToActive()
     window.addEventListener('resize', this.moveLineToActive)
-  },
+  },  
   beforeDestroy() {
     window.removeEventListener('resize', this.moveLineToActive)
   },
@@ -252,7 +252,7 @@ export default {
         el.classList.add('to-left')
       }
       requestAnimationFrame(() => {
-        el.style.transitionDuration = '.175s'
+        el.style.transitionDuration = '.15s'
         el.classList.remove('to-right')
         el.classList.remove('to-left')
       })
@@ -484,9 +484,11 @@ export default {
       return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.smartMargins)
     },
     smartMargins() {
+      const nonHidedLinks = this.nonHidedLinks
       if (this.userInfo && this.userInfo.margins)
-        return [...this.nonHidedLinks, ...this.userInfo.margins.map(el => ({id: el, isEmpty: true}))]
-      return this.nonHidedLinks
+        return [...nonHidedLinks, ...(this.userInfo.margins.map(el => ({id: el, isEmpty: true})).slice(0, (nonHidedLinks.length > 3) ? 2 : 1))
+      ]
+      return nonHidedLinks
     },
     nonHidedLinks() {
       if (!this.userInfo.hidedViews) return this.links
@@ -646,7 +648,7 @@ export default {
   z-index: 100px;
   cursor: pointer;
   opacity: 0 !important;
-  transition: opacity .175s, background-color .175s, width .175s, transform .175s;
+  transition: opacity .15s, background-color .15s, width .15s, transform .15s;
 }
 
 .sidebar-handle.sidebarHided {
@@ -747,7 +749,7 @@ export default {
 
 .header {
   width: 100%;
-  height: 42px;
+  height: 30px;
   margin: 14px 0;
   display: flex;
   border-bottom: .5px solid var(--light-gray);
@@ -774,7 +776,7 @@ export default {
   background-color: var(--primary);
   width: 100px;
   height: 2px;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .pressingHandle {
@@ -787,8 +789,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .175s;
+  transition-duration: .15s;
   cursor: pointer;
+  font-size: 1.05em;
   color: var(--fade);
   outline: none;
   border-top-left-radius: 6px;
@@ -870,12 +873,12 @@ export default {
 
 .icon-t-enter, .icon-t-leave-to {
   opacity: 0 !important;
-  transition-duration: .175s !important;
+  transition-duration: .15s !important;
 }
 
 .icon-t-leave, .icon-t-enter-to {
   opacity: 1 !important;
-  transition-duration: .175s !important;
+  transition-duration: .15s !important;
 }
 
 .search-t-enter, .search-t-leave-to {

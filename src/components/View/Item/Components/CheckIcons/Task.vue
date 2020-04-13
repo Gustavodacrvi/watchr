@@ -4,7 +4,7 @@
     :ca='canceled'
 
     :color='color || circleColor'
-    :se='false'
+    :se='isSelecting'
     :ac='isItemSelected'
     :so='isSomeday'
     :re='isRepeatingItem'

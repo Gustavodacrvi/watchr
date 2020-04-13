@@ -120,10 +120,10 @@ export default {
     },
   },
   actions: {
-    addFolder({rootState}, fold) {
+    async addFolder({rootState}, fold) {
       const b = fire.batch()
       
-      setFolder(b, {
+      await setFolder(b, {
         tasks: [],
         files: [],
         createdFire: new Date(),
@@ -143,19 +143,22 @@ export default {
 
       b.commit()
     },
-    updateOrder({rootState}, {id, ids}) {
+    async updateOrder({rootState}, {id, ids}) {
       const b = fire.batch()
       
-      setFolder(b, {
+      await setFolder(b, {
         order: ids,
       }, id, rootState)
 
       b.commit()
     },
-    saveFolder({rootState}, fold) {
+    async saveFolder({rootState}, fold) {
       const b = fire.batch()
-      
-      setFolder(b, fold, fold.id, rootState)
+
+      if (fold.comp)
+        delete fold.comp
+
+      await setFolder(b, fold, fold.id, rootState)
 
       b.commit()
     },
@@ -175,12 +178,12 @@ export default {
 
       b.commit()
     },
-    moveListBetweenFolders({rootState}, {folder, itemIds, ids}) {
+    async moveListBetweenFolders({rootState}, {folder, itemIds, ids}) {
       const b = fire.batch()
 
       const writes = []
 
-      setFolder(b, {order: ids}, folder, rootState, writes)
+      await setFolder(b, {order: ids}, folder, rootState, writes)
       batchSetLists(b, {
         folder, group: null,
       }, itemIds, rootState, writes)

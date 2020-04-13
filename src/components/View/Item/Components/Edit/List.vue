@@ -168,7 +168,7 @@ export default EditBuilder({
           })
 
         if (!this.model.deadline)
-          arr.unshift(this.deadlineTagObj)
+          arr.unshift(this.deadlineSmartIconObj)
 
         if (!this.model.calendar)
           arr.unshift({

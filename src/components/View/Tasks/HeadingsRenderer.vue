@@ -68,6 +68,7 @@
           @add-heading='addHeading'
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
+          @save-new-items-ids='id => $emit("save-new-items-ids", id)'
           @items-ids='ids => getItemsIds(ids, i)'
           @added-heading-complete-mount='addedHeadingCompleteMount'
 
@@ -242,8 +243,8 @@ export default {
       s.borderBottom = `0px ${heading.archive ? "dashed" : "solid"} var(--back-color)`
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
-        w.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
+        w.transitionDuration = '.15s'
 
         s.marginBottom = 0
         if (!isFirst)
@@ -290,13 +291,13 @@ export default {
 
       requestAnimationFrame(() => {
         if (c) {
-          c.transitionDuration = '.175s'
+          c.transitionDuration = '.15s'
           c.height = 0
           c.overflow = 'hidden'
         }
   
-        s.transitionDuration = '.175s'
-        w.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
+        w.transitionDuration = '.15s'
         w.opacity = 0
         w.height = 0
         w.overflow = 'hidden'

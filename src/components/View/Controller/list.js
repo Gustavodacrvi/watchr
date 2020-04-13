@@ -39,6 +39,7 @@ export default {
         return {
           group: this.viewList.group || null,
           list: this.viewList.id,
+          calendar: this.getCalObjectByView('Anytime'),
         }
     },
 
@@ -233,93 +234,13 @@ export default {
         return this.getTagsById(list.tags)
       return []
     },
-    headerConfig() {
+    headerPopup() {
       const list = this.viewList
-      const save = this.listsaveList
-      if (!list)
-        return null
-      
-      const arr = []
-
-      if (!list.deadline)
-        arr.unshift({
-          name: 'Add deadline',
-          icon: 'deadline',
-          color: 'var(--red)',
-          callback: () => ({
-            comp: 'CalendarPicker',
-            content: {
-              onlyDates: true,
-              noTime: true,
-              allowNull: true,
-              callback: date => save({deadline: (date && date.specific) || null}),
-            },
-          })
-        })
-      
-      if (!list.calendar)
-        arr.push({
-          name: 'Defer list',
-          icon: 'calendar',
-          color: 'var(--green)',
-          callback: () => ({
-            comp: "CalendarPicker",
-            content: {repeat: true, disableDaily: true, callback: calendar => save({calendar})},
-          })
-        })
-
-      
-      if (!list.notes)
-        arr.push({
-          name: 'Add notes',
-          icon: 'note',
-          callback: () => this.$refs.renderer.openNotes()
-        })
-      
-      arr.push(        {
-        name: 'Add tags',
-        icon: 'tag',
-        color: 'var(--red)',
-        callback: () => ({
-          allowSearch: true,
-          select: true,
-          onSave: names => {
-            dispatch('list/editListTags', {
-              tagIds: this.tags.filter(el => names.includes(el.name)).map(el => el.id),
-              listId,
-            })
-          },
-          selected: (list.tags && list.tags.map(id => this.tags.find(el => el.id === id).name)) || [],
-          links: this.tags.map(el => ({
-            name: el.name,
-            icon: 'tag',
-          })),
-        })
-      })
-
-      if (!list.color)
-        arr.push({
-          name: 'Add theme color',
-          icon: 'tint',
-          color: 'var(--yellow)',
-          callback: () => ({
-            comp: 'ColorPicker',
-            content: {
-              color: list.color,
-              callback: this.listsaveList,
-            },
-          })
-        })
-        
-      arr.push({
-        name: "Upload files",
-        icon: 'file',
-        file: true,
-        multiple: true,
-        handleFiles: files => this.$refs.renderer.addFiles(files)
-      })
-
-      return arr
+      if (list)
+        return {
+          comp: "AddList",
+          payload: list,
+        }
     },
     headerInfo() {
       const list = this.viewList

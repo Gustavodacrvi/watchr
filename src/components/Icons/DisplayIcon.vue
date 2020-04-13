@@ -61,7 +61,7 @@ export default {
 }
 
 .primary-hover .icon:hover {
-  transition-duration: .175s;
+  transition-duration: .15s;
   color: var(--primary) !important;
 }
 

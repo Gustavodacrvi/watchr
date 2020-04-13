@@ -161,7 +161,7 @@ export default {
   height: 20px;
   padding: 0 12px;
   border-radius: 4px;
-  transition: background-color .175s;
+  transition: background-color .15s;
 }
 
 .drop {

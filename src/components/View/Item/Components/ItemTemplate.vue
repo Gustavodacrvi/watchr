@@ -176,13 +176,13 @@ export default {
       if (this.canceled && !force) {
         this.cancelItem(true)
       } else {
-        this.animate(!this.completed)
         const anticipate = (this.isRepeatingItem && this.viewName !== 'Today' && this.comp === "Task")
         this.completed = !this.completed || anticipate
+        this.animate(this.completed || anticipate)
         this.$nextTick(() => {
-          if (this.completed || anticipate)
+          if (this.completed || anticipate) {
             this.$emit('complete-item')
-          else this.$emit('uncomplete-item')
+          } else this.$emit('uncomplete-item')
         })
       }
     },
@@ -383,7 +383,7 @@ export default {
     isItemSelected() {
       if (!this.item)
         return false
-      return !this.movingItem && this.selectedItems.includes(this.item.id)
+      return this.selectedItems.includes(this.item.id)
     },
     isItemMainSelection() {
       if (!this.item)
@@ -435,13 +435,6 @@ export default {
 
 <style>
 
-.sortable-ghost.ItemTemplate .cont-wrapper {
-  background-color: var(--sidebar-color) !important;
-  transition-duration: 0;
-  height: 38px;
-  padding: 0;
-}
-
 .mobile.sortable-ghost.ItemTemplate .cont-wrapper {
   height: 50px;
 }
@@ -454,6 +447,28 @@ export default {
 .sortable-ghost.ItemTemplate .info {
   display: none;
 }
+
+.ItemTemplate.isItemSelected .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.6) !important;
+  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
+  cursor: grab;
+}
+
+.sortable-ghost.ItemTemplate .cont-wrapper {
+  background-color: var(--sidebar-color) !important;
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
+  transition-duration: 0;
+  height: 38px;
+  padding: 0;
+}
+
+.moving .ItemTemplate.isItemSelected .cont-wrapper {
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
+  background-color: var(--sidebar-color);
+}
+
 
 </style>
 
@@ -469,7 +484,7 @@ export default {
   position: relative;
   z-index: 5;
   margin: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
   height: 100%;
   user-select: none;
 }
@@ -479,19 +494,13 @@ export default {
 }
 
 .isEditing {
-  transition-duration: .175s;
+  transition-duration: .15s;
   z-index: 6;
 }
 
 
-.desktop .cont-wrapper:hover, .desktop .cont-wrapper:active, .isItemMainSelection .cont-wrapper {
+.notMoving .desktop .cont-wrapper:hover, .desktop .cont-wrapper:active, .isItemMainSelection .cont-wrapper {
   background-color: var(--light-gray);
-}
-
-.isItemSelected .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.6) !important;
-  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
-  cursor: grab;
 }
 
 </style>

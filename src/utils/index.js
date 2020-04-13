@@ -630,7 +630,7 @@ export default {
               editDate: TOD_STR,
               begins: TOD_STR,
             }
-          }
+          } else return false
         },
       },
       {
@@ -667,7 +667,7 @@ export default {
               editDate: TOD_STR,
               begins: TOD_STR,   
             }
-          }
+          } else return false
         }
       },
       {
@@ -703,7 +703,7 @@ export default {
               editDate: TOD_STR,
               begins: TOD_STR,   
             }
-          }
+          } else return false
         },
       },
       {
@@ -756,7 +756,7 @@ export default {
                 type: weekDay === 'day' ? 'day' : parseInt(mom(weekDay.slice(0, 2), 'ddd').format('e'), 10),
               }
             }
-          }
+          } else return false
         },
       },
       {
@@ -770,7 +770,7 @@ export default {
                 onDate: obj.specific,
               }
             }
-          }
+          } else return false
         },
       },
       {
@@ -783,7 +783,7 @@ export default {
                 type: 'times',
                 times: days,
               }
-          }
+          } else return false
         },
       },
       {
@@ -794,7 +794,7 @@ export default {
             if (obj && obj.specific) {
               cal.begins = obj.specific
             }
-          }
+          } else return false
         },
       },
       ...(specificMatches.map(el => ({
@@ -833,7 +833,7 @@ export default {
                 cal.time = hour
               }
             }
-          }
+          } else return false
         },
       },
       {
@@ -842,7 +842,7 @@ export default {
           if (cal) {
             cal.evening = true
             return cal 
-          }
+          } else return false
         }
       },
       {
@@ -855,11 +855,13 @@ export default {
       const match = str.match(obj.match)
       if (match) {
         const first = (match[0] && match[0].trim()) || ''
-        if (!obj.unshift)
-          matches.push(first)
-        else
-          matches.unshift(first)
-        obj.get(match, first)
+
+        if (obj.get(match, first) !== false) {
+          if (!obj.unshift)
+            matches.push(first)
+          else
+            matches.unshift(first)
+        }
       }
     }
 

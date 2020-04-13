@@ -34,6 +34,8 @@
               @enter='save'
               @select='select'
               @cancel='$emit("close")'
+              @goup='goup'
+              @godown='godown'
             />
           </div>
         </div>
@@ -68,6 +70,7 @@ import List from "./List.vue"
 import Tag from "./Tag.vue"
 import Heading from "./Heading.vue"
 import Folder from "./Folder.vue"
+import Group from "./Group.vue"
 
 import DropInput from "@/components/Auth/DropInput.vue"
 
@@ -76,6 +79,7 @@ export default {
     List, Heading,
     Task, DropInput,
     Tag, Folder,
+    Group,
   },
   props: ['name', 'itemHeight', 'editComponent',  'doneTransition', 'editAction', 'editRawPlaceholder', 'item', 'itemModelFallback', 'isAdding', 'showInfo'],
   data() {
@@ -102,6 +106,19 @@ export default {
     window.addEventListener('click', this.windowClick)
   },
   methods: {
+    goup() {
+      this.$parent.$parent.$parent.$emit('goup')
+      setTimeout(() => {
+        this.focus()
+      })
+    },
+    godown() {
+      this.$parent.$parent.$parent.$emit('godown')
+      setTimeout(() => {
+        this.focus()
+      })
+    },
+    
     save() {
       this.$refs.comp.save()
     },

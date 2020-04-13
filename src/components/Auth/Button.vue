@@ -24,11 +24,11 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = height
         s.opacity = 1
 
-        setTimeout(done, 205)
+        setTimeout(done, 151)
       })
     },
     leave(el, done) {
@@ -37,11 +37,11 @@ export default {
 
       const {height, width} = getComputedStyle(el)
 
-      s.transitionDuration = '.175s'
+      s.transitionDuration = '.15s'
       s.height = 0
       s.opacity = 0
 
-      setTimeout(done, 205)
+      setTimeout(done, 151)
 
     },
   },
@@ -64,7 +64,7 @@ export default {
   border-radius: 6px;
   font-size: 1.01em;
   cursor: pointer;
-  transition-duration: .175s;
+  transition-duration: .15s;
   outline: none;
   overflow: hidden;
   position: relative;
@@ -97,7 +97,7 @@ export default {
   width: unset;
   padding: 6px;
   color: var(--fade);
-  transition-duration: .175s;
+  transition-duration: .15s;
   transform: scale(1,1);
 }
 
@@ -108,7 +108,7 @@ export default {
   margin-top: 12px;
   margin-left: 6px;
   width: unset;
-  transition-duration: .175s;
+  transition-duration: .15s;
   color: var(--fade);
 }
 

@@ -56,9 +56,9 @@ export default {
       icon.opacity = '0'
       el.style.opacity = '0'
       requestAnimationFrame(() => {
-        el.style.transitionDuration = '.175s'
-        name.transitionDuration = '.175s'
-        icon.transitionDuration = '.175s'
+        el.style.transitionDuration = '.15s'
+        name.transitionDuration = '.15s'
+        icon.transitionDuration = '.15s'
         requestAnimationFrame(() => {
           w.height = this.height + 'px'
           w.width = this.width + 'px'
@@ -89,10 +89,10 @@ export default {
       w.width = width
 
       requestAnimationFrame(() => {
-        el.style.transitionDuration = '.175s'
-        w.transitionDuration = '.175s'
-        name.transitionDuration = '.175s'
-        icon.transitionDuration = '.175s'
+        el.style.transitionDuration = '.15s'
+        w.transitionDuration = '.15s'
+        name.transitionDuration = '.15s'
+        icon.transitionDuration = '.15s'
 
         name.opacity = 0
         icon.opacity = 0
@@ -100,7 +100,7 @@ export default {
         w.height = '0px'
         w.width = '0px'
 
-        setTimeout(done, 205)
+        setTimeout(done, 151)
       })
     },
     activate() {
@@ -154,7 +154,7 @@ export default {
 }
 
 .name {
-  transition-duration: .175s;
+  transition-duration: .15s;
   transform: translateY(-1px);
   white-space: nowrap;
 }
@@ -162,7 +162,7 @@ export default {
 .Tag {
   margin-right: 4px;
   outline: none;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .Tag:hover, .active {

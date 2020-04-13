@@ -9,7 +9,7 @@
           class="comment-background"
           icon='comment'
           color='var(--sidebar-color)'
-          width='150px'
+          width='100px'
         />
           <transition-group
             @enter='enter'
@@ -110,14 +110,14 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = height
         s.opacity = 1
 
         setTimeout(() => {
           s.height = 'auto'
           done()
-        }, 210)
+        }, 151)
       })
       
     },
@@ -131,10 +131,10 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.height = 0
         s.opacity = 0
-        setTimeout(done, 205)
+        setTimeout(done, 151)
       })
       
     },
@@ -217,8 +217,8 @@ export default {
 }
 
 .Comments.desktop {
-  min-height: 500px;
-  flex-basis: 800px;
+  min-height: 400px;
+  flex-basis: 600px;
 }
 
 .wrapper {
@@ -245,19 +245,21 @@ export default {
 }
 
 .editor {
-  border: 2px solid var(--sidebar-color);
+  background-color: var(--sidebar-color);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
   display: flex;
   flex-direction: column;
   padding: 0 13px;
 }
 
 .text {
-  padding: 8px 0;
+  padding: 3px 0;
   box-sizing: border-box;
 }
 
 .header {
-  flex-basis: 45px;
+  flex-basis: 35px;
   border-top: 2px solid var(--sidebar-color);
   display: flex;
   justify-content: space-between;
@@ -282,7 +284,7 @@ export default {
 .button {
   background-color: var(--sidebar-color);
   padding: 8px;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .button:hover {

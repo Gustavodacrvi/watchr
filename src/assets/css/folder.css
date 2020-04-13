@@ -1,7 +1,7 @@
 
 .cont {
   margin: 0;
-  transition: margin .175s;
+  transition: margin .15s;
 }
 
 .showCont {
@@ -13,7 +13,7 @@
   display: flex;
   height: 19px;
   transform: scale(1,1); /* used for drag and drop */
-  transition-duration: .175s;
+  transition-duration: .15s;
   overflow: hidden;
 }
 
@@ -32,7 +32,7 @@
 .icon {
   color: var(--fade);
   transform: translateY(2px);
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .icon.headerHover {
@@ -51,8 +51,8 @@
 
 .arrow-wrapper-wrapper {
   position: absolute;
-  right: -35px;
-  transform: translateY(2.5px);
+  right: -38px;
+  transform: translateY(.5px);
 }
 
 .arrow-wrapper {
@@ -65,7 +65,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transition: transform .175s;
+  transition: transform .15s;
   transform: translate(-50%,-50%) rotate(-90deg);
 }
 
@@ -107,4 +107,6 @@
 
 .sortable-ghost .header {
   background-color: var(--dark-void) !important;
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
 }

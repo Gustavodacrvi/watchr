@@ -26,7 +26,6 @@
         :exclusiveGroups='exclusiveGroups'
 
         :extraIcons='extraIcons'
-        :headerConfig='headerConfig'
 
         :removeHeaderTag='removeHeaderTag'
         :priorities='priorityOptions'
@@ -147,7 +146,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'extraListView', 'removeHeaderTag', 'saveHeaderName', 'enableLogbook',
-  'calendarDate', 'viewItem', 'itemModelFallback', 'headerConfig',
+  'calendarDate', 'viewItem', 'itemModelFallback', 'headerPopup',
   'showHeading', 'viewComponent', 'newItemsViewAlert',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder',   'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'configFilterOptions'],

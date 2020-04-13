@@ -26,6 +26,7 @@ export default {
       if (this.viewGroup)
         return {
           group: this.viewGroup.id,
+          calendar: this.getCalObjectByView('Anytime'),
         }
     },
 
@@ -54,6 +55,14 @@ export default {
         return gro.notes
       return null
     },
+    headerPopup() {
+      const gro = this.viewGroup
+      if (gro)
+        return {
+          comp: "AddGroup",
+          payload: gro,
+        }
+    },
     headerInfo() {
       const group = this.viewGroup
       if (!group)
@@ -66,7 +75,7 @@ export default {
           group: group.id,
           room: group.id,
         } : undefined,
-        icons: [
+        icons: group.tint ? [
           {
             icon: 'tint',
             title: 'Group color',
@@ -79,7 +88,7 @@ export default {
               },
             },
           },
-        ],
+        ] : [],
         notes: {
           name: group.notes || null,
           save: notes => {

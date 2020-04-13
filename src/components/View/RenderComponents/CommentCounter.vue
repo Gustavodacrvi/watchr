@@ -76,7 +76,7 @@ export default {
   display: flex;
   color: var(--fade);
   align-items: center;
-  transition: .175s right, .175s color, .175s transform;
+  transition: .15s right, .15s color, .15s transform;
   transform: scale(1,1);
 }
 
@@ -86,7 +86,7 @@ export default {
 }
 
 .icon {
-  transition: .175s right, .175s color, .175s transform;
+  transition: .15s right, .15s color, .15s transform;
 }
 
 .icon:hover {
@@ -100,7 +100,7 @@ export default {
   top: 4px;
   opacity: 0;
   transform: translateY(5px);
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .photo {
@@ -123,7 +123,7 @@ export default {
 .show {
   opacity: 1;
   transform: translateY(0px);
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .icon-wrapper {

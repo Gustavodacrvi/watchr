@@ -64,6 +64,7 @@ export default {
   mounted() {
     if (this.focus)
       this.focusInput(200)
+    this.fixHeight()
   },
   methods: {
     onpaste(...args) {
@@ -82,7 +83,10 @@ export default {
     fixHeight(height) {
       const el = this.$refs.input
       if (el) {
-        el.style.height = (height || el.scrollHeight) + 'px'
+        const newHeight = (height || el.scrollHeight)
+        if (newHeight)
+          el.style.height = (height || el.scrollHeight) + 'px'
+        else el.style.height = '12px'
       }
     },
     enterItems(el, done) {
@@ -138,7 +142,7 @@ export default {
       for (const l of links) {
         l.style.opacity = 0
         setTimeout(() => {
-          l.style.transitionDuration = '.175s'
+          l.style.transitionDuration = '.15s'
         })
       }
     },
@@ -152,8 +156,11 @@ export default {
       if (key === 'Shift') this.shift = false
     },
     keydown(event) {
-      this.$emit('keydown', event)
       const { key } = event
+      if (this.shift) {
+        if (key === 'ArrowLeft') this.$emit('goup')
+        if (key === 'ArrowRight') this.$emit('godown')
+      } else this.$emit('keydown', event)
       if (key === "Escape")
         this.$emit('cancel')
       else if (key === 'ArrowDown' || key === 'ArrowUp')
@@ -181,10 +188,6 @@ export default {
         }
       } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
       this.active = ''
-      if (this.shift) {
-        if (key === 'ArrowLeft') this.$emit('goup')
-        if (key === 'ArrowRight') this.$emit('godown')
-      }
     }
     },
     getRefsPositions(text) {

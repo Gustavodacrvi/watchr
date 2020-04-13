@@ -104,7 +104,7 @@ export default {
 }
 
 .bright .inner-ball-button:hover {
-  transition: box-shadow .175s;
+  transition: box-shadow .15s;
   box-shadow: 0 0 24px rgba(120, 201, 263, .2);
 }
 

@@ -107,7 +107,6 @@ export default ({
 
             props: {
               ...el.props,
-              enterOnShift: true,
               value: this.model[el.vModel],
               options: el.options ? this[el.options] : [],
             },
@@ -115,7 +114,18 @@ export default ({
               input: value => {
                 this.model[el.vModel] = value
               },
-              enter: this.save,
+              goup: () => {
+                this.$parent.$parent.$parent.$parent.$emit('goup')
+                setTimeout(() => {
+                  this.$refs[el.id].focusInput()
+                })
+              },
+              godown: () => {
+                this.$parent.$parent.$parent.$parent.$emit('godown')
+                setTimeout(() => {
+                  this.$refs[el.id].focusInput()
+                })
+              },
               cancel: () => this.$parent.$emit('close'),
             },
             nativeOn: {
@@ -298,6 +308,9 @@ export default ({
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
 
+      if (this.isOnShift && key === 'Enter')
+        return this.save()
+
       if (checklist && this.isCursorInChecklist && !isTyping) {
         switch (key) {
           case "Delete": {
@@ -356,9 +369,9 @@ export default ({
             this.cursorPos = 0
           else        
             this.incrementPos(-1)
-        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || (key === "ArrowRight" && this.cursorPos > textFields.length)) {
+        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || (key === 'Tab') || (key === "ArrowRight" && this.cursorPos > textFields.length)) {
           p()
-  
+
           if (this.isOnShift)
             this.cursorPos = this.lastKeyboardActionIndex
           else        

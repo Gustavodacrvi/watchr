@@ -116,11 +116,11 @@ export default {
         s.opacity = 0
   
         requestAnimationFrame(() => {
-          s.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
           s.height = '22px'
           s.opacity = 1
   
-          setTimeout(done, 205)
+          setTimeout(done, 151)
         })
       })
     },
@@ -132,12 +132,12 @@ export default {
       s.opacity = 1
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         
         s.height = 0
         s.opacity = 0
 
-        setTimeout(done, 201)
+        setTimeout(done, 151)
       })
 
     },
@@ -169,7 +169,7 @@ export default {
 .Subtask {
   position: relative;
   display: flex;
-  transition: height .175s, background-color .175s;
+  transition: height .15s, background-color .15s;
   height: 22px;
 }
 
@@ -188,7 +188,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: opacity .175s;
+  transition: opacity .15s;
 }
 
 .line-wrapper {
@@ -233,7 +233,7 @@ export default {
 }
 
 .delete {
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .delete:hover {
@@ -250,11 +250,11 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity .175s;
+  transition: opacity .15s;
 }
 
 .icon {
-  transform: translateY(1px);
+  transform: translate(4px, 1px);
 }
 
 .input {

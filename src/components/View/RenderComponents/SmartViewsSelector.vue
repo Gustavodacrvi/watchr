@@ -81,7 +81,7 @@ export default {
   margin-left: 16px;
   box-shadow: 0 0 14px var(--dark-void);
   transform: scale(1,1) translateY(0);
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .active, .smart-card:hover {

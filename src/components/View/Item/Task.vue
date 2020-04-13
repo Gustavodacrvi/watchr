@@ -30,6 +30,7 @@
         v-bind="{...{...$attrs, ...$props}, ...item}"
 
         :isItemSelected='isItemSelected'
+        :isSelecting='isSelecting'
         :completed='props.completed'
         :itemModel='props.itemModel'
         :canceled='props.canceled'
@@ -99,7 +100,7 @@
       >
         {{ taskDuration }}
       </span>
-      <Icon v-if="checklistProgress" key="icon"
+      <Icon v-if="checklistProgress !== undefined" key="icon"
         class="icon name-icon slot-el"
         icon='pie'
         :progress='checklistProgress'

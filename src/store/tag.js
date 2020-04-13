@@ -162,6 +162,9 @@ export default {
     saveTag({rootState}, tag) {
       const b = fire.batch()
 
+      if (tag.comp)
+        delete tag.comp
+
       setTag(b, tag, tag.id, rootState)
 
       b.commit()

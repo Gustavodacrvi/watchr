@@ -63,7 +63,7 @@ export default {
   padding: 10px;
   user-select: none;
   cursor: pointer;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .option:hover {

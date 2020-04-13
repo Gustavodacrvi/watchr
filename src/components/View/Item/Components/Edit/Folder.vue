@@ -18,6 +18,9 @@ export default EditBuilder({
       vModel: 'notes', // this.model[vModel],
     },
   ],
+  allowFiles: {
+    storageFolder: 'folders', // requires file handle on firestore function
+  },
   instance: {
     data() {
       return {
@@ -26,7 +29,7 @@ export default EditBuilder({
         model: {
           name: '',
           notes: '',
-          color: '',
+          color: null,
         },
       }
     },
@@ -47,10 +50,22 @@ export default EditBuilder({
       },
     },
     computed: {
+      leftSmartIconDrops() {
+        return [          {
+            id: 'add_files',
+            props: {
+              disabled: true,
+              icon: 'file',
+              trigger: 'click',
+              file: true,
+              onDrop: this.onDrop,
+            },
+          }]
+      },
       rightSmartIconDrops() {
         const arr = []
 
-        if (!this.model.color)
+        if (!this.model.color || !this.selectedColorObj)
           arr.push({
             id: 'duration_clock',
             props: {

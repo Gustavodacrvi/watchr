@@ -178,7 +178,7 @@ export default {
       s.opacity = 0
       requestAnimationFrame(() => {
         setTimeout(() => {
-          s.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
           s.height = this.sublistHeight
           s.opacity = 1
           setTimeout(() => {
@@ -195,7 +195,7 @@ export default {
       s.height = this.sublistHeight
       requestAnimationFrame(() => {
         setTimeout(() => {
-          s.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
           s.height = '0px'
           s.overflow = 'hidden'
           setTimeout(done, 310)
@@ -386,7 +386,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  transition-duration: .175s;
+  transition-duration: .15s;
   transform: translateY(0px);
 }
 
@@ -396,7 +396,7 @@ export default {
   left: 50%;
   transform: translate(-50%,-50%) !important;
   margin-top: 1.5px;
-  transition: color .175s;
+  transition: color .15s;
 }
 
 .Folder .SidebarElement {
@@ -406,7 +406,7 @@ export default {
 .link-wrapper {
   height: 19px;
   position: relative;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .mobile.hasSubList .link-inner-wrapper {
@@ -418,7 +418,7 @@ export default {
   display: flex;
   width: 100%;
   transform: scale(1,1); /* used for drag and drop */
-  transition-duration: .175s;
+  transition-duration: .15s;
   height: 100%;
   overflow: hidden;
 }
@@ -455,6 +455,8 @@ export default {
 
 .sortable-ghost, .sortable-ghost .link-inner-wrapper {
   background-color: var(--dark-void) !important;
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
   transition-duration: 0 !important;
   transition: none !important;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot}]' @click='click'>
+  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot, moving, notMoving: !moving}]' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration"
         class="illustration"
@@ -29,9 +29,8 @@
         </button>
       </div>
     </transition>
-    <transition-group
+    <transition-group :name='getTransitionName'
       appear
-      :css='false'
       class="front item-renderer-root"
       :class="{isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
@@ -93,7 +92,6 @@
           :data-id="item.isEdit + 'component eidt'"
 
           v-bind='item.propsData'
-          :focusToggle='focusToggle'
           :isAdding='true'
           :itemHeight='itemHeight'
           :itemModelFallback='itemModelFallback'
@@ -183,6 +181,7 @@
       @added-heading-complete-mount='justAddedHeading = null'
       @go='moveItemHandlerSelection'
       @add-heading='addHeadingFromRootHeadings'
+      @save-new-items-ids='saveNewItemsIds'
       @set-changing-view-timeout='setChangingViewTimeout'
       @headings-items-ids='getHeadingsItemsIds'
     />
@@ -240,7 +239,6 @@ export default {
       selectedElements: [],
       disableItemEnterTransitionIds: [],
       droppedIds: [],
-      waitingUpdateTimeout: null,
       changingView: true,
       changingViewTimeout: null,
 
@@ -248,8 +246,8 @@ export default {
 
       addedItem: null,
       edit: null,
-      focusToggle: false,
       movingItem: false,
+      getTransitionName: 'flip-list',
 
       hasEdit: null,
       lastSelectedId: null,
@@ -343,7 +341,7 @@ export default {
           s.transitionDuration = '.1s'
           s.height = this.itemHeight + 'px'
           setTimeout(() => {
-            s.transitionDuration = '.175s'
+            s.transitionDuration = '.15s'
             s.height = 'auto'
             vm.isEditing = true
             this.setChangingViewTimeout()
@@ -363,17 +361,17 @@ export default {
       s.opacity = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = disableTransition ? 0 : '.175s'
+        s.transitionDuration = disableTransition ? 0 : '.15s'
         s.opacity = 1
         s.height = this.itemHeight + 'px'
         s.minHeight = this.itemHeight + 'px'
         
         setTimeout(() => {
-          s.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
           s.height = 'auto'
           this.setChangingViewTimeout()
           done()
-        }, 201)
+        }, 151)
       })
     },
     leave(el, done) {
@@ -398,11 +396,11 @@ export default {
 
       s.transitionDuration = '0s'
       s.opacity = 1
-      s.height = this.itemHeight + 'px'
-      s.minHeight = this.itemHeight + 'px'
+      s.height = this.itemHeight + (vm.showInfo ? 8 : 0) + 'px'
+      s.minHeight = this.itemHeight + (vm.showInfo ? 8 : 0) + 'px'
 
       const hideItem = () => {
-        s.transitionDuration = disableTransition ? 0 : '.175s'
+        s.transitionDuration = disableTransition ? 0 : '.15s'
         s.opacity = 0
         s.height = 0
         s.minHeight = 0
@@ -425,7 +423,12 @@ export default {
       this.newItemsStorageSave = !this.newItemsStorageSave
     },
     saveNewItemsIds(ids) {
-      localStorage.setItem(this.newItemStorageKey, JSON.stringify(ids))
+      const save = ids => localStorage.setItem(this.newItemStorageKey, JSON.stringify(ids))
+      
+      if (Array.isArray(ids))
+        save(ids)
+      else
+        save([...this.allItemsIds, ids])
     },
     toggleCompletion(ids) {
       ids.forEach(id => this.findItem(id, vm => vm.toggleCompletion()))
@@ -573,7 +576,7 @@ export default {
         for (const animate of this.completeAnimationStack)
           animate()
         this.completeAnimationStack = []
-      }, 2250)
+      }, 1750)
     },
     
     getHeadingsItemsIds(ids) {
@@ -605,13 +608,13 @@ export default {
         const show = s => {
           if (s) {
             s.opacity = 1
-            s.transitionDuration = '.175s'
+            s.transitionDuration = '.15s'
           }
         }
         const hide = s => {
           if (s) {
             s.opacity = 0
-            s.transitionDuration = '.175s'
+            s.transitionDuration = '.15s'
           }
         }
 
@@ -673,7 +676,6 @@ export default {
         move()
       else if ((index + offset) > -1)
         move()
-      setTimeout(() => this.focusToggle = !this.focusToggle, 10)
     },
     removeEdit() {
       const i = this.lazyItems.findIndex(el => el.isEdit)
@@ -923,6 +925,9 @@ export default {
           })
           
           this.$store.commit('moving', false)
+          setTimeout(() => {
+            this.getTransitionName = 'flip-list'
+          }, 200)
 
           if (this.isDesktopDevice)
             window.removeEventListener('mousemove', onMove)
@@ -981,6 +986,7 @@ export default {
         },
         onStart: evt => {
           this.$store.commit('moving', true)
+          this.getTransitionName = null
           
           if (this.isDesktopDevice)
             window.addEventListener('mousemove', onMove)
@@ -1128,7 +1134,9 @@ export default {
         const index = targetIndex || this.getListRendererPosition()
 
         if (shouldRender) {
-          this.saveNewItemsIds([...this.allItemsIds, t.id])
+          if (this.isRoot)
+            this.saveNewItemsIds([...this.allItemsIds, t.id])
+          else this.$emit('save-new-items-ids', t.id)
           this.lazyItems.splice(index, 0, t)
         }
         this.addedItem = t.id
@@ -1479,13 +1487,13 @@ export default {
   top: 0;
   justify-content: center;
   align-items: center;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .cameFromAnotherTab-ghost {
   height: 25px;
   background-color: var(--sidebar-color);
-  transition: transform .175s;
+  transition: transform .15s;
 }
 
 .new-items {
@@ -1502,7 +1510,7 @@ export default {
   opacity: 1;
   border: 1px solid var(--yellow);
   transition-duration: .2s;
-  margin-top: 65px;
+  margin-top: 55px;
 }
 
 .new-items-btn {
@@ -1521,12 +1529,16 @@ export default {
   opacity: 0;
   height: 0;
   margin-top: 0;
+  padding: 0;
+  border: 0 solid var(--yellow) !important;
 }
 
 .new-items-t-leave, .new-items-t-enter-to {
   opacity: 1;
   height: 28px;
-  margin-top: 65px;
+  border: 1px solid var(--yellow);
+  padding: 0 6px;
+  margin-top: 55px;
 }
 
 .mobile .illustration {
@@ -1576,7 +1588,7 @@ export default {
   min-height: 25px;
   z-index: 2;
   height: 100%;
-  transition-duration: .175s;
+  transition-duration: .15s;
   margin: 35px 0;
 }
 
@@ -1590,7 +1602,7 @@ export default {
   display: flex;
   justify-content: center;
   opacity: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
   cursor: pointer;
 }
 
@@ -1629,7 +1641,7 @@ export default {
   justify-content: center;
   align-items: center;
   transform: scale(1,1);
-  transition-duration: .175s;
+  transition-duration: .15s;
   box-shadow: 0 0 0 transparent;
 }
 
@@ -1648,12 +1660,15 @@ export default {
 }
 
 .isRootAndHaveItems {
-  margin: 65px 0;
+  margin: 55px 0;
 }
 
 .mobile .isRootAndHaveItems {
   margin: 25px 0;
 }
 
+.flip-list-move {
+  transition: transform .2s;
+}
 
 </style>

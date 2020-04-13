@@ -86,13 +86,13 @@ export default {
 .ruler-t-enter, .ruler-t-leave-to {
   opacity: 0;
   width: 0;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .ruler-t-leave, .ruler-t-enter-to {
   opacity: 1;
   width: 35px;
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 </style>

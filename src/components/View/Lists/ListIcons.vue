@@ -85,12 +85,12 @@ export default {
 }
 
 .trans-enter, .trans-leave-to {
-  transition-duration: .175s;
+  transition-duration: .15s;
   transform: scale(0,0);
 }
 
 .trans-leave, .trans-enter-to {
-  transition-duration: .175s;
+  transition-duration: .15s;
   transform: scale(1,1);
 }
 
