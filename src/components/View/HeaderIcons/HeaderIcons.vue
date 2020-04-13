@@ -32,25 +32,42 @@ export default {
   components: {
     HeaderIcon,
   },
-  props: ['width'],
+  props: ['width', 'getHeaderIcons'],
   methods: {
     save(model) {
       if (this.selectedItems.length) {
-        if (this.selectedType === 'Task')
-          this.$store.dispatch('task/saveTasksById', {
-            ids: this.selectedItems.slice(),
-            task: model,
-          })
-        else if (this.selectedType === 'List')
-          this.$store.dispatch('list/saveListsById', {
-            ids: this.selectedItems.slice(),
-            list: model,
-          })
+
+        if (model.tags && model.tags.length) {
+
+          if (this.selectedType === "Task") {
+            this.$store.dispatch('task/addTagsToTasksById', {
+              ids: this.selectedItems.slice(),
+              tagIds: model.tags,
+            })
+          }
+
+        } else {
+          
+          if (this.selectedType === 'Task')
+            this.$store.dispatch('task/saveTasksById', {
+              ids: this.selectedItems.slice(),
+              task: model,
+            })
+          else if (this.selectedType === 'List')
+            this.$store.dispatch('list/saveListsById', {
+              ids: this.selectedItems.slice(),
+              list: model,
+            })
+
+        }
       }
     },
     iconClick(id) {
       const keys = Object.keys(this.$refs).filter(key => key !== id)
-      keys.forEach(key => this.$refs[key][0].active = false)
+      keys.forEach(key => {
+        if (this.$refs[key][0])
+          this.$refs[key][0].active = false
+      })
     },
   },
   computed: {
@@ -78,10 +95,9 @@ export default {
         this.calendarSmartIconObj,
         this.getFilteredListSmartIconObj,
         this.deadlineSmartIconObj,
-        this.getSmartIconTags,
       ]
     },
-    getIcons() {
+    defaultIcons() {
       return [
         {
           id: 'go_back',
@@ -141,6 +157,11 @@ export default {
           },
         },
       ]
+    },
+    getIcons() {
+      if (this.getHeaderIcons)
+        return this.getHeaderIcons(this.defaultIcons)
+      return this.defaultIcons
     },
     getListIcons() {
       if (this.selectedItems.length) {

@@ -351,11 +351,12 @@ export default {
           evt.stopPropagation()
         }
 
+        if (key === "Escape" && !(this.tagMode && this.currentList === this.list))
+          this.switchLists()
+
         if (!stop) {
           if (this.tagMode && this.currentList === this.list)
             this.tagModeToggle = !this.tagModeToggle
-          else
-            this.switchLists()
         }
       }
     },

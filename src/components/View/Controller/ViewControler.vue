@@ -13,6 +13,7 @@
     :icon='icon'
     :showEmptyHeadings='showEmptyHeadings'
     :updateHeadingIds='updateHeadingIds'
+    :getHeaderIcons='getHeaderIcons'
     :newItemsViewAlert='newItemsViewAlert'
     :enableLogbook='enableLogbook'
     :headingEditOptions='headingEditOptions'

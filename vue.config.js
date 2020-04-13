@@ -4,7 +4,7 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 
 module.exports = {
   pwa: {
-    themeColor: '#1c1c1c',
+    themeColor: '#232325',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: '#131313',
     workboxPluginMode: 'InjectManifest',

@@ -37,6 +37,9 @@ export default {
       
       if (calendar) return {calendar}
     },
+    getHeaderIcons() {
+      return defaultIcons => defaultIcons.filter(({id}) => id !== 'heading' && id !== 'list')
+    },
     
     updateIds() {
       const fs = functionFallbacks.updateOrderFunctions

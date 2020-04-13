@@ -81,6 +81,16 @@ export default {
             keys.filter(key => this.model[key] !== undefined)
             .reduce((obj, key) => ({...obj, [key]: this.model[key]}), {})
           )
+          this.model = {
+            deadline: undefined,
+            calendar: undefined,
+            list: undefined,
+            folder: undefined,
+            group: undefined,
+            taskDuration: undefined,
+            priority: undefined,
+            tags: undefined,
+          }
           this.active = false
         }
       },

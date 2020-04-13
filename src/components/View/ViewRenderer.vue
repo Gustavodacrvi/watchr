@@ -102,6 +102,7 @@
     </transition>
     <HeaderIcons
       :width='width'
+      :getHeaderIcons='getHeaderIcons'
 
       @add-task='addTask'
       @add-list='addList'
@@ -149,7 +150,7 @@ export default {
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
   'width', 'sidebarHided',
-  'fallbackFunctionData',
+  'fallbackFunctionData', 'getHeaderIcons',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',

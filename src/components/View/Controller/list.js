@@ -42,6 +42,9 @@ export default {
           calendar: this.getCalObjectByView('Anytime'),
         }
     },
+    getHeaderIcons() {
+      return defaultIcons => defaultIcons.filter(({id}) => id !== 'list')
+    },
 
     saveHeaderName() {
       return name => {
