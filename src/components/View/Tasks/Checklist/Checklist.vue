@@ -258,7 +258,8 @@ export default {
 
 .sortable-ghost {
   background-color: var(--sidebar-color) !important;
-  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
   height: 38px;
   padding: 0;
 }

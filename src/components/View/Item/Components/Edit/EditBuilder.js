@@ -369,9 +369,9 @@ export default ({
             this.cursorPos = 0
           else        
             this.incrementPos(-1)
-        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || (key === "ArrowRight" && this.cursorPos > textFields.length)) {
+        } else if ((key === "ArrowDown" && !this.currentSmartIconHasList) || (key === 'Tab') || (key === "ArrowRight" && this.cursorPos > textFields.length)) {
           p()
-  
+
           if (this.isOnShift)
             this.cursorPos = this.lastKeyboardActionIndex
           else        

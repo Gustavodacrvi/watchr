@@ -44,8 +44,8 @@ export default {
     }
   },
   mounted() {
+    this.fixHeight()
     setTimeout(() => {
-      this.fixHeight()
       if (this.focusOnMount && this.$refs.text)
         this.$refs.text.focus()
     }, 80)

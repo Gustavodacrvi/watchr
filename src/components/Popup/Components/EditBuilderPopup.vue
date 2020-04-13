@@ -18,6 +18,7 @@
 <script>
 
 import FolderEdit from "@/components/View/Item/Folder.vue"
+import GroupEdit from "@/components/View/Item/Group.vue"
 import ListEdit from "@/components/View/Item/List.vue"
 import TagEdit from "@/components/View/Item/Tag.vue"
 
@@ -27,7 +28,7 @@ import mom from 'moment'
 
 export default {
   components: {
-    FolderEdit,
+    FolderEdit, GroupEdit,
     ListEdit, TagEdit,
   },
   props: ['item', 'save', 'comp', 'otherItems', 'errMsg', 'routeType'],
@@ -35,13 +36,20 @@ export default {
     saveItem(newItem) {
 
       if (this.item || !this.otherItems.some(el => el.name === newItem.name)) {
-        this.save({
+        const obj = {
           ...newItem,
           ...(this.item ? {} : {
             createdFire: new Date(),
             created: mom().format('Y-M-D HH:mm ss'),
           })
-        })
+        }
+
+        if (obj.comp)
+          delete obj.comp
+        if (obj.payload)
+          delete obj.payload
+        
+        this.save(obj)
         this.$router.push(`/user?${this.routeType}=${newItem.name}`)
       } else {
         this.$store.commit('pushToast',{

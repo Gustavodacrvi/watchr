@@ -23,6 +23,7 @@
               <span class="line"></span>
             </span>
             <transition-group
+              appear
               @enter='infoEnter'
               @leave='infoLeave'
             >
@@ -34,6 +35,7 @@
               </span>
               <span class="after-name">
                 <transition-group
+                  appear
                   @enter='infoEnter'
                   @leave='infoLeave'
                 >
@@ -43,6 +45,7 @@
             </span>
           </div>
           <transition-group
+            appear
             @enter='infoEnter'
             @leave='infoLeave'
           >
@@ -210,6 +213,8 @@ export default {
   overflow: hidden;
   height: 100%;
   max-width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .name-parsed {
@@ -259,14 +264,13 @@ export default {
   position: absolute;
   display: flex;
   align-items: center;
-  z-index: 1;
+  z-index: 2;
 }
 
 .line {
   width: 0;
-
   height: 3px;
-  background-color: var(--sidebar-color);
+  background-color: var(--extra-light-gray);
   border-radius: 8px;
   transition-duration: .15s;
 }

@@ -87,34 +87,47 @@ export const saveCalendarOrder = (b, rootState, finalIds, calendarDate, writes) 
 
 }
 export const setFolder = (batch, folder, id, rootState, writes) => {
-  const ref = folderRef(id)
-  const obj = {
-    ...folder, id: ref.id,
-    userId: uid(),
-  }
-
-  const allFolders = rootState.folder.folders
-  const folderStore = allFolders[ref.id]
-  if (folderStore)
-    utils.findChangesBetweenObjs(folderStore, obj)
-  else
-    rootState.folder.folders = {
-      ...allFolders,
-      [ref.id]: obj,
+  return new Promise((solve, reject) => {
+    const save = () => {
+        
+    const ref = folderRef(id)
+    const obj = {
+      ...folder, id: ref.id,
+      userId: uid(),
     }
 
-  if (!writes)
-    batch.set(cacheRef(), {
-      folders: {
+    if (obj.handleFiles !== undefined)
+      delete obj.handleFiles
+
+    const allFolders = rootState.folder.folders
+    const folderStore = allFolders[ref.id]
+    if (folderStore)
+      utils.findChangesBetweenObjs(folderStore, obj)
+    else
+      rootState.folder.folders = {
+        ...allFolders,
         [ref.id]: obj,
       }
-    }, {merge: true})
-  else if (writes.push)
-    writes.push({
-      collection: 'folders',
-      [ref.id]: obj,
-    })
-  batch.set(ref, obj, {merge: true})
+
+    if (!writes)
+      batch.set(cacheRef(), {
+        folders: {
+          [ref.id]: obj,
+        }
+      }, {merge: true})
+    else if (writes.push)
+      writes.push({
+        collection: 'folders',
+        [ref.id]: obj,
+      })
+    batch.set(ref, obj, {merge: true})
+
+    solve()
+  }
+    if (folder.handleFiles)
+      folder.handleFiles(id).then(save).catch(reject)
+    else save()
+  })
 }
 export const setGroupInfo = (batch, group, id, rootState) => {
   const infoRef = groupInfoRef(id)
@@ -780,25 +793,34 @@ export const setTag = (batch, tag, id, rootState, writes) => {
 }
 
 export const setGroup = (batch, group, id, rootState, writes) => {
-  const obj = group
+  return new Promise((solve, reject) => {
+    const save = () => {
+      const obj = group
 
-  const allGroups = rootState.group.groups
-  const targetGroup = allGroups.find(el => el.id === id)
-  if (targetGroup)
-    utils.findChangesBetweenObjs(targetGroup, obj)
-  else
-    rootState.group.groups = [
-      ...allGroups,
-      obj,
-    ]
-    
-  if (!writes)
-    batch.set(groupCacheRef(id), group, {merge: true})
-  else if (writes.push)
-    writes.push({
-      groupId: id,
-      obj,
-    })
+      const allGroups = rootState.group.groups
+      const targetGroup = allGroups.find(el => el.id === id)
+      if (targetGroup)
+        utils.findChangesBetweenObjs(targetGroup, obj)
+      else
+        rootState.group.groups = [
+          ...allGroups,
+          obj,
+        ]
+        
+      if (!writes)
+        batch.set(groupCacheRef(id), group, {merge: true})
+      else if (writes.push)
+        writes.push({
+          groupId: id,
+          obj,
+        })
+
+      solve()
+    }
+    if (group.handleFiles)
+      group.handleFiles(id).then(save).catch(reject)
+    else save()
+  })
 }
 export const deleteGroup = (b, groupId, rootState) => {
   const cacheRef = groupCacheRef(groupId)
@@ -862,50 +884,68 @@ export const removeMember = (batch, groupId, uid, rootState) => {
   batch.set(infoRef, obj, {merge: true})
   batch.set(cacheRef, obj, {merge: true})
 }
-export const addGroup = (batch, name, rootState) => {
-  const ref = groupRef()
-  const infoRef = groupInfoRef(ref.id)
-  const cacheRef = groupCacheRef(ref.id)
+export const addGroup = (batch, group, rootState) => {
+  return new Promise((solve, reject) => {
+    const save = () => {
+      const ref = groupRef()
+      const infoRef = groupInfoRef(ref.id)
+      const cacheRef = groupCacheRef(ref.id)
+    
+      const userId = uid()
+      const u = rootState.user
+      
+      const groupObj = {
+        id: ref.id,
+        userId,
+      }
 
-  const userId = uid()
-  const u = rootState.user
-  
-  const groupObj = {
-    id: ref.id,
-    userId,
-  }
+      if (group.handleFiles !== undefined)
+        delete group.handleFiles
+      if (group.created !== undefined)
+        delete group.created
+      if (group.createdFire !== undefined)
+        delete group.createdFire
 
-  const infoObj = {
-    ...groupObj,
-    name,
-    users: {
-      [userId]: true,
-    },
-    profiles: {
-      [userId]: {
-        uid: userId,
-        displayName: u.displayName,
-        photoURL: u.photoURL || null,
-        email: u.email,
-      },
+      const infoObj = {
+        ...groupObj,
+        name: group.name,
+        users: {
+          [userId]: true,
+        },
+        profiles: {
+          [userId]: {
+            uid: userId,
+            displayName: u.displayName,
+            photoURL: u.photoURL || null,
+            email: u.email,
+          },
+        }
+      }
+
+      const allGroups = rootState.group.groups
+      rootState.group.groups = [
+        ...allGroups,
+        infoObj,
+      ]
+
+    
+      batch.set(ref, groupObj, {merge: true})
+      batch.set(infoRef, infoObj, {merge: true})
+      batch.set(cacheRef, {
+        ...infoObj,
+        ...group,
+        lists: {dummy: null},
+        smartViewsOrders: {dummy: null},
+        tasks: {dummy: null},
+        comments: {dummy: null},
+      }, {merge: true})
+
+      solve()
     }
-  }
-
-  const allGroups = rootState.group.groups
-  rootState.group.groups = [
-    ...allGroups,
-    infoObj,
-  ]
-
-  batch.set(ref, groupObj, {merge: true})
-  batch.set(infoRef, infoObj, {merge: true})
-  batch.set(cacheRef, {
-    ...infoObj,
-    lists: {dummy: null},
-    smartViewsOrders: {dummy: null},
-    tasks: {dummy: null},
-    comments: {dummy: null},
-  }, {merge: true})
+    if (group.handleFiles)
+    group.handleFiles(id).then(save).catch(reject)
+    else save()
+  })
 }
 
 export const deleteTag = (batch, id, rootState, writes) => {

@@ -21,7 +21,6 @@
             :key="l.id || l.name"
             :ref="l.name"
             @click="linkClick(l)"
-            @dblclick="l.important ? linkCallback(l.callback, l) : () => {}"
           >
             <div class="link-cont">
               <ProfilePhoto v-if='l.photoURL'
@@ -168,14 +167,7 @@ export default {
     },
     
     linkClick(l) {
-      l.important ? this.blink(l.name) : this.linkCallback(l.callback, l)
-    },
-    blink(ref) {
-      const el = this.$refs[ref][0]
-      if (el) {
-        el.classList.add('blink')
-        setTimeout(() => el.classList.remove('blink'), 200)
-      }
+      this.linkCallback(l.callback, l)
     },
     saveSelected() {
       this.links.onSave(this.selected)
@@ -333,11 +325,6 @@ export default {
 
 .link.important:hover {
   background-color: rgba(222, 89, 89, .1);
-}
-
-.blink {
-  color: white !important;
-  background-color: rgba(255,255,255,.1) !important;
 }
 
 .link .link-cont {

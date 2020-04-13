@@ -339,10 +339,11 @@ service cloud.firestore {
     function isValidGroupCacheDoc() {
       return
         isValidGroupInfoDoc() &&
-        incomingData().size() > 4 &&
-        incomingData().size() < 13 &&
+        incomingData().size() > 5 &&
+        incomingData().size() < 14 &&
 
         isNullStringOrUndefined('notes') &&
+        isNullStringOrUndefined('color') &&
         isArrayOrUndefined('files', 20) &&
 
         (!('tasks' in incomingData()) || incomingData().tasks is map && incomingData().tasks.size() < 2001) &&

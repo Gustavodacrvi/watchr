@@ -19,7 +19,7 @@ export default EditBuilder({
     },
   ],
   allowFiles: {
-    storageFolder: 'folders', // requires file handle on firestore function
+    storageFolder: 'groups', // requires file handle on firestore setItem function
   },
   instance: {
     data() {

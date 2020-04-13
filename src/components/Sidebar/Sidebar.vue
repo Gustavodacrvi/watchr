@@ -486,7 +486,8 @@ export default {
     smartMargins() {
       const nonHidedLinks = this.nonHidedLinks
       if (this.userInfo && this.userInfo.margins)
-        return [...nonHidedLinks, ...this.userInfo.margins.map(el => ({id: el, isEmpty: true}))].slice(0, (nonHidedLinks.length > 3) ? 0 : 1)
+        return [...nonHidedLinks, ...(this.userInfo.margins.map(el => ({id: el, isEmpty: true})).slice(0, (nonHidedLinks.length > 3) ? 2 : 1))
+      ]
       return nonHidedLinks
     },
     nonHidedLinks() {

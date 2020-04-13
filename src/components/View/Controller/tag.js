@@ -36,7 +36,8 @@ export default {
     itemModelFallback() {
       if (this.viewTag)
         return {
-          tags: [this.viewTag.id]
+          tags: [this.viewTag.id],
+          calendar: this.getCalObjectByView('Anytime'),
         }
     },
     
@@ -59,20 +60,13 @@ export default {
         return tag.tasks
       return []
     },
-    headerConfig() {
+    headerPopup() {
       const tag = this.viewTag
-      if (!tag) return null
-
-      const arr = []
-
-      if (!tag.notes)
-        arr.push({
-          name: 'Add notes',
-          icon: 'note',
-          callback: () => this.$refs.renderer.openNotes(),
-        })
-      
-      return arr
+      if (tag)
+        return {
+          comp: 'AddTag',
+          payload: tag,
+        }
     },
     headerInfo() {
       return {

@@ -77,6 +77,8 @@ import { pipeBooleanFilters } from '@/utils/memo'
 
 import mom from 'moment'
 
+const TOD_STR = mom().format('Y-M-D')
+
 import mixins from './controlerModules'
 import mainMixin from './mixins/controler.js'
 
@@ -120,9 +122,17 @@ export default {
       if (this.viewName === 'Tomorrow')
         return this.getSpecificDayCalendarObj(mom().add(1, 'day'))
       if (this.viewName === 'Someday')
-        return {type: 'someday'}
+        return {
+          type: 'someday',
+          begins: TOD_STR,
+          editDate: TOD_STR,
+        }
       if (this.viewName === 'Anytime')
-        return {type: 'anytime'}
+        return {
+          type: 'anytime',
+          begins: TOD_STR,
+          editDate: TOD_STR,
+        }
     },
     slide(num) {
       this.$store.commit('slide', num)

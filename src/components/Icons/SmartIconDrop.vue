@@ -527,6 +527,11 @@ export default {
   min-width: 20px;
   display: flex;
   justify-content: center;
+  transform: translateY(1px);
+}
+
+.tagMode .icon-wrapper {
+  transform: translateY(0px);
 }
 
 .wrapper {
@@ -544,6 +549,7 @@ export default {
   padding: 0;
   width: 80px;
   outline: none;
+  transform: translateY(2px);
 }
 
 .list {
@@ -556,7 +562,7 @@ export default {
   max-height: 250px;
   width: 145px;
   left: 0;
-  top: 100%;
+  top: 110%;
 }
 
 .tag-mode-name {

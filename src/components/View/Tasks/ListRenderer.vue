@@ -1,5 +1,5 @@
 <template>
-  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot, moving}]' @click='click'>
+  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot, moving, notMoving: !moving}]' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration"
         class="illustration"
@@ -29,9 +29,8 @@
         </button>
       </div>
     </transition>
-    <transition-group
+    <transition-group :name='getTransitionName'
       appear
-      :css='false'
       class="front item-renderer-root"
       :class="{isRootAndHaveItems: isRoot && lazyItems.length > 0}"
       ref='item-renderer-root'
@@ -248,6 +247,7 @@ export default {
       addedItem: null,
       edit: null,
       movingItem: false,
+      getTransitionName: 'flip-list',
 
       hasEdit: null,
       lastSelectedId: null,
@@ -925,6 +925,9 @@ export default {
           })
           
           this.$store.commit('moving', false)
+          setTimeout(() => {
+            this.getTransitionName = 'flip-list'
+          }, 200)
 
           if (this.isDesktopDevice)
             window.removeEventListener('mousemove', onMove)
@@ -983,6 +986,7 @@ export default {
         },
         onStart: evt => {
           this.$store.commit('moving', true)
+          this.getTransitionName = null
           
           if (this.isDesktopDevice)
             window.addEventListener('mousemove', onMove)
@@ -1663,5 +1667,8 @@ export default {
   margin: 25px 0;
 }
 
+.flip-list-move {
+  transition: transform .2s;
+}
 
 </style>

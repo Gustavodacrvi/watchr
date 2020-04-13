@@ -254,7 +254,7 @@ export default {
 }
 
 .icon {
-  transform: translateY(1px);
+  transform: translate(4px, 1px);
 }
 
 .input {

@@ -39,6 +39,7 @@ export default {
         return {
           group: this.viewList.group || null,
           list: this.viewList.id,
+          calendar: this.getCalObjectByView('Anytime'),
         }
     },
 

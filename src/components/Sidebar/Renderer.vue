@@ -434,7 +434,8 @@ export default {
 
 .Renderer .sortable-ghost.empty {
   background-color: var(--dark-void);
-  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
   border-radius: 4px;
 }
 

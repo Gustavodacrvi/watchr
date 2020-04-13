@@ -203,10 +203,10 @@ export default {
     }),
   },
   actions: {
-    addGroup({rootState}, gro) {
+    async addGroup({rootState}, gro) {
       const b = fire.batch()
       
-      addGroup(b, gro.name, rootState)
+      await addGroup(b, gro, rootState)
 
       b.commit()
     },
@@ -240,10 +240,10 @@ export default {
 
       b.commit()
     },
-    saveGroup({rootState}, gro) {
+    async saveGroup({rootState}, gro) {
       const b = fire.batch()
       
-      setGroup(b, gro, gro.id, rootState)
+      await setGroup(b, gro, gro.id, rootState)
 
       b.commit()
     },

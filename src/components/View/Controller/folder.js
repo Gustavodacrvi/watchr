@@ -23,6 +23,7 @@ export default {
       if (this.viewFolder)
         return {
           folder: this.viewFolder.id,
+          calendar: this.getCalObjectByView('Anytime'),
         }
     },
 

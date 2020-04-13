@@ -15,7 +15,7 @@
           />
         </div>
         <div class="input">
-          <InputApp class='sub-edit'
+          <InputApp class='sub-edit no-back'
             :value='name'
             @input='v => name = v'
             :focus='true'
@@ -143,12 +143,14 @@ export default {
 
 .input {
   width: 100%;
-  padding: 0 8px;
+  padding: 0 7px;
 }
 
 .wrapper {
   display: flex;
   background-color: var(--light-sidebar-color);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
 }
 
 </style>

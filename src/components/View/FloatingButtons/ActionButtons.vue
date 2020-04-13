@@ -241,10 +241,6 @@ export default {
 
 <style>
 
-.moving .ActButton {
-  display: none;
-}
-
 .ActButton {
   transition-duration: 0s;
 }
