@@ -118,9 +118,6 @@ export default EditBuilder({
           ...this.colors.map(getObj),
         ]
       },
-      getFilteredMoveToListOptions() {
-        return this.getMoveToListOptions.filter(el => el.name !== 'Move to list')
-      },
       
       leftSmartIconDrops() {
         return [          {
@@ -138,16 +135,7 @@ export default EditBuilder({
         const arr = []
 
         if (!this.model.folder && !this.model.group)
-          arr.unshift({
-            id: 'folder_and_group',
-            props: {
-              placeholder: 'Move to...',
-              icon: 'tasks',
-              color: 'var(--primary)',
-              trigger: 'enter',
-              list: this.getFilteredMoveToListOptions,
-            },
-          })
+          arr.unshift(this.rightSmartIconDurationObj)
 
         if (!this.model.group)
           arr.push(this.getSmartIconTags)
@@ -204,7 +192,7 @@ export default EditBuilder({
               listWidth: '180px',
               color: this.getListColor,
               trigger: 'enter',
-              list: this.getFilteredMoveToListOptions,
+              list: this.getFilteredListMoveToListOptions,
             },
           })
 

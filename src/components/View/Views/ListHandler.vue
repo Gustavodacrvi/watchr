@@ -64,6 +64,9 @@ export default {
     selectAll() {
       this.$refs.renderer.selectAll()
     },
+    addItemEdit() {
+      this.$refs.renderer.appendItem()
+    },
     allowSomeday() {
       this.$emit('allow-someday')
     },

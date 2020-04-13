@@ -196,6 +196,182 @@ export default {
         return arr
       }
     },
+    getPrioritySmartIconObj() {
+      return {
+        id: 'priority',
+        props: {
+          placeholder: 'Priority...',
+          icon: 'priority',
+          color: 'var(--yellow)',
+          listWidth: '150px',
+          trigger: 'enter',
+          list: [
+            {
+              id: 'priority',
+              name: 'High priority',
+              icon: 'priority',
+              color: 'var(--red)',
+              callback: model => model.priority = 'High priority',
+            },
+            {
+              id: 'priority2',
+              name: 'Medium priority',
+              icon: 'priority',
+              color: 'var(--yellow)',
+              callback: model => model.priority = 'Medium priority',
+            },
+            {
+              id: 'priority3',
+              name: 'Low priority',
+              icon: 'priority',
+              color: 'var(--primary)',
+              callback: model => model.priority = 'Low priority',
+            },
+            {
+              id: 'priority4',
+              name: 'No priority',
+              icon: 'priority',
+              callback: model => model.priority = '',
+            },
+          ],
+        },
+      }
+    },
+    durationList() {
+      return [
+        {
+          id: 'no_duration_clock',
+          name: 'No duration',
+          icon: 'bloqued',
+          callback: model => model.taskDuration = null,
+        },
+        {
+          id: 'select_date',
+          name: 'Select duration',
+          icon: 'duration',
+          callback: model => {
+            this.$store.commit('pushIconDrop', {
+              comp: 'DurationPicker',
+              content: {
+                callback: time => {this.model.taskDuration = time},
+              },
+            })
+          },
+        },
+        {
+          id: '5min',
+          name: '5 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:05',
+        },
+        {
+          id: '10min',
+          name: '10 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:10',
+        },
+        {
+          id: '15min',
+          name: '15 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:15',
+        },
+        {
+          id: '20min',
+          name: '20 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:20',
+        },
+        {
+          id: '30min',
+          name: '30 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:30',
+        },
+        {
+          id: '1 hour',
+          name: '1 hour',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '01:00',
+        },
+        {
+          id: '2 hour',
+          name: '2 hour',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '02:00',
+        },
+      ]
+    },
+    getFilteredListMoveToListOptions() {
+      return this.getMoveToListOptions.filter(el => el.name !== 'Move to list')
+    },
+    getFilteredListSmartIconObj() {
+      return {
+        id: 'folder_and_group',
+        props: {
+          placeholder: 'Move to...',
+          icon: 'tasks',
+          color: 'var(--primary)',
+          trigger: 'enter',
+          list: this.getFilteredListMoveToListOptions,
+        },
+      }
+    },
+    rightSmartIconDurationObj() {
+      return {
+        id: 'duration_clock_smart_icon',
+        props: {
+          placeholder: 'Duration...',
+          icon: 'duration',
+          color: 'var(--purple)',
+          trigger: 'enter',
+          compose: this.composeDurationList,
+          list: this.durationList,
+        },
+      }
+    },
+    composeDurationList() {
+      return (list, search) => {
+        if (!search)
+          return list
+
+        const duration = utils.matchDuration(search)
+
+        const arr = list.filter(el => el.name.toLowerCase().includes(search.toLowerCase()))
+
+        if (duration)
+          arr.unshift({
+            id: 'hour_obj',
+            name: utils.formatQuantity(duration),
+            icon: 'duration',
+            listWidth: '225px',
+            trigger: 'enter',
+            callback: () => this.model.taskDuration = duration
+          })
+
+        return arr
+      }
+    },
+    getMoveToListSmartIconObj() {
+      return {
+        id: 'lists',
+        props: {
+          placeholder: 'Move to...',
+          icon: 'tasks',
+          color: 'var(--primary)',
+          listWidth: '180px',
+          trigger: 'enter',
+          list: this.getMoveToListOptions,
+        },
+      }
+    },
     getMoveToListOptions() {
       return [
         {

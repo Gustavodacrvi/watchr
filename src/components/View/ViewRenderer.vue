@@ -102,6 +102,10 @@
     </transition>
     <HeaderIcons
       :width='width'
+
+      @add-task='addTask'
+      @add-list='addList'
+      @add-heading='addHeading'
     />
   </div>
 </template>
@@ -253,6 +257,12 @@ export default {
     },
     addTask() {
       this.$refs.taskHandler.addTaskEdit()
+    },
+    addList() {
+      this.$refs.extraView.addItemEdit()
+    },
+    addHeading() {
+      this.$refs.taskHandler.addHeadingEdit()
     },
     selectAll() {
       this.$refs.taskHandler.selectAll()

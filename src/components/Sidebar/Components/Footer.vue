@@ -96,7 +96,7 @@ export default {
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 45px;
+  height: 40px;
   border: none;
   z-index: 100;
   border-top: 1px solid var(--extra-light-gray);
@@ -120,6 +120,7 @@ export default {
   height: 53px;
   width: 100%;
   margin-left: 0;
+  border: none;
   padding: 0;
 }
 
@@ -169,7 +170,7 @@ export default {
   position: absolute;
   right: 17px;
   display: flex;
-  transform: translate(26px, 18px);
+  transform: translate(26px, 13px);
 }
 
 .footer.mobile .drop {

@@ -110,7 +110,7 @@ export default {
 
   },
   beforeDestroy() {
-    this.$parent.$el.addEventListener('click', this.hide)
+    this.$parent.$el.removeEventListener('click', this.hide)
   },
   mounted() {
     this.saveValueWith()

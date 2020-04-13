@@ -98,6 +98,9 @@ export default {
     addTaskEdit() {
       this.$refs.renderer.appendItem()
     },
+    addHeadingEdit() {
+      this.$refs.renderer.appendHeadingEdit()
+    },
     selectAll() {
       this.$refs.renderer.selectAll()
     },
