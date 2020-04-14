@@ -3,6 +3,8 @@ import utils from "@/utils"
 
 import mom from 'moment'
 
+import { mapGetters, mapState } from "vuex"
+
 const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
 
@@ -14,6 +16,36 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      userInfo: state => state.userInfo,
+      iconDrop: state => state.iconDrop,
+      user: state => state.user,
+
+      viewName: state => state.viewName,
+      viewType: state => state.viewType,
+
+      isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
+      isOnAlt: state => state.isOnAlt,
+    }),
+    ...mapGetters({
+      lists: 'list/sortedLists',
+      folders: 'folder/sortedFolders',
+      groups: 'group/sortedGroupsByName',
+      tags: 'tag/sortedTagsByName',
+      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
+      getTagsById: 'tag/getTagsById',
+
+      colors: 'colors',
+
+      getListsById: 'list/getListsById',
+      getFoldersById: 'folder/getFoldersById',
+      getGroupsById: 'group/getGroupsById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
+
+      isRecurringTask: 'task/isRecurringTask',
+    }),
+    
     getCalendarStrColor() {
       switch (this.getCalendarStrIcon) {
         case 'inbox': return 'var(--primary)'
@@ -44,10 +76,10 @@ export default {
       if (iconDropObj)
         return iconDropObj.links.map(el => ({
               ...el,
-              callback: () => {
+              callback: model => {
                 if (el.name === "Remove assignee")
-                  this.model.assigned = null
-                else this.model.assigned = el.id
+                  model.assigned = null
+                else model.assigned = el.id
               }
             }))
     },
@@ -77,9 +109,10 @@ export default {
     },
     getAssigneSmartIconObj() {
       return {
-        id: 'fdjkasçlasdf',
+        id: 'assign',
         props: {
           placeholder: 'Assign to...',
+          title: 'Alt + A',
           icon: 'plus',
           listWidth: '180px',
           color: '',
@@ -93,6 +126,46 @@ export default {
       if (iconDropObj)
         return iconDropObj.links.find(el => el.id === this.model.assigned).name
     },
+    calendarOptions() {
+      const arr = this.calendarSmartIconOptions
+        .filter(el => el.name !== 'Inbox' && el.name !== 'This evening' && el.name !== 'Anytime')
+
+      arr.unshift({
+        id: 'no date',
+        name: 'No date',
+        icon: 'bloqued',
+        callback: model => model.calendar = null,
+      })
+
+      return arr
+    },
+    calendarTagObj() {
+      return {
+        id: 'smart_icon_calendar',
+        props: {
+          name: this.calendarStr,
+          icon: this.getCalendarStrIcon,
+          color: this.getCalendarStrColor,
+          trigger: 'enter',
+          compose: this.composeCalendarListHelper,
+          list: this.calendarOptions,
+        },
+      }
+    },
+    calendarSmartIconObj() {
+      return {
+        id: 'calendar',
+        props: {
+          placeholder: 'Defer...',
+          title: 'Alt + S',
+          icon: 'calendar',
+          color: 'var(--green)',
+          trigger: 'enter',
+          compose: this.composeCalendarListHelper,
+          list: this.calendarOptions,
+        },
+      }
+    },
     composeCalendarListHelper() {
       return (list, search) => {
         if (!search)
@@ -104,8 +177,8 @@ export default {
 
         arr = [...arr, ...helperList.map(el => ({
           ...el,
-          callback: () => {
-            this.model.calendar = this.parseKeyword(' ' + el.name),
+          callback: model => {
+            model.calendar = this.parseKeyword(' ' + el.name),
             this.fromIconDrop = true
           },
         }))]
@@ -116,13 +189,193 @@ export default {
             id: 'found_match',
             name: search,
             icon: 'calendar',
-            callback: () => {
+            callback: model => {
               this.fromIconDrop = true
-              this.model.calendar = calendar
+              model.calendar = calendar
             }
           })
 
         return arr
+      }
+    },
+    getPrioritySmartIconObj() {
+      return {
+        id: 'priority',
+        props: {
+          placeholder: 'Priority...',
+          title: 'Alt + P',
+          icon: 'priority',
+          color: 'var(--yellow)',
+          listWidth: '150px',
+          trigger: 'enter',
+          list: [
+            {
+              id: 'priority',
+              name: 'High priority',
+              icon: 'priority',
+              color: 'var(--red)',
+              callback: model => model.priority = 'High priority',
+            },
+            {
+              id: 'priority2',
+              name: 'Medium priority',
+              icon: 'priority',
+              color: 'var(--yellow)',
+              callback: model => model.priority = 'Medium priority',
+            },
+            {
+              id: 'priority3',
+              name: 'Low priority',
+              icon: 'priority',
+              color: 'var(--primary)',
+              callback: model => model.priority = 'Low priority',
+            },
+            {
+              id: 'priority4',
+              name: 'No priority',
+              icon: 'priority',
+              callback: model => model.priority = '',
+            },
+          ],
+        },
+      }
+    },
+    durationList() {
+      return [
+        {
+          id: 'no_duration_clock',
+          name: 'No duration',
+          icon: 'bloqued',
+          callback: model => model.taskDuration = null,
+        },
+        {
+          id: 'select_date',
+          name: 'Select duration',
+          icon: 'duration',
+          callback: model => {
+            this.$store.commit('pushIconDrop', {
+              comp: 'DurationPicker',
+              content: {
+                callback: time => {model.taskDuration = time},
+              },
+            })
+          },
+        },
+        {
+          id: '5min',
+          name: '5 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:05',
+        },
+        {
+          id: '10min',
+          name: '10 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:10',
+        },
+        {
+          id: '15min',
+          name: '15 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:15',
+        },
+        {
+          id: '20min',
+          name: '20 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:20',
+        },
+        {
+          id: '30min',
+          name: '30 minutes',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '00:30',
+        },
+        {
+          id: '1 hour',
+          name: '1 hour',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '01:00',
+        },
+        {
+          id: '2 hour',
+          name: '2 hour',
+          icon: 'duration',
+          color: 'var(--purple)',
+          callback: model => model.taskDuration = '02:00',
+        },
+      ]
+    },
+    getFilteredListMoveToListOptions() {
+      return this.getMoveToListOptions.filter(el => el.name !== 'Move to list')
+    },
+    getFilteredListSmartIconObj() {
+      return {
+        id: 'move',
+        props: {
+          placeholder: 'Move to...',
+          title: 'Alt + M',
+          icon: 'tasks',
+          color: 'var(--primary)',
+          trigger: 'enter',
+          list: this.getFilteredListMoveToListOptions,
+        },
+      }
+    },
+    rightSmartIconDurationObj() {
+      return {
+        id: 'duration',
+        props: {
+          placeholder: 'Duration...',
+          title: 'Alt + E',
+          icon: 'duration',
+          color: 'var(--purple)',
+          trigger: 'enter',
+          compose: this.composeDurationList,
+          list: this.durationList,
+        },
+      }
+    },
+    composeDurationList() {
+      return (list, search) => {
+        if (!search)
+          return list
+
+        const duration = utils.matchDuration(search)
+
+        const arr = list.filter(el => el.name.toLowerCase().includes(search.toLowerCase()))
+
+        if (duration)
+          arr.unshift({
+            id: 'hour_obj',
+            name: utils.formatQuantity(duration),
+            icon: 'duration',
+            listWidth: '225px',
+            trigger: 'enter',
+            callback: model => model.taskDuration = duration
+          })
+
+        return arr
+      }
+    },
+    getMoveToListSmartIconObj() {
+      return {
+        id: 'move',
+        props: {
+          placeholder: 'Move to...',
+          title: 'Alt + M',
+          icon: 'tasks',
+          color: 'var(--primary)',
+          listWidth: '180px',
+          trigger: 'enter',
+          list: this.getMoveToListOptions,
+        },
       }
     },
     getMoveToListOptions() {
@@ -136,12 +389,12 @@ export default {
             id: el.id,
             name: el.name,
             icon: 'tasks',
-            callback: () => {
-              this.model.list = el.id
-              this.model.heading = null
-              this.model.folder = null
-              this.model.assigned = null
-              this.model.group = null
+            callback: model => {
+              model.list = el.id
+              model.heading = null
+              model.folder = null
+              model.assigned = null
+              model.group = null
             },
           }))
         },
@@ -153,12 +406,12 @@ export default {
             id: el.id,
             name: el.name,
             icon: 'folder',
-            callback: () => {
-              this.model.list = null
-              this.model.heading = null
-              this.model.folder = el.id
-              this.model.assigned = null
-              this.model.group = null
+            callback: model => {
+              model.list = null
+              model.heading = null
+              model.folder = el.id
+              model.assigned = null
+              model.group = null
             },
           }))
         },
@@ -170,12 +423,12 @@ export default {
             id: el.id,
             name: el.name,
             icon: 'group',
-            callback: () => {
-              this.model.list = null
-              this.model.heading = null
-              this.model.folder = null
-              this.model.assigned = null
-              this.model.group = el.id || null
+            callback: model => {
+              model.list = null
+              model.heading = null
+              model.folder = null
+              model.assigned = null
+              model.group = el.id || null
             },
           }))
         },
@@ -183,11 +436,11 @@ export default {
           id: 'fd',
           name: 'Remove from lists',
           icon: 'bloqued',
-          callback: () => {
-            this.model.list = null
-            this.model.heading = null
-            this.model.folder = null
-            this.model.group = null
+          callback: model => {
+            model.list = null
+            model.heading = null
+            model.folder = null
+            model.group = null
           },
         },
       ]
@@ -225,16 +478,16 @@ export default {
           name: 'Select date',
           icon: 'calendar',
           color: 'var(--green)',
-          callback: () => {
+          callback: model => {
             this.$store.commit('pushIconDrop', {
               comp: 'CalendarPicker',
               content: {
                 allowNull: true,
                 noTime: true,
-                defaultTime: this.model.deadline,
+                defaultTime: model.deadline,
                 onlyDates: true,
                 callback: calendar => {
-                  this.model.deadline = calendar.specific
+                  model.deadline = calendar.specific
                 },
               },
             })
@@ -253,7 +506,7 @@ export default {
 
         arr = [...arr, ...helperList.map(el => ({
           ...el,
-          callback: () => this.model.deadline = this.parseKeyword(' ' + el.name).specific,
+          callback: model => model.deadline = this.parseKeyword(' ' + el.name).specific,
         }))]
 
         return arr
@@ -296,6 +549,7 @@ export default {
         id: 'deadline',
         props: {
           placeholder: 'Deadline...',
+          title: 'Alt + D',
           icon: 'deadline',
           color: 'var(--orange)',
           trigger: 'enter',
@@ -314,7 +568,7 @@ export default {
         icon: 'tint',
         color: item.color,
         trigger: 'enter',
-        callback: () => this.model.color = item.color
+        callback: model => model.color = item.color
       })
 
       return [
@@ -323,16 +577,30 @@ export default {
           name: 'No color',
           icon: 'tint',
           trigger: 'enter',
-          callback: () => this.model.color = null,
+          callback: model => model.color = null,
         },
         ...this.colors.map(getObj),
       ]
+    },
+    colorRightSmartIconObj() {
+      return {
+        id: 'color',
+        props: {
+          placeholder: 'Color name...',
+          title: 'Alt + O',
+          icon: 'tint',
+          color: 'var(--yellow)',
+          trigger: 'enter',
+          list: this.getColorArr,
+        },
+      }
     },
     getSmartIconTags() {
       return {
         id: 'tag',
         props: {
           placeholder: 'Tags...',
+          title: 'Alt + T',
           icon: 'tag',
           color: 'var(--red)',
           trigger: 'enter',
@@ -342,13 +610,17 @@ export default {
             icon: 'tag',
             color: 'var(--red)',
             callback: model => {
-              if (model.tags.includes(el.id)) {
-                const i = model.tags.findIndex(id => el.id)
-                model.tags.splice(i, 1)
-                this.cursorPos--
+              if (!model.tags) {
+                model.tags = [el.id]
               } else {
-                this.cursorPos++
-                model.tags.push(el.id)
+                if (model.tags.includes(el.id)) {
+                  const i = model.tags.findIndex(id => el.id)
+                  model.tags.splice(i, 1)
+                  this.cursorPos--
+                } else {
+                  this.cursorPos++
+                  model.tags.push(el.id)
+                }
               }
             },
           })),
@@ -367,10 +639,10 @@ export default {
             color: 'var(--red)',
             name: tag.name,
             trigger: 'click',
-            callback: () => {
-              const i = this.model.tags.findIndex(el => el === tag.id)
+            callback: model => {
+              const i = model.tags.findIndex(el => el === tag.id)
               if (i > -1)
-                this.model.tags.splice(i, 1)
+                model.tags.splice(i, 1)
             },
           },
         }))
@@ -408,7 +680,7 @@ export default {
           color: 'var(--dark-purple)',
           callback: model => {
               this.fromIconDrop = true
-              this.model.calendar = {
+              model.calendar = {
               ...this.getSpecificDayCalendarObj(TOD_S0TR),
               evening: true,
             }
@@ -469,14 +741,14 @@ export default {
           name: 'Select date',
           icon: 'calendar',
           color: 'var(--green)',
-          callback: () => {
+          callback: model => {
             this.$store.commit('pushIconDrop', {
               comp: 'CalendarPicker',
               content: {
                 repeat: true,
                 callback: calendar => {
                   this.fromIconDrop = true
-                  this.model.calendar = calendar
+                  model.calendar = calendar
                 },
               },
             })

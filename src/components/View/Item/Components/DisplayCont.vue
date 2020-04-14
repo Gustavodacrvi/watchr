@@ -270,7 +270,7 @@ export default {
 .line {
   width: 0;
   height: 3px;
-  background-color: var(--extra-light-gray);
+  background-color: var(--txt);
   border-radius: 8px;
   transition-duration: .15s;
 }

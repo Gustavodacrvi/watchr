@@ -3,7 +3,7 @@
     <div class="inner-footer">
       <div class="wrapper">
         <div v-if='showing && isDesktopDevice && showIconDropdown && !slimMode'
-          class="scheduler-toggle passive"
+          class="scheduler-toggle"
           :class="{scheduleHover}"
 
           @mouseenter='scheduleHover = true'
@@ -24,7 +24,7 @@
         </div>
         <div class="drop" v-if="showIconDropdown && showing && !scheduling">
           <Icon v-for="i in sideIcons" :key='i.icon'
-            class="sect-icon passive cursor remove-highlight primary-hover"
+            class="sect-icon cursor remove-highlight primary-hover"
             :icon='i.icon'
             width='12px'
             
@@ -35,7 +35,7 @@
           <transition name="icon-t">
             <IconDrop
               width='12px'
-              class="right passive"
+              class="right"
               handle='settings-h'
               
               handleColor='var(--fade)'
@@ -96,9 +96,10 @@ export default {
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 30px;
+  height: 40px;
   border: none;
   z-index: 100;
+  border-top: 1px solid var(--extra-light-gray);
 }
 
 .slimMode {
@@ -119,6 +120,7 @@ export default {
   height: 53px;
   width: 100%;
   margin-left: 0;
+  border: none;
   padding: 0;
 }
 
@@ -168,7 +170,7 @@ export default {
   position: absolute;
   right: 17px;
   display: flex;
-  transform: translate(16px, 10px);
+  transform: translate(26px, 13px);
 }
 
 .footer.mobile .drop {

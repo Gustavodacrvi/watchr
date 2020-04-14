@@ -7,7 +7,8 @@
   >
     <div class="SmartIconDrop cursor"
 
-      :class="{isActive, tagMode, isTyping: !disabled && (isActive || tagMode) && (!tagMode || tagModeToggle)}"
+      :class="{isActive, headerIcon, notHeaderIcon: !headerIcon, tagMode, isTyping: !disabled && (isActive || tagMode) && (!tagMode || tagModeToggle)}"
+      :title='title'
 
       @click="click"
       @click.self='clickSelf'
@@ -90,9 +91,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop', 'headerIcon', 'title'],
   data() {
     return {
       focus: false,
@@ -110,7 +112,7 @@ export default {
 
   },
   beforeDestroy() {
-    this.$parent.$el.addEventListener('click', this.hide)
+    this.$parent.$el.removeEventListener('click', this.hide)
   },
   mounted() {
     this.saveValueWith()
@@ -122,7 +124,7 @@ export default {
         this.onDrop(...args)
     },
     appear(el, done) {
-      if (this.$parent.isFirstEdit)
+      if (this.$parent.isFirstEdit || this.headerIcon)
         return done()
       this.enter(el, done)
     },
@@ -337,6 +339,10 @@ export default {
     keydown(evt) {
       const {key} = evt
 
+      if (this.headerIcon && this.isOnAlt) {
+        evt.preventDefault()
+      }
+
       if (key === 'ArrowDown' || key === 'ArrowUp') {
         evt.stopPropagation()
         this.moveActive(key)
@@ -346,16 +352,17 @@ export default {
 
         let stop
         
-        if (key === "Escape" || ((key === 'ArrowRight' || key === 'ArrowLeft') && this.model.length > 0)) {
+        if (!this.headerIcon && (key === "Escape" || ((key === 'ArrowRight' || key === 'ArrowLeft') && this.model.length > 0))) {
           stop = true
           evt.stopPropagation()
         }
 
+        if (key === "Escape" && !(this.tagMode && this.currentList === this.list))
+          this.switchLists()
+
         if (!stop) {
           if (this.tagMode && this.currentList === this.list)
             this.tagModeToggle = !this.tagModeToggle
-          else
-            this.switchLists()
         }
       }
     },
@@ -441,6 +448,8 @@ export default {
     },
   },
   computed: {
+    ...mapState(['isOnAlt']),
+    
     getPlaceholder() {
       return this.tagMode ? this.name : this.placeholder
     },
@@ -511,15 +520,23 @@ export default {
   box-shadow: inset 0 10px 6px -13px rgba(10,10,10, .8);
 }
 
-.SmartIconDrop.isActive, .SmartIconDrop:hover {
+.SmartIconDrop.isActive, .SmartIconDrop.notHeaderIcon:hover {
   background-color: var(--light-sidebar-color);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
+}
+
+.SmartIconDrop.isActive.headerIcon {
+  background-color: var(--sidebar-color);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
 }
 
 .tagMode {
   border: 1px solid var(--light-gray);
 }
 
-.tagMode.isActive, .tagMode:hover {
+.tagMode.isActive, .tagMode.notHeaderIcon:hover {
   background-color: var(--light-gray);
 }
 
@@ -549,7 +566,7 @@ export default {
   padding: 0;
   width: 80px;
   outline: none;
-  transform: translateY(2px);
+  transform: translateY(1px);
 }
 
 .list {
@@ -562,7 +579,14 @@ export default {
   max-height: 250px;
   width: 145px;
   left: 0;
+}
+
+.notHeaderIcon .list {
   top: 110%;
+}
+
+.headerIcon .list {
+  bottom: 110%;
 }
 
 .tag-mode-name {

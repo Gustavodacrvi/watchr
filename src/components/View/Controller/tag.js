@@ -40,7 +40,9 @@ export default {
           calendar: this.getCalObjectByView('Anytime'),
         }
     },
-    
+    getHeaderIcons() {
+      return defaultIcons => defaultIcons.filter(({id}) => id !== 'heading' && id !== 'list')
+    },
     
     icon() {return 'tag'},
     viewNameValue() {return this.viewName},

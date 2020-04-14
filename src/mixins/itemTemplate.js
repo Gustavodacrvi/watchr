@@ -6,6 +6,11 @@ export default {
     ItemTemplate,
   },
   props: ['newItemsObj', 'changingView'],
+  methods: {
+    selectItem() {
+      this.$refs.template.selectItem()
+    },
+  },
   computed: {
     isNewItem() {
       return this.item && this.newItemsObj[this.item.id]

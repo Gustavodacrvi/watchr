@@ -213,9 +213,6 @@ export default {
       if (!this.isSelecting)
         this.selectItem()
     },
-    selectItem() {
-      this.$refs.template.selectItem()
-    },
     saveTaskContent(obj) {
       this.$store.dispatch('task/saveTask', {
         id: this.item.id,

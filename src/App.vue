@@ -113,6 +113,22 @@ export default {
       if (key === "Alt")
         this.$store.commit('toggleAlt', false)
     },
+    goBack() {
+      if (this.historyPos > 1) {
+        this.saveHistory = false
+        this.$store.commit('decreaseHistory')
+        this.$router.go(-1)
+      }
+    },
+    goNext() {
+      this.saveHistory = false
+      const old = this.$route.fullPath
+      this.$router.go(1)
+      setTimeout(() => {
+        if (old !== this.$route.fullPath)
+          this.$store.commit('increaseHistory')
+      })
+    },
     keydown({key}) {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
@@ -120,21 +136,11 @@ export default {
       if (!isTyping && !this.isOnShift && !this.isEditing)
         switch (key) {
           case 'ArrowLeft': {
-            if (this.historyPos > 1) {
-              this.saveHistory = false
-              this.$store.commit('decreaseHistory')
-              this.$router.go(-1)
-            }
+            this.goBack()
             break
           }
           case 'ArrowRight': {
-            this.saveHistory = false
-            const old = this.$route.fullPath
-            this.$router.go(1)
-            setTimeout(() => {
-              if (old !== this.$route.fullPath)
-                this.$store.commit('increaseHistory')
-            })
+            this.goNext()
             break
           }
         }

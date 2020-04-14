@@ -222,7 +222,7 @@ import utils from '@/utils/'
 export default {
   mixins: [autoScheduleMixin],
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'changingRootView', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
-  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'openCalendar', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback', 'rootItemsObj',
+  'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback', 'rootItemsObj',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'newItemsViewAlert', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback', 'getCalendarOrderDate'],
   components: {
@@ -468,6 +468,9 @@ export default {
     },
     appendItem() {
       this.addEditComp(this.nonEditGetItems.length)
+    },
+    appendHeadingEdit() {
+      this.addHeadingsEdit(this.nonEditGetItems.length)
     },
     filterHeading(h) {
       const showArchivedHeading = this.isSmart || this.showArchived || !h.archive
@@ -1052,7 +1055,7 @@ export default {
       if (this.selected.length > 0) {
         let found = false
         for (const node of event.path) {
-          if (node.classList && node.classList.contains('Task')) {
+          if (node.classList && node.classList.contains('ItemTemplate')) {
             found = true
             break
           }
@@ -1409,11 +1412,11 @@ export default {
     },
     enableSelect() {
       if (this.disableSelect) return false
-      return this.openCalendar || !this.isDesktopDevice ||
+      return !this.isDesktopDevice ||
       (this.pressingSelectKeys || this.isSelecting)
     },
     isSelecting() {
-      if (this.selected.length > 0 || this.openCalendar) return true
+      if (this.selected.length > 0) return true
       if (this.isDesktopDevice)
         return this.pressingSelectKeys
     },

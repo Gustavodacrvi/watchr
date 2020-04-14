@@ -97,31 +97,6 @@ export default EditBuilder({
         isRecurringList: 'list/isRecurringList',
       }),
 
-      getColorArr() {
-        const getObj = item => ({
-          id: item.name,
-          name: item.name,
-          icon: 'tint',
-          color: item.color,
-          trigger: 'enter',
-          callback: () => this.model.color = item.color
-        })
-
-        return [
-          {
-            id: 'no_color',
-            name: 'No color',
-            icon: 'tint',
-            trigger: 'enter',
-            callback: () => this.model.color = null,
-          },
-          ...this.colors.map(getObj),
-        ]
-      },
-      getFilteredMoveToListOptions() {
-        return this.getMoveToListOptions.filter(el => el.name !== 'Move to list')
-      },
-      
       leftSmartIconDrops() {
         return [          {
           id: 'add_files',
@@ -138,16 +113,7 @@ export default EditBuilder({
         const arr = []
 
         if (!this.model.folder && !this.model.group)
-          arr.unshift({
-            id: 'folder_and_group',
-            props: {
-              placeholder: 'Move to...',
-              icon: 'tasks',
-              color: 'var(--primary)',
-              trigger: 'enter',
-              list: this.getFilteredMoveToListOptions,
-            },
-          })
+          arr.unshift(this.rightSmartIconDurationObj)
 
         if (!this.model.group)
           arr.push(this.getSmartIconTags)
@@ -156,32 +122,13 @@ export default EditBuilder({
           tags.push(this.getAssigneTagObj)
 
         if (!this.model.color)
-          arr.push({
-            id: 'duration_clock',
-            props: {
-              placeholder: 'Color name...',
-              icon: 'tint',
-              color: 'var(--yellow)',
-              trigger: 'enter',
-              list: this.getColorArr,
-            },
-          })
+          arr.push(this.colorRightSmartIconObj)
 
         if (!this.model.deadline)
           arr.unshift(this.deadlineSmartIconObj)
 
         if (!this.model.calendar)
-          arr.unshift({
-            id: 'calendar_icon',
-            props: {
-              placeholder: 'Defer...',
-              icon: 'calendar',
-              color: 'var(--green)',
-              trigger: 'enter',
-              compose: this.composeCalendarListHelper,
-              list: this.calendarOptions,
-            },
-          })
+          arr.unshift(this.calendarSmartIconObj)
 
         const listObj = this.getListObj
 
@@ -194,34 +141,11 @@ export default EditBuilder({
       selectedColorObj() {
         return this.colors.find(el => el.color === this.model.color)
       },
-      calendarOptions() {
-        const arr = this.calendarSmartIconOptions
-          .filter(el => el.name !== 'Inbox' && el.name !== 'This evening' && el.name !== 'Anytime')
-
-        arr.unshift({
-          id: 'no date',
-          name: 'No date',
-          icon: 'bloqued',
-          callback: model => model.calendar = null,
-        })
-
-        return arr
-      },
       getViewTags() {
         const arr = []
 
         if (this.model.calendar)
-          arr.push({
-            id: 'smart_icon_calendar',
-            props: {
-              name: this.calendarStr,
-              icon: this.getCalendarStrIcon,
-              color: this.getCalendarStrColor,
-              trigger: 'enter',
-              compose: this.composeCalendarListHelper,
-              list: this.calendarOptions,
-            },
-          })
+          arr.push(this.calendarTagObj)
         
         if (this.model.deadline)
           arr.push(this.deadlineTagObj)
@@ -237,7 +161,7 @@ export default EditBuilder({
               listWidth: '180px',
               color: this.getListColor,
               trigger: 'enter',
-              list: this.getFilteredMoveToListOptions,
+              list: this.getFilteredListMoveToListOptions,
             },
           })
 

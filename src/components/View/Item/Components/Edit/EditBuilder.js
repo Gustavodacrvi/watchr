@@ -301,6 +301,17 @@ export default ({
         this.cursorPos = 0
       else this.cursorPos = this.lastKeyboardActionIndex
     },
+    focusSmartInputById(id) {
+      const icons = this.allSmartIcons
+      let num = this.getFirstSmartIconKeyboardActionPosition
+      for (const icon of icons) {
+        if (icon.id === id) {
+          this.cursorPos = num
+          return true
+        }
+        num++
+      }
+    },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
@@ -310,6 +321,26 @@ export default ({
 
       if (this.isOnShift && key === 'Enter')
         return this.save()
+
+      if (this.isOnAlt && !this.isOnControl) {
+        const vals = {
+          s: 'calendar',
+          m: 'move',
+          d: 'deadline',
+          t: 'tag',
+          p: 'priority',
+          e: 'duration',
+          a: 'assign',
+          o: 'color',
+          n: 'evening',
+          c: 'checklist',
+          h: 'hour',
+        }
+        console.log(vals[key])
+
+        if (this.focusSmartInputById(vals[key]))
+          p()
+      }
 
       if (checklist && this.isCursorInChecklist && !isTyping) {
         switch (key) {
@@ -422,36 +453,6 @@ export default ({
     ...(instance.methods || {}),
   },
   computed: {
-    ...mapState({
-      userInfo: state => state.userInfo,
-      iconDrop: state => state.iconDrop,
-      user: state => state.user,
-
-      viewName: state => state.viewName,
-      viewType: state => state.viewType,
-
-      isOnControl: state => state.isOnControl,
-      isOnShift: state => state.isOnShift,
-      isOnAlt: state => state.isOnAlt,
-    }),
-    ...mapGetters({
-      lists: 'list/sortedLists',
-      folders: 'folder/sortedFolders',
-      groups: 'group/sortedGroupsByName',
-      tags: 'tag/sortedTagsByName',
-      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
-      getTagsById: 'tag/getTagsById',
-
-      colors: 'colors',
-
-      getListsById: 'list/getListsById',
-      getFoldersById: 'folder/getFoldersById',
-      getGroupsById: 'group/getGroupsById',
-      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
-
-      isRecurringTask: 'task/isRecurringTask',
-    }),
-
     currentSmartIconHasList() {
       if (this.cursorPos < this.getFirstSmartIconKeyboardActionPosition)
         return false

@@ -100,6 +100,15 @@
         @add-task='addTask'
       />
     </transition>
+    <HeaderIcons
+      ref='header-icons'
+      :width='width'
+      :getHeaderIcons='getHeaderIcons'
+
+      @add-task='addTask'
+      @add-list='addList'
+      @add-heading='addHeading'
+    />
   </div>
 </template>
 
@@ -111,6 +120,7 @@ import SlimModeNav from './SlimModeNav.vue'
 import TaskHandler from './Views/TaskHandler.vue'
 import ListHandler from './Views/ListHandler.vue'
 import CalendarEvents from './RenderComponents/CalendarEvents.vue'
+import HeaderIcons from './HeaderIcons/HeaderIcons.vue'
 
 import Defer from '@/mixins/defer'
 import autoScheduleMixin from "@/mixins/autoSchedule"
@@ -141,7 +151,7 @@ export default {
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
   'width', 'sidebarHided',
-  'fallbackFunctionData',
+  'fallbackFunctionData', 'getHeaderIcons',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'headerInfo', 'disableRootActions', 'updateViewIds',
@@ -153,7 +163,7 @@ export default {
   components: {
     ListHandler, CalendarEvents,
     TaskHandler, ViewRendererLongCalendarPicker,
-    Header: HeaderVue,
+    Header: HeaderVue, HeaderIcons,
     ActionButtons: ActionButtonsVue,
     SlimModeNav,
   },
@@ -250,6 +260,12 @@ export default {
     addTask() {
       this.$refs.taskHandler.addTaskEdit()
     },
+    addList() {
+      this.$refs.extraView.addItemEdit()
+    },
+    addHeading() {
+      this.$refs.taskHandler.addHeadingEdit()
+    },
     selectAll() {
       this.$refs.taskHandler.selectAll()
       if (this.$refs.extraView)
@@ -301,6 +317,22 @@ export default {
     },
     getAllListsIds(ids) {
       this.allListsIds = ids
+    },
+    focusHeaderIcon(smartIconId) {
+      const ids = this.fallbackSelected
+      if (!ids) return;
+
+      const focus = () => {
+        this.$refs['header-icons'].focusOnHeaderIcon(smartIconId)
+      }
+
+      if (this.selectedItems.length === 0 && ids.length === 1) {
+        this.$store.commit('selectItem', ids[0])
+        this.$store.commit('selectType', this.shortcutsType)
+        this.$nextTick(focus)
+      } else if (ids.length >= 1) {
+        focus()
+      }
     },
 
     go(dire) {
@@ -364,16 +396,15 @@ export default {
     },
     keydown(evt) {
       const active = document.activeElement
-      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
       
-      if (!isTyping) {
+      if (!this.isEditingComp) {
         const p = () => evt.preventDefault()
         const {key} = evt
         const hasSelected = this.selectedItems.length > 0
   
         const fallbackItems = this.fallbackSelected
 
-        if (!isTyping && !this.isEditingComp && (!this.mainSelection || this.mainSelectionIsNotInView)) {
+        if ((!this.mainSelection || this.mainSelectionIsNotInView)) {
           switch (key) {
             case 'ArrowDown': {
               this.go(true)
@@ -476,6 +507,20 @@ export default {
               this.getAssigneeIconDrop({group: items[0].group}, callback)
             )
           }
+        }
+
+        if (this.isOnAlt && !this.isOnControl) {
+          const vals = {
+            s: 'calendar',
+            m: 'move',
+            d: 'deadline',
+            t: 'tag',
+            p: 'priority',
+            e: 'duration',
+          }
+          
+          if (vals[key])
+            this.focusHeaderIcon(vals[key])
         }
   
         utils.saveByShortcut(this, (this.isEditingComp || this.iconDrop), key, p, (type, item) => {
