@@ -97,28 +97,6 @@ export default EditBuilder({
         isRecurringList: 'list/isRecurringList',
       }),
 
-      getColorArr() {
-        const getObj = item => ({
-          id: item.name,
-          name: item.name,
-          icon: 'tint',
-          color: item.color,
-          trigger: 'enter',
-          callback: () => this.model.color = item.color
-        })
-
-        return [
-          {
-            id: 'no_color',
-            name: 'No color',
-            icon: 'tint',
-            trigger: 'enter',
-            callback: () => this.model.color = null,
-          },
-          ...this.colors.map(getObj),
-        ]
-      },
-      
       leftSmartIconDrops() {
         return [          {
           id: 'add_files',
@@ -144,16 +122,7 @@ export default EditBuilder({
           tags.push(this.getAssigneTagObj)
 
         if (!this.model.color)
-          arr.push({
-            id: 'duration_clock',
-            props: {
-              placeholder: 'Color name...',
-              icon: 'tint',
-              color: 'var(--yellow)',
-              trigger: 'enter',
-              list: this.getColorArr,
-            },
-          })
+          arr.push(this.colorRightSmartIconObj)
 
         if (!this.model.deadline)
           arr.unshift(this.deadlineSmartIconObj)

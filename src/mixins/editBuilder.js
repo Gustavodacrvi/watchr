@@ -109,9 +109,10 @@ export default {
     },
     getAssigneSmartIconObj() {
       return {
-        id: 'fdjkasçlasdf',
+        id: 'assign',
         props: {
           placeholder: 'Assign to...',
+          title: 'Alt + A',
           icon: 'plus',
           listWidth: '180px',
           color: '',
@@ -153,9 +154,10 @@ export default {
     },
     calendarSmartIconObj() {
       return {
-        id: 'calendar_icon',
+        id: 'calendar',
         props: {
           placeholder: 'Defer...',
+          title: 'Alt + S',
           icon: 'calendar',
           color: 'var(--green)',
           trigger: 'enter',
@@ -201,6 +203,7 @@ export default {
         id: 'priority',
         props: {
           placeholder: 'Priority...',
+          title: 'Alt + P',
           icon: 'priority',
           color: 'var(--yellow)',
           listWidth: '150px',
@@ -314,9 +317,10 @@ export default {
     },
     getFilteredListSmartIconObj() {
       return {
-        id: 'folder_and_group',
+        id: 'move',
         props: {
           placeholder: 'Move to...',
+          title: 'Alt + M',
           icon: 'tasks',
           color: 'var(--primary)',
           trigger: 'enter',
@@ -326,9 +330,10 @@ export default {
     },
     rightSmartIconDurationObj() {
       return {
-        id: 'duration_clock_smart_icon',
+        id: 'duration',
         props: {
           placeholder: 'Duration...',
+          title: 'Alt + E',
           icon: 'duration',
           color: 'var(--purple)',
           trigger: 'enter',
@@ -361,9 +366,10 @@ export default {
     },
     getMoveToListSmartIconObj() {
       return {
-        id: 'lists',
+        id: 'move',
         props: {
           placeholder: 'Move to...',
+          title: 'Alt + M',
           icon: 'tasks',
           color: 'var(--primary)',
           listWidth: '180px',
@@ -543,6 +549,7 @@ export default {
         id: 'deadline',
         props: {
           placeholder: 'Deadline...',
+          title: 'Alt + D',
           icon: 'deadline',
           color: 'var(--orange)',
           trigger: 'enter',
@@ -575,11 +582,25 @@ export default {
         ...this.colors.map(getObj),
       ]
     },
+    colorRightSmartIconObj() {
+      return {
+        id: 'color',
+        props: {
+          placeholder: 'Color name...',
+          title: 'Alt + O',
+          icon: 'tint',
+          color: 'var(--yellow)',
+          trigger: 'enter',
+          list: this.getColorArr,
+        },
+      }
+    },
     getSmartIconTags() {
       return {
         id: 'tag',
         props: {
           placeholder: 'Tags...',
+          title: 'Alt + T',
           icon: 'tag',
           color: 'var(--red)',
           trigger: 'enter',

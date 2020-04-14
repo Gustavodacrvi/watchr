@@ -301,6 +301,17 @@ export default ({
         this.cursorPos = 0
       else this.cursorPos = this.lastKeyboardActionIndex
     },
+    focusSmartInputById(id) {
+      const icons = this.allSmartIcons
+      let num = this.getFirstSmartIconKeyboardActionPosition
+      for (const icon of icons) {
+        if (icon.id === id) {
+          this.cursorPos = num
+          return true
+        }
+        num++
+      }
+    },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
@@ -310,6 +321,26 @@ export default ({
 
       if (this.isOnShift && key === 'Enter')
         return this.save()
+
+      if (this.isOnAlt && !this.isOnControl) {
+        const vals = {
+          s: 'calendar',
+          m: 'move',
+          d: 'deadline',
+          t: 'tag',
+          p: 'priority',
+          e: 'duration',
+          a: 'assign',
+          o: 'color',
+          n: 'evening',
+          c: 'checklist',
+          h: 'hour',
+        }
+        console.log(vals[key])
+
+        if (this.focusSmartInputById(vals[key]))
+          p()
+      }
 
       if (checklist && this.isCursorInChecklist && !isTyping) {
         switch (key) {

@@ -117,18 +117,18 @@ export default {
             },
           ]
     },
-    getCalObjectByView(viewName) {
-      if (this.viewName === 'Today')
+    getCalObjectByView(viewName = this.viewName) {
+      if (viewName === 'Today')
         return this.getSpecificDayCalendarObj(mom())
-      if (this.viewName === 'Tomorrow')
+      if (viewName === 'Tomorrow')
         return this.getSpecificDayCalendarObj(mom().add(1, 'day'))
-      if (this.viewName === 'Someday')
+      if (viewName === 'Someday')
         return {
           type: 'someday',
           begins: TOD_STR,
           editDate: TOD_STR,
         }
-      if (this.viewName === 'Anytime')
+      if (viewName === 'Anytime')
         return {
           type: 'anytime',
           begins: TOD_STR,

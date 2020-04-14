@@ -101,6 +101,7 @@
       />
     </transition>
     <HeaderIcons
+      ref='header-icons'
       :width='width'
       :getHeaderIcons='getHeaderIcons'
 
@@ -317,6 +318,22 @@ export default {
     getAllListsIds(ids) {
       this.allListsIds = ids
     },
+    focusHeaderIcon(smartIconId) {
+      const ids = this.fallbackSelected
+      if (!ids) return;
+
+      const focus = () => {
+        this.$refs['header-icons'].focusOnHeaderIcon(smartIconId)
+      }
+
+      if (this.selectedItems.length === 0 && ids.length === 1) {
+        this.$store.commit('selectItem', ids[0])
+        this.$store.commit('selectType', this.shortcutsType)
+        this.$nextTick(focus)
+      } else if (ids.length >= 1) {
+        focus()
+      }
+    },
 
     go(dire) {
       const ids = this.allViewItemsIds
@@ -379,16 +396,15 @@ export default {
     },
     keydown(evt) {
       const active = document.activeElement
-      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
       
-      if (!isTyping) {
+      if (!this.isEditingComp) {
         const p = () => evt.preventDefault()
         const {key} = evt
         const hasSelected = this.selectedItems.length > 0
   
         const fallbackItems = this.fallbackSelected
 
-        if (!isTyping && !this.isEditingComp && (!this.mainSelection || this.mainSelectionIsNotInView)) {
+        if ((!this.mainSelection || this.mainSelectionIsNotInView)) {
           switch (key) {
             case 'ArrowDown': {
               this.go(true)
@@ -491,6 +507,20 @@ export default {
               this.getAssigneeIconDrop({group: items[0].group}, callback)
             )
           }
+        }
+
+        if (this.isOnAlt && !this.isOnControl) {
+          const vals = {
+            s: 'calendar',
+            m: 'move',
+            d: 'deadline',
+            t: 'tag',
+            p: 'priority',
+            e: 'duration',
+          }
+          
+          if (vals[key])
+            this.focusHeaderIcon(vals[key])
         }
   
         utils.saveByShortcut(this, (this.isEditingComp || this.iconDrop), key, p, (type, item) => {

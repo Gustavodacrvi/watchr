@@ -76,30 +76,14 @@
         <span class="tag">L</span>
       </div>
       <div class="line">
-        <span>Open folder quick add</span>
-        <span class="tag">F</span>
-      </div>
-      <div class="line">
         <span>Open tag quick add</span>
         <span class="tag">T</span>
       </div>
 
       <h3 class="pc">Edit items</h3>
       <div class="line">
-        <span>Add "High priority" to selection</span>
-        <span class="tag">Alt + H</span>
-      </div>
-      <div class="line">
-        <span>Add "Medium priority" to selection</span>
-        <span class="tag">Alt + M</span>
-      </div>
-      <div class="line">
-        <span>Add "Low priority" to selection</span>
-        <span class="tag">Alt + L</span>
-      </div>
-      <div class="line">
-        <span>Remove priority from selection</span>
-        <span class="tag">Alt + N</span>
+        <span>Select task priority</span>
+        <span class="tag">Alt + P</span>
       </div>
       <div class="line">
         <span>Add selection to logbook</span>
@@ -108,10 +92,6 @@
       <div class="line">
         <span>Assign user to selection</span>
         <span class="tag">Alt + A</span>
-      </div>
-      <div class="line">
-        <span>Add selection to group</span>
-        <span class="tag">Alt + L</span>
       </div>
       <div class="line">
         <span>Add deadline to selection</span>
@@ -139,11 +119,11 @@
       </div>
       <div class="line">
         <span>Move to Someday</span>
-        <span class="tag">Alt + S</span>
+        <span class="tag">Shift + S</span>
       </div>
       <div class="line">
         <span>Move to Today</span>
-        <span class="tag">Alt + T</span>
+        <span class="tag">Shift + T</span>
       </div>
       <div class="line">
         <span>Close task editor</span>
@@ -152,12 +132,8 @@
 
       <h3 class="pc">Move items</h3>
       <div class="line">
-        <span>Move to list</span>
-        <span class="tag">Alt + K</span>
-      </div>
-      <div class="line">
-        <span>Move to folder</span>
-        <span class="tag">Alt + F</span>
+        <span>Move selection to list/group/folder</span>
+        <span class="tag">Alt + M</span>
       </div>
       <div class="line">
         <span>Use calendar on selection</span>
@@ -174,7 +150,7 @@
 
       <h3 class="pc">View</h3>
       <div class="line">
-        <span>Go to selecte list</span>
+        <span>Go to selected list</span>
         <span class="tag">Shift + ArrowRight</span>
       </div>
       <div class="line">
@@ -229,7 +205,6 @@ export default {
   border-radius: 4px;
   background-color: var(--dark);
   padding: 6px;
-  font-size: .8em;
 }
 
 h3 {

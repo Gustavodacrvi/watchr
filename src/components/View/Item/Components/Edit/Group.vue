@@ -66,16 +66,7 @@ export default EditBuilder({
         const arr = []
 
         if (!this.model.color || !this.selectedColorObj)
-          arr.push({
-            id: 'duration_clock',
-            props: {
-              placeholder: 'Color name...',
-              icon: 'tint',
-              color: 'var(--yellow)',
-              trigger: 'enter',
-              list: this.getColorArr,
-            },
-          })
+          arr.push(this.colorRightSmartIconObj)
 
         return arr
       },

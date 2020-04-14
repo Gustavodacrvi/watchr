@@ -8,6 +8,7 @@
     <div class="SmartIconDrop cursor"
 
       :class="{isActive, headerIcon, notHeaderIcon: !headerIcon, tagMode, isTyping: !disabled && (isActive || tagMode) && (!tagMode || tagModeToggle)}"
+      :title='title'
 
       @click="click"
       @click.self='clickSelf'
@@ -90,9 +91,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop', 'headerIcon'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop', 'headerIcon', 'title'],
   data() {
     return {
       focus: false,
@@ -122,7 +124,7 @@ export default {
         this.onDrop(...args)
     },
     appear(el, done) {
-      if (this.$parent.isFirstEdit)
+      if (this.$parent.isFirstEdit || this.headerIcon)
         return done()
       this.enter(el, done)
     },
@@ -337,6 +339,10 @@ export default {
     keydown(evt) {
       const {key} = evt
 
+      if (this.headerIcon && this.isOnAlt) {
+        evt.preventDefault()
+      }
+
       if (key === 'ArrowDown' || key === 'ArrowUp') {
         evt.stopPropagation()
         this.moveActive(key)
@@ -346,7 +352,7 @@ export default {
 
         let stop
         
-        if (key === "Escape" || ((key === 'ArrowRight' || key === 'ArrowLeft') && this.model.length > 0)) {
+        if (!this.headerIcon && (key === "Escape" || ((key === 'ArrowRight' || key === 'ArrowLeft') && this.model.length > 0))) {
           stop = true
           evt.stopPropagation()
         }
@@ -442,6 +448,8 @@ export default {
     },
   },
   computed: {
+    ...mapState(['isOnAlt']),
+    
     getPlaceholder() {
       return this.tagMode ? this.name : this.placeholder
     },

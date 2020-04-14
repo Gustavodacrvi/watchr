@@ -3,6 +3,8 @@
     :class="{active: (active && !simple), simple}"
     
     @click='headerClick'
+
+    :title='props.title'
   >
     <SmartDrop v-if="!simple" :ref='id'
       v-bind="props"

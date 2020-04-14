@@ -34,6 +34,16 @@ export default {
   },
   props: ['width', 'getHeaderIcons'],
   methods: {
+    focusOnHeaderIcon(id) {
+      Object.keys(this.$refs).forEach(key => {
+        if (this.$refs[key][0])
+          this.$refs[key][0].active = false
+      })
+      this.$nextTick(() => {
+        if (this.$refs[id])
+          this.$refs[id][0].active = true
+      })
+    },
     save(model) {
       if (this.selectedItems.length) {
 
@@ -103,6 +113,7 @@ export default {
           id: 'go_back',
           simple: true,
           props: {
+            title: 'Go to previous view, "Left Arrow"',
             icon: 'arrow',
             color: 'var(--fade)',
             callback: () => this.$root.$children[0].goBack(),
@@ -112,6 +123,7 @@ export default {
           id: 'task',
           simple: true,
           props: {
+            title: 'Add task, "A"',
             icon: 'plus',
             color: 'var(--txt)',
             callback: () => this.$emit('add-task'),
@@ -121,6 +133,7 @@ export default {
           id: 'list',
           simple: true,
           props: {
+            title: "Add list",
             icon: 'pie',
             progress: 30,
             color: 'var(--txt)',
@@ -131,6 +144,7 @@ export default {
           id: 'heading',
           simple: true,
           props: {
+            title: 'Add heading, "H"',
             icon: 'heading',
             color: 'var(--txt)',
             callback: () => this.$emit('add-heading'),
@@ -140,6 +154,7 @@ export default {
           id: 'search',
           simple: true,
           props: {
+            title: 'Quick search, "F"',
             icon: 'search',
             color: 'var(--txt)',
             callback: () => this.$store.dispatch('pushPopup', {
@@ -151,6 +166,7 @@ export default {
           id: 'go_next',
           simple: true,
           props: {
+            title: 'Go to next view, "Right Arrow"',
             icon: 'arrow',
             color: 'var(--fade)',
             callback: () => this.$root.$children[0].goNext(),

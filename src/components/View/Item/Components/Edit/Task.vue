@@ -93,6 +93,7 @@ export default EditBuilder({
       }
     },
     methods: {
+      
       saveByShortcut(type, task) {
         switch (type) {
           case 'CalendarPicker': {
@@ -197,9 +198,10 @@ export default EditBuilder({
       leftSmartIconDrops() {
         const arr = [
           {
-            id: 'checklist-icon',
+            id: 'checklist',
             props: {
               placeholder: 'Checklist...',
+              title: 'Alt + C',
               icon: 'menu',
               trigger: 'type',
             },
@@ -221,9 +223,10 @@ export default EditBuilder({
 
         if (this.model.calendar && !this.model.calendar.evening)
           arr.splice(1, 0, {
-            id: 'evening_left_icon',
+            id: 'evening',
             props: {
               disabled: true,
+              title: 'Alt + N',
               icon: 'moon',
               color: 'var(--dark-purple)',
               trigger: 'click',
@@ -312,9 +315,10 @@ export default EditBuilder({
 
         if (this.model.calendar && !this.model.calendar.time)
           arr.unshift({
-            id: 'calendar_time',
+            id: 'hour',
             props: {
               placeholder: 'Time...',
+              title: 'Alt + H',
               icon: 'clock',
               color: 'var(--brown)',
               listWidth: '180px',
@@ -405,7 +409,7 @@ export default EditBuilder({
 
         if (this.model.calendar && this.model.calendar.evening)
           tags.push({
-            id: 'evening_left_icon',
+            id: 'evening',
             props: {
               icon: 'moon',
               name: 'Evening',
