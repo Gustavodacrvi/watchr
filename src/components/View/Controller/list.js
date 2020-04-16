@@ -310,7 +310,6 @@ export default {
         } : undefined,
         files: {
           names: list.files || [],
-          storageFolder: 'lists',
           id: list.id,
           save: files => save({files}),
         },

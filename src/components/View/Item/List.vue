@@ -163,11 +163,14 @@ export default {
     cancelItem() {
       this.$store.dispatch('list/cancelLists', [this.item.id])
     },
-    save(obj) {
-      this.$store.dispatch('list/saveList', {
+    async save(obj) {
+      await this.$store.dispatch('list/saveList', {
         id: this.item.id,
         ...obj,
       })
+
+      if (obj.handleFiles)
+        this.$refs.template.isEditing = false
     },
     unCancelItem() {
       this.$store.dispatch('list/uncancelLists', [this.item.id])

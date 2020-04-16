@@ -20,9 +20,7 @@ export default EditBuilder({
       vModel: 'notes', // this.model[vModel],
     },
   ],
-  allowFiles: {
-    storageFolder: 'lists',
-  },
+  allowFiles: true, // requires file handle on firestore function
   instance: {
     data() {
       return {
@@ -98,7 +96,7 @@ export default EditBuilder({
       }),
 
       leftSmartIconDrops() {
-        return [          {
+        return this.model.group ? [] : [          {
           id: 'add_files',
           props: {
             disabled: true,

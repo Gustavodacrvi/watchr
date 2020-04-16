@@ -50,9 +50,7 @@ export default EditBuilder({
     vModel: 'checklist', // this.model[option]
     order: 'order', // this.model[option]
   }, // requires removeSubtask, saveChecklist, addSubtask, isRecurringItem methods
-  allowFiles: {
-    storageFolder: 'tasks', // requires file handle on firestore function
-  },
+  allowFiles: true, // requires file handle on firestore function
   instance: {
     data() {
       return {
@@ -209,7 +207,10 @@ export default EditBuilder({
               vm.$refs.subitems.pushEditString(getModel)
             },
           },
-          {
+        ]
+
+        if (!this.model.group)
+          arr.push({
             id: 'add_files',
             props: {
               disabled: true,
@@ -218,8 +219,7 @@ export default EditBuilder({
               file: true,
               onDrop: this.onDrop,
             },
-          },
-        ]
+          })
 
         if (this.model.calendar && !this.model.calendar.evening)
           arr.splice(1, 0, {

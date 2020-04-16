@@ -85,7 +85,6 @@ export default {
       if (fold) {
         return {
           id: fold.id,
-          storageFolder: 'folders',
           files: fold.files,
         }
       }
@@ -141,7 +140,6 @@ export default {
       return {
         files: {
           names: folder.files || [],
-          storageFolder: 'folders',
           id: folder.id,
           save: files => this.foldersaveFolder({files}),
         },

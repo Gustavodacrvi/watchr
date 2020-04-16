@@ -1037,7 +1037,7 @@ export default {
     },
     saveTask({rootState}, obj) {
       const b = fire.batch()
-      setTask(b, obj, rootState, obj.id).then(() => {
+      return setTask(b, obj, rootState, obj.id).then(() => {
         b.commit()
       })
     },
@@ -1108,6 +1108,7 @@ export default {
           name: tasksWithConflictingListNames[task.id] ? task.name + ' (list)' : task.name,
           notes: task.notes || null,
           tags: task.tags || [],
+          files: task.files || [],
           assigned: task.assigned || null,
           tasks: subIds,
           headings: [],
@@ -1144,7 +1145,7 @@ export default {
 
         const writes = []
   
-        const list = listRef()
+        const list = listRef(task.id)
         deleteTask(b, task.id, rootState, writes)
         
         const ids = []
@@ -1181,6 +1182,7 @@ export default {
           smartViewsOrders: {},
           name: task.name,
           notes: task.notes || null,
+          files: task.files || [],
           tags: task.tags || [],
           descr: '',
           tasks: ids,

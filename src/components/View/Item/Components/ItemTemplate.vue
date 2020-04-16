@@ -130,8 +130,10 @@ export default {
       if (this.isAdding)
         this.$parent.$emit('save', obj)
       else {
+        if (!obj.handleFiles)
+          this.isEditing = false
+        
         this.$emit('save', obj)
-        this.isEditing = false
       }
     },
     click(evt) {

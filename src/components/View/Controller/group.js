@@ -102,7 +102,6 @@ export default {
         },
         files: {
           names: group.files || [],
-          storageFolder: 'groups',
           id: group.id,
           save: files => save({files}),
         },

@@ -5,8 +5,8 @@
       :name="f"
       :status='getFileStatus(f)'
       @delete="deleteFile(f)"
-      @download="downloadFile(f, storageFolder, id)"
-      @view="viewFile(f, storageFolder, id)"
+      @download="downloadFile(f, id)"
+      @view="viewFile(f, id)"
     />
     <transition name="progress-t">
       <div v-if="saving" class="progress">
@@ -35,7 +35,7 @@ export default {
     FileDragDrop,
     File, AuthButton,
   },
-  props: ['storageFolder', 'id'],
+  props: ['id'],
   data() {
     return {
       saving: false,
@@ -45,7 +45,7 @@ export default {
     saveCompFiles() {
       this.saving = true
       const files = this.files
-      this.saveFiles(this.getFilesToRemove, this.addedFiles, this.id, this.storageFolder).then(res => {
+      this.saveFiles(this.getFilesToRemove, this.addedFiles, this.id).then(res => {
         this.$emit('save', files)
         this.addedFiles = []
         this.$store.commit('pushToast', {

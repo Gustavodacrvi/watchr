@@ -171,7 +171,7 @@ export default ({
       })
     )
 
-    if (allowFiles && allowFiles.storageFolder) {
+    if (allowFiles) {
       editChildren.splice(2 - (checklist ? 0 : 1), 0, 
         create('div', {class: 'file-drag-drop-wrapper'}, [
           create(FileDragDrop, {
@@ -195,8 +195,8 @@ export default ({
             },
             on: {
               delete: () => this.deleteFile(str),
-              download: () => this.downloadFile(str, allowFiles.storageFolder, this.model.id),
-              view: () => this.viewFile(str, allowFiles.storageFolder, this.model.id)
+              download: () => this.downloadFile(str, this.model.id),
+              view: () => this.viewFile(str, this.model.id)
             },
           })
         }))
@@ -231,7 +231,7 @@ export default ({
       )
     )
 
-    if (allowFiles && allowFiles.storageFolder && this.savingItem)
+    if (allowFiles && this.savingItem)
         editChildren.push(
           create(UploadProgressLine, {
             props: this.uploadProgress,
@@ -254,16 +254,16 @@ export default ({
     save() {
       const model = this.beforeSave(this.model, this)
       if (model) {
-        if (allowFiles && allowFiles.storageFolder && this.isEditingFiles && this.addedFiles.length > 0)
+        if (allowFiles && this.isEditingFiles && this.addedFiles.length > 0)
           this.savingItem = true
 
         const obj = model
 
-        if (allowFiles && allowFiles.storageFolder) {
+        if (allowFiles) {
           obj.files = this.files || []
           obj.handleFiles = this.isEditingFiles ? itemId => {
             return new Promise((solve, reject) => {
-              this.saveFiles(this.getFilesToRemove, this.addedFiles, itemId, allowFiles.storageFolder)
+              this.saveFiles(this.getFilesToRemove, this.addedFiles, itemId)
               .then(() => {
                 this.files = []
                 this.addedFiles = []
@@ -377,18 +377,18 @@ export default ({
           }
         }
       }
-      if (allowFiles && allowFiles.storageFolder && this.isCursorInFile && !isTyping) {
+      if (allowFiles && this.isCursorInFile && !isTyping) {
         switch (key) {
           case "Delete": {
             this.deleteFile(this.activeFileName)
             break
           }
           case 'Enter': {
-            this.downloadFile(this.activeFileName, allowFiles.storageFolder, this.model.id)
+            this.downloadFile(this.activeFileName, this.model.id)
             break
           }
           case " ": {
-            this.viewFile(this.activeFileName, allowFiles.storageFolder, this.model.id)
+            this.viewFile(this.activeFileName, this.model.id)
             break
           }
         }
@@ -577,7 +577,7 @@ export default ({
       return this.model[checklist.vModel].some(el => el.id === this.activeChecklistId)
     },
     isCursorInFile() {
-      if (!allowFiles || !allowFiles.storageFolder)
+      if (!allowFiles)
         return false
       return this.getFiles.some(str => str === this.activeFileName)
     },

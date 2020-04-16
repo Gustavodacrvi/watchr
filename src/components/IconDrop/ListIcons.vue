@@ -275,7 +275,7 @@ export default {
 }
 
 .ListIcons {
-  max-height: 250px;
+  max-height: 320px;
   padding: 8px 0;
 }
 

@@ -39,38 +39,13 @@ const db = firebase.firestore()
   return Promise.all(promises)
 } */
 
-const deleteCache = (snap: FirebaseFirestore.DocumentSnapshot, context: functions.EventContext, collection: string) => {
+/* const deleteCache = (snap: FirebaseFirestore.DocumentSnapshot, context: functions.EventContext) => {
   const { userId, docId } = context.params
   
-  return  firebase.storage().bucket().deleteFiles({
-      prefix: `attachments/${userId}/${collection}/${docId}`
+  return firebase.storage().bucket().deleteFiles({
+      prefix: `attachments/users/${userId}/${docId}`
     })
-}
-
-export const deleteTaskCache = functions.firestore
-  .document("users/{userId}/tasks/{docId}")
-  .onDelete((a, b) => deleteCache(a, b, 'tasks'))
-  
-export const deleteListCache = functions.firestore
-  .document("users/{userId}/lists/{docId}")
-  .onDelete((a, b) => deleteCache(a, b, 'lists'))
-
-export const deleteInfoCache = functions.firestore
-  .document("users/{userId}/info/{docId}")
-  .onDelete((a, b) => deleteCache(a, b, 'info'))
-
-export const deleteFoldersCache = functions.firestore
-  .document("users/{userId}/folders/{docId}")
-  .onDelete((a, b) => deleteCache(a, b, 'folders'))
-
-export const deleteStatsCache = functions.firestore
-  .document("users/{userId}/stats/{docId}")
-  .onDelete((a, b) => deleteCache(a, b, 'stats'))
-
-export const deleteTagsCache = functions.firestore
-  .document("users/{userId}/tags/{docId}")
-  .onDelete((a, b) => deleteCache(a, b, 'tags'))
-
+} */
 
 export const deleteGroupCollection = functions.firestore
   .document('groups/{groupId}/groupCache/groupCache')

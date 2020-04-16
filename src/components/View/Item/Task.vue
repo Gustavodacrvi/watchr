@@ -192,10 +192,11 @@ export default {
     CheckIcon, TimelineElement,
   },
   methods: {
-    save(obj) {
-      if (this.item)
-        this.saveTaskContent(obj)
-      else this.$emit('save', obj)
+    async save(obj) {
+      await this.saveTaskContent(obj)
+
+      if (obj.handleFiles)
+        this.$refs.template.isEditing = false
     },
     copyItem() {
       if (this.item)
@@ -211,7 +212,7 @@ export default {
         this.selectItem()
     },
     saveTaskContent(obj) {
-      this.$store.dispatch('task/saveTask', {
+      return this.$store.dispatch('task/saveTask', {
         id: this.item.id,
         ...obj,
       })

@@ -45,7 +45,6 @@
     <FileHandler v-if='hasFileHandler'
       ref='file-handler'
       :defaultFiles='headerInfo.files.names'
-      :storageFolder='headerInfo.files.storageFolder'
       :id='headerInfo.files.id'
       @save='headerInfo.files.save'
     />

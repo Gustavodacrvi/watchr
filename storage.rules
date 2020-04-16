@@ -1,18 +1,22 @@
 service firebase.storage {
   match /b/{bucket}/o {
-    match /attachments/users/{userId}/{storageFolder}/{parentId}/{fileName} {
-      allow read, write: if isSignedInAndVerified() && request.auth.uid == userId
+    match /attachments/users/{userId}/{parentId}/{fileName} {
+      allow read, write: if isSignedInAndVerified() && request.auth.uid == userId;
+    }
 
+    match /images/{userId} {
+      allow read: if isSignedInAndVerified();
+      allow write: if isSignedInAndVerified() && userId == request.auth.uid;
+    }
 
-      function isSignedIn() {
-        return request.auth.uid != null
-      }
-      function isVerified() {
-        return isSignedIn() && request.auth.token.email_verified
-      }
-      function isSignedInAndVerified() {
-        return isSignedIn() && isVerified()
-      }
+    function isSignedIn() {
+      return request.auth.uid != null
+    }
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified
+    }
+    function isSignedInAndVerified() {
+      return isSignedIn() && isVerified()
     }
   }
 }
