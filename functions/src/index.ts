@@ -39,13 +39,49 @@ const db = firebase.firestore()
   return Promise.all(promises)
 } */
 
-/* const deleteCache = (snap: FirebaseFirestore.DocumentSnapshot, context: functions.EventContext) => {
+const blindDeleteCache = (snap: FirebaseFirestore.DocumentSnapshot, context: functions.EventContext) => {
   const { userId, docId } = context.params
-  
+
   return firebase.storage().bucket().deleteFiles({
       prefix: `attachments/users/${userId}/${docId}`
     })
-} */
+}
+
+const checkBeforeDeleteCache = async (snap: FirebaseFirestore.DocumentSnapshot, context: functions.EventContext, checkCollection: string) => {
+  const { userId, docId } = context.params
+  
+  if (
+    !(await db.collection('users').doc(userId).collection(checkCollection).doc(docId).get()).exists // delete files if the new document does not exist
+  )
+    return firebase.storage().bucket().deleteFiles({
+      prefix: `attachments/users/${userId}/${docId}`
+    })
+}
+
+export const deleteTaskCache = functions.firestore
+  .document("users/{userId}/tasks/{docId}")
+  .onDelete((a, b) => checkBeforeDeleteCache(a, b, 'lists'))
+  
+export const deleteListCache = functions.firestore
+  .document("users/{userId}/lists/{docId}")
+  .onDelete((a, b) => checkBeforeDeleteCache(a, b, 'tasks'))
+
+export const deleteInfoCache = functions.firestore
+  .document("users/{userId}/info/{docId}")
+  .onDelete((a, b) => blindDeleteCache(a, b))
+
+export const deleteFoldersCache = functions.firestore
+  .document("users/{userId}/folders/{docId}")
+  .onDelete((a, b) => blindDeleteCache(a, b))
+
+export const deleteStatsCache = functions.firestore
+  .document("users/{userId}/stats/{docId}")
+  .onDelete((a, b) => blindDeleteCache(a, b))
+
+export const deleteTagsCache = functions.firestore
+  .document("users/{userId}/tags/{docId}")
+  .onDelete((a, b) => blindDeleteCache(a, b))
+
 
 export const deleteGroupCollection = functions.firestore
   .document('groups/{groupId}/groupCache/groupCache')

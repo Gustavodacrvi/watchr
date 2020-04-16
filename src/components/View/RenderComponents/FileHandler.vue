@@ -1,24 +1,32 @@
 <template>
-  <div class="FileHandler">
-    <FileDragDrop :onDrop='onDrop'/>
-    <File v-for="f in getFiles" :key="f"
-      :name="f"
-      :status='getFileStatus(f)'
-      @delete="deleteFile(f)"
-      @download="downloadFile(f, id)"
-      @view="viewFile(f, id)"
-    />
-    <transition name="progress-t">
-      <div v-if="saving" class="progress">
-        <div class="progress-line" :style="{width: `${uploadProgress}%`}"></div>
-      </div>
-    </transition>
-    <AuthButton v-if='isEditingFiles'
-      type='dark'
-      value='Save changes'
-      @click="saveCompFiles"
-    />
-  </div>
+  <transition
+    appear
+
+    :css='false'
+    @enter='enter'
+    @leave='leave'
+  >
+    <div class="FileHandler">
+      <FileDragDrop :onDrop='onDrop'/>
+      <File v-for="f in getFiles" :key="f"
+        :name="f"
+        :status='getFileStatus(f)'
+        @delete="deleteFile(f)"
+        @download="downloadFile(f, id)"
+        @view="viewFile(f, id)"
+      />
+      <transition name="progress-t">
+        <div v-if="saving" class="progress">
+          <div class="progress-line" :style="{width: `${uploadProgress}%`}"></div>
+        </div>
+      </transition>
+      <AuthButton v-if='isEditingFiles'
+        type='dark'
+        value='Save changes'
+        @click="saveCompFiles"
+      />
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -42,6 +50,33 @@ export default {
     }
   },
   methods: {
+    enter(el, done) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.margin = '0'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.175s'
+        s.margin = '12px 0'
+
+        setTimeout(176, done)
+      })
+    },
+    leave(el, done) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.margin = '12px 0'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.175s'
+        s.margin = '0'
+
+        setTimeout(176, done)
+      })
+    },
+    
     saveCompFiles() {
       this.saving = true
       const files = this.files
@@ -70,6 +105,10 @@ export default {
 </script>
 
 <style scoped>
+
+.FileHandler {
+  margin: 12px 0;
+}
 
 .progress {
   bottom: 0;
