@@ -234,8 +234,14 @@ export default {
     Folder(b, writes, {finalIds, folderId, rootState}) {
       setFolder(b, {tasks: finalIds}, folderId, rootState, writes)
     },
+    FolderExtraView(b, writes, {finalIds, folderId, rootState}) {
+      setFolder(b, {order: finalIds}, folderId, rootState, writes)
+    },
     Group(b, writes, {finalIds, groupId, rootState}) {
       setGroup(b, {order: finalIds}, groupId, rootState, writes)
+    },
+    GroupExtraView(b, writes, {finalIds, groupId, rootState}) {
+      setGroup(b, {listsOrder: finalIds}, groupId, rootState, writes)
     },
   },
 }

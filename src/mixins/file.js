@@ -52,7 +52,7 @@ export default {
       const file = this.addedFiles.find(file => file.name === fileName)
       try {
         if (!file)
-          storage().ref(`attachments/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
+          storage().ref(`attachments/users/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
             this.$store.commit('readFile', url)
           })
         else this.$store.commit('readFile', URL.createObjectURL(file))
@@ -81,7 +81,7 @@ export default {
       const file = this.addedFiles.find(file => file.name === fileName)
       try {
         if (!file) {
-          storage().ref(`attachments/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
+          storage().ref(`attachments/users/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
             utils.downloadBlobFromURL(url).then(blob => this.downloadBlog(blob, fileName))
           })
         } else this.downloadBlog(file, fileName)
@@ -117,7 +117,7 @@ export default {
         this.uploadProgress = (totalTransferred / totalBytes) * 100
       }
 
-      const taskPath = `attachments/${this.user.uid}/${storageFolder}/${parentId}/`
+      const taskPath = `attachments/users/${this.user.uid}/${storageFolder}/${parentId}/`
       const addFiles = () => {
         const proms = []
         for (const f of add) {

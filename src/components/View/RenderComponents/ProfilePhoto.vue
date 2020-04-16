@@ -95,18 +95,18 @@ export default {
     },
     getIconSize() {
       switch (this.size) {
-        case 'normal': return '28px'
-        case 'small': return '17px'
-        case 'ultra-small': return '15px'
+        case 'normal': return '24px'
+        case 'small': return '13px'
+        case 'ultra-small': return '11px'
         default: return '12px'
       }
     },
     getProfileWidth() {
       switch (this.size) {
-        case 'normal': return '75px'
-        case 'small': return '35px'
-        case 'ultra-small': return '23px'
-        default: return '75px'
+        case 'normal': return '65px'
+        case 'small': return '25px'
+        case 'ultra-small': return '14px'
+        default: return '45px'
       }
     },
     getProviderPhotoURL() {

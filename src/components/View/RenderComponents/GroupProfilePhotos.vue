@@ -87,6 +87,8 @@ export default {
 .members {
   margin-left: 10px;
   margin-right: -8px;
+  display: flex;
+  align-items: center;
 }
 
 .mem {

@@ -86,6 +86,7 @@ export default {
     getAssignees() {
       let group
       const listObj = this.getListObj
+      if (!listObj) return null
 
       if (this.model.group)
         group = this.model.group
@@ -508,6 +509,19 @@ export default {
           ...el,
           callback: model => model.deadline = this.parseKeyword(' ' + el.name).specific,
         }))]
+
+        
+        const calendar = this.parseKeyword(' ' + search.trim())
+        if (calendar && calendar.type === 'specific')
+          arr.unshift({
+            id: 'found_match',
+            name: search,
+            icon: 'calendar',
+            callback: model => {
+              this.fromIconDrop = true
+              model.calendar = calendar
+            }
+          })
 
         return arr
       }

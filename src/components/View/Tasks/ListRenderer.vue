@@ -1135,11 +1135,14 @@ export default {
         }
 
         const index = targetIndex || this.getListRendererPosition()
-
-        if (shouldRender) {
+        
+        if (shouldRender || t.handleFiles) {
           if (this.isRoot)
             this.saveNewItemsIds([...this.allItemsIds, t.id])
           else this.$emit('save-new-items-ids', t.id)
+        }
+
+        if (shouldRender) {
           this.lazyItems.splice(index, 0, t)
         }
         this.addedItem = t.id
@@ -1365,7 +1368,14 @@ export default {
       return this.cameFromAnotherTab && this.cameFromAnotherTabHTMLElement === this.draggableRoot
     },
     getItems() {
-      const items = this.lazyItems.filter(el => el)
+      const set = new Set()
+      const items = this.lazyItems.filter(el => {
+        if (!el) return false
+        if (!set.has(el.id)) {
+          set.add(el.id)
+          return true
+        }
+      })
       if (!this.isElementFromAnotherTabHovering)
         return items
 

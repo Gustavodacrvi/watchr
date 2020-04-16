@@ -32,10 +32,10 @@ export default EditBuilder({
 
           if (toSplit) {
             txt.split(toSplit).filter(s => s)
-              .forEach(task => this.addSubtask({
+              .forEach(task => this.$parent.addSubtask({
                 name: task,
-                index: this.task.checklist.length,
-                ids: this.task.order
+                index: this.$parent.model.checklist.length,
+                ids: this.$parent.model.order
               }))
           }
         
@@ -206,7 +206,7 @@ export default EditBuilder({
               trigger: 'type',
             },
             onTrigger: (vm, getModel) => {
-              vm.$refs.checklist.pushEditString(getModel)
+              vm.$refs.subitems.pushEditString(getModel)
             },
           },
           {

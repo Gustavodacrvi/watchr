@@ -20,6 +20,7 @@
     :headerOptions='headerOptions'
     :headerPopup='headerPopup'
     :notes='getViewNotes'
+    :viewId='viewId'
     :progress='getPieProgress'
     :headings='headings'
     :headingsOrder='headingsOrder'

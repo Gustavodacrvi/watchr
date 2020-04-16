@@ -38,7 +38,7 @@
           <Icon v-if="allowRemove || allowRemove === undefined" class="icon cursor remove-highlight primary-hover"
             icon='trash'
             color='var(--red)'
-            width='26px'
+            width='14px'
             @click="$emit('delete')"
           />
         </div>
@@ -75,7 +75,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
 
-        s.height = '48px'
+        s.height = '30px'
         s.opacity = 1
 
         setTimeout(done, 151)
@@ -110,7 +110,7 @@ export default {
 
 .GroupUserProfile {
   display: flex;
-  height: 48px;
+  height: 30px;
   transition-duration: .15s;
   align-items: center;
   overflow: hidden;
@@ -165,7 +165,7 @@ export default {
 }
 
 .displayName {
-  font-size: 1.1em;
+  font-size: 1.05em;
 }
 
 .email {
@@ -178,9 +178,9 @@ export default {
 .tag {
   display: inline-block;
   font-size: .8em;
-  padding: 2px 5px;  
+  padding: 1px 4px;  
   border-radius: 50px;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 .pending {

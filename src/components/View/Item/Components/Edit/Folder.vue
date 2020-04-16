@@ -30,6 +30,7 @@ export default EditBuilder({
           name: '',
           notes: '',
           color: null,
+          files: [],
         },
       }
     },

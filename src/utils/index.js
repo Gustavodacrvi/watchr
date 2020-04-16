@@ -184,7 +184,8 @@ export default {
       root.insertBefore(items[i], root.children[indicies[i]])
     }
 
-    items.forEach(deSelectItem)
+    if (deSelectItem)
+      items.forEach(deSelectItem)
   },
   
   sortListByName(lists, property = 'name') {
@@ -975,7 +976,7 @@ export default {
             change = old !== val
           }
         }
-        
+
         if (change) {
           if (onFoundChange)
             onFoundChange(k, val)
@@ -990,7 +991,7 @@ export default {
                   const bothObjects = typeof final[key] === 'object' && typeof val[key] === 'object'
 
                   if (bothObjects)
-                    final[key] = Object.assign(final[key], old[key], val[key])
+                    final[key] = Object.assign(final[key] || {}, old[key] || {}, val[key] || {})
                   else
                     final[key] = val[key]
                 })
@@ -1255,7 +1256,7 @@ export default {
   },
   saveByShortcut(vm, isEditing, key, preventDefault, save, specificMessage = []) {
     const p = preventDefault
-    const {isOnControl, isOnShift, isOnAlt} = vm
+    const {isOnShift, isOnAlt} = vm
 
     if (!isEditing)
       switch (key) {
@@ -1308,16 +1309,10 @@ export default {
       }
     }
 
-    const iconDrop = opt => vm.$store.commit('pushIconDrop', opt)
-
     if (isOnShift && isOnAlt)
       switch (key) {
         case 'L': {
           save('logbook')
-          break
-        }
-        case "A": {
-          save('assign')
           break
         }
       }

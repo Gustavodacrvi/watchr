@@ -6,7 +6,7 @@
 .popup {
   margin: 12px;
   margin-top: 75px;
-  flex-basis: 650px;
+  flex-basis: 550px;
 }
 
 .popup.fillSpace {

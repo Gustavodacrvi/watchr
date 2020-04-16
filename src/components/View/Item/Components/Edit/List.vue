@@ -113,7 +113,7 @@ export default EditBuilder({
         const arr = []
 
         if (!this.model.folder && !this.model.group)
-          arr.unshift(this.rightSmartIconDurationObj)
+          arr.unshift(this.getFilteredListSmartIconObj)
 
         if (!this.model.group)
           arr.push(this.getSmartIconTags)

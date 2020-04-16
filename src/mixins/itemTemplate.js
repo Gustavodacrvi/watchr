@@ -1,6 +1,8 @@
 
 import ItemTemplate from "@/components/View/Item/Components/ItemTemplate.vue"
 
+import { mapState } from "vuex"
+
 export default {
   components: {
     ItemTemplate,
@@ -12,6 +14,8 @@ export default {
     },
   },
   computed: {
+    ...mapState(['userInfo']),
+    
     isNewItem() {
       return this.item && this.newItemsObj[this.item.id]
     },

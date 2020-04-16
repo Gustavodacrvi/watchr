@@ -378,7 +378,6 @@ export default {
       nonReadCommentsById: 'group/nonReadCommentsById',
       getAssigneeIconDrop: 'group/getAssigneeIconDrop',
     }),
-    ...mapGetters(['layout', 'isDesktopDevice']),
 
     isItemSelected() {
       if (!this.item)
@@ -444,6 +443,7 @@ export default {
 .sortable-ghost.ItemTemplate .CheckIcon,
 .sortable-ghost.ItemTemplate .ruler-element,
 .sortable-ghost.ItemTemplate .main-cont,
+.sortable-ghost.ItemTemplate .text,
 .sortable-ghost.ItemTemplate .info {
   display: none;
 }

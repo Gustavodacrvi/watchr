@@ -72,10 +72,17 @@
             >
               <div class="option-wrapper">
                 <div class="option-icon-wrapper">
-                  <Icon class="option-icon"
+                  <Icon v-if='o.icon' class="option-icon"
                     :icon='o.icon'
                     :color='o.color'
                     width='12px'
+                  />
+                  <Photo v-else-if='o.photoURL'
+                    class="mem"
+                    :photoURL='o.photoURL'
+                    size='ultra-small'
+                    :stopAuthFallback='true'
+                    :display='true'
                   />
                 </div>
                 <div class="option-name">
@@ -91,9 +98,15 @@
 </template>
 
 <script>
+
+import Photo from "@/components/View/RenderComponents/ProfilePhoto.vue"
+
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    Photo,
+  },
   props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop', 'headerIcon', 'title'],
   data() {
     return {
@@ -359,6 +372,9 @@ export default {
 
         if (key === "Escape" && !(this.tagMode && this.currentList === this.list))
           this.switchLists()
+        
+        if (key === "Escape" && this.headerIcon)
+          this.$emit('close')
 
         if (!stop) {
           if (this.tagMode && this.currentList === this.list)
@@ -517,13 +533,12 @@ export default {
 }
 
 .isTyping {
-  box-shadow: inset 0 10px 6px -13px rgba(10,10,10, .8);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
 }
 
 .SmartIconDrop.isActive, .SmartIconDrop.notHeaderIcon:hover {
   background-color: var(--light-sidebar-color);
-  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
-    inset 0 -10px 5px -13px rgba(210,210,210, .7);
 }
 
 .SmartIconDrop.isActive.headerIcon {

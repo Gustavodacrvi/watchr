@@ -107,16 +107,13 @@
         width='7px'
         data-isfirstcontelement='first'
       />
-      <span v-if="hasFiles"
-        key="file"
-        class="info-box slot-el"
-      >
-        <Icon
-          icon='file'
-          :color='hasFiles'
-          width='8px'
-        />
-      </span>
+      <Icon v-if="hasFiles"
+        key='file'
+        class="icon name-icon slot-el"
+        icon='file'
+        :color='hasFiles'
+        width='11px'
+      />
     </template>
 
     <template v-slot:flex-end>
@@ -388,6 +385,11 @@ export default {
       if (!this.item)
         return;
       const group = this.itemGroup
+      const list = this.itemList
+
+      if (list && group && list.group === group.id && this.viewName === list.name) {
+        return;
+      }
 
       if (!group || this.hideGroupName || (group.name === this.viewName)) return null
       

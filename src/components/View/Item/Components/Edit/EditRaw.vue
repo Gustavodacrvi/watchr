@@ -44,6 +44,7 @@
             ref='comp'
             v-model="model"
             :item='item'
+            :defaultFiles='(item && item.files) || []'
             :itemModelFallback='itemModelFallback'
             :editAction='editAction'
             :firstFieldOptions='options'

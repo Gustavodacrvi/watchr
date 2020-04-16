@@ -1,6 +1,6 @@
 <template>
   <div class="ListHandler">
-    <ListRendererVue v-if="!hideList"
+    <ListRendererVue
       v-bind='$props'
       ref='renderer'
 
@@ -21,7 +21,7 @@
       editComp='List'
       itemPlaceholder='List name...'
 
-      @update="updateListIds"
+      @update="updateIds"
       @allow-someday='allowSomeday'
 
       @go='go'
@@ -39,7 +39,9 @@ import utilsTask from "@/utils/task"
 
 import { mapState, mapGetters } from 'vuex'
 
-import { listRef } from '@/utils/firestore'
+import { fire } from '@/store/'
+
+import { listRef, cacheBatchedItems } from '@/utils/firestore'
 
 import HandlerMixin from "@/mixins/handlerMixin"
 
@@ -51,8 +53,8 @@ export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday',
-  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'filterByAssigned', 'viewName', 'viewType'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateViewIds', 'addItem', 'showCompleted', 'folderId', 'groupId', 'showSomeday', 'showSomeday',
+  'taskIconDropOptions', 'width', 'removeListHandlerWhenThereArentLists', 'filterByAssigned', 'viewName', 'viewType', 'fallbackFunctionData', 'mainFallbackItem', 'itemModelFallback'],
   components: {
     ListRendererVue,
   },
@@ -85,7 +87,26 @@ export default {
         },
         newListRef: obj.newItemRef,
       }
-      this.fixPosition(newObj, this.nonFilteredIds, () => this.addItem(newObj))
+      this.fixPosition(newObj, this.nonFilteredIds, async () => {
+        const b = fire.batch()
+        const writes = []
+
+
+        await this.$store.dispatch('list/addViewList', {
+          b, ...newObj, writes,
+        })
+        this.order = newObj.ids.slice()
+
+        this.updateViewIds(b, writes, {
+          finalIds: newObj.ids,
+          ...this.getUpdateIdsInfo()
+        })
+
+        cacheBatchedItems(b, writes)
+
+        b.commit()
+
+      })
     },
     getItemFirestoreRef() {
       return listRef()
@@ -107,10 +128,32 @@ export default {
         }
       })
     },
-    updateListIds({finalIds}) {
-      this.updateIds(
-        utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, this.nonFilteredIds)
+    updateIds({finalIds, b = fire.batch(), writes = []}) {
+      this.updateViewIds(
+        b,
+        writes,
+        {
+          finalIds: utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, this.rootNonFilteredIds),
+          ...this.getUpdateIdsInfo()
+        }
       )
+
+      this.order = finalIds.slice()
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    getUpdateIdsInfo() {
+      return {
+        viewName: this.viewName,
+        viewType: this.viewType,
+
+        rootState: this.$store.state,
+        rootGetters: this.$store.getters,
+
+        ...this.fallbackFunctionData(),
+      }
     },
     rootFilterFunction(list) {
       return true

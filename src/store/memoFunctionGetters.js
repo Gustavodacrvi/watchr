@@ -45,8 +45,9 @@ export default (memoizeObject) => {
       }
 
       if (val.touchGetters) {
-        for (const str of val.touchGetters)
+        for (const str of val.touchGetters) {
           thisBinding[str] = rootGetters[str]
+        }
       }
 
       if (val.deepStateTouch) {
@@ -56,12 +57,13 @@ export default (memoizeObject) => {
         for (const str of touchKeys) {
           const split = str.split('/')
           thisBinding[str] = rootState[split[0]][split[1]]
-          const targetKeys = Object.keys(val.deepStateTouch[str])
-
+          const targetKeys = val.deepStateTouch[str]
+          
           if (Array.isArray(thisBinding[str]))
             for (const targetStr of targetKeys) {
-              for (const item of thisBinding[str])
+              for (const item of thisBinding[str]) {
                 item[targetStr]
+              }
             }
         }
 

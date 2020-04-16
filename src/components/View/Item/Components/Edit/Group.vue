@@ -18,9 +18,9 @@ export default EditBuilder({
       vModel: 'notes', // this.model[vModel],
     },
   ],
-  allowFiles: {
+/*   allowFiles: {
     storageFolder: 'groups', // requires file handle on firestore setItem function
-  },
+  }, */
   instance: {
     data() {
       return {
@@ -30,6 +30,7 @@ export default EditBuilder({
           name: '',
           notes: '',
           color: null,
+          files: [],
         },
       }
     },

@@ -115,10 +115,6 @@ export default {
     removeDeadline() {
       this.listsaveList({deadline: null})
     },
-
-    removeDeadline() {},
-    removeDeferDate() {},
-    
     
     mainFilter() {
       const list = this.viewList

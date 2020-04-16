@@ -276,7 +276,7 @@ export default {
   border: none;
   padding: 9px;
   outline: none;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 1em;
   width: 100%;
   box-sizing: border-box;
@@ -294,7 +294,7 @@ export default {
   position: absolute;
   width: 100%;
   z-index: 5;
-  top: 20px;
+  top: 30px;
   overflow: auto;
   max-height: 200px;
   background-color: var(--light-gray);

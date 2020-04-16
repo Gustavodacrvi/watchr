@@ -159,15 +159,15 @@ export default {
   position: absolute;
   left: -10px;
   top: -10px;
-  padding: 6px;
+  padding: 4px;
   border-radius: 50px;
   background-color: var(--red);
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 18px;
-  height: 18px;
+  min-width: 16px;
+  height: 16px;
 }
 
 .num {

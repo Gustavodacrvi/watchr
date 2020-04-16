@@ -241,7 +241,7 @@ export default {
   transition-duration: .2s;
 }
 
-.iconHover .icon-wrapper {
+.iconHover .icon-wrapper, .showLine .icon-wrapper {
   opacity: 1;
 }
 
@@ -265,6 +265,11 @@ export default {
   display: flex;
   align-items: center;
   z-index: 2;
+  visibility: hidden;
+}
+
+.showLine .line-wrapper {
+  visibility: visible;
 }
 
 .line {

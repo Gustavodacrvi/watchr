@@ -142,7 +142,6 @@ export default {
 
 .photos {
   margin-left: 10px;
-  margin-top: 2px;
 }
 
 .comment-icon {

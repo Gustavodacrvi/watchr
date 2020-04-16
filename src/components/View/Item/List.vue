@@ -60,26 +60,20 @@
       >
         {{ listTasksLength }}
       </span>
-      <span v-if="listColor"
-        key="color"
-        class="slot-el info-box"
-      >
-        <Icon
-          icon='tint'
-          :color='listColor'
-          width='8px'
-        />
-      </span>
-      <span v-if="hasFiles"
-        key="file"
-        class="slot-el info-box"
-      >
-        <Icon
-          icon='file'
-          :color='hasFiles'
-          width='8px'
-        />
-      </span>
+      <Icon v-if="listColor"
+        key='color'
+        class='icon name-icon slot-el'
+        icon='tint'
+        :color='hasFiles'
+        width='11px'
+      />
+      <Icon v-if="hasFiles"
+        key='file'
+        class='icon name-icon slot-el'
+        icon='file'
+        :color='hasFiles'
+        width='11px'
+      />
     </template>
 
     <template v-slot:flex-end>
@@ -219,6 +213,7 @@ export default {
 
       getFoldersById: 'folder/getFoldersById',
       getGroupsById: 'group/getGroupsById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
     }),
     
     folderObj() {

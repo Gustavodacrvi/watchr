@@ -5,6 +5,7 @@ import SmartIconDrop from "@/components/Icons/SmartIconDrop.vue"
 import ChecklistVue from '@/components/View/Tasks/Checklist/Checklist.vue'
 import FileApp from '@/components/View/RenderComponents/File.vue'
 import FileDragDrop from '@/components/View/RenderComponents/FileDragDrop.vue'
+import UploadProgressLine from "@/components/View/RenderComponents/UploadProgressLine.vue"
 
 import momUtils from '@/utils/moment'
 
@@ -37,8 +38,9 @@ export default ({
   },
   created() {
     this.model = {...this.model, ...this.itemModelFallback}
-    if (this.item)
+    if (this.item) {
       this.model = {...this.model, ...this.item}
+    }
 
     setTimeout(() => this.isFirstEdit = false, 200)
 
@@ -146,7 +148,7 @@ export default ({
 
     if (checklist)
       editChildren.splice(1, 0, create(ChecklistVue, {
-        ref: 'checklist',
+        ref: 'subitems',
 
         class: {
           hasContent: this.getChecklist && this.getChecklist.length > 0
@@ -170,7 +172,7 @@ export default ({
     )
 
     if (allowFiles && allowFiles.storageFolder) {
-      editChildren.splice(2, 0, 
+      editChildren.splice(2 - (checklist ? 0 : 1), 0, 
         create('div', {class: 'file-drag-drop-wrapper'}, [
           create(FileDragDrop, {
             props: {
@@ -179,7 +181,7 @@ export default ({
           })
         ])
       )
-      editChildren.splice(3, 0, 
+      editChildren.splice(3 - (checklist ? 0 : 1), 0, 
         create('div', {class: {
           files: true,
           hasContent: this.getFiles && this.getFiles.length > 0
@@ -226,8 +228,15 @@ export default ({
             }
           })
         })
-      )  
+      )
     )
+
+    if (allowFiles && allowFiles.storageFolder && this.savingItem)
+        editChildren.push(
+          create(UploadProgressLine, {
+            props: this.uploadProgress,
+          })
+        )
 
     return create('div', {
       class: 'EditBuilder',
@@ -251,13 +260,14 @@ export default ({
         const obj = model
 
         if (allowFiles && allowFiles.storageFolder) {
-          obj.files = this.getSaveFilePromise || []
+          obj.files = this.files || []
           obj.handleFiles = this.isEditingFiles ? itemId => {
             return new Promise((solve, reject) => {
               this.saveFiles(this.getFilesToRemove, this.addedFiles, itemId, allowFiles.storageFolder)
               .then(() => {
                 this.files = []
                 this.addedFiles = []
+                this.savingItem = false
                 solve()
               })
               .catch(() => {
@@ -267,6 +277,7 @@ export default ({
                   type: 'error',
                 })
                 reject()
+                this.savingItem = false
               })
             })
           } : null
@@ -336,7 +347,6 @@ export default ({
           c: 'checklist',
           h: 'hour',
         }
-        console.log(vals[key])
 
         if (this.focusSmartInputById(vals[key]))
           p()
@@ -349,19 +359,19 @@ export default ({
             break
           }
           case '.': {
-            this.$refs.checklist.toggleTask(this.activeChecklistId)
+            this.$refs.subitems.toggleTask(this.activeChecklistId)
             p()
             break
           }
           case " ": {
-            this.$refs.checklist.addEdit(this.cursorPos - 1)
+            this.$refs.subitems.addEdit(this.cursorPos - 1)
             p()
             break
           }
           case "Enter": {
             if (!isTyping) {
               p()
-              this.$refs.checklist.editChecklist(this.activeChecklistId)
+              this.$refs.subitems.editChecklist(this.activeChecklistId)
             }
             break
           }

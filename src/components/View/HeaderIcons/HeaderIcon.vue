@@ -43,6 +43,7 @@ export default {
         taskDuration: undefined,
         priority: undefined,
         tags: undefined,
+        assigned: undefined,
       },
     }
   },

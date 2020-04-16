@@ -13,7 +13,7 @@
         autocomplete="off"
         v-model="name"
         :placeholder='placeholder'
-        @keydown="keydown"
+        @keydown.stop.prevent="keydown"
       />
     </div>
   </div>

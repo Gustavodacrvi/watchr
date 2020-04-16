@@ -125,7 +125,7 @@ export const setFolder = (batch, folder, id, rootState, writes) => {
     solve()
   }
     if (folder.handleFiles)
-      folder.handleFiles(id).then(save).catch(reject)
+      folder.handleFiles(folder.id).then(save).catch(reject)
     else save()
   })
 }
@@ -145,8 +145,8 @@ export const setGroupInfo = (batch, group, id, rootState) => {
 }
 export const setList = (batch, list, id, rootState, writes) => {
   return new Promise((solve, reject) => {
+    id = id ? id : utils.getUid()
     const save = () => {
-      id = id ? id : utils.getUid()
   
       const groupLists = rootState.list.groupLists
       const individualLists = rootState.list.lists
@@ -155,13 +155,13 @@ export const setList = (batch, list, id, rootState, writes) => {
       const savedIndividualList = individualLists[id]
       
       const hydratedList = {
-        ...(savedGroupList || savedIndividualList || {}),
+        ...({...savedGroupList} || {...savedIndividualList} || {}),
         ...list,
       }
     
       const getGroupId = restrict => hydratedList.group || (savedGroupList && !restrict && savedGroupList.group)
     
-      const getObj = () => ({
+      const finalObj = ({
         ...hydratedList, handleFiles: null,
         filePromiseHandler: null,
         id,
@@ -172,16 +172,16 @@ export const setList = (batch, list, id, rootState, writes) => {
       const setGroupList = groupId => {
         batch.set(
           !groupId ? getGroupListRef() : groupList(groupId, id),
-          getObj(), {merge: true}
+          finalObj, {merge: true}
         )
       }
       const setPersonalList = () => {
-        batch.set(listRef(id), getObj(), {merge: true})
+        batch.set(listRef(id), finalObj, {merge: true})
       }
       const setCache = refCache => {
         batch.set(refCache, {
           lists: {
-            [id]: getObj(),
+            [id]: finalObj,
           },
         }, {merge: true})
       }
@@ -230,7 +230,7 @@ export const setList = (batch, list, id, rootState, writes) => {
       }
       const getListTaskIds = obj => Object.keys(obj).filter(el => obj[el] && obj[el].list === id)
       const setListTasks = toPersonal => {
-        getListTaskIds(toPersonal ? rootState.task.groupTasks : rootState.task.tasks).forEach(
+        getListTaskIds(!toPersonal ? rootState.task.groupTasks : rootState.task.tasks).forEach(
           taskId => setTask(batch, {
             group: toPersonal ? null : getGroupId(true),
             list: id,
@@ -245,15 +245,6 @@ export const setList = (batch, list, id, rootState, writes) => {
       
       if (getGroupId(true)) {
     
-        const savedGroupLists = rootState.list.groupLists
-        if (savedGroupList)
-          utils.findChangesBetweenObjs(savedGroupList, getObj())
-        else
-          rootState.list.groupLists = {
-            ...savedGroupLists,
-            [id]: getObj(),
-          }
-        
         if (isNewList || updatingGroupList) { // Create and add list to group/update.
           
           setGroupList()
@@ -261,8 +252,8 @@ export const setList = (batch, list, id, rootState, writes) => {
           if (!writes)
             setGroupCache()
           else if (writes.push)
-            addSharedWrite(getObj())
-    
+            addSharedWrite(finalObj)
+          
         } else if (savedIndividualList) { // Move personal list to shared.
     
           const savedPersonalLists = rootState.list.lists
@@ -279,36 +270,36 @@ export const setList = (batch, list, id, rootState, writes) => {
             setGroupCache()
             deleteFromPersonalCache()
           } else if (writes.push) {
-            addSharedWrite(getObj())
+            addSharedWrite(finalObj)
             addPersonalWrite(fd().delete())
           }
     
         } else if (isChangingGroups) {
-    
+        
           setListTasks()
           deleteGroupList(savedGroupList.group)
-          setGroupList(task.group)
+          setGroupList(finalObj.group)
           
           if (!writes) {
-            setGroupCache(task.group)
+            setGroupCache(finalObj.group)
             deleteFromGroupCache(savedGroupList.group)
           } else if (writes.push) {
             addSharedWrite(fd().delete(), savedGroupList.group)
-            addSharedWrite(getObj(), task.group)
+            addSharedWrite(finalObj, finalObj.group)
           }
     
         }
+
+        const savedGroupLists = rootState.list.groupLists
+        if (savedGroupList)
+          utils.findChangesBetweenObjs(savedGroupList, finalObj)
+        else
+          rootState.list.groupLists = {
+            ...savedGroupLists,
+            [id]: finalObj,
+          }
       } else {
     
-        const savedPersonalLists = rootState.list.lists
-        if (savedIndividualList)
-          utils.findChangesBetweenObjs(savedIndividualList, getObj())
-        else
-          rootState.list.lists = {
-            ...savedPersonalLists,
-            [id]: getObj(),
-          }
-        
         if (isNewList || updatingPersonalList) { // Create and add list to personal/update.
     
           setPersonalList()
@@ -316,7 +307,7 @@ export const setList = (batch, list, id, rootState, writes) => {
           if (!writes)
             setPersonalCache()
           else if (writes.push)
-            addPersonalWrite(getObj())
+            addPersonalWrite(finalObj)
     
         } else if (savedGroupList) { // Move shared list to personal.
     
@@ -334,13 +325,23 @@ export const setList = (batch, list, id, rootState, writes) => {
             setPersonalCache()
             deleteFromGroupCache()
           } else if (writes.push) {
-            addPersonalWrite(getObj())
+            addPersonalWrite(finalObj)
             addSharedWrite(fd().delete())
           }
     
         }
+
+        const savedPersonalLists = rootState.list.lists
+        if (savedIndividualList)
+          utils.findChangesBetweenObjs(savedIndividualList, finalObj)
+        else
+          rootState.list.lists = {
+            ...savedPersonalLists,
+            [id]: finalObj,
+          }
       }
 
+      solve()
     }
     if (list.handleFiles)
       list.handleFiles(id).then(save).catch(reject)
@@ -375,10 +376,8 @@ export const saveGroupOrder = (batch, rootState, finalIds, groupId, writes) => {
 
 export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
   return new Promise((solve, reject) => {
+    id = id ? id : utils.getUid()
     const save = () => {
-
-      
-      id = id ? id : utils.getUid()
       
       const groupTasks = rootState.task.groupTasks
       const individualTasks = rootState.task.tasks
@@ -393,30 +392,30 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
         ...task,
       }
 
-
       const getGroupId = restrict => hydratedTask.group || (savedGroupTask && !restrict && savedGroupTask.group)
-  
-      const getObj = () => ({
+
+      const finalObj = ({
         ...hydratedTask, handleFiles: null,
         lastEditDate: mom().format('Y-M-D HH:mm ss'),
         id,
         userId: uid(),
       })
+
       const getGroupTaskRef = () => groupTask(getGroupId(), id)
       const getGroupCacheRef = () => groupCacheRef(getGroupId())
       const setGroupTask = groupId => {
         batch.set(
           !groupId ? getGroupTaskRef() : groupTask(groupId, id),
-          getObj(), {merge: true}
+          finalObj, {merge: true}
         )
       }
       const setPersonalTask = () => {
-        batch.set(taskRef(id), getObj(), {merge: true})
+        batch.set(taskRef(id), finalObj, {merge: true})
       }
       const setCache = refCache => {
         batch.set(refCache, {
           tasks: {
-            [id]: getObj(),
+            [id]: finalObj,
           },
         }, {merge: true})
       }
@@ -501,29 +500,24 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
       const updatingPersonalTask = !isNewTask && savedIndividualTask && savedIndividualTask.group === null
       const isChangingGroups = savedGroupTask && savedGroupTask.group !== getGroupId(true)
 
+      if (finalObj && finalObj.calendar && finalObj.calendar.assigned)
+        console.warn('FREAKING BUG!!!', finalObj)
+
 
       if (getGroupId(true)) {
 
-        const saveGroupTasks = rootState.task.groupTasks
-        if (onTaskSave) onTaskSave(savedGroupTask)
-        else if (savedGroupTask)
-          utils.findChangesBetweenObjs(savedGroupTask, getObj())
-        else if (!onTaskSave)
-          rootState.task.groupTasks = {
-            ...saveGroupTasks,
-            [id]: getObj(),
-          }
-        
         if (isNewTask || updatingGroupTask) { // Create and add task to group/update.
+          console.log('// Create and add task to group/update.')
           
           setGroupTask()
           
           if (!writes)
             setGroupCache()
           else if (writes.push)
-            addSharedWrite(getObj())
-
+            addSharedWrite(finalObj)
+          
         } else if (savedIndividualTask) { // Move personal task to shared.
+          console.log('// Move personal task to shared.')
 
           const savedPersonalTasks = rootState.task.tasks
           rootState.task.tasks = {
@@ -538,11 +532,12 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
             setGroupCache()
             deleteFromPersonalCache()
           } else if (writes.push) {
-            addSharedWrite(getObj())
+            addSharedWrite(finalObj)
             addPersonalWrite(fd().delete())
           }
 
         } else if (isChangingGroups) {
+          console.log('// between groups.')
 
           deleteGroupTask(savedGroupTask.group)
           setGroupTask(task.group)
@@ -552,32 +547,35 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
             deleteFromGroupCache(savedGroupTask.group)
           } else if (writes.push) {
             addSharedWrite(fd().delete(), savedGroupTask.group)
-            addSharedWrite(getObj(), task.group)
+            addSharedWrite(finalObj, task.group)
           }
           
         }
+        
+        const saveGroupTasks = rootState.task.groupTasks
+        if (onTaskSave) onTaskSave(savedGroupTask)
+        else if (savedGroupTask)
+          utils.findChangesBetweenObjs(savedGroupTask, finalObj)
+        else if (!onTaskSave)
+          rootState.task.groupTasks = {
+            ...saveGroupTasks,
+            [id]: finalObj,
+          }
+        
       } else {
 
-        const savedPersonalTasks = rootState.task.tasks
-        if (onTaskSave) onTaskSave(savedIndividualTask)
-        else if (savedIndividualTask)
-          utils.findChangesBetweenObjs(savedIndividualTask, getObj())
-        else
-          rootState.task.tasks = {
-            ...savedPersonalTasks,
-            [id]: getObj(),
-          }
-
         if (isNewTask || updatingPersonalTask) { // Create and add task to personal/update.
+          console.log('// Create and add task to personal/update.')
 
           setPersonalTask()
 
           if (!writes)
             setPersonalCache()
           else if (writes.push)
-            addPersonalWrite(getObj())
+            addPersonalWrite(finalObj)
 
         } else if (savedGroupTask) { // Move shared task to personal.
+          console.log('// Move shared task to personal.')
 
           const saveGroupTasks = rootState.task.groupTasks
           rootState.task.groupTasks = {
@@ -592,14 +590,24 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
             setPersonalCache()
             deleteFromGroupCache()
           } else if (writes.push) {
-            addPersonalWrite(getObj())
+            addPersonalWrite(finalObj)
             addSharedWrite(fd().delete())
           }
           
         }
+
+        const savedPersonalTasks = rootState.task.tasks
+        if (onTaskSave) onTaskSave(savedIndividualTask)
+        else if (savedIndividualTask)
+          utils.findChangesBetweenObjs(savedIndividualTask, finalObj)
+        else
+          rootState.task.tasks = {
+            ...savedPersonalTasks,
+            [id]: finalObj,
+          }
       }
 
-      console.warn('setTask ', getObj())
+      console.warn('setTask ', finalObj)
 
       solve()
     }
@@ -631,11 +639,13 @@ export const addComment = (b, groupId, room, comment, name, rootState) => {
   }, {merge: true})
 
   const target = rootState.group.groups.find(el => el.id === groupId)
-  if (!target.comments) {
-    Vue.set(target, 'comments', {})
-    Vue.set(target.comments, room, {})
-  }
-  Vue.set(target.comments[room], comment, obj)
+  Vue.set(target, 'comments', {
+    ...(target.comments || {}),
+    [room]: {
+      ...(target.comments[room] || {}),
+      [comment]: obj,
+    },
+  })
 }
 export const readComments = (b, groupId, room, ids, rootState) => {
   const ref = groupCacheRef(groupId)
@@ -644,21 +654,20 @@ export const readComments = (b, groupId, room, ids, rootState) => {
   b.set(ref, {
     comments: {
       [room]: {
-        ...ids.reduce((o, id) => ({...o, [id]: {readBy: {[userId]: true}}}), {})
+        ...ids.reduce((o, id) => ({...o, [id]: {readBy: {[userId]: true}}}), {}),
       },
     },
   }, {merge: true})
 
   const target = rootState.group.groups.find(el => el.id === groupId)
-  const keys = Object.keys(target.comments[room])
-  for (const k of keys)
-    if (ids.includes(k)) {
-      Vue.set(target.comments[room][k], 'readBy', {
-        ...target.comments[room][k].readBy,
-        [userId]: true,
-      })
-    }
-  target.comments = {...target.comments}
+
+  Vue.set(target, 'comments', {
+    ...target.comments,
+    [room]: {
+      ...target.comments[room],
+      ...ids.reduce((o, id) => ({...o, [id]: {readBy: {[userId]: true}}}), {}),
+    },
+  })
 }
 export const deleteComment = (b, groupId, room, comment, rootState) => {
   const ref = groupCacheRef(groupId)
@@ -943,7 +952,7 @@ export const addGroup = (batch, group, rootState) => {
       solve()
     }
     if (group.handleFiles)
-    group.handleFiles(id).then(save).catch(reject)
+      group.handleFiles(group.id).then(save).catch(reject)
     else save()
   })
 }

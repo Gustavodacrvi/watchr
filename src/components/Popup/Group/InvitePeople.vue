@@ -199,7 +199,7 @@ export default {
       return Object.keys(this.userInfo.pastShared).map(k => this.userInfo.pastShared[k])
     },
     options() {
-      return this.pastShared.filter(user => user.displayName.toLowerCase().includes(this.name.toLowerCase())).map(el => `${el.displayName} ${el.email}`)
+      return this.pastShared.filter(user => user && user.displayName.toLowerCase().includes(this.name.toLowerCase())).map(el => `${el.displayName} ${el.email}`)
     },
   },
 }

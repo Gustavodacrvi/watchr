@@ -130,6 +130,7 @@ const store = new Vuex.Store({
       hidedSections: [],
       hidedViews: [],
       links: [],
+      pastShared: null,
       
       calendarOrders: null,
       getGmailInbox: false,
@@ -814,7 +815,7 @@ const store = new Vuex.Store({
                   state.list.groupLists = utils.addIdsToObjectFromKeys({...state.list.groupLists})
                 } else {
                   const i = state.group.groups.findIndex(el => el.id === newGroup.id)
-          
+
                   utils.findChangesBetweenObjs(state.group.groups[i], newGroup, undefined, ['tasks', 'lists'])
 
                   utils.updateVuexObject(state.task, 'groupTasks', newGroup.tasks || {}, task => task.group === newGroup.id)
