@@ -152,9 +152,10 @@ export default EditBuilder({
 
         if (this.isInAtLeastOneList && listObj)
           arr.push({
-            id: 'lists_tag',
+            id: 'move',
             props: {
               name: listObj.name,
+              title: 'Alt + M',
               icon: this.getListIcon,
               listWidth: '180px',
               color: this.getListColor,
@@ -165,9 +166,10 @@ export default EditBuilder({
 
         if (this.model.color && this.selectedColorObj)
           arr.push({
-            id: 'color_tint',
+            id: 'color',
             props: {
               name: this.selectedColorObj.name,
+              title: 'Alt + O',
               icon: 'tint',
               color: this.selectedColorObj.color,
               trigger: 'enter',

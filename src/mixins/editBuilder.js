@@ -79,7 +79,7 @@ export default {
               callback: model => {
                 if (el.name === "Remove assignee")
                   model.assigned = null
-                else model.assigned = el.id
+                else model.assigned = el.id || null
               }
             }))
     },
@@ -98,9 +98,10 @@ export default {
     },
     getAssigneTagObj() {
       return {
-        id: 'assigned',
+        id: 'assign',
         props: {
           name: this.getAssignedName,
+          title: 'Alt + A',
           icon: 'user',
           listWidth: '180px',
           trigger: 'enter',
@@ -142,9 +143,10 @@ export default {
     },
     calendarTagObj() {
       return {
-        id: 'smart_icon_calendar',
+        id: 'calendar',
         props: {
           name: this.calendarStr,
+          title: 'Alt + S',
           icon: this.getCalendarStrIcon,
           color: this.getCalendarStrColor,
           trigger: 'enter',
@@ -666,6 +668,7 @@ export default {
         id: 'deadline',
         props: {
           name: utils.getHumanReadableDate(this.model.deadline),
+          title: 'Alt + D',
           icon: 'deadline',
           color: 'var(--orange)',
           trigger: 'enter',

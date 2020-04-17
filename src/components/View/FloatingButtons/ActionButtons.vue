@@ -63,7 +63,7 @@ export default {
       this.showingTaskAdder = true
     }, 700)
     this.sortable = new Sortable(this.$el, {
-      group: {name: ['action-buttons', 'sidebar'], pull: 'clone', put: false},
+      group: {name: ['action-buttons', 'sidebar'], pull: true, put: false},
       handle: '.floating-button-handle',
       animation: 200,
 
@@ -241,6 +241,10 @@ export default {
 </style>
 
 <style>
+
+.moving .ActButton {
+  display: none;
+}
 
 .ActButton {
   transition-duration: 0s;

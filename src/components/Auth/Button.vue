@@ -105,7 +105,7 @@ export default {
   display: inline-block;
   transform: scale(1,1);
   padding: 2px;
-  margin-top: 12px;
+  margin-top: 8px;
   margin-left: 6px;
   width: unset;
   transition-duration: .15s;

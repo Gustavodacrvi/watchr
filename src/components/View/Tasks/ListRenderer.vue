@@ -149,7 +149,7 @@
         </div>
       </div>
     </transition-group>
-    <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
+    <HeadingsRenderer v-if="isRoot"
       ref='headings'
       
       :viewName='viewName'
@@ -579,7 +579,7 @@ export default {
         for (const animate of this.completeAnimationStack)
           animate()
         this.completeAnimationStack = []
-      }, 1750)
+      }, 1510)
     },
     
     getHeadingsItemsIds(ids) {
@@ -1441,6 +1441,29 @@ export default {
     },
   },
   watch: {
+    allItemsIds(arr, old) {
+      this.emitIds()
+      if (
+          old.includes(this.mainSelection) &&
+          !arr.includes(this.mainSelection)
+        ) {
+          let i = old.indexOf(this.mainSelection)
+
+          while (!arr[i] && (i < arr.length)) {
+            i++
+          }
+          
+          if (arr[i])
+            return this.$store.commit('saveMainSelection', arr[i])
+
+          while (!arr[i] && (i >= 0)) {
+            i--
+          }
+
+          if (arr[i])
+            return this.$store.commit('saveMainSelection', arr[i])
+        }
+    },
     selected() {
       const ids = this.selected
       const removedEls = this.selectedElements.filter(el => el && !ids.find(id => id === el.dataset.id))
@@ -1482,9 +1505,6 @@ export default {
         })
       }
     },
-    allItemsIds() {
-      this.emitIds()
-    },
   }
 }
 
@@ -1522,7 +1542,7 @@ export default {
   border-radius: 4px;
   opacity: 1;
   border: 1px solid var(--yellow);
-  transition-duration: .2s;
+  transition-duration: .15s;
   margin-top: 55px;
 }
 
@@ -1531,7 +1551,7 @@ export default {
   color: var(--dark);
   border-radius: 4px;
   padding: 1px 8px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .new-items-btn:hover {
@@ -1611,7 +1631,7 @@ export default {
 
 .heading-add {
   position: relative;
-  transform: translateY(25px);
+  transform: translateY(5px);
   display: flex;
   justify-content: center;
   opacity: 0;
@@ -1681,7 +1701,7 @@ export default {
 }
 
 .flip-list-move {
-  transition: transform .2s;
+  transition: transform .15s;
 }
 
 </style>

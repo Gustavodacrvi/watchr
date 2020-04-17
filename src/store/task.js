@@ -1382,7 +1382,7 @@ export default {
 
       b.commit()
     },
-    async addTagsToTasksById({commit, rootState}, {ids, tagIds}) {
+    async addTagsToTasksById({rootState}, {ids, tagIds}) {
       const b = fire.batch()
 
       await batchSetTasks(b, {
@@ -1435,7 +1435,7 @@ export default {
       
       b.commit()
     },
-    copyTask(c, task) {
+    copyTask({rootState}, task) {
       const b = fire.batch()
 
       setTask(b, {
@@ -1450,6 +1450,7 @@ export default {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }
+
 
       switch (type) {
         case 'tag': {
@@ -1495,6 +1496,13 @@ export default {
             task: {
               calendar: calObj(mom().add(1, 'day')),
             }
+          })
+          break
+        }
+        case 'Inbox': {
+          dispatch('saveTasksById', {
+            ids: taskIds,
+            task: {calendar: null},
           })
           break
         }

@@ -30,7 +30,7 @@
         v-bind="{...{...$attrs, ...$props}, ...item}"
 
         :isItemSelected='isItemSelected'
-        :isSelecting='isSelecting'
+        :isSelecting='props.isEditing ? false : isSelecting'
         :completed='props.completed'
         :itemModel='props.itemModel'
         :canceled='props.canceled'

@@ -143,7 +143,7 @@ export const setGroupInfo = (batch, group, id, rootState) => {
   batch.set(infoRef, group, {merge: true})
   batch.set(cacheRef, group, {merge: true})
 }
-export const setList = (batch, list, id, rootState, writes) => {
+export const setList = (batch, list, id, rootState, writes, onListSave) => {
   return new Promise((solve, reject) => {
     id = id ? id : utils.getUid()
     const save = () => {
@@ -291,13 +291,15 @@ export const setList = (batch, list, id, rootState, writes) => {
         }
 
         const savedGroupLists = rootState.list.groupLists
-        if (savedGroupList)
+        if (onListSave) onListSave(savedGroupList)
+        else if (savedGroupList)
           utils.findChangesBetweenObjs(savedGroupList, finalObj)
-        else
+        else if (!onListSave)
           rootState.list.groupLists = {
             ...savedGroupLists,
             [id]: finalObj,
           }
+
       } else {
     
         if (isNewList || updatingPersonalList) { // Create and add list to personal/update.
@@ -332,9 +334,10 @@ export const setList = (batch, list, id, rootState, writes) => {
         }
 
         const savedPersonalLists = rootState.list.lists
-        if (savedIndividualList)
+        if (onListSave) onListSave(savedIndividualList)
+        else if (savedIndividualList)
           utils.findChangesBetweenObjs(savedIndividualList, finalObj)
-        else
+        else if (!onListSave)
           rootState.list.lists = {
             ...savedPersonalLists,
             [id]: finalObj,
@@ -500,10 +503,6 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
       const updatingPersonalTask = !isNewTask && savedIndividualTask && savedIndividualTask.group === null
       const isChangingGroups = savedGroupTask && savedGroupTask.group !== getGroupId(true)
 
-      if (finalObj && finalObj.calendar && finalObj.calendar.assigned)
-        console.warn('FREAKING BUG!!!', finalObj)
-
-
       if (getGroupId(true)) {
 
         if (isNewTask || updatingGroupTask) { // Create and add task to group/update.
@@ -600,7 +599,7 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
         if (onTaskSave) onTaskSave(savedIndividualTask)
         else if (savedIndividualTask)
           utils.findChangesBetweenObjs(savedIndividualTask, finalObj)
-        else
+        else if (!onTaskSave)
           rootState.task.tasks = {
             ...savedPersonalTasks,
             [id]: finalObj,
@@ -743,12 +742,12 @@ export const batchSetTasks = (batch, task, ids, rootState, rootWrites, onTaskSav
     solve()
   })
 }
-export const batchSetLists = (batch, list, ids, rootState, rootWrites) => {
+export const batchSetLists = (batch, list, ids, rootState, rootWrites, onListSave) => {
   return new Promise(async solve => {
   
     const writes = rootWrites || []
     ids.forEach(id => {
-      setList(batch, list, id, rootState, writes)
+      setList(batch, list, id, rootState, writes, onListSave)
     })
     
     if (!rootWrites)

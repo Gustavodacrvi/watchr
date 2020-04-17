@@ -32,7 +32,7 @@ export default {
     calendarOrder(t, force = false, specific, header) {
       const isEvening = (header && header.id === 'EVENING_SMART_VIEW')
       const c = t.calendar
-      if (force || !c) {
+      if (force) {
         if (isEvening && c && c.type !== 'specific' && c.type !== 'someday' && c.type !== 'anytime') {
           c.evening = true
         } else if (force || !c) {
@@ -125,7 +125,7 @@ export default {
       return t
     },
     ListGroup(t, force = false, {groupId, listId}) {
-      if (force || (!t.group && !t.list)) {
+      if (force || !isAlreadyOnAnotherList(t)) {
         t.group = groupId || null
         t.list = listId || null
       }

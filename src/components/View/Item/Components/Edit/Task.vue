@@ -211,7 +211,7 @@ export default EditBuilder({
 
         if (!this.model.group)
           arr.push({
-            id: 'add_files',
+            id: 'file',
             props: {
               disabled: true,
               icon: 'file',
@@ -293,6 +293,19 @@ export default EditBuilder({
             icon: 'clock',
             callback: model => model.calendar.time = null
           },
+          {
+            id: 'select_teim',
+            name: 'Select time',
+            icon: 'clock',
+            callback: () => {
+              this.$store.commit('pushIconDrop', {
+                comp: 'TimePicker',
+                content: {
+                  callback: time => {model.calendar.time = time},
+                },
+              })
+            }
+          },
           ...arr.map(getObj),
         ]
       },
@@ -373,9 +386,10 @@ export default EditBuilder({
         const name = this.calendarStr
         
         return {
-          id: 'calendar_tag',
+          id: 'calendar',
           props: {
             name,
+            title: 'Alt + S',
             icon: this.getCalendarStrIcon,
             color: this.getCalendarStrColor,
             trigger: 'enter',
@@ -396,9 +410,10 @@ export default EditBuilder({
         
         if (this.model.calendar && this.model.calendar.time)
           tags.push({
-            id: 'time',
+            id: 'hour',
             props: {
               icon: 'clock',
+              title: 'Alt + H',
               name: utils.parseTime(this.model.calendar.time, this.userInfo),
               color: 'var(--brown)',
               trigger: 'enter',
@@ -412,6 +427,7 @@ export default EditBuilder({
             id: 'evening',
             props: {
               icon: 'moon',
+              title: 'Alt + N',
               name: 'Evening',
               color: 'var(--dark-purple)',
               trigger: 'click',
@@ -429,9 +445,10 @@ export default EditBuilder({
 
         if (this.isInAtLeastOneList && listObj)
           tags.push({
-            id: 'lists_tag',
+            id: 'move',
             props: {
               name: listObj.name,
+              title: 'Alt + M',
               icon: this.getListIcon,
               listWidth: '180px',
               color: this.getListColor,
@@ -445,7 +462,7 @@ export default EditBuilder({
 
         if (this.model.heading && listObj && listObj.headings && listObj.headings.length > 0)
           tags.push({
-            id: 'headingsd_id',
+            id: 'headings',
             props: {
               name: this.getListHeadingName,
               icon: 'heading',
@@ -458,7 +475,7 @@ export default EditBuilder({
 
         if (this.model.taskDuration)
           tags.push({
-            id: 'duration_clock',
+            id: 'duration',
             props: {
               name: this.durationStr,
               icon: 'duration',

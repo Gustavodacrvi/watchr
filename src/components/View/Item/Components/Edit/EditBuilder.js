@@ -7,6 +7,7 @@ import FileApp from '@/components/View/RenderComponents/File.vue'
 import FileDragDrop from '@/components/View/RenderComponents/FileDragDrop.vue'
 import UploadProgressLine from "@/components/View/RenderComponents/UploadProgressLine.vue"
 
+
 import momUtils from '@/utils/moment'
 
 import FileMixin from '@/mixins/file.js'
@@ -231,6 +232,13 @@ export default ({
       )
     )
 
+    if (allowFiles && this.getFiles && this.getFiles.length && this.model.group)
+        editChildren.splice(3 - (checklist ? 0 : 1), 0,
+          create('div', {class: 'hasContent'}, [
+            'Note: Save your files before sending a task/list to a shared group, group files are not supported and they will be lost forever.'
+          ])
+        )
+
     if (allowFiles && this.savingItem)
         editChildren.push(
           create(UploadProgressLine, {
@@ -253,7 +261,11 @@ export default ({
     },
     save() {
       const model = this.beforeSave(this.model, this)
+
       if (model) {
+        if (allowFiles && model.group)
+          model.files = []
+          
         if (allowFiles && this.isEditingFiles && this.addedFiles.length > 0)
           this.savingItem = true
 
@@ -312,12 +324,31 @@ export default ({
         this.cursorPos = 0
       else this.cursorPos = this.lastKeyboardActionIndex
     },
+    closeAllDropdowns() {
+      this.getViewTags.forEach(({id}) => this.$refs[id].tagModeToggle = false)
+    },
     focusSmartInputById(id) {
       const icons = this.allSmartIcons
       let num = this.getFirstSmartIconKeyboardActionPosition
       for (const icon of icons) {
         if (icon.id === id) {
-          this.cursorPos = num
+          this.closeAllDropdowns()
+          return this.$nextTick(() => {
+            this.cursorPos = num
+            return true
+          })
+        }
+        num++
+      }
+      num = this.getFirstViewTagKeyboardActionPosition
+      const tags = this.getViewTags
+      for (const icon of tags) {
+        if (icon.id === id) {
+          this.closeAllDropdowns()
+          return this.$nextTick(() => {
+            this.cursorPos = num
+            this.keyboardActions[num]()
+          })
           return true
         }
         num++
@@ -348,8 +379,7 @@ export default ({
           h: 'hour',
         }
 
-        if (this.focusSmartInputById(vals[key]))
-          p()
+        this.focusSmartInputById(vals[key])
       }
 
       if (checklist && this.isCursorInChecklist && !isTyping) {
@@ -485,6 +515,9 @@ export default ({
       return []
     },
 
+    getFirstViewTagKeyboardActionPosition() {
+      return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0)
+    },
     getFirstSmartIconKeyboardActionPosition() {
       return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0) + this.getViewTags.length + this.getFiles.length
     },

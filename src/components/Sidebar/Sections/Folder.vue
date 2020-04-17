@@ -96,5 +96,14 @@ export default {
 
 <style scoped src="@/assets/css/sidebarmixin.css"></style>
 
+<style>
+
+.sortable-ghost .SidebarElement {
+  visibility: hidden;
+  opacity: 0;
+}
+
+</style>
+
 <style scoped src="@/assets/css/folder.css">
 </style>

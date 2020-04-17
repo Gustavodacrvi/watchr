@@ -406,6 +406,9 @@ export default {
   
         const fallbackItems = this.fallbackSelected
 
+        if (key === 'Escape' && this.selectedItems.length)
+          this.$store.commit('clearSelected')
+
         if ((!this.mainSelection || this.mainSelectionIsNotInView)) {
           switch (key) {
             case 'ArrowDown': {

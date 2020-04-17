@@ -450,7 +450,7 @@ export default {
     },
     assignUser(uid) {
       this.saveTaskContent({
-        assigned: uid,
+        assigned: uid || null,
       })
     },
     saveNewCalendarTime() {

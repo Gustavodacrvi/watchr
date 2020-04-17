@@ -130,7 +130,7 @@ export default {
         return t => !isHeadingTask(t)
       
       if (this.isCalendarOrderViewType)
-        return t => !isHeadingTask(t) && !t.calendar.evening
+        return t => !isHeadingTask(t) && t.calendar && !t.calendar.evening
         
       return () => false
     },

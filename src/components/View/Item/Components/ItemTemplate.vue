@@ -37,6 +37,7 @@
           <slot name="check-icon"
             :completed='completed'
             :canceled='canceled'
+            :isEditing='isEditing'
             :color='props.iconColor'
             :itemModel='props.itemModel'
             :forceDefault='props.forceDefault'

@@ -99,7 +99,7 @@ export default {
   height: 40px;
   border: none;
   z-index: 100;
-  border-top: 1px solid var(--extra-light-gray);
+  border-top: 1px solid var(--light-gray);
 }
 
 .slimMode {

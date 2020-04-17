@@ -29,7 +29,7 @@
 import { mapGetters } from 'vuex'
 
 import Sidebar from "@/components/Sidebar/Sidebar.vue"
-import Scheduler from '@/components/Sidebar/Scheduler.vue'
+import Scheduler from '@/components/Scheduling/SchedulerTimeline.vue'
 
 export default {
   components: {

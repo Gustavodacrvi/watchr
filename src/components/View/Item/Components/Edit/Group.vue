@@ -48,18 +48,6 @@ export default EditBuilder({
       },
     },
     computed: {
-      leftSmartIconDrops() {
-        return [          {
-            id: 'add_files',
-            props: {
-              disabled: true,
-              icon: 'file',
-              trigger: 'click',
-              file: true,
-              onDrop: this.onDrop,
-            },
-          }]
-      },
       rightSmartIconDrops() {
         const arr = []
 
@@ -73,8 +61,9 @@ export default EditBuilder({
 
         if (this.model.color && this.selectedColorObj)
           arr.push({
-            id: 'color_tint',
+            id: 'color',
             props: {
+              title: 'Alt + O',
               name: this.selectedColorObj.name,
               icon: 'tint',
               color: this.selectedColorObj.color,

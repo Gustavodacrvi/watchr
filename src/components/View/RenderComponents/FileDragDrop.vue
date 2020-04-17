@@ -1,6 +1,6 @@
 <template>
   <transition name="trans" appear>
-    <div v-if="dragging && !moving && showDragDrop"
+    <div v-if="dragging && !movingTask"
       class="FileDragDrop"
 
       @drop.prevent.stop='drop'
@@ -12,7 +12,7 @@
       @dragover.stop.prevent
     >
       <div class="wrapper">
-        <Icon class="icon" icon='import' width='100px' color='var(--sidebar-color)'/>
+        <Icon class="icon" icon='import' width='80px' color='var(--sidebar-color)'/>
         <span class="msg">Drag it here.</span>
       </div>
     </div>
@@ -48,7 +48,7 @@ export default {
     },
     onDrag() {
        setTimeout(() => {
-        if (!this.moving)
+        if (this.movingTask)
           return;
         this.dragging = true
         if (this.dragOverTimeout)
@@ -64,16 +64,16 @@ export default {
     },
   },
   computed: {
-    ...mapState(['moving'])
+    ...mapState(['movingTask'])
   },
   watch: {
-    moving() {
-      this.showDragDrop = false
-      if (this.onDragTimeout || !this.moving)
+    movingTask() {
+      this.dragging = false
+      if (this.onDragTimeout || !this.movingTask)
         clearTimeout(this.onDragTimeout)
-      if (this.moving)
+      if (this.movingTask)
         this.onDragTimeout = setTimeout(() => {
-          this.showDragDrop = true
+          this.dragging = true
         }, 100)
     },
   },
@@ -84,15 +84,16 @@ export default {
 <style scoped>
 
 .FileDragDrop {
-  height: 125px;
-  border: 2px solid var(--fade);
+  height: 80px;
+  border: 2px solid var(--sidebar-color);
   border-style: dashed;
-  border-radius: 16px;
+  border-radius: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   overflow: hidden;
+  margin: 9px;
 }
 
 .icon {
@@ -114,13 +115,15 @@ export default {
   transition-timing-function: 'ease-out';
   height: 0;
   opacity: 0;
+  margin: 0;
 }
 
 .trans-leave, .trans-enter-to {
   transition-duration: .15s;
   transition-timing-function: 'ease-in';
-  height: 125px;
+  height: 80px;
   opacity: 1;
+  margin: 9px;
 }
 
 </style>

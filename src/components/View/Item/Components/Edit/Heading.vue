@@ -52,8 +52,9 @@ export default EditBuilder({
 
         if (!this.model.color)
           arr.push({
-            id: 'duration_clock',
+            id: 'color',
             props: {
+              title: 'Alt + O',
               placeholder: 'Color name...',
               icon: 'tint',
               color: 'var(--yellow)',
@@ -69,8 +70,9 @@ export default EditBuilder({
 
         if (this.model.color && this.selectedColorObj)
           arr.push({
-            id: 'color_tint',
+            id: 'color',
             props: {
+              title: 'Alt + O',
               name: this.selectedColorObj.name,
               icon: 'tint',
               color: this.selectedColorObj.color,

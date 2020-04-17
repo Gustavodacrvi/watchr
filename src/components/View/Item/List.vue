@@ -31,6 +31,7 @@
 
         :isItemSelected='isItemSelected'
         :completed='props.completed'
+        :isSelecting='props.isEditing ? false : isSelecting'
         :canceled='props.canceled'
         :color='props.color'
         :itemModel='props.itemModel'

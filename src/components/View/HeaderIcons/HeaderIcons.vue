@@ -61,6 +61,11 @@ export default {
               ids: this.selectedItems.slice(),
               tagIds: model.tags,
             })
+          } else {
+            this.$store.dispatch('list/addTagsToListsById', {
+              ids: this.selectedItems.slice(),
+              tagIds: model.tags,
+            })
           }
 
         } else {
@@ -106,7 +111,6 @@ export default {
         this.calendarSmartIconObj,
         this.getMoveToListSmartIconObj,
         this.deadlineSmartIconObj,
-        this.getSmartIconTags,
         this.getPrioritySmartIconObj,
         this.rightSmartIconDurationObj,
       ]
@@ -198,8 +202,11 @@ export default {
       if (this.selectedItems.length) {
         const arr = (this.selectedType === "Task" ? this.taskListIcons : this.listListIcons).slice()
 
-        if (this.areGroupItems)
+        if (this.areGroupItems) {
           arr.unshift(this.getAssigneSmartIconObj)
+        } else {
+          arr.splice(3, 0, this.getSmartIconTags)
+        }
         
         return arr
       }
@@ -207,7 +214,7 @@ export default {
     },
   },
   watch: {
-    viewType() {
+    viewId() {
       this.model.group = this.viewId || null
     },
   },
@@ -224,9 +231,9 @@ export default {
   bottom: 0;
   display: flex;
   justify-content: center;
-  border-top: 1px solid var(--extra-light-gray);
+  border-top: 1px solid var(--light-gray);
   background-color: var(--back-color);
-  transition-duration: .2s;
+  transition-duration: .15s;
   z-index: 100;
 }
 
@@ -240,7 +247,7 @@ export default {
 }
 
 .flip-list-move {
-  transition: transform .2s;
+  transition: transform .15s;
 }
 
 </style>

@@ -2,6 +2,8 @@
 import { fire, auth } from './index'
 import fb from 'firebase/app'
 
+import Vue from 'vue'
+
 import utils from '../utils'
 import utilsTask from "@/utils/task"
 import utilsList from "@/utils/list"
@@ -914,6 +916,17 @@ export default {
         fullCancelDate: null,
         fullCheckDate: null,
       }, ids, rootState)
+
+      b.commit()
+    },
+    async addTagsToListsById({rootState}, {ids, tagIds}) {
+      const b = fire.batch()
+
+      await batchSetLists(b, {
+        tags: fd().arrayUnion(...tagIds),
+      }, ids, rootState, undefined, list => {
+        Vue.set(list, 'tags', list.tags ? [...list.tags, ...tagIds] : tagIds)
+      })
 
       b.commit()
     },

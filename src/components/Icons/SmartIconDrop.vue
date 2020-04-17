@@ -207,7 +207,7 @@ export default {
           s.marginLeft = 0
         }
 
-        setTimeout(done, 175)
+        setTimeout(done, 151)
       })
 
 

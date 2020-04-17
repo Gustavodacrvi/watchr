@@ -57,7 +57,7 @@ export default {
       s.margin = '0'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.margin = '12px 0'
 
         setTimeout(176, done)
@@ -70,7 +70,7 @@ export default {
       s.margin = '12px 0'
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.175s'
+        s.transitionDuration = '.15s'
         s.margin = '0'
 
         setTimeout(176, done)

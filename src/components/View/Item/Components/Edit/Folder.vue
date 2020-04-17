@@ -28,6 +28,7 @@ export default EditBuilder({
           name: '',
           notes: '',
           color: null,
+          defaultShowing: true,
           files: [],
         },
       }
@@ -74,8 +75,9 @@ export default EditBuilder({
 
         if (this.model.color && this.selectedColorObj)
           arr.push({
-            id: 'color_tint',
+            id: 'color',
             props: {
+              title: 'Alt + O',
               name: this.selectedColorObj.name,
               icon: 'tint',
               color: this.selectedColorObj.color,

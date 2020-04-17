@@ -9,7 +9,7 @@
       @mouseleave="iconHover = false"
 
       @click.stop="$emit('toggle-complete')"
-      @contextmenu="$emit('toggle-cancel')"
+      @contextmenu.prevent.stop="$emit('toggle-cancel')"
     >
       <slot name="check-icon"></slot>
     </div>
@@ -238,7 +238,7 @@ export default {
   width: 25px;
   flex-shrink: 0;
   opacity: .4;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .iconHover .icon-wrapper, .showLine .icon-wrapper {

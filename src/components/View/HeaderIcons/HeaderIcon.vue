@@ -113,7 +113,7 @@ export default {
   align-items: center;
   border-radius: 4px;
   transform: scale(1,1);
-  transition-duration: .175s;
+  transition-duration: .15s;
 }
 
 .simple .icon {

@@ -850,6 +850,10 @@ export default {
         match: / (no date)(?!(\w+))/gi,
         get: () => cal = null,
       },
+      {
+        match: / (inbox)(?!(\w+))/gi,
+        get: () => cal = null,
+      },
     ]
     
     for (const obj of keywords) {

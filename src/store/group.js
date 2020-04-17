@@ -35,7 +35,7 @@ export default {
       if (!itemGroup)
         return;
       const profiles = itemGroup.profiles
-      const profileUsers = Object.keys(profiles).map(k => ({
+      const profileUsers = Object.keys(profiles).filter(k => profiles[k]).map(k => ({
         name: profiles[k].displayName,
         uid: profiles[k].uid,
         id: profiles[k].uid,
@@ -172,13 +172,13 @@ export default {
         },
       },
       getGroupsByName: {
-        react: [
-          'name',
+        touchState: [
+          'group/groups',
         ],
-        getter({state}, names) {
+        getter({}, names) {
           const arr = []
           for (const n of names) {
-            const gro = state.groups.find(f => f.name === n)
+            const gro = this['group/groups'].find(f => f.name === n)
             if (gro) arr.push(gro)
           }
           return arr

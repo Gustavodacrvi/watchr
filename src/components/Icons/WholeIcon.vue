@@ -102,7 +102,7 @@ export default {
       return 18.5 * this.progress / 100
     },
     getBoxColor() {
-      const color = this.boxColor || 'var(--light-gray)'
+      const color = this.boxColor || ''
       return this.iconHover || this.active ? color : ''
     },
     getColor() {

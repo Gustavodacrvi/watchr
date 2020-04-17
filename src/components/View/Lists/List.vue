@@ -250,7 +250,7 @@ export default {
     assignUser(uid) {
       this.$store.dispatch('list/saveList', {
         id: this.item.id,
-        assigned: uid,
+        assigned: uid || null,
       })
     },
 

@@ -437,7 +437,7 @@ export default {
   user-select: none;
 }
 
-.sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble, .sortable-ghost .toggle-icon, .sortable-ghost .info {
+.sortable-ghost.SidebarElement .name-wrapper, .sortable-ghost.SidebarElement .icon-wrapper, .sortable-ghost.SidebarElement .bubble, .sortable-ghost.SidebarElement .toggle-icon, .sortable-ghost.SidebarElement .info {
   display: none;
 }
 
@@ -453,12 +453,10 @@ export default {
   background-color: var(--card) !important;
 }
 
-.sortable-ghost, .sortable-ghost .link-inner-wrapper {
+.sortable-ghost.SidebarElement, .sortable-ghost.SidebarElement .link-inner-wrapper {
   background-color: var(--dark-void) !important;
   box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
     inset 0 -10px 5px -13px rgba(210,210,210, .7);
-  transition-duration: 0 !important;
-  transition: none !important;
 }
 
 .sortable-selected .link-inner-wrapper {
