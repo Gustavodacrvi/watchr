@@ -639,6 +639,7 @@ export default {
 .sidebar-handle {
   position: fixed;
   background-color: var(--card);
+  box-shadow: 0 2px 4px rgba(0,0,0,.3);
   width: 5px;
   height: 145px;
   margin-left: 6px;

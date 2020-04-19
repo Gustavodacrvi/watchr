@@ -57,18 +57,32 @@
           />
         </div>
       </div>
+      <div class="icon-drop">
+        <SmartIcon
+          v-bind="currentObj"
+          trigger='enter'
+
+          :listenToWindow='true'
+          :tagMode='true'
+          :list='getList'
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 
+import SmartIcon from '@/components/Icons/SmartIconDrop.vue'
 import mom from 'moment'
 
 const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
 
 export default {
+  components: {
+    SmartIcon,
+  },
   props: ['date'],
   data() {
     return {
@@ -77,7 +91,12 @@ export default {
       initial: this.date || TOD_STR,
       selected: this.date || TOD_STR,
       current: this.date || TOD_STR,
+
+      currentObj: null,
     }
+  },
+  created() {
+    this.currentObj = this.getList[0]
   },
   methods: {
     goToPreviousMonth() {
@@ -91,6 +110,53 @@ export default {
     },
   },
   computed: {
+    getList() {
+      const getFinalArr = obj => ({
+        ...obj,
+        callback: () => ({...obj}),
+      })
+      
+      return [
+        {
+          id: '1',
+          name: 'Inbox',
+          icon: 'inbox',
+          color: 'var(--primary)',
+        },
+        {
+          id: '2',
+          name: 'Anytime',
+          icon: 'layer-group',
+          color: 'var(--olive)',
+        },
+        {
+          id: '3',
+          name: 'Someday',
+          icon: 'archive',
+          color: 'var(--brown)',
+        },
+        {
+          id: '4',
+          name: 'Assigned to me',
+          icon: 'group',
+          color: 'var(--orange)',
+        },
+        {
+          id: '6',
+          name: 'Upcoming',
+          icon: 'calendar',
+          color: 'var(--green)',
+        },
+        {
+          id: '7',
+          name: 'Deadlines',
+          icon: 'deadline',
+          color: 'var(--red)',
+        },
+      ].map(getFinalArr)
+    },
+    
+    
     initialMom() {
       return mom(this.initial, 'Y-M-D')
     },
@@ -151,6 +217,11 @@ export default {
       return (this.daysInMonth % 7)
     },
   },
+  watch: {
+    currentObj() {
+      this.$emit('input', this.currentObj)
+    },
+  },
 }
 
 </script>
@@ -160,8 +231,8 @@ export default {
 .SchedulerCalendar {
   background-color: var(--card);
   box-shadow: 0 1px 2px rgba(0,0,0,.4);
-  overflow-y: auto;
-  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
 }
 
 .wrapper {
@@ -191,7 +262,7 @@ export default {
   transition-duration: .15s;
 }
 
-.options {
+.options, .icon-drop {
   height: 30px;
   display: flex;
   justify-content: space-around;

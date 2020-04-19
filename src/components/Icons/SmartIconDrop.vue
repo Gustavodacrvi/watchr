@@ -13,7 +13,7 @@
       @click="click"
       @click.self='clickSelf'
     >
-      <div class="wrapper"
+      <div class="wrapper-wrapper"
         @click="activate"
       >
         <div class="icon-wrapper">
@@ -107,7 +107,7 @@ export default {
   components: {
     Photo,
   },
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop', 'headerIcon', 'title'],
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop', 'headerIcon', 'title', 'listenToWindow'],
   data() {
     return {
       focus: false,
@@ -125,11 +125,11 @@ export default {
 
   },
   beforeDestroy() {
-    this.$parent.$el.removeEventListener('click', this.hide)
+    (!this.listenToWindow ? this.$parent.$el : window).removeEventListener('click', this.hide)
   },
   mounted() {
+    (!this.listenToWindow ? this.$parent.$el : window).addEventListener('click', this.hide)
     this.saveValueWith()
-    this.$parent.$el.addEventListener('click', this.hide)
   },
   methods: {
     onFileDrop(...args) {
@@ -375,6 +375,8 @@ export default {
         
         if (key === "Escape" && this.headerIcon)
           this.$emit('close')
+        if (key === "Escape" && this.tagMode)
+          this.tagModeToggle = false
 
         if (!stop) {
           if (this.tagMode && this.currentList === this.list)
@@ -566,7 +568,7 @@ export default {
   transform: translateY(0px);
 }
 
-.wrapper {
+.wrapper-wrapper {
   width: 100%;
   height: 100%;
   display: flex;
