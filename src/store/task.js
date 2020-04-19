@@ -711,6 +711,16 @@ export default {
       },
 
 
+      getEndsTodayEvening: {
+        deepGetterTouch: {
+          'task/allTasks': [
+            'calendar',
+          ],
+        },
+        getter({getters}) {
+          return this['task/allTasks'].filter(t => getters.isTaskInView('Today', t) && t.calendar && t.calendar.evening)
+        },
+      },
       getEndsTodayTasks: {
         deepGetterTouch: {
           'task/tasks': [

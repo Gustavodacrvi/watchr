@@ -19,9 +19,9 @@
       @click.stop
     >
       {{ getViewName }}
-      <Icon v-if="scheduling || calendarDate"
+      <Icon v-if="calendarDate"
         class="comp-icon primary-hover cursor"
-        :icon='scheduling ? "star" : "calendar-star"'
+        icon='calendar-star'
         color='var(--fade)'
         width='14px'
         @click='$emit("open-main-comp")'
@@ -34,6 +34,14 @@
         @click='viewConfig'
       />
     </span>
+    <Icon v-if="comments"
+      style='margin-left: 15px;'
+      class='comp-icon primary-hover cursor'
+      icon='comment'
+      :color='getNonReadComments ? "var(--txt)" : "var(--fade)"'
+      :number='getNonReadComments'
+      @click.native='openComments'
+    />
     <div class="drop passive">
       <Icon v-for="i in extraIcons" :key="i.icon"
         class="cursor opt remove-highlight primary-hover"
@@ -66,8 +74,17 @@ export default {
     HeaderSearch,
     IconDrop,
   },
-  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'headerPopup','viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
+  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'headerPopup','viewNameValue', 'viewType', 'icon', 'viewName', 'saveHeaderName', 'comments'],
   methods: {
+    openComments() {
+      this.$store.dispatch('pushPopup', {
+        comp: "Comments",
+        payload: {
+          groupId: this.headerInfo.comments.group,
+          id: this.headerInfo.comments.room,
+        },
+      })
+    },
     openMenu() {
       if (!this.isDesktopBreakPoint)
         this.$router.push('/menu')
@@ -79,10 +96,22 @@ export default {
   computed: {
     ...mapState(['selectedItems', 'scheduling']),
     ...mapGetters(['layout', 'isDesktopBreakPoint', 'getIcon', 'getIconColor', 'isSmartList', 'calendarDate']),
+    ...mapGetters({
+      layout: 'layout',
+      isDesktopBreakPoint: 'isDesktopBreakPoint',
+      getIcon: 'getIcon',
+      getIconColor: 'getIconColor',
+      isSmartList: 'isSmartList',
+      calendarDate: 'calendarDate',
+      nonReadCommentsById: 'group/nonReadCommentsById',
+    }),
     getViewName() {
       if (this.calendarDate)
         return utils.getHumanReadableDate(this.calendarDate)
       return this.viewNameValue
+    },
+    getNonReadComments() {
+      return this.nonReadCommentsById(this.comments.group, this.comments.room).length
     },
   },
   watch: {
@@ -106,7 +135,7 @@ export default {
   position: relative;
   z-index: 2;
   margin-right: 6px;
-  transform: translateY(.5px);
+  transform: translateY(1px);
 }
 
 .progress {

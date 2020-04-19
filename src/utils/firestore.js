@@ -398,11 +398,14 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
       const getGroupId = restrict => hydratedTask.group || (savedGroupTask && !restrict && savedGroupTask.group)
 
       const finalObj = ({
-        ...hydratedTask, handleFiles: null,
+        ...hydratedTask,
         lastEditDate: mom().format('Y-M-D HH:mm ss'),
         id,
         userId: uid(),
       })
+
+      if (finalObj.handleFiles)
+        delete finalObj.handleFiles
 
       const getGroupTaskRef = () => groupTask(getGroupId(), id)
       const getGroupCacheRef = () => groupCacheRef(getGroupId())
@@ -502,6 +505,8 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
       const updatingGroupTask = !isNewTask && savedGroupTask && savedGroupTask.group === getGroupId()
       const updatingPersonalTask = !isNewTask && savedIndividualTask && savedIndividualTask.group === null
       const isChangingGroups = savedGroupTask && savedGroupTask.group !== getGroupId(true)
+
+      console.warn('setTask ', finalObj)
 
       if (getGroupId(true)) {
 
@@ -605,8 +610,6 @@ export const setTask = (batch, task, rootState, id, writes, onTaskSave) => {
             [id]: finalObj,
           }
       }
-
-      console.warn('setTask ', finalObj)
 
       solve()
     }

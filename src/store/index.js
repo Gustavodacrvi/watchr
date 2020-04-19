@@ -146,7 +146,6 @@ const store = new Vuex.Store({
       links: [],
     },
     firstFireLoad: false,
-    cameFromAnotherTabHTMLElement: null,
     selectedItems: [],
     fireBaseFirstLoaded: false,
     authState: false,
@@ -171,6 +170,7 @@ const store = new Vuex.Store({
     moving: false,
     pressingKey: null,
     movingTimeout: null,
+    movingTaskTimeout: null,
     historyPos: 0,
 
     googleCalendarReady: false,
@@ -543,11 +543,6 @@ const store = new Vuex.Store({
       state.allowCalendar = allowCalendar
       localStorage.setItem('allowCalendar', allowCalendar)
     },
-    cameFromAnotherTabDragStart(state, element) {
-      if (element === null && state.cameFromAnotherTabHTMLElement === null)
-        return;
-      state.cameFromAnotherTabHTMLElement = element
-    },
     moving(state, moving) {
       
       if (!moving)
@@ -578,8 +573,18 @@ const store = new Vuex.Store({
     gmailReady(state) {
       state.gmailReady = true
     },
-    movingTask(state, bool) {
-      state.movingTask = bool
+    movingTask(state, moving) {
+      state.movingTask = moving
+
+      if (!moving)
+        state.movingTaskTimeout = setTimeout(() => {
+          state.movingTask = false
+        }, 200)
+      else {
+        if (state.movingTaskTimeout)
+          clearTimeout(state.movingTaskTimeout)
+        state.movingTask = true
+      }
     },
     saveMainSelection(state, id) {
       state.mainSelection = id

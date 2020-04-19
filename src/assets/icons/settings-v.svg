@@ -3,7 +3,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="74.275px" height="74.275px" viewBox="0 0 74.275 74.275" enable-background="new 0 0 74.275 74.275" xml:space="preserve">
-<circle fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="37.137" cy="10.5" r="8"/>
-<circle fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="37.137" cy="37.137" r="8"/>
-<circle fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="37.137" cy="63.774" r="8"/>
+<circle fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="37.137" cy="10.5" r="8"/>
+<circle fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="37.137" cy="37.137" r="8"/>
+<circle fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="37.137" cy="63.774" r="8"/>
 </svg>

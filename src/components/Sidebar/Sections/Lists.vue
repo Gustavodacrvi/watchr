@@ -138,6 +138,8 @@ export default {
       delay: this.isDesktopBreakPoint ? 15 : 150,
       filter: '.ignore-item',
       animation: 200,
+      forceFallback: true,
+      fallbackOnBody: true,
       handle: '.handle-folder',
 
       onUpdate: (evt) => {
@@ -354,15 +356,23 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
 
-.isDragginInnerList {
-  pointer-events: none;
+.sortable-drag.Folder {
+  font-size: var(--font-size);
+  opacity: 1 !important;
+  background-color: var(--card);
+  box-shadow: 0 1px 8px rgba(15,15,15,.6);
+  border-radius: 4px;
 }
 
 </style>
 
 <style scoped>
+
+.isDragginInnerList {
+  pointer-events: none;
+}
 
 .hasRootLists {
   margin-top: 25px;

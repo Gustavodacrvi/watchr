@@ -241,12 +241,19 @@ export default {
           payload: list,
         }
     },
+    comments() {
+      const l = this.viewList
+      if (l)
+      return {
+        group: l.group || null,
+        room: l.id,
+        }
+    },
     headerInfo() {
       const list = this.viewList
       if (!list)
         return null
       
-      const listId = list.id
       const parseDate = utils.getHumanReadableDate
 
       const specificDate = list.calendar ? utils.parseCalendarObjectToString(list.calendar, this.userInfo) : null
@@ -304,10 +311,6 @@ export default {
         })
 
       const obj = {
-        comments: list.group ? {
-          group: list.group || null,
-          room: list.id,
-        } : undefined,
         files: {
           names: list.files || [],
           id: list.id,

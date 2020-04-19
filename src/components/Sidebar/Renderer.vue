@@ -107,6 +107,8 @@ export default {
       multiDrag: this.enableSelect,
       
       animation: 200,
+      forceFallback: true,
+      fallbackOnBody: true,
       multiDragKey: 'CTRL',
       direction: 'vertical',
 

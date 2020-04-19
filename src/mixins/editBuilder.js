@@ -521,7 +521,7 @@ export default {
             icon: 'calendar',
             callback: model => {
               this.fromIconDrop = true
-              model.calendar = calendar
+              model.deadline = calendar.specific
             }
           })
 

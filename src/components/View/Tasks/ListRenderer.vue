@@ -40,22 +40,11 @@
 
       v-bind='rootId'
 
-      @dragenter='dragenter'
-      @dragover='dragover'
-      @drop='drop'
-      @dragleave.stop
-
       @enter='enter'
       @leave='leave'
     >
       <template v-for="item of getItems">
-        <div v-if='item.cameFromAnotherTab'
-          :key="item.cameFromAnotherTab + 'fdskçalsdf'"
-          class='cameFromAnotherTab-ghost rb'
-        >
-
-        </div>
-        <component v-else-if="!item.isEdit" :is='comp'
+        <component v-if="!item.isEdit" :is='comp'
           v-bind="$props"
           :ref='item.id'
           :key="item.id"
@@ -110,25 +99,25 @@
         class='list-info'
       >
         <transition name="fade-t">
-          <div v-if="computedShowSomedayButton && !isElementFromAnotherTabHovering"
+          <div v-if="computedShowSomedayButton"
             @click="$emit('allow-someday')"
           >
             <ButtonVue type="no-padding" value="Show someday items..."/>
           </div>
         </transition>
         <transition name="fade-t">
-          <div v-if="computedShowArchivedHeadings && !isElementFromAnotherTabHovering"
+          <div v-if="computedShowArchivedHeadings"
             @click="showArchived = true"
           >
             <ButtonVue type="no-padding" value="Show archived headings..."/>
           </div>
         </transition>
-        <ButtonVue v-if="showMoreItemsButton && !isElementFromAnotherTabHovering"
+        <ButtonVue v-if="showMoreItemsButton"
           type="no-padding"
           :value='showMoreItemsMessage'
           @click="showingMoreItems = true"
         />
-        <div v-if="showAddItemButton && !isElementFromAnotherTabHovering"
+        <div v-if="showAddItemButton"
           class="add-item-wrapper"
         >
           <div
@@ -138,7 +127,7 @@
             Add item
           </div>
         </div>
-        <div v-if="isDesktopDevice && !isElementFromAnotherTabHovering && viewType === 'list' && !isSmart"
+        <div v-if="isDesktopDevice && viewType === 'list' && !isSmart"
           class="heading-add"
           @click.stop="addHeadingsEdit(lazyItems.length)"
         >
@@ -259,8 +248,6 @@ export default {
       lazyHeadingsSetTimeouts: [],
       oldRemovedIndicies: [],
       showArchived: false,
-      cameFromAnotherTab: false,
-      cameFromAnotherTabIndex: null,
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -484,75 +471,8 @@ export default {
 
       return this.showEmptyHeadings || h.items.length > 0
     },
-    dragenter(evt) {
-      if (!this.moving && !this.hasEdit)
-        evt.preventDefault()
-    },
-    dragover(evt) {
-      this.cameFromAnotherTab = !this.moving && this.allowSortableAdd
-      if (this.cameFromAnotherTab && !this.hasEdit) {
-        const draggableRoot = this.draggableRoot
-        this.$store.commit('cameFromAnotherTabDragStart', draggableRoot)
-        evt.preventDefault()
-
-        const getOffsetTop = elem =>{
-          let offsetTop = 0
-          do {
-            if (!isNaN(elem.offsetTop)) {
-              offsetTop += elem.offsetTop
-            }
-          } while(elem = elem.offsetParent)
-          return offsetTop
-        }
-
-        const listLength = this.lazyItems.length
-        const thresold = 1
-        const itemHeight = this.itemHeight
-        const mousePos = evt.pageY - getOffsetTop(draggableRoot)
-        
-        if (mousePos < (itemHeight + thresold))
-          this.cameFromAnotherTabIndex = 0
-        else if ((((listLength - 2) * itemHeight) - thresold) < mousePos) {
-          this.cameFromAnotherTabIndex = listLength
-        } else {
-          }
-        const pos = Math.floor(mousePos / itemHeight)
-        this.cameFromAnotherTabIndex = pos === -1 ? 0 : pos
-        
-        
-      } else {
-        this.cameFromAnotherTab = false
-      }
-    },
     filterValidItemId(id) {
       return id && id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined && id !== 'Headingcomponent eidt'
-    },
-    drop(evt) {
-      try {
-        if (this.cameFromAnotherTab) {
-          const res = evt.dataTransfer.getData('text/plain')
-          if (!res) return;
-          const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
-          if (!obj) return;
-          if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
-          evt.preventDefault()
-          let items = this.getTasksById(obj.ids)
-          const alreadyHasItem = this.lazyItems.some(el => items.some(i => i.id  === el.id))
-          
-          if (!alreadyHasItem) {
-            localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
-            items = items.map(el => this.fallbackItem(el, true))
-  
-            this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
-            const finalIds = this.lazyItems.map(el => el.id)
-    
-            this.addToList(finalIds, obj.ids)
-          }
-        }
-      } catch (arr) {
-        
-      }
-      this.cameFromAnotherTab = false
     },
     addToList(finalIds, itemsIds) {
       if (!this.onSortableAdd) {
@@ -756,6 +676,8 @@ export default {
         direction: 'vertical',
 
         animation: 200,
+        forceFallback: true,
+        fallbackOnBody: true,
         delay: this.isDesktopDevice ? 5 : 100,
         handle: '.item-handle',
         
@@ -975,10 +897,10 @@ export default {
             this.oldRemovedIndicies = []
           })
           
-          if (this.isDesktopDevice && this.comp === 'Task') {
+          if (this.isDesktopDevice) {
             this.movingItem = false
-            this.$store.commit('movingTask', false)
           }
+          this.$store.commit('movingTask', false)
         },
         setData: (dataTransfer, el) => {
           dataTransfer.setData('text/plain', JSON.stringify({
@@ -1001,8 +923,8 @@ export default {
 
           if (this.isDesktopDevice && this.comp === 'Task') {
             this.movingItem = true
-            this.$store.commit('movingTask', true)
           }
+          this.$store.commit('movingTask', true)
           
           if (!this.isDesktopDevice)
             window.navigator.vibrate(20)
@@ -1030,10 +952,6 @@ export default {
             }
           }
         },
-      }
-      if (!this.isDesktopDevice) {
-        obj.forceFallback = true
-        obj.fallbackOnBody = true
       }
       this.sortable = new Sortable(this.draggableRoot, obj)
     },
@@ -1292,7 +1210,6 @@ export default {
     ...mapState({
       isDraggingOverSidebarElement: state => state.isDraggingOverSidebarElement,
       isEditing: state => state.isEditing,
-      cameFromAnotherTabHTMLElement: state => state.cameFromAnotherTabHTMLElement,
       selected: state => state.selectedItems,
 
       isOnControl: state => state.isOnControl,
@@ -1364,9 +1281,6 @@ export default {
     getMainSelectionIndex() {
       return this.lazyItems.findIndex(i => i.id === this.mainSelection)
     },
-    isElementFromAnotherTabHovering() {
-      return this.cameFromAnotherTab && this.cameFromAnotherTabHTMLElement === this.draggableRoot
-    },
     getItems() {
       const set = new Set()
       const items = this.lazyItems.filter(el => {
@@ -1376,12 +1290,7 @@ export default {
           return true
         }
       })
-      if (!this.isElementFromAnotherTabHovering)
-        return items
 
-      items.splice(this.cameFromAnotherTabIndex, 0, {
-        cameFromAnotherTab: true,
-      })
       return items
     },
     nonEditGetItems() {
@@ -1521,12 +1430,6 @@ export default {
   justify-content: center;
   align-items: center;
   transition-duration: .15s;
-}
-
-.cameFromAnotherTab-ghost {
-  height: 25px;
-  background-color: var(--sidebar-color);
-  transition: transform .15s;
 }
 
 .new-items {

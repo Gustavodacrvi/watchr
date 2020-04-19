@@ -66,6 +66,14 @@ export default {
           payload: gro,
         }
     },
+    comments() {
+      const g = this.viewGroup
+      if (g)
+        return {
+          group: g.id,
+          room: g.id,
+        }
+    },
     headerInfo() {
       const group = this.viewGroup
       if (!group)
@@ -74,10 +82,6 @@ export default {
       const save = this.groupsaveGroup
 
       return {
-        comments: group.id ? {
-          group: group.id,
-          room: group.id,
-        } : undefined,
         icons: group.tint ? [
           {
             icon: 'tint',

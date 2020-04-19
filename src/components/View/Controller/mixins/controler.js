@@ -1,6 +1,6 @@
 
 const computed = [
-  'icon', 'showEmptyHeadings', 'updateHeadingIds', 'headingEditOptions', 'headerOptions', 'getViewNotes', 'getPieProgress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackItem', 'mainFilter', 'rootFilter', 'tasksOrder', 'viewNameValue', 'mainFallbackItem', 'showHeading', 'itemCompletionCompareDate', 'headerPopup', 'getHeaderIcons',
+  'icon', 'showEmptyHeadings', 'updateHeadingIds', 'headingEditOptions', 'headerOptions', 'getViewNotes', 'getPieProgress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackItem', 'mainFilter', 'rootFilter', 'tasksOrder', 'viewNameValue', 'mainFallbackItem', 'comments', 'showHeading', 'itemCompletionCompareDate', 'headerPopup', 'getHeaderIcons',
   'headerInfo', 'saveHeaderContent', 'configFilterOptions', 'viewComponent', 'showHeadadingFloatingButton', 'extraListView', 'enableLogbook', 'viewId', 'removeListHandlerWhenThereArentLists', 'viewItem', 'disableRootActions', 'fallbackFunctionData', 'itemModelFallback', 'newItemsViewAlert',
   'removeHeaderTag', 'saveHeaderName', 'disableSortableMount',
 ]

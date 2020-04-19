@@ -457,6 +457,14 @@ export default {
   cursor: grab;
 }
 
+.sortable-drag.ItemTemplate {
+  font-size: var(--font-size);
+  opacity: 1 !important;
+  background-color: var(--card);
+  box-shadow: 0 1px 8px rgba(15,15,15,.6);
+  border-radius: 4px;
+}
+
 .sortable-ghost.ItemTemplate .cont-wrapper {
   background-color: var(--sidebar-color) !important;
   box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),

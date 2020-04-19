@@ -12,6 +12,7 @@
 
     :icon='icon'
     :showEmptyHeadings='showEmptyHeadings'
+    :comments='comments'
     :updateHeadingIds='updateHeadingIds'
     :getHeaderIcons='getHeaderIcons'
     :newItemsViewAlert='newItemsViewAlert'
@@ -258,8 +259,8 @@ export default {
       getBeginsTodayLists: 'list/getBeginsTodayLists',
       isListLastDeadlineDay: 'list/isListLastDeadlineDay',
       isListBeginDay: 'list/isListBeginDay',
-      getEndsTodayTasks: 'task/getEndsTodayTasks',
       isRecurringTask: 'task/isRecurringTask',
+      getEndsTodayTasks: 'task/getEndsTodayTasks',
       wasTaskLoggedLastWeek: 'task/wasTaskLoggedLastWeek',
       getOverdueTasks: 'task/getOverdueTasks',
       wasTaskLoggedInMonth: 'task/wasTaskLoggedInMonth',
@@ -590,6 +591,7 @@ export default {
         const calendarDate = this.getCalendarOrderDate
         let scheduleOrder = this.getCurrentScheduleTasksOrder.slice()
 
+      if (this.hasEndsTodayTasks)
         arr.push({
           name: 'Evening',
           id: 'EVENING_SMART_VIEW',
@@ -1480,6 +1482,9 @@ export default {
     },
     hasEndsTodayLists() {
       return this.getEndsTodayLists(this.getCalendarOrderDate).length > 0
+    },
+    hasEveningTasks() {
+      return this.getTasksBy
     },
     hasBeginsTodayLists() {
       return this.getBeginsTodayLists(this.getCalendarOrderDate).length > 0

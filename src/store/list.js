@@ -10,7 +10,6 @@ import utilsList from "@/utils/list"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
 import { listRef, setInfo, uid, listColl, taskRef, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists, setGroup } from '../utils/firestore'
-import router from '../router'
 
 import mom from 'moment'
 

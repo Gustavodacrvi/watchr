@@ -81,6 +81,13 @@
   flex-grow: 0;
 }
 
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+}
+
 .info {
   flex-basis: 65px;
   height: 100%;

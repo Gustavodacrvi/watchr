@@ -144,7 +144,7 @@ export default {
         if (app) {
           let height = app.offsetHeight
 
-          const minimalBottomPosition = this.hideNavbar ? 33 : 58
+          const minimalBottomPosition = this.hideNavbar ? 33 : 50
         
           this.navObj = {
             height: (height - minimalBottomPosition) + 'px',

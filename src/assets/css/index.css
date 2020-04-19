@@ -42,6 +42,7 @@ html {
   --dark-blue: #5751c8;
   --red: #ff4d4d;
   --dark-red: #f2241c;
+  --font-size: 10.5px;
 }
 
 body {
@@ -89,7 +90,7 @@ body, input, button, textarea {
 }
 
 .shadow {
-  box-shadow: 0 2px 8px rgba(10,10,10,.45);
+  box-shadow: 0 1px 8px rgba(15,15,15,.6);
 }
 
 .pc {

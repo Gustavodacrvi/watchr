@@ -152,7 +152,7 @@ export default {
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
-  'width', 'sidebarHided', 'viewId',
+  'width', 'sidebarHided', 'viewId', 'comments',
   'fallbackFunctionData', 'getHeaderIcons',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
@@ -397,10 +397,10 @@ export default {
       }
     },
     keydown(evt) {
+      const p = () => evt.preventDefault()
       const active = document.activeElement
       
       if (!this.isEditingComp) {
-        const p = () => evt.preventDefault()
         const {key} = evt
         const hasSelected = this.selectedItems.length > 0
   
@@ -485,8 +485,10 @@ export default {
             a: 'assign',
           }
           
-          if (vals[key])
+          if (vals[key]) {
+            p()
             this.focusHeaderIcon(vals[key])
+          }
         }
   
         utils.saveByShortcut(this, (this.isEditingComp || this.iconDrop), key, p, (type, item) => {

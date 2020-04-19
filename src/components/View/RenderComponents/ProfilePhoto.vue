@@ -97,7 +97,7 @@ export default {
       switch (this.size) {
         case 'normal': return '24px'
         case 'small': return '13px'
-        case 'ultra-small': return '11px'
+        case 'ultra-small': return '8px'
         default: return '12px'
       }
     },

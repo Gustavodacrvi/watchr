@@ -1,6 +1,6 @@
 <template>
   <div class="Sidebar-wrapper"
-    :class="[layout, {'scroll-thin': isDesktopBreakPoint, 'slim-sidebar': slimMode, showing}]"
+    :class="[layout, {'scroll-thin': isDesktopBreakPoint, 'slim-sidebar': slimMode, enableSidebarScroll: showing, notScheduling: !isScheduling, isScheduling}]"
 
     id='sidebar-scroll'
 
@@ -733,13 +733,20 @@ export default {
 
 .Sidebar-wrapper {
   height: 100%;
+  position: relative;
+  top: 0;
+  transition-duration: .15s;
 }
 
-.Sidebar-wrapper.showing {
+.Sidebar-wrapper.isScheduling {
+  top: -33px !important;
+}
+
+.Sidebar-wrapper.enableSidebarScroll {
   overflow: auto;
 }
 
-.Sidebar-wrapper.desktop {
+.notScheduling.Sidebar-wrapper.desktop {
   padding: 0 16px;
 }
 

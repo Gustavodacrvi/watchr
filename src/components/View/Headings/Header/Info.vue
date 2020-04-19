@@ -6,17 +6,10 @@
       @leave='leave'
       tag="div"
     >
-      <div v-if="headerInfo && ((headerInfo.icons && headerInfo.icons.length) || headerInfo.comments)" class="icons">
+      <div v-if="headerInfo && ((headerInfo.icons && headerInfo.icons.length))" class="icons">
         <HeaderInfo v-for="item in headerInfo.icons"
           :key="item.icon"
           v-bind="item"
-        />
-        <HeaderInfo v-if="headerInfo.comments"
-          :key="'faskasdf' + false"
-          icon='comment'
-          :number='getNonReadComments'
-          title='Group chat'
-          @click.native="openComments"
         />
       </div>
     </transition>
@@ -152,29 +145,14 @@ export default {
 
       setTimeout(done, 155)
     },
-    openComments() {
-      this.$store.dispatch('pushPopup', {
-        comp: "Comments",
-        payload: {
-          groupId: this.headerInfo.comments.group,
-          id: this.headerInfo.comments.room,
-        },
-      })
-    },
   },
   computed: {
-    ...mapGetters({
-      nonReadCommentsById: 'group/nonReadCommentsById',
-    }),
 
     hasNotes() {
       return this.headerInfo && this.headerInfo.notes && this.headerInfo.notes.save
     },
     isAddingNotes() {
       return this.hasNotes && this.headerInfo.notes && this.headerInfo.notes.name === null
-    },
-    getNonReadComments() {
-      return this.nonReadCommentsById(this.headerInfo.comments.group, this.headerInfo.comments.room).length
     },
     hasFileHandler() {
       return this.headerInfo && this.headerInfo.files && this.headerInfo.files.names

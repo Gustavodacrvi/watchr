@@ -40,6 +40,14 @@
     </template>
 
     <template v-slot:before-name>
+      <Icon v-if="isNewItem"
+        class="name-icon slot-el"
+        key='new-item-icon'
+      
+        icon='circle-full-filled'
+        color='var(--yellow)'
+        width='9px'
+      />
       <span v-if="logStr && !showCheckDate"
         key='check-date'
         class="slot-el check-date"

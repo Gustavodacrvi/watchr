@@ -441,7 +441,7 @@ export default {
   display: none;
 }
 
-.desktop .link-inner-wrapper:hover, .notSmartActive, .link-inner-wrapper:active, .isActive {
+.desktop .link-inner-wrapper:hover, .notSmartActive, .link-inner-wrapper:active, .isActive {  
   background-color: var(--card);
 }
 
@@ -449,8 +449,12 @@ export default {
   background-color: var(--dark-light-gray);
 }
 
-.sortable-drag {
-  background-color: var(--card) !important;
+.sortable-drag.SidebarElement {
+  font-size: var(--font-size);
+  opacity: 1 !important;
+  background-color: var(--card);
+  box-shadow: 0 1px 8px rgba(15,15,15,.6);
+  border-radius: 4px;
 }
 
 .sortable-ghost.SidebarElement, .sortable-ghost.SidebarElement .link-inner-wrapper {

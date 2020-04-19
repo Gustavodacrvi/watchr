@@ -63,7 +63,7 @@ export default {
       this.showingTaskAdder = true
     }, 700)
     this.sortable = new Sortable(this.$el, {
-      group: {name: ['action-buttons', 'sidebar'], pull: true, put: false},
+      group: {name: ['action-buttons', 'sidebar'], pull: 'clone', put: false},
       handle: '.floating-button-handle',
       animation: 200,
 
@@ -77,7 +77,12 @@ export default {
         this.moving = true
       },
       onMove: evt => evt.to !== this.$el,
-      onEnd: () => {
+      onClone: evt => {
+        console.log('onClone', evt)
+      },
+      onEnd: evt => {
+        console.log('onEnd', evt)
+        
         if (this.inboxHover)
           this.openQuickAdd()
         this.moving = false
@@ -165,6 +170,12 @@ export default {
 
 <style scoped>
 
+.sortable-drag.ActButton {
+  opacity: 1 !important;
+  transition: transform .05s;
+  border-radius: 4px;
+}
+
 .inbox-wrapper {
   width: 45px;
   height: 45px;
@@ -242,7 +253,7 @@ export default {
 
 <style>
 
-.moving .ActButton {
+.ActionButtons.moving .ActButton {
   display: none;
 }
 
