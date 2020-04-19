@@ -1,13 +1,18 @@
 <template>
   <div class="Scheduler">
-    asdf
+    <SchedulerCalendar/>
   </div>
 </template>
 
 <script>
 
+import SchedulerCalendar from "./Components/SchedulerCalendar.vue"
 
-export default {}
+export default {
+  components: {
+    SchedulerCalendar,
+  },
+}
 
 </script>
 

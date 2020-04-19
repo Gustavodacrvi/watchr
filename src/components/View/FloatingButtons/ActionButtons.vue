@@ -172,8 +172,6 @@ export default {
 
 .sortable-drag.ActButton {
   opacity: 1 !important;
-  transition: transform .05s;
-  border-radius: 4px;
 }
 
 .inbox-wrapper {
