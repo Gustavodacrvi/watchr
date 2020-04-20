@@ -29,11 +29,11 @@
             >
               <slot name='before-name'></slot>
             </transition-group>
-            <span class="name-wrapper">
+            <div class="name-wrapper">
               <span class="name">
                 <span class="name-parsed" v-html="parsedName"></span>
               </span>
-              <span class="after-name">
+              <div class="after-name">
                 <transition-group
                   appear
                   @enter='infoEnter'
@@ -41,8 +41,8 @@
                 >
                   <slot name="after-name"></slot>
                 </transition-group>
-              </span>
-            </span>
+              </div>
+            </div>
           </div>
           <transition-group
             appear
@@ -209,12 +209,25 @@ export default {
   width: calc(100% - 10px);
 }
 
+.main-cont {
+  position: relative;
+  width: 100%;
+}
+
 .name-wrapper {
-  overflow: hidden;
   height: 100%;
-  max-width: 100%;
   position: relative;
   z-index: 1;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
 }
 
 .name-parsed {
@@ -222,14 +235,6 @@ export default {
   transition: 0;
   z-index: 2;
   padding-right: 1px;
-}
-
-.name {
-  max-width: 100%;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .icon-wrapper {

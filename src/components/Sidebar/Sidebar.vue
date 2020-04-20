@@ -21,7 +21,7 @@
             <transition
               :name='isScheduling ? "mr": "ml"'
             >
-              <div v-if="!isScheduling" class="menus">
+              <div v-if="!isScheduling" class="sidebar-menus">
                 <SidebarRenderer
                   type='list'
                   :isSmart='true'

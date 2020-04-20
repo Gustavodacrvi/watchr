@@ -184,8 +184,6 @@ export default {
     'hideGroupName', 'hideFolderName', 'showingRuler',
     'isSelecting', 'allowDeadlineStr', 'disableLogStr', 'itemModelFallback',
     'isAdding', 'listRenderer',
-
-    'viewName', 'viewType',
   ],
   components: {
     Info,

@@ -24,3 +24,12 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+.ItemList {
+  padding: 20px 10px;
+  padding-right: 20px;
+}
+
+</style>

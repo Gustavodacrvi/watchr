@@ -407,7 +407,7 @@ export default {
 
 <style>
 
-.Sidebar-wrapper .Task {
+.sidebar-menus .Task {
   max-height: 0;
   overflow: hidden !important;
 }

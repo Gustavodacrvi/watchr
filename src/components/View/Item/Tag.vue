@@ -33,7 +33,7 @@ export default {
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'hideGroupName', 'hideFolderName',
     'isSelecting', 'allowDeadlineStr', 'allowLogStr', 'itemModelFallback',
-    'isAdding', 'listRenderer', 'viewName', 'viewType',
+    'isAdding', 'listRenderer',
   ],
 }
 

@@ -56,7 +56,7 @@ export default {
   },
   data() {
     return {
-      MINIMUM_WIDTH: 135,
+      MINIMUM_WIDTH: 150,
       sidebarHided: false,
       scrollTop: null,
       width: DEFAULT_WIDTH,
