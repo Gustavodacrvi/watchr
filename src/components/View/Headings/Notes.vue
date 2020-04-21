@@ -58,6 +58,9 @@ export default {
     blur() {
       this.$emit('input', false)
       this.editing = false
+      this.$nextTick(() => {
+        this.name = this.notes
+      })
     },
     keydown(evt) {
       const {key} = evt
@@ -75,7 +78,6 @@ export default {
       const txt = this.$refs.text
 
       if (txt) {
-        txt.style.height = ''
         txt.style.height = txt.scrollHeight + 'px'
   
         this.$refs.root.style = txt.scrollHeight + 'px'
@@ -85,20 +87,24 @@ export default {
 
       const s = el.style
 
-      const height = el.scrollHeight + 'px'
-      s.transitionDuration = 0
       s.height = 'auto'
-      s.opacity = 0
-      s.marginTop = 0
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.15s'
-        s.height = height
-        s.opacity = 1
-        s.marginTop = this.heading ? 0 : '10px'
-
-        setTimeout(done, 155)
+        const height = getComputedStyle(el).height
         
+        s.transitionDuration = 0
+        s.opacity = 0
+        s.marginTop = 0
+  
+        requestAnimationFrame(() => {
+          s.transitionDuration = '.15s'
+          s.height = height
+          s.opacity = 1
+          s.marginTop = this.heading ? 0 : '10px'
+  
+          setTimeout(done, 155)
+          
+        })
       })
 
     },

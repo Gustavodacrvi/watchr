@@ -2,27 +2,7 @@
   <div class="footer" :class="{slimMode, showing}">
     <div class="inner-footer">
       <div class="wrapper">
-        <div v-if='showing && isDesktopDevice && showIconDropdown && !slimMode'
-          class="scheduler-toggle"
-          :class="{scheduleHover}"
-
-          @mouseenter='scheduleHover = true'
-          @mouseleave='scheduleHover = false'
-          @click='$emit("toggle-scheduling")'
-        >
-          <Icon
-            :icon='!scheduling ? "calendar-star" : "star"'
-            :color='scheduleHover ? schedulerToggleColor : "var(--fade)"'
-          />
-          <span
-            class="schedule-msg"
-            :style='{color: scheduleHover ? schedulerToggleColor : "var(--fade)"}'
-          >
-            <span v-if="scheduling" key="2"> Smart views </span>
-            <span v-else key='s'> Scheduler </span>
-          </span>
-        </div>
-        <div class="drop" v-if="showIconDropdown && showing && !scheduling">
+        <div class="drop" v-if="showIconDropdown && showing">
           <Icon v-for="i in sideIcons" :key='i.icon'
             class="sect-icon cursor remove-highlight primary-hover"
             :icon='i.icon'
@@ -58,19 +38,15 @@ export default {
   components: {
     IconDrop,
   },
-  props: ['showIconDropdown', 'sideIcons', 'render', 'getSectionOptions', 'scheduling', 'slimMode'],
+  props: ['showIconDropdown', 'sideIcons', 'render', 'getSectionOptions', 'slimMode'],
   data() {
     return {
       showing: this.render,
-      scheduleHover: false,
       timeout: null,
     }
   },
   computed: {
     ...mapGetters(['isDesktopDevice', 'isDesktopBreakPoint']),
-    schedulerToggleColor() {
-      return this.scheduling ? 'var(--yellow)' : 'var(--purple)'
-    },
   },
   watch: {
     render() {
@@ -93,13 +69,20 @@ export default {
 <style scoped>
 
 .footer {
-  position: absolute;
+  position: fixed;
   left: 0;
   bottom: 0;
   height: 40px;
   border: none;
   z-index: 100;
-  border-top: 1px solid var(--extra-light-gray);
+  border-top: 1px solid var(--light-gray);
+}
+
+.scheduler-toggler {
+  position: relative;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .slimMode {
@@ -150,27 +133,11 @@ export default {
   background-color: var(--back-color);
 }
 
-
-.scheduler-toggle {
-  position: absolute;
-  left: -15px;
-  user-select: none;
-  top: 50%;
-  transform: translateY(-50%) scale(1,1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 20px;
-  padding: 0 12px;
-  border-radius: 4px;
-  transition: background-color .15s;
-}
-
 .drop {
   position: absolute;
   right: 17px;
   display: flex;
-  transform: translate(26px, 13px);
+  transform: translate(26px, 14px);
 }
 
 .footer.mobile .drop {
@@ -181,18 +148,6 @@ export default {
 .mobile .drop {
   right: unset;
   left: 0;
-}
-
-.scheduler-toggle:hover {
-  background-color: var(--back-color);
-}
-
-.schedule-msg {
-  margin-left: 6px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
 }
 
 </style>

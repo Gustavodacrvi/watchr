@@ -5,23 +5,23 @@
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <path fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M3.827,19.127"/>
-<path fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+<path fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M3.827,19.127"/>
 <g>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M51.121,36.184L23.554,63.751c-2.333,2.333-6.152,2.333-8.485,0l-5.227-5.227c-2.333-2.333-2.333-6.152,0-8.485l27.567-27.567"/>
 </g>
-<polygon fill="currentColor" fill-opacity='.2' points="37.953,10.829 34.816,12.735 33.202,16.033 31.296,12.895 27.998,11.281 31.136,9.375 32.749,6.077 
+<polygon fill="currentColor" fill-opacity='1' points="37.953,10.829 34.816,12.735 33.202,16.033 31.296,12.895 27.998,11.281 31.136,9.375 32.749,6.077 
 	34.656,9.215 "/>
 <g>
-	<path fill="currentColor" fill-opacity='.2' d="M44.814,24.093c-2.328-2.339-2.323-6.163,0.011-8.496l7.265-7.265c2.333-2.333,6.152-2.333,8.485,0
+	<path fill="currentColor" fill-opacity='1' d="M44.814,24.093c-2.328-2.339-2.323-6.163,0.011-8.496l7.265-7.265c2.333-2.333,6.152-2.333,8.485,0
 		l4.969,4.969c2.333,2.333,2.333,6.152,0,8.485l-7.299,7.299c-2.333,2.333-6.147,2.329-8.475-0.011L44.814,24.093z"/>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M44.814,24.093c-2.328-2.339-2.323-6.163,0.011-8.496l7.265-7.265c2.333-2.333,6.152-2.333,8.485,0l4.969,4.969
 		c2.333,2.333,2.333,6.152,0,8.485l-7.299,7.299c-2.333,2.333-6.147,2.329-8.475-0.011L44.814,24.093z"/>
 </g>
-<polygon fill="currentColor" fill-opacity='.2' points="55.184,53.629 52.266,55.401 50.766,58.467 48.994,55.55 45.928,54.05 48.845,52.278 50.346,49.212 
+<polygon fill="currentColor" fill-opacity='1' points="55.184,53.629 52.266,55.401 50.766,58.467 48.994,55.55 45.928,54.05 48.845,52.278 50.346,49.212 
 	52.118,52.129 "/>
-<polygon fill="currentColor" fill-opacity='.2' points="19.834,22.073 14.307,25.43 11.465,31.239 8.107,25.712 2.298,22.87 7.825,19.512 10.668,13.703 
+<polygon fill="currentColor" fill-opacity='1' points="19.834,22.073 14.307,25.43 11.465,31.239 8.107,25.712 2.298,22.87 7.825,19.512 10.668,13.703 
 	14.025,19.23 "/>
 </svg>

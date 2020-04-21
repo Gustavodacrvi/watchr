@@ -32,8 +32,10 @@ export default {
     },
     getAssigneeIconDrop: (s, getters, rootState) => ({group = null}, assignUser) => {
       const itemGroup = getters.getGroupsById([group])[0]
+      if (!itemGroup)
+        return;
       const profiles = itemGroup.profiles
-      const profileUsers = Object.keys(profiles).map(k => ({
+      const profileUsers = Object.keys(profiles).filter(k => profiles[k]).map(k => ({
         name: profiles[k].displayName,
         uid: profiles[k].uid,
         id: profiles[k].uid,
@@ -94,13 +96,6 @@ export default {
         touchGetters: [
           'group/getGroupsById',
         ],
-        deepStateTouch: {
-          'group/groups': [
-            'profiles',
-            'users',
-            'comments',
-          ]
-        },
         getter({}, groupId, id) {
           const group = this['group/getGroupsById']([groupId])[0]
           if (group) {
@@ -177,22 +172,26 @@ export default {
         },
       },
       getGroupsByName: {
-        react: [
-          'name',
+        touchState: [
+          'group/groups',
         ],
-        getter({state}, names) {
+        getter({}, names) {
           const arr = []
           for (const n of names) {
-            const gro = state.groups.find(f => f.name === n)
+            const gro = this['group/groups'].find(f => f.name === n)
             if (gro) arr.push(gro)
           }
           return arr
         },
       },
       getGroupsById: {
-        touchState: [
-          'group/groups',
-        ],
+        deepStateTouch: {
+          'group/groups': [
+            'profiles',
+            'users',
+            'comments',
+          ]
+        },
         getter({}, ids) {
           const arr = []
           for (const f of this['group/groups'])
@@ -259,12 +258,12 @@ export default {
 
       b.commit()
     },
-    moveListBetweenGroups({rootState}, {group, itemIds, ids}) {
+    async moveListBetweenGroups({rootState}, {group, itemIds, ids}) {
       const b = fire.batch()
 
       const writes = []
 
-      setGroup(b, {listsOrder: ids}, group, rootState, writes)
+      await setGroup(b, {listsOrder: ids}, group, rootState, writes)
       batchSetLists(b, {
         group, folder: null,
       }, itemIds, rootState, writes)
@@ -280,10 +279,10 @@ export default {
 
       b.commit()
     },
-    updateOrder({rootState}, {id, ids}) {
+    async updateOrder({rootState}, {id, ids}) {
       const b = fire.batch()
       
-      setGroup(b, {
+      await setGroup(b, {
         listsOrder: ids,
       }, id, rootState)
 

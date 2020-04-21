@@ -66,6 +66,14 @@ export default {
           payload: gro,
         }
     },
+    comments() {
+      const g = this.viewGroup
+      if (g)
+        return {
+          group: g.id,
+          room: g.id,
+        }
+    },
     headerInfo() {
       const group = this.viewGroup
       if (!group)
@@ -74,10 +82,6 @@ export default {
       const save = this.groupsaveGroup
 
       return {
-        comments: group.id ? {
-          group: group.id,
-          room: group.id,
-        } : undefined,
         icons: group.tint ? [
           {
             icon: 'tint',
@@ -102,7 +106,6 @@ export default {
         },
         files: {
           names: group.files || [],
-          storageFolder: 'groups',
           id: group.id,
           save: files => save({files}),
         },
@@ -120,8 +123,9 @@ export default {
     
     mainFilter() {
       const group = this.viewGroup
+      const isTaskInGroup = this.isTaskInGroup
       if (group)
-        return task => this.isTaskInGroup(task, group.id)
+        return task => isTaskInGroup(task, group.id)
       return () => false
     },
     rootFilter() {
@@ -164,15 +168,11 @@ export default {
     viewItem() {
       return this.viewGroup
     },
+    viewId() {
+      return (this.viewGroup && this.viewGroup.id) || null
+    },
     extraListView() {
       const gro = this.viewGroup
-      const save = obj => {
-        this.$store.dispatch('group/saveGroup', {
-          id: gro.id,
-          ...obj,
-        })
-      }
-      const dispatch = this.$store.dispatch
       
       if (gro)
         return {
@@ -180,8 +180,13 @@ export default {
           groupId: gro.id,
           rootFilter: list => gro.id === list.group,
           itemsOrder: gro.listsOrder || [],
-          updateIds: listsOrder => save({listsOrder}),
-          addItem: obj => dispatch('list/addListInGroupByIndexFromView', {...obj, groupId: gro.id}),
+          itemModelFallback: {
+            group: gro.id,
+          },
+          updateViewIds: functionFallbacks.updateOrderFunctions.GroupExtraView,
+          fallbackFunctionData: () => ({
+            groupId: gro.id
+          }),
         }
     },
   },

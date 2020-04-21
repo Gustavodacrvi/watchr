@@ -111,9 +111,7 @@ export default {
       icon: 'trash',
       important: true,
       callback: () => {
-        dispatch('list/deleteList', {
-          listId, tasks: tasks.filter(isTaskInList),
-        })
+        dispatch('list/deleteList', listId)
       }
     }
 

@@ -31,6 +31,7 @@
 
         :isItemSelected='isItemSelected'
         :completed='props.completed'
+        :isSelecting='props.isEditing ? false : isSelecting'
         :canceled='props.canceled'
         :color='props.color'
         :itemModel='props.itemModel'
@@ -39,6 +40,14 @@
     </template>
 
     <template v-slot:before-name>
+      <Icon v-if="isNewItem"
+        class="name-icon slot-el"
+        key='new-item-icon'
+      
+        icon='circle-full-filled'
+        color='var(--yellow)'
+        width='9px'
+      />
       <span v-if="logStr && !showCheckDate"
         key='check-date'
         class="slot-el check-date"
@@ -60,26 +69,20 @@
       >
         {{ listTasksLength }}
       </span>
-      <span v-if="listColor"
-        key="color"
-        class="slot-el info-box"
-      >
-        <Icon
-          icon='tint'
-          :color='listColor'
-          width='8px'
-        />
-      </span>
-      <span v-if="hasFiles"
-        key="file"
-        class="slot-el info-box"
-      >
-        <Icon
-          icon='file'
-          :color='hasFiles'
-          width='8px'
-        />
-      </span>
+      <Icon v-if="listColor"
+        key='color'
+        class='icon name-icon slot-el'
+        icon='tint'
+        :color='hasFiles'
+        width='11px'
+      />
+      <Icon v-if="hasFiles"
+        key='file'
+        class='icon name-icon slot-el'
+        icon='file'
+        :color='hasFiles'
+        width='11px'
+      />
     </template>
 
     <template v-slot:flex-end>
@@ -136,7 +139,7 @@ export default {
     'item', 'movingItem', 'disableCalendarStr',
     'disableDeadlineStr', 'hideGroupName', 'hideFolderName',
     'isSelecting', 'allowDeadlineStr', 'allowLogStr', 'itemModelFallback',
-    'isAdding', 'listRenderer', 'viewName', 'viewType',
+    'isAdding', 'listRenderer',
   ],
   data() {
     return {
@@ -169,11 +172,14 @@ export default {
     cancelItem() {
       this.$store.dispatch('list/cancelLists', [this.item.id])
     },
-    save(obj) {
-      this.$store.dispatch('list/saveList', {
+    async save(obj) {
+      await this.$store.dispatch('list/saveList', {
         id: this.item.id,
         ...obj,
       })
+
+      if (obj.handleFiles)
+        this.$refs.template.isEditing = false
     },
     unCancelItem() {
       this.$store.dispatch('list/uncancelLists', [this.item.id])
@@ -219,6 +225,7 @@ export default {
 
       getFoldersById: 'folder/getFoldersById',
       getGroupsById: 'group/getGroupsById',
+      getAssigneeIconDrop: 'group/getAssigneeIconDrop',
     }),
     
     folderObj() {

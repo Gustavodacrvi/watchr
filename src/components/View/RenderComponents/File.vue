@@ -18,7 +18,11 @@
         <span class="name">{{ name }}</span>
       </span>
       <transition name="fade-t">
-        <div v-if="hover || !isDesktopBreakPoint" class="info">
+        <div v-if="hover || !isDesktopBreakPoint"
+          class="info"
+
+          @click.stop
+        >
           <Icon v-if="status !== 'update'"
             class="icon remove-highlight cursor primary-hover"
             icon='import'

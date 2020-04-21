@@ -1,7 +1,7 @@
 
 @font-face {
-  font-family: "Work Sans";
-  src: url("../WorkSans-Regular.otf");
+  font-family: "Open Sans";
+  src: url("../OpenSans-Semibold.ttf");
 }
 
 html {
@@ -30,18 +30,19 @@ html {
   --dark-void: #19191a;
   --extra-extra-light-gray: #888888;
 
-  --font: "Work Sans";
-
-  --orange: #f68a46;
-  --green: #3efe45;
+  --font: "Open Sans";
+  
+  --orange: #FF9F40;
+  --green: #56EC56;
   --purple: #a04dff;
   --dark-purple: #6b0fff;
-  --olive: #3dffa5;
-  --brown: #e4944e;
-  --yellow: #ffff4d;
+  --olive: #58D68D ;
+  --brown: #9D6C3C;
+  --yellow: #FFFF47;
   --dark-blue: #5751c8;
   --red: #ff4d4d;
   --dark-red: #f2241c;
+  --font-size: 11.5px;
 }
 
 body {
@@ -89,7 +90,7 @@ body, input, button, textarea {
 }
 
 .shadow {
-  box-shadow: 0 2px 8px rgba(10,10,10,.45);
+  box-shadow: 0 1px 8px rgba(15,15,15,.6);
 }
 
 .pc {

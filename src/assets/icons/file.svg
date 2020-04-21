@@ -8,7 +8,7 @@
 		M63.042,36.042v25.664c0,3.85-3.15,7-7,7h-40c-3.85,0-7-3.15-7-7V10.378c0-3.85,3.15-7,7-7h21.925"/>
 </g>
 <g>
-	<path fill="currentColor" fill-opacity='.2' d="M37.967,3.378v16.416c0,3.85,3.15,7,7,7h11.075c3.85,0,7-3.15,7-7v-9.416c0-3.85-3.15-7-7-7H38.503"/>
+	<path fill="currentColor" fill-opacity='1' d="M37.967,3.378v16.416c0,3.85,3.15,7,7,7h11.075c3.85,0,7-3.15,7-7v-9.416c0-3.85-3.15-7-7-7H38.503"/>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M37.967,3.378v16.416c0,3.85,3.15,7,7,7h11.075c3.85,0,7-3.15,7-7v-9.416c0-3.85-3.15-7-7-7H38.503"/>
 </g>

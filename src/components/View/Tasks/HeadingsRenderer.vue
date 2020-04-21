@@ -1,6 +1,7 @@
 <template>
   <div v-if="defer(2)" class="HeadingsWrapper">
     <transition-group
+        appear
         class="front headings-root"
         tag="div"
         ref='headings-root'
@@ -231,7 +232,7 @@ export default {
 
       const heading = this.headings.find(head => head.id === el.dataset.id) || {}
 
-      const isFirst = this.headings[0].id === el.dataset.id
+      const isFirst = this.headings[0] && this.headings[0].id === el.dataset.id
 
       s.transitionDuration = 0
       w.transitionDuration = 0
@@ -272,7 +273,7 @@ export default {
 
       const heading = this.headings.find(head => head.id === el.dataset.id) || {}
 
-      const isFirst = this.headings[0].id === el.dataset.id
+      const isFirst = this.headings[0] && this.headings[0].id === el.dataset.id
 
       if (c)
         c.transitionDuration = 0
@@ -308,7 +309,7 @@ export default {
         s.padding = 0
         s.borderBoddom = `0px ${heading.archive ? "dashed" : "solid"} var(--back-color)`
   
-        setTimeout(done, 175)
+        setTimeout(done, 151)
       })
 
     },

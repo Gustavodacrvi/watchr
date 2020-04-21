@@ -338,7 +338,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'deviceLayout']),
+    ...mapGetters(['isDesktopBreakPoint', 'isDesktopDevice', 'deviceLayout', 'itemHeight']),
     bigName() {
       const m = this.getMom
 
@@ -359,9 +359,6 @@ export default {
     },
     renderHeight() {
       return ((this.length * this.itemHeight) - 4) + 'px'
-    },
-    itemHeight() {
-      return this.isDesktopDevice ? 28 : 50
     },
     renderCont() {
       return this.defer(2) && this.showing
@@ -416,8 +413,6 @@ export default {
 
 .Heading.sortable-ghost .header-wrapper {
   background-color: var(--sidebar-color) !important;
-  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
-    inset 0 -10px 5px -13px rgba(210,210,210, .7);
 }
 
 </style>
@@ -542,6 +537,8 @@ export default {
 
 .sortable-ghost {
   background-color: var(--sidebar-color);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
   border-radius: 4px;
 }
 

@@ -5,6 +5,8 @@ import SmartIconDrop from "@/components/Icons/SmartIconDrop.vue"
 import ChecklistVue from '@/components/View/Tasks/Checklist/Checklist.vue'
 import FileApp from '@/components/View/RenderComponents/File.vue'
 import FileDragDrop from '@/components/View/RenderComponents/FileDragDrop.vue'
+import UploadProgressLine from "@/components/View/RenderComponents/UploadProgressLine.vue"
+
 
 import momUtils from '@/utils/moment'
 
@@ -37,8 +39,9 @@ export default ({
   },
   created() {
     this.model = {...this.model, ...this.itemModelFallback}
-    if (this.item)
+    if (this.item) {
       this.model = {...this.model, ...this.item}
+    }
 
     setTimeout(() => this.isFirstEdit = false, 200)
 
@@ -146,7 +149,7 @@ export default ({
 
     if (checklist)
       editChildren.splice(1, 0, create(ChecklistVue, {
-        ref: 'checklist',
+        ref: 'subitems',
 
         class: {
           hasContent: this.getChecklist && this.getChecklist.length > 0
@@ -169,8 +172,8 @@ export default ({
       })
     )
 
-    if (allowFiles && allowFiles.storageFolder) {
-      editChildren.splice(2, 0, 
+    if (allowFiles) {
+      editChildren.splice(2 - (checklist ? 0 : 1), 0, 
         create('div', {class: 'file-drag-drop-wrapper'}, [
           create(FileDragDrop, {
             props: {
@@ -179,7 +182,7 @@ export default ({
           })
         ])
       )
-      editChildren.splice(3, 0, 
+      editChildren.splice(3 - (checklist ? 0 : 1), 0, 
         create('div', {class: {
           files: true,
           hasContent: this.getFiles && this.getFiles.length > 0
@@ -193,8 +196,8 @@ export default ({
             },
             on: {
               delete: () => this.deleteFile(str),
-              download: () => this.downloadFile(str, allowFiles.storageFolder, this.model.id),
-              view: () => this.viewFile(str, allowFiles.storageFolder, this.model.id)
+              download: () => this.downloadFile(str, this.model.id),
+              view: () => this.viewFile(str, this.model.id)
             },
           })
         }))
@@ -226,8 +229,22 @@ export default ({
             }
           })
         })
-      )  
+      )
     )
+
+    if (allowFiles && this.getFiles && this.getFiles.length && this.model.group)
+        editChildren.splice(3 - (checklist ? 0 : 1), 0,
+          create('div', {class: 'hasContent'}, [
+            'Note: Save your files before sending a task/list to a shared group, group files are not supported and they will be lost forever.'
+          ])
+        )
+
+    if (allowFiles && this.savingItem)
+        editChildren.push(
+          create(UploadProgressLine, {
+            props: this.uploadProgress,
+          })
+        )
 
     return create('div', {
       class: 'EditBuilder',
@@ -244,20 +261,25 @@ export default ({
     },
     save() {
       const model = this.beforeSave(this.model, this)
+
       if (model) {
-        if (allowFiles && allowFiles.storageFolder && this.isEditingFiles && this.addedFiles.length > 0)
+        if (allowFiles && model.group)
+          model.files = []
+          
+        if (allowFiles && this.isEditingFiles && this.addedFiles.length > 0)
           this.savingItem = true
 
         const obj = model
 
-        if (allowFiles && allowFiles.storageFolder) {
-          obj.files = this.getSaveFilePromise || []
+        if (allowFiles) {
+          obj.files = this.files || []
           obj.handleFiles = this.isEditingFiles ? itemId => {
             return new Promise((solve, reject) => {
-              this.saveFiles(this.getFilesToRemove, this.addedFiles, itemId, allowFiles.storageFolder)
+              this.saveFiles(this.getFilesToRemove, this.addedFiles, itemId)
               .then(() => {
                 this.files = []
                 this.addedFiles = []
+                this.savingItem = false
                 solve()
               })
               .catch(() => {
@@ -267,6 +289,7 @@ export default ({
                   type: 'error',
                 })
                 reject()
+                this.savingItem = false
               })
             })
           } : null
@@ -301,12 +324,31 @@ export default ({
         this.cursorPos = 0
       else this.cursorPos = this.lastKeyboardActionIndex
     },
+    closeAllDropdowns() {
+      this.getViewTags.forEach(({id}) => this.$refs[id].tagModeToggle = false)
+    },
     focusSmartInputById(id) {
       const icons = this.allSmartIcons
       let num = this.getFirstSmartIconKeyboardActionPosition
       for (const icon of icons) {
         if (icon.id === id) {
-          this.cursorPos = num
+          this.closeAllDropdowns()
+          return this.$nextTick(() => {
+            this.cursorPos = num
+            return true
+          })
+        }
+        num++
+      }
+      num = this.getFirstViewTagKeyboardActionPosition
+      const tags = this.getViewTags
+      for (const icon of tags) {
+        if (icon.id === id) {
+          this.closeAllDropdowns()
+          return this.$nextTick(() => {
+            this.cursorPos = num
+            this.keyboardActions[num]()
+          })
           return true
         }
         num++
@@ -336,10 +378,8 @@ export default ({
           c: 'checklist',
           h: 'hour',
         }
-        console.log(vals[key])
 
-        if (this.focusSmartInputById(vals[key]))
-          p()
+        this.focusSmartInputById(vals[key])
       }
 
       if (checklist && this.isCursorInChecklist && !isTyping) {
@@ -349,36 +389,36 @@ export default ({
             break
           }
           case '.': {
-            this.$refs.checklist.toggleTask(this.activeChecklistId)
+            this.$refs.subitems.toggleTask(this.activeChecklistId)
             p()
             break
           }
           case " ": {
-            this.$refs.checklist.addEdit(this.cursorPos - 1)
+            this.$refs.subitems.addEdit(this.cursorPos - 1)
             p()
             break
           }
           case "Enter": {
             if (!isTyping) {
               p()
-              this.$refs.checklist.editChecklist(this.activeChecklistId)
+              this.$refs.subitems.editChecklist(this.activeChecklistId)
             }
             break
           }
         }
       }
-      if (allowFiles && allowFiles.storageFolder && this.isCursorInFile && !isTyping) {
+      if (allowFiles && this.isCursorInFile && !isTyping) {
         switch (key) {
           case "Delete": {
             this.deleteFile(this.activeFileName)
             break
           }
           case 'Enter': {
-            this.downloadFile(this.activeFileName, allowFiles.storageFolder, this.model.id)
+            this.downloadFile(this.activeFileName, this.model.id)
             break
           }
           case " ": {
-            this.viewFile(this.activeFileName, allowFiles.storageFolder, this.model.id)
+            this.viewFile(this.activeFileName, this.model.id)
             break
           }
         }
@@ -475,6 +515,9 @@ export default ({
       return []
     },
 
+    getFirstViewTagKeyboardActionPosition() {
+      return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0)
+    },
     getFirstSmartIconKeyboardActionPosition() {
       return this.fieldFunctions.length + 1 + (this.hasChecklist ? this.model[checklist.vModel].length : 0) + this.getViewTags.length + this.getFiles.length
     },
@@ -567,7 +610,7 @@ export default ({
       return this.model[checklist.vModel].some(el => el.id === this.activeChecklistId)
     },
     isCursorInFile() {
-      if (!allowFiles || !allowFiles.storageFolder)
+      if (!allowFiles)
         return false
       return this.getFiles.some(str => str === this.activeFileName)
     },

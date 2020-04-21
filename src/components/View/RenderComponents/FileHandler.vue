@@ -1,24 +1,32 @@
 <template>
-  <div class="FileHandler">
-    <FileDragDrop :onDrop='onDrop'/>
-    <File v-for="f in getFiles" :key="f"
-      :name="f"
-      :status='getFileStatus(f)'
-      @delete="deleteFile(f)"
-      @download="downloadFile(f, storageFolder, id)"
-      @view="viewFile(f, storageFolder, id)"
-    />
-    <transition name="progress-t">
-      <div v-if="saving" class="progress">
-        <div class="progress-line" :style="{width: `${uploadProgress}%`}"></div>
-      </div>
-    </transition>
-    <AuthButton v-if='isEditingFiles'
-      type='dark'
-      value='Save changes'
-      @click="saveCompFiles"
-    />
-  </div>
+  <transition
+    appear
+
+    :css='false'
+    @enter='enter'
+    @leave='leave'
+  >
+    <div class="FileHandler">
+      <FileDragDrop :onDrop='onDrop'/>
+      <File v-for="f in getFiles" :key="f"
+        :name="f"
+        :status='getFileStatus(f)'
+        @delete="deleteFile(f)"
+        @download="downloadFile(f, id)"
+        @view="viewFile(f, id)"
+      />
+      <transition name="progress-t">
+        <div v-if="saving" class="progress">
+          <div class="progress-line" :style="{width: `${uploadProgress}%`}"></div>
+        </div>
+      </transition>
+      <AuthButton v-if='isEditingFiles'
+        type='dark'
+        value='Save changes'
+        @click="saveCompFiles"
+      />
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -35,17 +43,44 @@ export default {
     FileDragDrop,
     File, AuthButton,
   },
-  props: ['storageFolder', 'id'],
+  props: ['id'],
   data() {
     return {
       saving: false,
     }
   },
   methods: {
+    enter(el, done) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.margin = '0'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.15s'
+        s.margin = '12px 0'
+
+        setTimeout(176, done)
+      })
+    },
+    leave(el, done) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.margin = '12px 0'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.15s'
+        s.margin = '0'
+
+        setTimeout(176, done)
+      })
+    },
+    
     saveCompFiles() {
       this.saving = true
       const files = this.files
-      this.saveFiles(this.getFilesToRemove, this.addedFiles, this.id, this.storageFolder).then(res => {
+      this.saveFiles(this.getFilesToRemove, this.addedFiles, this.id).then(res => {
         this.$emit('save', files)
         this.addedFiles = []
         this.$store.commit('pushToast', {
@@ -70,6 +105,10 @@ export default {
 </script>
 
 <style scoped>
+
+.FileHandler {
+  margin: 12px 0;
+}
 
 .progress {
   bottom: 0;

@@ -9,7 +9,7 @@
       @mouseleave="iconHover = false"
 
       @click.stop="$emit('toggle-complete')"
-      @contextmenu="$emit('toggle-cancel')"
+      @contextmenu.prevent.stop="$emit('toggle-cancel')"
     >
       <slot name="check-icon"></slot>
     </div>
@@ -29,11 +29,11 @@
             >
               <slot name='before-name'></slot>
             </transition-group>
-            <span class="name-wrapper">
+            <div class="name-wrapper">
               <span class="name">
                 <span class="name-parsed" v-html="parsedName"></span>
               </span>
-              <span class="after-name">
+              <div class="after-name">
                 <transition-group
                   appear
                   @enter='infoEnter'
@@ -41,8 +41,8 @@
                 >
                   <slot name="after-name"></slot>
                 </transition-group>
-              </span>
-            </span>
+              </div>
+            </div>
           </div>
           <transition-group
             appear
@@ -92,7 +92,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
         s.height = height
-        s.opacity = .4
+        s.opacity = .7
 
         setTimeout(() => {
           s.height = '10px'
@@ -108,7 +108,7 @@ export default {
 
       s.transitionDuration = 0
       s.height = height
-      s.opacity = .4
+      s.opacity = .7
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
@@ -209,12 +209,25 @@ export default {
   width: calc(100% - 10px);
 }
 
+.main-cont {
+  position: relative;
+  width: 100%;
+}
+
 .name-wrapper {
-  overflow: hidden;
   height: 100%;
-  max-width: 100%;
   position: relative;
   z-index: 1;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
 }
 
 .name-parsed {
@@ -224,24 +237,16 @@ export default {
   padding-right: 1px;
 }
 
-.name {
-  max-width: 100%;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .icon-wrapper {
   position: relative;
   height: 100%;
   width: 25px;
   flex-shrink: 0;
   opacity: .4;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
-.iconHover .icon-wrapper {
+.iconHover .icon-wrapper, .showLine .icon-wrapper {
   opacity: 1;
 }
 
@@ -254,7 +259,7 @@ export default {
 
 .info {
   height: 40%;
-  font-size: .95em;
+  font-size: .825em;
   overflow: hidden;
 }
 
@@ -265,6 +270,11 @@ export default {
   display: flex;
   align-items: center;
   z-index: 2;
+  visibility: hidden;
+}
+
+.showLine .line-wrapper {
+  visibility: visible;
 }
 
 .line {

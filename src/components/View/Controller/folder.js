@@ -70,8 +70,9 @@ export default {
     
     mainFilter() {
       const fold = this.viewFolder
+      const isTaskInFolder = this.isTaskInFolder
       if (fold)
-        return task => this.isTaskInFolder(task, fold.id)
+        return task => isTaskInFolder(task, fold.id)
       return () => false
     },
     rootFilter() {
@@ -85,7 +86,6 @@ export default {
       if (fold) {
         return {
           id: fold.id,
-          storageFolder: 'folders',
           files: fold.files,
         }
       }
@@ -141,7 +141,6 @@ export default {
       return {
         files: {
           names: folder.files || [],
-          storageFolder: 'folders',
           id: folder.id,
           save: files => this.foldersaveFolder({files}),
         },
@@ -175,7 +174,6 @@ export default {
           ...obj,
         })
       }
-      const dispatch = this.$store.dispatch
       
       if (fold)
         return {
@@ -183,8 +181,22 @@ export default {
           folderId: fold.id,
           rootFilter: list => fold.id === list.folder,
           itemsOrder: fold.order || [],
-          updateIds: order => save({order}),
-          addItem: obj => dispatch('list/addListInFolderByIndexFromView', {...obj, folderId: fold.id}),
+          itemModelFallback: {
+            folder: fold.id,
+          },
+          updateViewIds: functionFallbacks.updateOrderFunctions.FolderExtraView,
+          mainFallbackItem: (...args) => {
+            const l = this.listmainFallbackItem(...args)
+            if (l.heading)
+              delete l.heading
+            if (l.list)
+              delete l.list
+            return l
+          },
+          
+          fallbackFunctionData: () => ({
+            folderId: fold.id
+          }),
         }
     },
   },

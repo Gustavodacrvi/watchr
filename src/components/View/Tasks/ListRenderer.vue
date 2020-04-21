@@ -1,5 +1,5 @@
 <template>
-  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot, moving, notMoving: !moving}]' @click='click'>
+  <div class="ListRenderer floating-btn-container" :class='[layout, `${comp}-ListRenderer`, {isHeading: !isRoot, moving, notMoving: !moving}]' @click='rootClick'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration"
         class="illustration"
@@ -40,32 +40,17 @@
 
       v-bind='rootId'
 
-      @dragenter='dragenter'
-      @dragover='dragover'
-      @drop='drop'
-      @dragleave.stop
-
       @enter='enter'
       @leave='leave'
     >
       <template v-for="item of getItems">
-        <div v-if='item.cameFromAnotherTab'
-          :key="item.cameFromAnotherTab + 'fdskçalsdf'"
-          class='cameFromAnotherTab-ghost rb'
-        >
-
-        </div>
-        <component v-else-if="!item.isEdit" :is='comp'
+        <component v-if="!item.isEdit" :is='comp'
           v-bind="$props"
           :ref='item.id'
           :key="item.id"
 
-          :itemHeight='itemHeight'
           :item='item'
-          :viewName='viewName'
-          :viewType='viewType'
           :timelineIncrement='timelineIncrement'
-          :isRoot='isRoot'
           :changingView='changingRootView || changingView'
           :newItemsObj='rootItemsObj || newItemsObj'
           :listRenderer='true'
@@ -93,7 +78,6 @@
 
           v-bind='item.propsData'
           :isAdding='true'
-          :itemHeight='itemHeight'
           :itemModelFallback='itemModelFallback'
           :listRenderer='true'
           :fallbackItem='fallbackItem'
@@ -110,25 +94,25 @@
         class='list-info'
       >
         <transition name="fade-t">
-          <div v-if="computedShowSomedayButton && !isElementFromAnotherTabHovering"
+          <div v-if="computedShowSomedayButton"
             @click="$emit('allow-someday')"
           >
             <ButtonVue type="no-padding" value="Show someday items..."/>
           </div>
         </transition>
         <transition name="fade-t">
-          <div v-if="computedShowArchivedHeadings && !isElementFromAnotherTabHovering"
+          <div v-if="computedShowArchivedHeadings"
             @click="showArchived = true"
           >
             <ButtonVue type="no-padding" value="Show archived headings..."/>
           </div>
         </transition>
-        <ButtonVue v-if="showMoreItemsButton && !isElementFromAnotherTabHovering"
+        <ButtonVue v-if="showMoreItemsButton"
           type="no-padding"
           :value='showMoreItemsMessage'
           @click="showingMoreItems = true"
         />
-        <div v-if="showAddItemButton && !isElementFromAnotherTabHovering"
+        <div v-if="showAddItemButton"
           class="add-item-wrapper"
         >
           <div
@@ -138,7 +122,7 @@
             Add item
           </div>
         </div>
-        <div v-if="isDesktopDevice && !isElementFromAnotherTabHovering && viewType === 'list' && !isSmart"
+        <div v-if="isDesktopDevice && viewType === 'list' && !isSmart"
           class="heading-add"
           @click.stop="addHeadingsEdit(lazyItems.length)"
         >
@@ -149,7 +133,7 @@
         </div>
       </div>
     </transition-group>
-    <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
+    <HeadingsRenderer v-if="isRoot"
       ref='headings'
       
       :viewName='viewName'
@@ -209,6 +193,7 @@ import { fire } from '@/store/'
 import { uid, setTask } from '@/utils/firestore'
 
 import autoScheduleMixin from "@/mixins/autoSchedule"
+import listRendering from "@/mixins/listRendering"
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -220,7 +205,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  mixins: [autoScheduleMixin],
+  mixins: [autoScheduleMixin, listRendering],
   props: ['items', 'headings','header', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'hideGroupName', 'showHeadingName', 'isSmart', 'disableDeadlineStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'addedHeading', 'changingRootView', 'rootFilterFunction', 'isRootAddingHeadings', 'onSortableAdd',
   'disableRootActions', 'showHeadingFloatingButton', 'allowLogStr', 'headingFilterFunction', 'showSomedayButton', 'width', 'disableCalendarStr', 'showingRuler', 'itemModelFallback', 'rootItemsObj',
   'rootHeadings', 'viewType', 'itemIconDropOptions', 'newItemsViewAlert', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
@@ -236,7 +221,6 @@ export default {
       showingMoreItems: false,
       lazyItems: [],
       lazyHeadings: [],
-      selectedElements: [],
       disableItemEnterTransitionIds: [],
       droppedIds: [],
       changingView: true,
@@ -250,26 +234,19 @@ export default {
       getTransitionName: 'flip-list',
 
       hasEdit: null,
-      lastSelectedId: null,
       lastHeadingName: null,
       lastButtonElement: null,
       editMoveType: 'add',
       headingsItemsIds: [],
       lazyItemsSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
-      oldRemovedIndicies: [],
       showArchived: false,
-      cameFromAnotherTab: false,
-      cameFromAnotherTabIndex: null,
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
       justAddedHeading: false,
       isAddingHeadings: false,
       newItemsStorageSave: false,
-
-      completeAnimationStack: [],
-      completeAnimationSettimeout: null,
     }
   },
   created() {
@@ -317,107 +294,6 @@ export default {
       else this.$parent.$emit('set-changing-view-timeout')
     },
     
-    enter(el, done) {
-      const id = el.dataset.id
-      const type = el.dataset.transition
-      if (!type || !id) {
-        this.setChangingViewTimeout()
-        return done()
-      }
-
-      const isAdding = type !== 'display'
-
-      const vm = this.$refs[id][0].$refs.template
-
-      const cont = vm.$refs['cont-wrapper']
-      const s = cont.style
-      
-      s.transitionDuration = '0s'
-      s.height = 0
-      s.minHeight = 0
-      
-      if (isAdding) {
-        return requestAnimationFrame(() => {
-          s.transitionDuration = '.1s'
-          s.height = this.itemHeight + 'px'
-          setTimeout(() => {
-            s.transitionDuration = '.15s'
-            s.height = 'auto'
-            vm.isEditing = true
-            this.setChangingViewTimeout()
-            done()
-          }, 10)
-        })
-      }
-      const parentIds = this.disableItemEnterTransitionIds
-      
-      let disableTransition = false
-      if (parentIds.includes(id)) {
-        const i = parentIds.findIndex(id => id === id)
-        parentIds.splice(i, 1)
-        disableTransition = true
-      }
-
-      s.opacity = 0
-
-      requestAnimationFrame(() => {
-        s.transitionDuration = disableTransition ? 0 : '.15s'
-        s.opacity = 1
-        s.height = this.itemHeight + 'px'
-        s.minHeight = this.itemHeight + 'px'
-        
-        setTimeout(() => {
-          s.transitionDuration = '.15s'
-          s.height = 'auto'
-          this.setChangingViewTimeout()
-          done()
-        }, 151)
-      })
-    },
-    leave(el, done) {
-      const id = el.dataset.id
-      const type = el.dataset.transition
-      if (!id || !type || (type === 'edit'))
-        return done()
-
-      const vm = this.$refs[id][0].$refs.template
-
-      const cont = vm.$refs['cont-wrapper']
-      const parentIds = this.disableItemEnterTransitionIds
-      
-      let disableTransition = false
-      if (parentIds.includes(id)) {
-        const i = parentIds.findIndex(id => id === id)
-        parentIds.splice(i, 1)
-        disableTransition = true
-      }
-
-      const s = cont.style
-
-      s.transitionDuration = '0s'
-      s.opacity = 1
-      s.height = this.itemHeight + (vm.showInfo ? 8 : 0) + 'px'
-      s.minHeight = this.itemHeight + (vm.showInfo ? 8 : 0) + 'px'
-
-      const hideItem = () => {
-        s.transitionDuration = disableTransition ? 0 : '.15s'
-        s.opacity = 0
-        s.height = 0
-        s.minHeight = 0
-
-        setTimeout(done, disableTransition ? 0 : 201)
-      }
-
-      requestAnimationFrame(() => {
-        if (!vm.completeAnimation) {
-          hideItem()
-        } else {
-          this.waitForAnotherTaskCompleteAnimation(hideItem)
-        }
-      })
-    },
-
-
     newItemsButtonClick() {
       this.saveNewItemsIds(this.allItemsIds)
       this.newItemsStorageSave = !this.newItemsStorageSave
@@ -484,75 +360,8 @@ export default {
 
       return this.showEmptyHeadings || h.items.length > 0
     },
-    dragenter(evt) {
-      if (!this.moving && !this.hasEdit)
-        evt.preventDefault()
-    },
-    dragover(evt) {
-      this.cameFromAnotherTab = !this.moving && this.allowSortableAdd
-      if (this.cameFromAnotherTab && !this.hasEdit) {
-        const draggableRoot = this.draggableRoot
-        this.$store.commit('cameFromAnotherTabDragStart', draggableRoot)
-        evt.preventDefault()
-
-        const getOffsetTop = elem =>{
-          let offsetTop = 0
-          do {
-            if (!isNaN(elem.offsetTop)) {
-              offsetTop += elem.offsetTop
-            }
-          } while(elem = elem.offsetParent)
-          return offsetTop
-        }
-
-        const listLength = this.lazyItems.length
-        const thresold = 1
-        const itemHeight = this.itemHeight
-        const mousePos = evt.pageY - getOffsetTop(draggableRoot)
-        
-        if (mousePos < (itemHeight + thresold))
-          this.cameFromAnotherTabIndex = 0
-        else if ((((listLength - 2) * itemHeight) - thresold) < mousePos) {
-          this.cameFromAnotherTabIndex = listLength
-        } else {
-          }
-        const pos = Math.floor(mousePos / itemHeight)
-        this.cameFromAnotherTabIndex = pos === -1 ? 0 : pos
-        
-        
-      } else {
-        this.cameFromAnotherTab = false
-      }
-    },
     filterValidItemId(id) {
       return id && id !== 'Edit' && id !== 'Heading' && id !== 'EditComp' && id !== undefined && id !== 'Headingcomponent eidt'
-    },
-    drop(evt) {
-      try {
-        if (this.cameFromAnotherTab) {
-          const res = evt.dataTransfer.getData('text/plain')
-          if (!res) return;
-          const obj = JSON.parse(evt.dataTransfer.getData('text/plain'))
-          if (!obj) return;
-          if (!obj.ids || !Array.isArray(obj.ids) || !obj.viewName || !obj.viewType) return;
-          evt.preventDefault()
-          let items = this.getTasksById(obj.ids)
-          const alreadyHasItem = this.lazyItems.some(el => items.some(i => i.id  === el.id))
-          
-          if (!alreadyHasItem) {
-            localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', res)
-            items = items.map(el => this.fallbackItem(el, true))
-  
-            this.lazyItems.splice(this.cameFromAnotherTabIndex, 0, ...items)
-            const finalIds = this.lazyItems.map(el => el.id)
-    
-            this.addToList(finalIds, obj.ids)
-          }
-        }
-      } catch (arr) {
-        
-      }
-      this.cameFromAnotherTab = false
     },
     addToList(finalIds, itemsIds) {
       if (!this.onSortableAdd) {
@@ -567,19 +376,6 @@ export default {
       } else {
         this.onSortableAdd(finalIds, itemsIds)
       }
-    },
-    
-    waitForAnotherTaskCompleteAnimation(hideTaskFunc) {
-      this.completeAnimationStack.push(hideTaskFunc)
-
-      if (this.completeAnimationSettimeout)
-        clearTimeout(this.completeAnimationSettimeout)
-      
-      this.completeAnimationSettimeout = setTimeout(() => {
-        for (const animate of this.completeAnimationStack)
-          animate()
-        this.completeAnimationStack = []
-      }, 1750)
     },
     
     getHeadingsItemsIds(ids) {
@@ -632,37 +428,6 @@ export default {
 
           hide(createElement.style)
           show(addHeadingElement.style)
-        }
-      }
-    },
-    selectMultipleIds(newId) {
-      if (this.lastSelectedId && newId && this.lazyItems.find(el => el.id === newId) && this.lazyItems.find(el => el.id === this.lastSelectedId)) {
-        const idsToSelect = []
-
-        let selecting = false
-        for (const t of this.lazyItems) {
-          const isOneOfTheTwo = t.id === this.lastSelectedId || t.id === newId
-          if (selecting && !isOneOfTheTwo) {
-            idsToSelect.push(t.id)
-          } else if (!selecting && isOneOfTheTwo) {
-            selecting = true
-          } else if (isOneOfTheTwo) break
-        }
-
-        if (idsToSelect.length > 0) {
-          const root = this.draggableRoot
-          const childNodes = root.childNodes
-
-          const nodes = []
-          for (const node of childNodes) {
-            if (node.dataset && idsToSelect.includes(node.dataset.id) && !nodes.includes(node)) {
-              nodes.push(node)
-            }
-          }
-
-          for (const node of nodes) {
-            this.selectItem(node)
-          }
         }
       }
     },
@@ -749,14 +514,16 @@ export default {
       let lastToElement = null
 
       const onMove = () => divs = []
-      
+
       const obj = {
         disabled: this.disableSortableMount,
         multiDrag: this.enableSelect || !this.isDesktopDevice,
         direction: 'vertical',
 
         animation: 200,
-        delay: this.isDesktopDevice ? 5 : 100,
+        forceFallback: true,
+        fallbackOnBody: true,
+        delay: this.isDesktopDevice ? 15 : 100,
         handle: '.item-handle',
         
         group: this.group || {
@@ -785,39 +552,10 @@ export default {
           }
         },
 
-        onUpdate: (evt) => {
-          setTimeout(() => {
-            this.$emit('update', {finalIds: this.getIds(true)})
-          }, 10)
-        },
-        onSelect: evt => {
-          const id = evt.item.dataset.id
-
-          if (id !== "Edit" && !this.selected.includes(id)) {
-            if (this.pressingMultiSelectKeys)
-              this.selectMultipleIds(id)
-            this.lastSelectedId = id
-
-
-            this.saveType(id)
-            this.$store.commit('selectItem', id)
-          }
-        },
-        onDeselect: evt => {
-          const id = evt.item.dataset.id
-          this.$store.commit('unselectItem', id)
-          if (this.selected.length === 0)
-            setTimeout(() => {
-              if (this.selected.length === 0)
-                this.lastSelectedId = null
-            })
-        },
-        onRemove: (evt) => {
-          const {indicies, items, oldIndicies} = utils.getInfoFromAddSortableEvt(evt)
-          utils.removeSortableItemsOnRemove(items, indicies, this.draggableRoot, this.deSelectItem)
-
-          this.oldRemovedIndicies = oldIndicies.slice()
-        },
+        onUpdate: this.sortableOnUpdate,
+        onSelect: this.sortableOnSelect,
+        onDeselect: this.onSortableDeselect,
+        onRemove: this.onSortableRemove,
         onAdd: (evt, original) => {
           const {type, ids, indicies, items} = utils.getInfoFromAddSortableEvt(evt)
           
@@ -911,21 +649,6 @@ export default {
           }
         },
         onEnd: evt => {
-          setTimeout(() => {
-            const dropedIds = localStorage.getItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP')
-            if (dropedIds) {
-              const obj = JSON.parse(dropedIds)
-              if (obj.ids && Array.isArray(obj.ids)) {
-                obj.ids.forEach(id => {
-                  const i = this.lazyItems.findIndex(el => el.id)
-  
-                  if (i > -1 && !this.isItemRenderable(this.lazyItems[i]))
-                    this.lazyItems.splice(i, 1)
-                })
-                localStorage.setItem('WATCHR_BETWEEN_WINDOWS_DRAG_DROP', '')
-              }
-            }
-          })
           
           this.$store.commit('moving', false)
           setTimeout(() => {
@@ -975,10 +698,10 @@ export default {
             this.oldRemovedIndicies = []
           })
           
-          if (this.isDesktopDevice && this.comp === 'Task') {
+          if (this.isDesktopDevice) {
             this.movingItem = false
-            this.$store.commit('movingTask', false)
           }
+          this.$store.commit('movingTask', false)
         },
         setData: (dataTransfer, el) => {
           dataTransfer.setData('text/plain', JSON.stringify({
@@ -1001,8 +724,8 @@ export default {
 
           if (this.isDesktopDevice && this.comp === 'Task') {
             this.movingItem = true
-            this.$store.commit('movingTask', true)
           }
+          this.$store.commit('movingTask', true)
           
           if (!this.isDesktopDevice)
             window.navigator.vibrate(20)
@@ -1031,10 +754,6 @@ export default {
           }
         },
       }
-      if (!this.isDesktopDevice) {
-        obj.forceFallback = true
-        obj.fallbackOnBody = true
-      }
       this.sortable = new Sortable(this.draggableRoot, obj)
     },
     addHeading(obj, ...args) {
@@ -1050,49 +769,6 @@ export default {
         if (this.isRoot)
           this.justAddedHeading = obj.name
       }
-    },
-    click(event) {
-      if (this.selected.length > 0) {
-        let found = false
-        for (const node of event.path) {
-          if (node.classList && node.classList.contains('ItemTemplate')) {
-            found = true
-            break
-          }
-        }
-
-        if (found) event.stopPropagation()
-      }
-    },
-    selectItem(el) {
-      if (!this.selectedElements.includes(el)) {
-        this.selectedElements.push(el)
-        this.saveType(el.dataset.id)
-        this.$store.commit('selectItem', el.dataset.id)
-        Sortable.utils.select(el)
-      }
-    },
-    saveType(id) {
-      if (this.selectedType !== this.comp) {
-        this.$store.commit('clearSelected')
-        setTimeout(() => {
-          this.$store.commit('selectItem', id)
-        })
-      }
-      this.$store.commit('selectType', this.comp)
-    },
-    deselectAll() {
-      const els = this.selectedElements
-      for (const e of els)
-        this.deSelectItem(e)
-    },
-    deSelectItem(el) {
-      this.$store.commit('unselectItem', el.dataset.id)
-      Sortable.utils.deselect(el)
-
-      const i = this.selectedElements.findIndex(el => el === el)
-      if (i > -1)
-        this.selectedElements.splice(i, 1)
     },
     windowClick() {
       for (const el of this.selectedElements)
@@ -1135,11 +811,14 @@ export default {
         }
 
         const index = targetIndex || this.getListRendererPosition()
-
-        if (shouldRender) {
+        
+        if (shouldRender || t.handleFiles) {
           if (this.isRoot)
             this.saveNewItemsIds([...this.allItemsIds, t.id])
           else this.$emit('save-new-items-ids', t.id)
+        }
+
+        if (shouldRender) {
           this.lazyItems.splice(index, 0, t)
         }
         this.addedItem = t.id
@@ -1289,23 +968,17 @@ export default {
     ...mapState({
       isDraggingOverSidebarElement: state => state.isDraggingOverSidebarElement,
       isEditing: state => state.isEditing,
-      cameFromAnotherTabHTMLElement: state => state.cameFromAnotherTabHTMLElement,
-      selected: state => state.selectedItems,
 
       isOnControl: state => state.isOnControl,
       isOnAlt: state => state.isOnAlt,
 
-      selectedType: state => state.selectedType,
       isOnShift: state => state.isOnShift,
       pressingKey: state => state.pressingKey,
       mainSelection: state => state.mainSelection,
       toggleClipboardPaste: state => state.toggleClipboardPaste,
-
-      moving: state => state.moving,
     }),
     ...mapGetters({
       calendarDate: 'calendarDate',
-      itemHeight: 'itemHeight',
       savedTasks: 'task/tasks',
       layout: 'layout',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
@@ -1361,17 +1034,16 @@ export default {
     getMainSelectionIndex() {
       return this.lazyItems.findIndex(i => i.id === this.mainSelection)
     },
-    isElementFromAnotherTabHovering() {
-      return this.cameFromAnotherTab && this.cameFromAnotherTabHTMLElement === this.draggableRoot
-    },
     getItems() {
-      const items = this.lazyItems.filter(el => el)
-      if (!this.isElementFromAnotherTabHovering)
-        return items
-
-      items.splice(this.cameFromAnotherTabIndex, 0, {
-        cameFromAnotherTab: true,
+      const set = new Set()
+      const items = this.lazyItems.filter(el => {
+        if (!el) return false
+        if (!set.has(el.id)) {
+          set.add(el.id)
+          return true
+        }
       })
+
       return items
     },
     nonEditGetItems() {
@@ -1431,11 +1103,28 @@ export default {
     },
   },
   watch: {
-    selected() {
-      const ids = this.selected
-      const removedEls = this.selectedElements.filter(el => el && !ids.find(id => id === el.dataset.id))
-      for (const el of removedEls)
-        this.deSelectItem(el)
+    allItemsIds(arr, old) {
+      this.emitIds()
+      if (
+          old.includes(this.mainSelection) &&
+          !arr.includes(this.mainSelection)
+        ) {
+          let i = old.indexOf(this.mainSelection)
+
+          while (!arr[i] && (i < arr.length)) {
+            i++
+          }
+          
+          if (arr[i])
+            return this.$store.commit('saveMainSelection', arr[i])
+
+          while (!arr[i] && (i >= 0)) {
+            i--
+          }
+
+          if (arr[i])
+            return this.$store.commit('saveMainSelection', arr[i])
+        }
     },
     toggleClipboardPaste() {
       const task = this.$store.state.clipboardTask
@@ -1472,9 +1161,6 @@ export default {
         })
       }
     },
-    allItemsIds() {
-      this.emitIds()
-    },
   }
 }
 
@@ -1493,12 +1179,6 @@ export default {
   transition-duration: .15s;
 }
 
-.cameFromAnotherTab-ghost {
-  height: 25px;
-  background-color: var(--sidebar-color);
-  transition: transform .15s;
-}
-
 .new-items {
   background-color: rgba(255, 255, 77, .2);
   color: var(--yellow);
@@ -1512,7 +1192,7 @@ export default {
   border-radius: 4px;
   opacity: 1;
   border: 1px solid var(--yellow);
-  transition-duration: .2s;
+  transition-duration: .15s;
   margin-top: 55px;
 }
 
@@ -1521,7 +1201,7 @@ export default {
   color: var(--dark);
   border-radius: 4px;
   padding: 1px 8px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .new-items-btn:hover {
@@ -1601,7 +1281,7 @@ export default {
 
 .heading-add {
   position: relative;
-  transform: translateY(25px);
+  transform: translateY(5px);
   display: flex;
   justify-content: center;
   opacity: 0;
@@ -1671,7 +1351,7 @@ export default {
 }
 
 .flip-list-move {
-  transition: transform .2s;
+  transition: transform .15s;
 }
 
 </style>

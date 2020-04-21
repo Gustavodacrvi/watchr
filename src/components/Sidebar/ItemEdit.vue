@@ -21,7 +21,7 @@
 
 <script>
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   props: ['placeholder', 'adderIcon'],
@@ -30,11 +30,16 @@ export default {
       name: '',
     }
   },
+  created() {
+    this.$store.commit('isEditing', true)
+  },
   mounted() {
     window.addEventListener('click', this.windowClick)
+    
     this.focus()
   },
   beforeDestroy() {
+    this.$store.commit('isEditing', false)
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
@@ -80,7 +85,12 @@ export default {
     },
   },
   computed: {
-    ...mapState(['isOnShift', 'layout'])
+    ...mapState({
+      isOnShift: state => state.isOnShift,
+    }),
+    ...mapGetters({
+      layout: 'layout',
+    })
   },
 }
 

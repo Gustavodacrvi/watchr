@@ -8,7 +8,7 @@
 <path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M59.567,40.477c-0.008,8.781-4.237,17.401-12.066,22.677"/>
 <g>
-	<path fill="currentColor" fill-opacity='.2' d="M67.208,31.608c0.005-5.264-1.508-10.587-4.671-15.281C57.261,8.498,48.641,4.269,39.861,4.261v21.347
+	<path fill="currentColor" fill-opacity='1' d="M67.208,31.608c0.005-5.264-1.508-10.587-4.671-15.281C57.261,8.498,48.641,4.269,39.861,4.261v21.347
 		c0,3.3,2.7,6,6,6H67.208z"/>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M67.208,31.608c0.005-5.264-1.508-10.587-4.671-15.281C57.261,8.498,48.641,4.269,39.861,4.261v21.347c0,3.3,2.7,6,6,6H67.208z"/>

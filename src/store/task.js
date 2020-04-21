@@ -711,6 +711,16 @@ export default {
       },
 
 
+      getEndsTodayEvening: {
+        deepGetterTouch: {
+          'task/allTasks': [
+            'calendar',
+          ],
+        },
+        getter({getters}) {
+          return this['task/allTasks'].filter(t => getters.isTaskInView('Today', t) && t.calendar && t.calendar.evening)
+        },
+      },
       getEndsTodayTasks: {
         deepGetterTouch: {
           'task/tasks': [
@@ -1037,7 +1047,7 @@ export default {
     },
     saveTask({rootState}, obj) {
       const b = fire.batch()
-      setTask(b, obj, rootState, obj.id).then(() => {
+      return setTask(b, obj, rootState, obj.id).then(() => {
         b.commit()
       })
     },
@@ -1108,6 +1118,7 @@ export default {
           name: tasksWithConflictingListNames[task.id] ? task.name + ' (list)' : task.name,
           notes: task.notes || null,
           tags: task.tags || [],
+          files: task.files || [],
           assigned: task.assigned || null,
           tasks: subIds,
           headings: [],
@@ -1144,7 +1155,7 @@ export default {
 
         const writes = []
   
-        const list = listRef()
+        const list = listRef(task.id)
         deleteTask(b, task.id, rootState, writes)
         
         const ids = []
@@ -1181,6 +1192,7 @@ export default {
           smartViewsOrders: {},
           name: task.name,
           notes: task.notes || null,
+          files: task.files || [],
           tags: task.tags || [],
           descr: '',
           tasks: ids,
@@ -1380,7 +1392,7 @@ export default {
 
       b.commit()
     },
-    async addTagsToTasksById({commit, rootState}, {ids, tagIds}) {
+    async addTagsToTasksById({rootState}, {ids, tagIds}) {
       const b = fire.batch()
 
       await batchSetTasks(b, {
@@ -1433,7 +1445,7 @@ export default {
       
       b.commit()
     },
-    copyTask(c, task) {
+    copyTask({rootState}, task) {
       const b = fire.batch()
 
       setTask(b, {
@@ -1448,6 +1460,7 @@ export default {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }
+
 
       switch (type) {
         case 'tag': {
@@ -1493,6 +1506,13 @@ export default {
             task: {
               calendar: calObj(mom().add(1, 'day')),
             }
+          })
+          break
+        }
+        case 'Inbox': {
+          dispatch('saveTasksById', {
+            ids: taskIds,
+            task: {calendar: null},
           })
           break
         }

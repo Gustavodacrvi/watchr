@@ -79,13 +79,14 @@ export default {
               callback: model => {
                 if (el.name === "Remove assignee")
                   model.assigned = null
-                else model.assigned = el.id
+                else model.assigned = el.id || null
               }
             }))
     },
     getAssignees() {
       let group
       const listObj = this.getListObj
+      if (!listObj) return null
 
       if (this.model.group)
         group = this.model.group
@@ -97,9 +98,10 @@ export default {
     },
     getAssigneTagObj() {
       return {
-        id: 'assigned',
+        id: 'assign',
         props: {
           name: this.getAssignedName,
+          title: 'Alt + A',
           icon: 'user',
           listWidth: '180px',
           trigger: 'enter',
@@ -141,9 +143,10 @@ export default {
     },
     calendarTagObj() {
       return {
-        id: 'smart_icon_calendar',
+        id: 'calendar',
         props: {
           name: this.calendarStr,
+          title: 'Alt + S',
           icon: this.getCalendarStrIcon,
           color: this.getCalendarStrColor,
           trigger: 'enter',
@@ -509,6 +512,19 @@ export default {
           callback: model => model.deadline = this.parseKeyword(' ' + el.name).specific,
         }))]
 
+        
+        const calendar = this.parseKeyword(' ' + search.trim())
+        if (calendar && calendar.type === 'specific')
+          arr.unshift({
+            id: 'found_match',
+            name: search,
+            icon: 'calendar',
+            callback: model => {
+              this.fromIconDrop = true
+              model.deadline = calendar.specific
+            }
+          })
+
         return arr
       }
     },
@@ -652,6 +668,7 @@ export default {
         id: 'deadline',
         props: {
           name: utils.getHumanReadableDate(this.model.deadline),
+          title: 'Alt + D',
           icon: 'deadline',
           color: 'var(--orange)',
           trigger: 'enter',

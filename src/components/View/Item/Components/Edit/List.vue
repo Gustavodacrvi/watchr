@@ -20,9 +20,7 @@ export default EditBuilder({
       vModel: 'notes', // this.model[vModel],
     },
   ],
-  allowFiles: {
-    storageFolder: 'lists',
-  },
+  allowFiles: true, // requires file handle on firestore function
   instance: {
     data() {
       return {
@@ -98,7 +96,7 @@ export default EditBuilder({
       }),
 
       leftSmartIconDrops() {
-        return [          {
+        return this.model.group ? [] : [          {
           id: 'add_files',
           props: {
             disabled: true,
@@ -113,7 +111,7 @@ export default EditBuilder({
         const arr = []
 
         if (!this.model.folder && !this.model.group)
-          arr.unshift(this.rightSmartIconDurationObj)
+          arr.unshift(this.getFilteredListSmartIconObj)
 
         if (!this.model.group)
           arr.push(this.getSmartIconTags)
@@ -154,9 +152,10 @@ export default EditBuilder({
 
         if (this.isInAtLeastOneList && listObj)
           arr.push({
-            id: 'lists_tag',
+            id: 'move',
             props: {
               name: listObj.name,
+              title: 'Alt + M',
               icon: this.getListIcon,
               listWidth: '180px',
               color: this.getListColor,
@@ -167,9 +166,10 @@ export default EditBuilder({
 
         if (this.model.color && this.selectedColorObj)
           arr.push({
-            id: 'color_tint',
+            id: 'color',
             props: {
               name: this.selectedColorObj.name,
+              title: 'Alt + O',
               icon: 'tint',
               color: this.selectedColorObj.color,
               trigger: 'enter',

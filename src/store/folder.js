@@ -128,8 +128,8 @@ export default {
         files: [],
         createdFire: new Date(),
         created: mom().format('Y-M-D HH:mm ss'),
-        ...fold,
         defaultShowing: true,
+        ...fold,
       }, undefined, rootState)
 
       b.commit()

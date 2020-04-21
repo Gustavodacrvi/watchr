@@ -77,7 +77,12 @@ export default {
         this.moving = true
       },
       onMove: evt => evt.to !== this.$el,
-      onEnd: () => {
+      onClone: evt => {
+        console.log('onClone', evt)
+      },
+      onEnd: evt => {
+        console.log('onEnd', evt)
+        
         if (this.inboxHover)
           this.openQuickAdd()
         this.moving = false
@@ -165,6 +170,10 @@ export default {
 
 <style scoped>
 
+.sortable-drag.ActButton {
+  opacity: 1 !important;
+}
+
 .inbox-wrapper {
   width: 45px;
   height: 45px;
@@ -241,6 +250,10 @@ export default {
 </style>
 
 <style>
+
+.ActionButtons.moving .ActButton {
+  display: none;
+}
 
 .ActButton {
   transition-duration: 0s;

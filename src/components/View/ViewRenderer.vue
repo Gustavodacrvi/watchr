@@ -102,7 +102,9 @@
     </transition>
     <HeaderIcons
       ref='header-icons'
+      :viewId='viewId'
       :width='width'
+      :viewType='viewType'
       :getHeaderIcons='getHeaderIcons'
 
       @add-task='addTask'
@@ -150,7 +152,7 @@ export default {
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
-  'width', 'sidebarHided',
+  'width', 'sidebarHided', 'viewId', 'comments',
   'fallbackFunctionData', 'getHeaderIcons',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
@@ -327,8 +329,8 @@ export default {
       }
 
       if (this.selectedItems.length === 0 && ids.length === 1) {
-        this.$store.commit('selectItem', ids[0])
         this.$store.commit('selectType', this.shortcutsType)
+        this.$store.commit('selectItem', ids[0])
         this.$nextTick(focus)
       } else if (ids.length >= 1) {
         focus()
@@ -395,14 +397,17 @@ export default {
       }
     },
     keydown(evt) {
+      const p = () => evt.preventDefault()
       const active = document.activeElement
       
       if (!this.isEditingComp) {
-        const p = () => evt.preventDefault()
         const {key} = evt
         const hasSelected = this.selectedItems.length > 0
   
         const fallbackItems = this.fallbackSelected
+
+        if (key === 'Escape' && this.selectedItems.length)
+          this.$store.commit('clearSelected')
 
         if ((!this.mainSelection || this.mainSelectionIsNotInView)) {
           switch (key) {
@@ -468,46 +473,6 @@ export default {
           }
         }
 
-        if (this.isOnAlt && key === 'a') {
-          let isTask
-          let items
-          
-          if (this.shortcutsType === 'Task') {
-            isTask = true
-            items = this.getTasksById(fallbackItems)
-          } else {
-            isTask = false
-            items = this.getListsById(fallbackItems)
-          }
-          const groupSet = new Set()
-
-          items.forEach(el => {
-            if (el && el.group && !groupSet.has(el.group))
-              groupSet.add(el.group)
-          })
-
-          if (items.some(el => el && el.group) && groupSet.size === 1) {
-            const ids = fallbackItems.slice()
-
-            const callback = !isTask ?
-                uid => this.$store.dispatch('list/saveListsById', {
-                  ids,
-                  list: {
-                    assigned: uid,
-                  },
-                }) : 
-                uid => this.$store.dispatch('task/saveTasksById', {
-                  ids,
-                  task: {
-                    assigned: uid,
-                  },
-                })
-            
-            this.$store.commit('pushIconDrop',
-              this.getAssigneeIconDrop({group: items[0].group}, callback)
-            )
-          }
-        }
 
         if (this.isOnAlt && !this.isOnControl) {
           const vals = {
@@ -517,10 +482,13 @@ export default {
             t: 'tag',
             p: 'priority',
             e: 'duration',
+            a: 'assign',
           }
           
-          if (vals[key])
+          if (vals[key]) {
+            p()
             this.focusHeaderIcon(vals[key])
+          }
         }
   
         utils.saveByShortcut(this, (this.isEditingComp || this.iconDrop), key, p, (type, item) => {

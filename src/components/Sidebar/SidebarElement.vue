@@ -437,11 +437,11 @@ export default {
   user-select: none;
 }
 
-.sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble, .sortable-ghost .toggle-icon, .sortable-ghost .info {
+.sortable-ghost.SidebarElement .name-wrapper, .sortable-ghost.SidebarElement .icon-wrapper, .sortable-ghost.SidebarElement .bubble, .sortable-ghost.SidebarElement .toggle-icon, .sortable-ghost.SidebarElement .info {
   display: none;
 }
 
-.desktop .link-inner-wrapper:hover, .notSmartActive, .link-inner-wrapper:active, .isActive {
+.desktop .link-inner-wrapper:hover, .notSmartActive, .link-inner-wrapper:active, .isActive {  
   background-color: var(--card);
 }
 
@@ -449,16 +449,18 @@ export default {
   background-color: var(--dark-light-gray);
 }
 
-.sortable-drag {
-  background-color: var(--card) !important;
+.sortable-drag.SidebarElement {
+  font-size: var(--font-size);
+  opacity: 1 !important;
+  background-color: var(--card);
+  box-shadow: 0 1px 8px rgba(15,15,15,.6);
+  border-radius: 4px;
 }
 
-.sortable-ghost, .sortable-ghost .link-inner-wrapper {
+.sortable-ghost.SidebarElement, .sortable-ghost.SidebarElement .link-inner-wrapper {
   background-color: var(--dark-void) !important;
   box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
     inset 0 -10px 5px -13px rgba(210,210,210, .7);
-  transition-duration: 0 !important;
-  transition: none !important;
 }
 
 .sortable-selected .link-inner-wrapper {

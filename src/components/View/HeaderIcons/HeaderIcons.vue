@@ -25,14 +25,21 @@ import HeaderIcon from './HeaderIcon.vue'
 
 import editBuilderMixin from "@/mixins/editBuilder.js"
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   mixins: [editBuilderMixin],
   components: {
     HeaderIcon,
   },
-  props: ['width', 'getHeaderIcons'],
+  props: ['width', 'getHeaderIcons', 'viewId'],
+  data() {
+    return {
+      model: {
+        group: (this.viewType === 'group' && this.viewId) || null,
+      },
+    }
+  },
   methods: {
     focusOnHeaderIcon(id) {
       Object.keys(this.$refs).forEach(key => {
@@ -54,10 +61,15 @@ export default {
               ids: this.selectedItems.slice(),
               tagIds: model.tags,
             })
+          } else {
+            this.$store.dispatch('list/addTagsToListsById', {
+              ids: this.selectedItems.slice(),
+              tagIds: model.tags,
+            })
           }
 
         } else {
-          
+
           if (this.selectedType === 'Task')
             this.$store.dispatch('task/saveTasksById', {
               ids: this.selectedItems.slice(),
@@ -82,6 +94,10 @@ export default {
   },
   computed: {
     ...mapState(['selectedType', 'selectedItems']),
+    ...mapGetters({
+      getTasksById: 'task/getTasksById',
+      getListsById: 'list/getListsById',
+    }),
 
     style() {
       return {
@@ -95,7 +111,6 @@ export default {
         this.calendarSmartIconObj,
         this.getMoveToListSmartIconObj,
         this.deadlineSmartIconObj,
-        this.getSmartIconTags,
         this.getPrioritySmartIconObj,
         this.rightSmartIconDurationObj,
       ]
@@ -179,11 +194,28 @@ export default {
         return this.getHeaderIcons(this.defaultIcons)
       return this.defaultIcons
     },
+    areGroupItems() {
+      const items = this.selectedType === "Task" ? this.getTasksById(this.selectedItems) : this.getListsById(this.selectedItems)
+      return items.every(item => item.group)
+    },
     getListIcons() {
       if (this.selectedItems.length) {
-        return this.selectedType === "Task" ? this.taskListIcons : this.listListIcons 
+        const arr = (this.selectedType === "Task" ? this.taskListIcons : this.listListIcons).slice()
+
+        if (this.areGroupItems) {
+          arr.unshift(this.getAssigneSmartIconObj)
+        } else {
+          arr.splice(3, 0, this.getSmartIconTags)
+        }
+        
+        return arr
       }
       return this.getIcons
+    },
+  },
+  watch: {
+    viewId() {
+      this.model.group = this.viewId || null
     },
   },
 }
@@ -199,9 +231,9 @@ export default {
   bottom: 0;
   display: flex;
   justify-content: center;
-  border-top: 1px solid var(--extra-light-gray);
+  border-top: 1px solid var(--light-gray);
   background-color: var(--back-color);
-  transition-duration: .2s;
+  transition-duration: .15s;
   z-index: 100;
 }
 
@@ -215,7 +247,7 @@ export default {
 }
 
 .flip-list-move {
-  transition: transform .2s;
+  transition: transform .15s;
 }
 
 </style>

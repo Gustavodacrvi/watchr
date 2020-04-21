@@ -56,7 +56,7 @@ export default {
   },
   data() {
     return {
-      MINIMUM_WIDTH: 135,
+      MINIMUM_WIDTH: 150,
       sidebarHided: false,
       scrollTop: null,
       width: DEFAULT_WIDTH,
@@ -144,7 +144,7 @@ export default {
         if (app) {
           let height = app.offsetHeight
 
-          const minimalBottomPosition = this.hideNavbar ? 33 : 58
+          const minimalBottomPosition = this.hideNavbar ? 33 : 50
         
           this.navObj = {
             height: (height - minimalBottomPosition) + 'px',

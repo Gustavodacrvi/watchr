@@ -32,10 +32,10 @@ export default EditBuilder({
 
           if (toSplit) {
             txt.split(toSplit).filter(s => s)
-              .forEach(task => this.addSubtask({
+              .forEach(task => this.$parent.addSubtask({
                 name: task,
-                index: this.task.checklist.length,
-                ids: this.task.order
+                index: this.$parent.model.checklist.length,
+                ids: this.$parent.model.order
               }))
           }
         
@@ -50,9 +50,7 @@ export default EditBuilder({
     vModel: 'checklist', // this.model[option]
     order: 'order', // this.model[option]
   }, // requires removeSubtask, saveChecklist, addSubtask, isRecurringItem methods
-  allowFiles: {
-    storageFolder: 'tasks', // requires file handle on firestore function
-  },
+  allowFiles: true, // requires file handle on firestore function
   instance: {
     data() {
       return {
@@ -206,11 +204,14 @@ export default EditBuilder({
               trigger: 'type',
             },
             onTrigger: (vm, getModel) => {
-              vm.$refs.checklist.pushEditString(getModel)
+              vm.$refs.subitems.pushEditString(getModel)
             },
           },
-          {
-            id: 'add_files',
+        ]
+
+        if (!this.model.group)
+          arr.push({
+            id: 'file',
             props: {
               disabled: true,
               icon: 'file',
@@ -218,8 +219,7 @@ export default EditBuilder({
               file: true,
               onDrop: this.onDrop,
             },
-          },
-        ]
+          })
 
         if (this.model.calendar && !this.model.calendar.evening)
           arr.splice(1, 0, {
@@ -292,6 +292,19 @@ export default EditBuilder({
             name: 'No time',
             icon: 'clock',
             callback: model => model.calendar.time = null
+          },
+          {
+            id: 'select_teim',
+            name: 'Select time',
+            icon: 'clock',
+            callback: () => {
+              this.$store.commit('pushIconDrop', {
+                comp: 'TimePicker',
+                content: {
+                  callback: time => {model.calendar.time = time},
+                },
+              })
+            }
           },
           ...arr.map(getObj),
         ]
@@ -373,9 +386,10 @@ export default EditBuilder({
         const name = this.calendarStr
         
         return {
-          id: 'calendar_tag',
+          id: 'calendar',
           props: {
             name,
+            title: 'Alt + S',
             icon: this.getCalendarStrIcon,
             color: this.getCalendarStrColor,
             trigger: 'enter',
@@ -396,9 +410,10 @@ export default EditBuilder({
         
         if (this.model.calendar && this.model.calendar.time)
           tags.push({
-            id: 'time',
+            id: 'hour',
             props: {
               icon: 'clock',
+              title: 'Alt + H',
               name: utils.parseTime(this.model.calendar.time, this.userInfo),
               color: 'var(--brown)',
               trigger: 'enter',
@@ -412,6 +427,7 @@ export default EditBuilder({
             id: 'evening',
             props: {
               icon: 'moon',
+              title: 'Alt + N',
               name: 'Evening',
               color: 'var(--dark-purple)',
               trigger: 'click',
@@ -429,9 +445,10 @@ export default EditBuilder({
 
         if (this.isInAtLeastOneList && listObj)
           tags.push({
-            id: 'lists_tag',
+            id: 'move',
             props: {
               name: listObj.name,
+              title: 'Alt + M',
               icon: this.getListIcon,
               listWidth: '180px',
               color: this.getListColor,
@@ -445,7 +462,7 @@ export default EditBuilder({
 
         if (this.model.heading && listObj && listObj.headings && listObj.headings.length > 0)
           tags.push({
-            id: 'headingsd_id',
+            id: 'headings',
             props: {
               name: this.getListHeadingName,
               icon: 'heading',
@@ -458,7 +475,7 @@ export default EditBuilder({
 
         if (this.model.taskDuration)
           tags.push({
-            id: 'duration_clock',
+            id: 'duration',
             props: {
               name: this.durationStr,
               icon: 'duration',

@@ -37,6 +37,7 @@
           <slot name="check-icon"
             :completed='completed'
             :canceled='canceled'
+            :isEditing='isEditing'
             :color='props.iconColor'
             :itemModel='props.itemModel'
             :forceDefault='props.forceDefault'
@@ -95,9 +96,9 @@ export default {
     ItemCont, CommentCounter,
   },
   props: [
-    'itemHeight', 'item', 'editRawPlaceholder', 'isAdding', 
+    'item', 'editRawPlaceholder', 'isAdding', 
     'multiSelectOptions', 'movingItem', 'isSelecting', 'comp',
-    'completedItem', 'canceledItem', 'waitForAnotherItemComplete',
+    'completedItem', 'canceledItem', 'sidebarRenderer',
     'editComponent', 'itemModelFallback', 'listRenderer', 'showInfo',
     'isRepeatingItem', 'changingView',
 
@@ -126,16 +127,24 @@ export default {
   methods: {
     ...mapMutations(['saveMainSelection']),
     
+    saveSelecition(id) {
+      if (!this.sidebarRenderer)
+        this.saveMainSelection(id)
+    },
     save(obj) {
       if (this.isAdding)
         this.$parent.$emit('save', obj)
       else {
+        if (!obj.handleFiles) {
+          this.isEditing = false
+          this.onHover = false
+        }
+        
         this.$emit('save', obj)
-        this.isEditing = false
       }
     },
     click(evt) {
-      if (!this.isSelecting && this.isDesktopDevice && !this.isEditing) {
+      if (!this.isSelecting && this.isDesktopDevice && !this.isEditing && !this.sidebarRenderer) {
         this.isEditing = true
         evt.stopPropagation()
       }
@@ -145,8 +154,8 @@ export default {
     },
     close() {
       this.isEditing = false
-      if (!this.isAdding)
-        this.saveMainSelection(this.item.id)
+      if (!this.isAdding && !this.sidebarRenderer)
+        this.saveSelecition(this.item.id)
     },
     
     animate(animate) {
@@ -370,6 +379,7 @@ export default {
     }),
     ...mapGetters({
       layout: 'layout',
+      itemHeight: 'itemHeight',
       isDesktopDevice: 'isDesktopDevice',
       isDesktopBreakPoint: 'isDesktopBreakPoint',
 
@@ -378,7 +388,6 @@ export default {
       nonReadCommentsById: 'group/nonReadCommentsById',
       getAssigneeIconDrop: 'group/getAssigneeIconDrop',
     }),
-    ...mapGetters(['layout', 'isDesktopDevice']),
 
     isItemSelected() {
       if (!this.item)
@@ -386,7 +395,7 @@ export default {
       return this.selectedItems.includes(this.item.id)
     },
     isItemMainSelection() {
-      if (!this.item)
+      if (!this.item || this.sidebarRenderer)
         return;
       return this.item.id === this.mainSelection
     },
@@ -444,6 +453,7 @@ export default {
 .sortable-ghost.ItemTemplate .CheckIcon,
 .sortable-ghost.ItemTemplate .ruler-element,
 .sortable-ghost.ItemTemplate .main-cont,
+.sortable-ghost.ItemTemplate .text,
 .sortable-ghost.ItemTemplate .info {
   display: none;
 }
@@ -454,6 +464,14 @@ export default {
   cursor: grab;
 }
 
+.sortable-drag.ItemTemplate {
+  font-size: var(--font-size);
+  opacity: 1 !important;
+  background-color: var(--card);
+  box-shadow: 0 1px 8px rgba(15,15,15,.6);
+  border-radius: 4px;
+}
+
 .sortable-ghost.ItemTemplate .cont-wrapper {
   background-color: var(--sidebar-color) !important;
   box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
@@ -461,6 +479,10 @@ export default {
   transition-duration: 0;
   height: 38px;
   padding: 0;
+}
+
+.Sidebar-wrapper .sortable-ghost.ItemTemplate .cont-wrapper {
+  background-color: var(--dark-void) !important;
 }
 
 .moving .ItemTemplate.isItemSelected .cont-wrapper {

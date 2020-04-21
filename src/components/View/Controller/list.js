@@ -115,15 +115,12 @@ export default {
     removeDeadline() {
       this.listsaveList({deadline: null})
     },
-
-    removeDeadline() {},
-    removeDeferDate() {},
-    
     
     mainFilter() {
       const list = this.viewList
+      const isTaskInList = this.isTaskInList
       if (list) {
-        return task => this.isTaskInList(task, list.id)
+        return task => isTaskInList(task, list.id)
       }
       return () => false
     },
@@ -132,9 +129,11 @@ export default {
       const viewList = this.viewList
       if (viewList) {
         const headings = this.$store.getters['list/getListHeadingsById'](viewList.id)
+
+        const isTaskInHeading = this.isTaskInHeading
         
         for (const h of headings) {
-          const pipedFilter = task => this.isTaskInHeading(task, h)
+          const pipedFilter = task => isTaskInHeading(task, h)
 
           const save = obj => {
             this.$store.dispatch('list/saveHeading', {
@@ -245,12 +244,19 @@ export default {
           payload: list,
         }
     },
+    comments() {
+      const l = this.viewList
+      if (l)
+      return {
+        group: l.group || null,
+        room: l.id,
+        }
+    },
     headerInfo() {
       const list = this.viewList
       if (!list)
         return null
       
-      const listId = list.id
       const parseDate = utils.getHumanReadableDate
 
       const specificDate = list.calendar ? utils.parseCalendarObjectToString(list.calendar, this.userInfo) : null
@@ -308,13 +314,8 @@ export default {
         })
 
       const obj = {
-        comments: list.group ? {
-          group: list.group || null,
-          room: list.id,
-        } : undefined,
         files: {
           names: list.files || [],
-          storageFolder: 'lists',
           id: list.id,
           save: files => save({files}),
         },

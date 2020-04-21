@@ -244,12 +244,15 @@ export default {
         if (head.react)
           for (const p of head.react) nonFiltered[p]
 
+        const filterOptionsPipes = this.filterOptionsPipes
+        const filterOptionsPipe = this.filterOptionsPipe
+
         const tasks = nonFiltered.filter(
           head.configFilterOptions ?
             pipeBooleanFilters(
-              ...this.filterOptionsPipes.filter(head.configFilterOptions).map(p => this[p])
+              ...filterOptionsPipes.filter(head.configFilterOptions).map(p => this[p])
             )
-           : this.filterOptionsPipe
+           : filterOptionsPipe
         )
 
         const saveTempo = final => {
@@ -469,18 +472,21 @@ export default {
     },
     hasAtLeastOneSomeday() {
       const rootNonFiltered = this.rootNonFiltered
+      const isTaskSomeday = this.isTaskSomeday
+      
       for (const task of rootNonFiltered)
-        if (this.isTaskSomeday(task))
+        if (isTaskSomeday(task))
           return true
       const laserHeadings = this.laserHeadings
       for (const head of laserHeadings)
-        if (head.nonFiltered.some(task => this.isTaskSomeday(task)))
+        if (head.nonFiltered.some(task => isTaskSomeday(task)))
           return true
       return false
     },
     pipeSomeday() {
       if (this.showSomeday) return () => true
-      return task => !this.isTaskSomeday(task)
+      const isTaskSomeday = this.isTaskSomeday
+      return task => !isTaskSomeday(task)
     },
     filterByAssignedPipe() {
       if (!this.filterByAssigned) return () => true
@@ -488,11 +494,13 @@ export default {
     },
     pipeCompleted() {
       if (this.showCompleted) return () => true
-      return task => !this.isTaskCompleted(task, this.calendarDate, this.itemCompletionCompareDate)
+      const isTaskCompleted = this.isTaskCompleted
+      return task => !isTaskCompleted(task, this.calendarDate, this.itemCompletionCompareDate)
     },
     pipeCanceled() {
       if (this.showCompleted) return () => true
-      return task => !this.isTaskCanceled(task)
+      const isTaskCanceled = this.isTaskCanceled
+      return task => !isTaskCanceled(task)
     },
 
     presentTags() {

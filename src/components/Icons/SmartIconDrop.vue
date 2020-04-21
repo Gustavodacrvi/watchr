@@ -13,7 +13,7 @@
       @click="click"
       @click.self='clickSelf'
     >
-      <div class="wrapper"
+      <div class="wrapper-wrapper"
         @click="activate"
       >
         <div class="icon-wrapper">
@@ -72,10 +72,17 @@
             >
               <div class="option-wrapper">
                 <div class="option-icon-wrapper">
-                  <Icon class="option-icon"
+                  <Icon v-if='o.icon' class="option-icon"
                     :icon='o.icon'
                     :color='o.color'
                     width='12px'
+                  />
+                  <Photo v-else-if='o.photoURL'
+                    class="mem"
+                    :photoURL='o.photoURL'
+                    size='ultra-small'
+                    :stopAuthFallback='true'
+                    :display='true'
                   />
                 </div>
                 <div class="option-name">
@@ -91,10 +98,16 @@
 </template>
 
 <script>
+
+import Photo from "@/components/View/RenderComponents/ProfilePhoto.vue"
+
 import { mapState } from 'vuex'
 
 export default {
-  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop', 'headerIcon', 'title'],
+  components: {
+    Photo,
+  },
+  props: ['icon', 'color', 'placeholder', 'width', 'active', 'trigger', 'list', 'listWidth', 'tagMode', 'name', 'callback', 'compose', 'disabled', 'file', 'onDrop', 'headerIcon', 'title', 'listenToWindow'],
   data() {
     return {
       focus: false,
@@ -112,11 +125,11 @@ export default {
 
   },
   beforeDestroy() {
-    this.$parent.$el.removeEventListener('click', this.hide)
+    (!this.listenToWindow ? this.$parent.$el : window).removeEventListener('click', this.hide)
   },
   mounted() {
+    (!this.listenToWindow ? this.$parent.$el : window).addEventListener('click', this.hide)
     this.saveValueWith()
-    this.$parent.$el.addEventListener('click', this.hide)
   },
   methods: {
     onFileDrop(...args) {
@@ -194,7 +207,7 @@ export default {
           s.marginLeft = 0
         }
 
-        setTimeout(done, 175)
+        setTimeout(done, 151)
       })
 
 
@@ -359,6 +372,11 @@ export default {
 
         if (key === "Escape" && !(this.tagMode && this.currentList === this.list))
           this.switchLists()
+        
+        if (key === "Escape" && this.headerIcon)
+          this.$emit('close')
+        if (key === "Escape" && this.tagMode)
+          this.tagModeToggle = false
 
         if (!stop) {
           if (this.tagMode && this.currentList === this.list)
@@ -517,13 +535,12 @@ export default {
 }
 
 .isTyping {
-  box-shadow: inset 0 10px 6px -13px rgba(10,10,10, .8);
+  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
+    inset 0 -10px 5px -13px rgba(210,210,210, .7);
 }
 
 .SmartIconDrop.isActive, .SmartIconDrop.notHeaderIcon:hover {
   background-color: var(--light-sidebar-color);
-  box-shadow: inset 0 10px 8px -13px rgba(5,5,5, .7),
-    inset 0 -10px 5px -13px rgba(210,210,210, .7);
 }
 
 .SmartIconDrop.isActive.headerIcon {
@@ -551,7 +568,7 @@ export default {
   transform: translateY(0px);
 }
 
-.wrapper {
+.wrapper-wrapper {
   width: 100%;
   height: 100%;
   display: flex;

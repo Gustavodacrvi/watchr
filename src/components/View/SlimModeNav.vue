@@ -1,8 +1,7 @@
 <template>
   <div class="SlimModeNav" :class="{render, mobile: !isDesktopDevice}">
     <transition name="side-t">
-      <component v-if="active"
-        :is='getComp'
+      <Scheduler v-if="active"
 
         :date='calendarDate'
         :mainView='true'
@@ -28,12 +27,10 @@
 
 import { mapGetters } from 'vuex'
 
-import Sidebar from "@/components/Sidebar/Sidebar.vue"
-import Scheduler from '@/components/Sidebar/Scheduler.vue'
+import Scheduler from '@/components/Scheduling/SchedulerTimeline.vue'
 
 export default {
   components: {
-    Sidebar,
     Scheduler,
   },
   props: ['scheduling', 'render', 'viewName'], 
@@ -64,9 +61,6 @@ export default {
   },
   computed: {
     ...mapGetters(['calendarDate', 'isDesktopDevice']),
-    getComp() {
-      return this.scheduling ? 'Sidebar' : 'Scheduler'
-    },
   },
   watch: {
     active() {

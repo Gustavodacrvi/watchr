@@ -30,7 +30,7 @@
         v-bind="{...{...$attrs, ...$props}, ...item}"
 
         :isItemSelected='isItemSelected'
-        :isSelecting='isSelecting'
+        :isSelecting='props.isEditing ? false : isSelecting'
         :completed='props.completed'
         :itemModel='props.itemModel'
         :canceled='props.canceled'
@@ -107,16 +107,13 @@
         width='7px'
         data-isfirstcontelement='first'
       />
-      <span v-if="hasFiles"
-        key="file"
-        class="info-box slot-el"
-      >
-        <Icon
-          icon='file'
-          :color='hasFiles'
-          width='8px'
-        />
-      </span>
+      <Icon v-if="hasFiles"
+        key='file'
+        class="icon name-icon slot-el"
+        icon='file'
+        :color='hasFiles'
+        width='11px'
+      />
     </template>
 
     <template v-slot:flex-end>
@@ -187,18 +184,17 @@ export default {
     'hideGroupName', 'hideFolderName', 'showingRuler',
     'isSelecting', 'allowDeadlineStr', 'disableLogStr', 'itemModelFallback',
     'isAdding', 'listRenderer',
-
-    'viewName', 'viewType',
   ],
   components: {
     Info,
     CheckIcon, TimelineElement,
   },
   methods: {
-    save(obj) {
-      if (this.item)
-        this.saveTaskContent(obj)
-      else this.$emit('save', obj)
+    async save(obj) {
+      await this.saveTaskContent(obj)
+
+      if (obj.handleFiles)
+        this.$refs.template.isEditing = false
     },
     copyItem() {
       if (this.item)
@@ -214,7 +210,7 @@ export default {
         this.selectItem()
     },
     saveTaskContent(obj) {
-      this.$store.dispatch('task/saveTask', {
+      return this.$store.dispatch('task/saveTask', {
         id: this.item.id,
         ...obj,
       })
@@ -388,6 +384,11 @@ export default {
       if (!this.item)
         return;
       const group = this.itemGroup
+      const list = this.itemList
+
+      if (list && group && list.group === group.id && this.viewName === list.name) {
+        return;
+      }
 
       if (!group || this.hideGroupName || (group.name === this.viewName)) return null
       

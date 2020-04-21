@@ -130,6 +130,7 @@ const store = new Vuex.Store({
       hidedSections: [],
       hidedViews: [],
       links: [],
+      pastShared: null,
       
       calendarOrders: null,
       getGmailInbox: false,
@@ -145,7 +146,6 @@ const store = new Vuex.Store({
       links: [],
     },
     firstFireLoad: false,
-    cameFromAnotherTabHTMLElement: null,
     selectedItems: [],
     fireBaseFirstLoaded: false,
     authState: false,
@@ -170,6 +170,7 @@ const store = new Vuex.Store({
     moving: false,
     pressingKey: null,
     movingTimeout: null,
+    movingTaskTimeout: null,
     historyPos: 0,
 
     googleCalendarReady: false,
@@ -376,11 +377,11 @@ const store = new Vuex.Store({
           name: 'Dark Blue',
         },
         {
-          color: '#ffff4d',
+          color: '#FFFF47',
           name: 'Yellow',
         },
         {
-          color: '#e4944e',
+          color: '#9D6C3C',
           name: 'Brown',
         },
         {
@@ -396,11 +397,11 @@ const store = new Vuex.Store({
           name: 'Flamingo',
         },
         {
-          color: '#3efe45',
+          color: '#56EC56',
           name: 'Green',
         },
         {
-          color: '#3dffa5',
+          color: '#58D68D ',
           name: 'Olive',
         },
         {
@@ -408,7 +409,7 @@ const store = new Vuex.Store({
           name: 'Sage',
         },
         {
-          color: '#f68a46',
+          color: '#FF9F40',
           name: 'Orange',
         },
         {
@@ -542,11 +543,6 @@ const store = new Vuex.Store({
       state.allowCalendar = allowCalendar
       localStorage.setItem('allowCalendar', allowCalendar)
     },
-    cameFromAnotherTabDragStart(state, element) {
-      if (element === null && state.cameFromAnotherTabHTMLElement === null)
-        return;
-      state.cameFromAnotherTabHTMLElement = element
-    },
     moving(state, moving) {
       
       if (!moving)
@@ -577,8 +573,18 @@ const store = new Vuex.Store({
     gmailReady(state) {
       state.gmailReady = true
     },
-    movingTask(state, bool) {
-      state.movingTask = bool
+    movingTask(state, moving) {
+      state.movingTask = moving
+
+      if (!moving)
+        state.movingTaskTimeout = setTimeout(() => {
+          state.movingTask = false
+        }, 200)
+      else {
+        if (state.movingTaskTimeout)
+          clearTimeout(state.movingTaskTimeout)
+        state.movingTask = true
+      }
     },
     saveMainSelection(state, id) {
       state.mainSelection = id
@@ -814,7 +820,7 @@ const store = new Vuex.Store({
                   state.list.groupLists = utils.addIdsToObjectFromKeys({...state.list.groupLists})
                 } else {
                   const i = state.group.groups.findIndex(el => el.id === newGroup.id)
-          
+
                   utils.findChangesBetweenObjs(state.group.groups[i], newGroup, undefined, ['tasks', 'lists'])
 
                   utils.updateVuexObject(state.task, 'groupTasks', newGroup.tasks || {}, task => task.group === newGroup.id)

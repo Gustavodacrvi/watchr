@@ -2,13 +2,14 @@
 import { fire, auth } from './index'
 import fb from 'firebase/app'
 
+import Vue from 'vue'
+
 import utils from '../utils'
 import utilsTask from "@/utils/task"
 import utilsList from "@/utils/list"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
 import { listRef, setInfo, uid, listColl, taskRef, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists, setGroup } from '../utils/firestore'
-import router from '../router'
 
 import mom from 'moment'
 
@@ -653,14 +654,14 @@ export default {
 
       b.commit()
     },
-    addListInFolderByIndexFromView({rootState}, {list, newItemRef, ids, folderId}) {
+    addListInGroupByIndexFromView({rootState}, {list, newItemRef, ids, groupId}) {
       const b = fire.batch()
 
       const writes = []
 
-      setFolder(b, {order: ids}, folderId, rootState, writes)
+      setGroup(b, {listsOrder: ids}, groupId, rootState, writes)
 
-      list.folder = folderId
+      list.group = groupId
 
       setList(b, list, newItemRef.id, rootState, writes)
 
@@ -726,14 +727,14 @@ export default {
       
       b.commit()
     },
-    addListInGroupByIndex({rootState}, {ids, item, newItemRef}) {
+    async addListInGroupByIndex({rootState}, {ids, item, newItemRef}) {
       const b = fire.batch()
 
       const writes = []
-      item.group = item.folder
+      item.group = item.folder // this is not wrong
       item.folder = null
-      
-      setGroup(b, {listsOrder: ids}, item.group, rootState, writes)
+
+      await setGroup(b, {listsOrder: ids}, item.group, rootState, writes)
 
       setList(b, {
         ...item,
@@ -914,6 +915,17 @@ export default {
         fullCancelDate: null,
         fullCheckDate: null,
       }, ids, rootState)
+
+      b.commit()
+    },
+    async addTagsToListsById({rootState}, {ids, tagIds}) {
+      const b = fire.batch()
+
+      await batchSetLists(b, {
+        tags: fd().arrayUnion(...tagIds),
+      }, ids, rootState, undefined, list => {
+        Vue.set(list, 'tags', list.tags ? [...list.tags, ...tagIds] : tagIds)
+      })
 
       b.commit()
     },
@@ -1251,17 +1263,18 @@ export default {
       b.commit()
     },
 
-    deleteList({getters, rootState}, {listId, tasks}) {
+    deleteList({getters, rootState, rootGetters}, listId) {
+      const tasks = rootGetters['task/allTasks']
       const b = fire.batch()
       const list = getters.getListsById([listId])[0]
-      let folder = null
-      if (list.folder) folder = list.folder
+      let folder = list.folder || null
 
       const writes = []
 
       const ids = []
       for (const t of tasks)
-      if (t.list === listId) ids.push(t.id)
+        if (t.list === listId) ids.push(t.id)
+
       batchSetTasks(b, {
         list: null,
         folder,

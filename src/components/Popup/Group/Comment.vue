@@ -19,7 +19,7 @@
             @click.native='$emit("delete")'
           />
         </div>
-        <span v-html="parsedName"></span>
+        <span class="name" v-html="parsedName"></span>
       </div>
     </div>
   </div>
@@ -70,15 +70,18 @@ export default {
 <style scoped>
 
 .info-icon {
-  transform: translateY(-1.5px);
   opacity: 0;
   transition: opacity .15s;
 }
 
 .Comment {
-  margin: 6px 60px;
+  margin: 6px 45px;
   margin-right: 30px;
   position: relative;
+}
+
+.name {
+  margin-left: 4px;
 }
 
 .card:hover .info-icon {
@@ -87,10 +90,10 @@ export default {
 
 .card {
   background-color: var(--sidebar-color);
-  padding: 22px;
+  padding: 12px;
   max-width: 400px;
   word-break: break-all;
-  border-radius: 18px;
+  border-radius: 12px;
   float: left;
 }
 
@@ -99,7 +102,9 @@ export default {
 }
 
 .info {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .fade {
@@ -119,7 +124,7 @@ export default {
 
 .photo {
   position: absolute;
-  left: -52px;
+  left: -42px;
 }
 
 .triangle {

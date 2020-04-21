@@ -107,6 +107,8 @@ export default {
       multiDrag: this.enableSelect,
       
       animation: 200,
+      forceFallback: true,
+      fallbackOnBody: true,
       multiDragKey: 'CTRL',
       direction: 'vertical',
 
@@ -129,7 +131,7 @@ export default {
           if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
-      delay: this.isDesktopDevice ? 10 : 150,
+      delay: this.isDesktopDevice ? 15 : 150,
       handle: '.item-handle',
 
       onUpdate: evt => {
@@ -139,12 +141,14 @@ export default {
       },
       onStart: () => {
         this.$store.commit('moving', true)
+        this.$store.commit('movingTask', true)
         this.isDragging = true
         this.$emit('is-moving', true)
         window.navigator.vibrate(20)
       },
       onEnd: () => {
         this.$store.commit('moving', false)
+        this.$store.commit('movingTask', false)
         this.isDragging = false
         this.$emit('is-moving', false)
       },
@@ -403,7 +407,7 @@ export default {
 
 <style>
 
-.Sidebar-wrapper .Task {
+.sidebar-menus .Task {
   max-height: 0;
   overflow: hidden !important;
 }

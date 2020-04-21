@@ -169,7 +169,7 @@ service cloud.firestore {
         allow read, delete: if isSignedInAndVerified() && isGroupMember(groupId);
         allow update: if
           isSignedInAndVerified() &&
-          didntChangeConstant() &&
+          existingData().id == incomingData().id &&
           incomingData().id == task &&
           isValidTask() &&
           isGroupMember(groupId);
@@ -183,7 +183,7 @@ service cloud.firestore {
         allow read, delete: if isSignedInAndVerified() && isGroupMember(groupId);
         allow update: if
           isSignedInAndVerified() &&
-          didntChangeConstant() &&
+          existingData().id == incomingData().id &&
           incomingData().id == list &&
           isValidList() &&
           isGroupMember(groupId);
@@ -221,7 +221,7 @@ service cloud.firestore {
         isNullStringOrUndefined('notes') &&
         isNullStringOrUndefined('assigned') &&
         isNullStringOrUndefined('list') &&
-        incomingData().size() < 30 &&
+        incomingData().size() < 65 &&
         (
           (!('calendar' in incomingData()) || incomingData().calendar == null) ||
           (
@@ -250,7 +250,8 @@ service cloud.firestore {
           isArrayOrUndefined('tasks', 50) &&
 
           (
-            (!('folder' in incomingData()) || !('group' in incomingData())) ||
+            !('folder' in incomingData()) ||
+            !('group' in incomingData()) ||
             !(
               (incomingData().folder is string) && (incomingData().group is string)
             ) ||
@@ -340,7 +341,7 @@ service cloud.firestore {
       return
         isValidGroupInfoDoc() &&
         incomingData().size() > 5 &&
-        incomingData().size() < 14 &&
+        incomingData().size() < 15 &&
 
         isNullStringOrUndefined('notes') &&
         isNullStringOrUndefined('color') &&

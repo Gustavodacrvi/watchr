@@ -4,12 +4,13 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="EditRaw">
+    <div class="EditRaw"
+      @pointerdown.stop
+    >
       <div class="back-layer"></div>
       <div class="cont rb" ref='cont'>
         <div
           class="first-field"
-          @pointerdown.stop
 
           :style="{minHeight: getHeight + 'px'}"
         >
@@ -44,6 +45,7 @@
             ref='comp'
             v-model="model"
             :item='item'
+            :defaultFiles='(item && item.files) || []'
             :itemModelFallback='itemModelFallback'
             :editAction='editAction'
             :firstFieldOptions='options'
@@ -169,9 +171,9 @@ export default {
         s.height = this.getHeight + 'px'
   
         requestAnimationFrame(() => {
-          s.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
   
-          s.boxShadow = '0 2px 8px rgba(15,15,15,.3)'
+          s.boxShadow = '0 1px 8px rgba(15,15,15,.6)'
           s.backgroundColor = 'var(--card)'
           s.height = height + 'px'
   
@@ -207,8 +209,8 @@ export default {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           
-          s.transitionDuration = '.175s'
-          rootS.transitionDuration = '.175s'
+          s.transitionDuration = '.15s'
+          rootS.transitionDuration = '.15s'
           s.boxShadow = '0 0 0 transparent'
 
           if (this.isAdding) {
@@ -302,9 +304,9 @@ export default {
 
 .drop-input {
   width: 100%;
-  font-size: 1.05m;
+  font-size: 1;
   margin-left: 26px;
-  transform: translate(-1px, 1px);
+  transform: translate(-1px, 2.5px);
 }
 
 </style>

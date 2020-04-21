@@ -133,8 +133,10 @@ export default {
     pushEditString(getString) {
       this.addEdit(this.list.length)
       this.$nextTick(() => {
-        if (getString)
-          this.$refs.Edit[0].updateString(getString())
+        try {
+            if (getString)
+              this.$refs.Edit[0].updateString(getString())
+        } catch (err) {}
       })
     },
     addEdit(i) {

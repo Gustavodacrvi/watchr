@@ -95,7 +95,7 @@ export default {
     ProfilePhotos,
   },
   created() {
-    this.showing = localStorage.getItem(`group_toggle_${this.name}`) === 'true'
+    this.showing = (localStorage.getItem(`watch.closeGroupToggle.${this.id}`) !== 'true')
   },
   methods: {
     click() {
@@ -103,7 +103,7 @@ export default {
     },
     toggle() {
       this.showing = !this.showing
-      localStorage.setItem(`group_toggle_${this.name}`, this.showing)
+      localStorage.setItem(`watch.closeGroupToggle.${this.id}`, !this.showing)
     },
   },
   computed: {
@@ -133,6 +133,15 @@ export default {
 <style scoped src="@/assets/css/folder.css">
 </style>
 
+<style>
+
+.sortable-ghost .SidebarElement {
+  visibility: hidden;
+  opacity: 0;
+}
+
+</style>
+
 <style scoped>
 
 .counter {
@@ -142,7 +151,6 @@ export default {
 
 .photos {
   margin-left: 10px;
-  margin-top: 2px;
 }
 
 .comment-icon {

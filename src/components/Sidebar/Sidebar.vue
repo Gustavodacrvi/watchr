@@ -1,6 +1,6 @@
 <template>
   <div class="Sidebar-wrapper"
-    :class="[layout, {'scroll-thin': isDesktopBreakPoint, 'slim-sidebar': slimMode, showing}]"
+    :class="[layout, {'scroll-thin': isDesktopBreakPoint, 'slim-sidebar': slimMode, enableSidebarScroll: showing}]"
 
     id='sidebar-scroll'
 
@@ -18,76 +18,68 @@
           name="bar-trans"
         >
           <div v-if="showSidebarStuff && (!isDesktopBreakPoint || showing)" class="sidebar-content">
-            <transition
-              :name='isScheduling ? "mr": "ml"'
-            >
-              <div v-if="!isScheduling" class="menus">
-                <SidebarRenderer
-                  type='list'
-                  :isSmart='true'
-                  :enableSort='true'
-                  :disabled='false'
-                  :disableSelection='true'
-                  :showColor='true'
-                  :list='getLinksOrdered'
-                  :active='value'
-                  :onTaskDrop='onTaskDrop'
-                  :viewType='viewType'
+            <div class="sidebar-menus">
+              <SidebarRenderer
+                type='list'
+                :isSmart='true'
+                :enableSort='true'
+                :disabled='false'
+                :disableSelection='true'
+                :showColor='true'
+                :list='getLinksOrdered'
+                :active='value'
+                :onTaskDrop='onTaskDrop'
+                :viewType='viewType'
 
-                  :mapNumbers='numberOfTasks'
-                  @update='update'
-                />
-                <div class='favorites-div' :class='{showFavorites}'></div>
-                <SidebarRenderer v-if="showFavorites"
-                  :enableSort='true'
-                  :disabled='false'
-                  :disableItemAdd='true'
-                  :isSmart='false'
-                  :disableSelection='true'
-                  :list='getFavoritesRenderList'
-                  :active='value'
-                  :viewType='viewType'
-
-                  :mapNumbers='mapFavorites'
-                  :mapProgress='mapProgress'
-                  @update='updateFavorites'
-                />
-                <div v-if="!isSingleSection" class="header">
-                  <div v-for="(s,i) in notHidedSections" :key="s.name"
-                    class="option section-option"
-                    :class="{sectionActive: s.name === section}"
-                    :tabindex="i + 1 + links.length"
-                    @click="moveLine(i)"
-                    :data-section="s.name"
-                  >{{ s.name }}
-                  </div>
-                  <div class="line section-line"></div>
-                </div>
-                <div v-else style="margin-top: 18px"></div>
-                <div class="comp-wrapper">
-                  <transition name="sect-trans"
-                    @leave="leave"
-                    @enter="enter"
-                  >
-                    <component
-                      class="component sidebar-section floating-btn-container"
-                      :is="section"
-                      :active="value"
-                      :viewType='viewType'
-                      :viewName='viewName'
-                      :showDefered='showDefered'
-                      :showRepeat='showRepeat'
-                      :data-transindex="getSidebarIndex(section)"
-                    />
-                  </transition>
-                </div>
-                <div class='extra-margin' style="height: 150px"></div>
-              </div>
-              <Scheduler
-                @scroll='scroll'
-                v-else
+                :mapNumbers='numberOfTasks'
+                @update='update'
               />
-            </transition>
+              <div class='favorites-div' :class='{showFavorites}'></div>
+              <SidebarRenderer v-if="showFavorites"
+                :enableSort='true'
+                :disabled='false'
+                :disableItemAdd='true'
+                :isSmart='false'
+                :disableSelection='true'
+                :list='getFavoritesRenderList'
+                :active='value'
+                :viewType='viewType'
+
+                :mapNumbers='mapFavorites'
+                :mapProgress='mapProgress'
+                @update='updateFavorites'
+              />
+              <div v-if="!isSingleSection" class="header">
+                <div v-for="(s,i) in notHidedSections" :key="s.name"
+                  class="option section-option"
+                  :class="{sectionActive: s.name === section}"
+                  :tabindex="i + 1 + links.length"
+                  @click="moveLine(i)"
+                  :data-section="s.name"
+                >{{ s.name }}
+                </div>
+                <div class="line section-line"></div>
+              </div>
+              <div v-else style="margin-top: 24px"></div>
+              <div class="comp-wrapper">
+                <transition name="sect-trans"
+                  @leave="leave"
+                  @enter="enter"
+                >
+                  <component
+                    class="component sidebar-section floating-btn-container"
+                    :is="section"
+                    :active="value"
+                    :viewType='viewType'
+                    :viewName='viewName'
+                    :showDefered='showDefered'
+                    :showRepeat='showRepeat'
+                    :data-transindex="getSidebarIndex(section)"
+                  />
+                </transition>
+              </div>
+              <div class='extra-margin' style="height: 150px"></div>
+            </div>
           </div>
         </transition>
         <SidebarFooter
@@ -96,7 +88,6 @@
           :style="{width}"
           :slimMode='slimMode'
           :showIconDropdown='showIconDropdown'
-          :scheduling='isScheduling'
           :getSectionOptions='getSectionOptions'
           :sideIcons='sideIcons'
           @toggle-scheduling='toggleScheduling'
@@ -123,7 +114,6 @@ import IconDropVue from '../IconDrop/IconDrop.vue'
 import RendererVue from './Renderer.vue'
 import SearchButtonVue from './SearchButton.vue'
 import SidebarFooter from './Components/Footer.vue'
-import Scheduler from './Scheduler.vue'
 
 import { mapGetters, mapState, mapMutations } from 'vuex'
 
@@ -142,7 +132,7 @@ export default {
     SidebarElement: SidebarElementVue,
     IconDrop: IconDropVue,
     Lists: ListsVue, SidebarFooter,
-    Tags: TagsVue, Scheduler,
+    Tags: TagsVue,
     Filters: FiltersVue,
     SidebarRenderer: RendererVue,
     SearchButton: SearchButtonVue,
@@ -639,13 +629,14 @@ export default {
 .sidebar-handle {
   position: fixed;
   background-color: var(--card);
+  box-shadow: 0 2px 4px rgba(0,0,0,.3);
   width: 5px;
   height: 145px;
   margin-left: 6px;
   top: 50%;
   border-radius: 100px;
   transform: translateY(-50%);
-  z-index: 100px;
+  z-index: 100;
   cursor: pointer;
   opacity: 0 !important;
   transition: opacity .15s, background-color .15s, width .15s, transform .15s;
@@ -705,7 +696,7 @@ export default {
 }
 
 .favorites-div.showFavorites {
-  margin-top: 18px;
+  margin-top: 24px;
 }
 
 .inner-wrapper {
@@ -733,9 +724,16 @@ export default {
 
 .Sidebar-wrapper {
   height: 100%;
+  position: relative;
+  top: 0;
+  transition-duration: .15s;
 }
 
-.Sidebar-wrapper.showing {
+.Sidebar-wrapper.isScheduling {
+  top: -33px !important;
+}
+
+.Sidebar-wrapper.enableSidebarScroll {
   overflow: auto;
 }
 

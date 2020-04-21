@@ -84,13 +84,6 @@ export default {
     this.updateViewType(true)
   },
   mounted() {
-    const commit = () => this.$store.commit('cameFromAnotherTabDragStart', null)
-    
-    this.$el.addEventListener('dragenter', evt => evt.preventDefault())
-    this.$el.addEventListener('dragover', evt => evt.preventDefault())
-    this.$el.addEventListener('drop', commit)
-    this.$el.addEventListener('dragleave', commit)
-
     setInterval(this.getGmailInbox, 300000)
   },
   methods: {
@@ -423,7 +416,7 @@ export default {
 }
 
 #app.desktop {
-  font-size: 10.5px;
+  font-size: var(--font-size);
 }
 
 </style>

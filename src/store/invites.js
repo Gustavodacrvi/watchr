@@ -20,11 +20,14 @@ export default {
     },
     ...MemoizeGetters({
       getSentInvitesByGroupId: {
+        deepGetterTouch: {
+          'invites/sortedFromMeInvites': [],
+        },
         getter({getters}, groupId) {
           return getters.sortedFromMeInvites.filter(i => i.groupId === groupId)
         },
         cache(args) {
-          return JSON.stringify(args[0])
+          return args[0]
         },
       }
     }),
