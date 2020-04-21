@@ -185,7 +185,7 @@ export default {
 }
 
 .after-name {
-  margin-left: 9px;
+  margin: 0 9px;
 }
 
 .DisplayCont {

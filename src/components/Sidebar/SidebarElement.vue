@@ -372,7 +372,7 @@ export default {
   align-items: center;
   right: 6px;
   flex-shrink: 0;
-  margin-right: 4px;
+  margin-left: 6px;
   height: 100%;
   font-size: .9em;
   z-index: 5;
@@ -441,7 +441,17 @@ export default {
   display: none;
 }
 
-.desktop .link-inner-wrapper:hover, .notSmartActive, .link-inner-wrapper:active, .isActive {  
+.light .desktop .link-inner-wrapper:hover,
+.light .notSmartActive,
+.light .link-inner-wrapper:active,
+.light .isActive {  
+  background-color: var(--dark-gray);
+}
+
+.dark .desktop .link-inner-wrapper:hover,
+.dark .notSmartActive,
+.dark .link-inner-wrapper:active,
+.dark .isActive {  
   background-color: var(--card);
 }
 

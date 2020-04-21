@@ -5,17 +5,17 @@
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
 	
-		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="29.122" y1="33.264" x2="29.122" y2="56.377"/>
+		<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="29.122" y1="33.264" x2="29.122" y2="56.377"/>
 </g>
 <g>
 	
-		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="43.564" y1="33.264" x2="43.564" y2="56.377"/>
+		<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="43.564" y1="33.264" x2="43.564" y2="56.377"/>
 </g>
 <g>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M57.351,30.758v30.058c0,3.3-2.7,6-6,6H20.733c-3.3,0-6-2.7-6-6V30.758"/>
 </g>
-<path fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+<path fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M7.942,21.088H63.04h2.028c0,0,0-3.56,0-7.91s-4.229-7.91-9.399-7.91H16.414c-5.169,0-9.399,3.56-9.399,7.91s0,7.91,0,7.91H7.942z"
 	/>
 </svg>

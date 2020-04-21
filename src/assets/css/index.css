@@ -4,45 +4,13 @@
   src: url("../OpenSans-Semibold.ttf");
 }
 
-html {
-  touch-action: manipulation;
+@font-face {
+  font-family: "Open Sans Bold";
+  src: url("../OpenSans-Bold.ttf");
 }
 
-:root {
-  --primary-dark: #2b5cda;
-  --primary: #5a81e2;
-  --primary-light: #8aa5ea;
-
-  --back-color: #232325;
-  --sidebar-color: #1e1e20;
-  --light-sidebar-color: #232325;
-  --card: #28282a;
-
-  --txt: #cccccc;
-  --dark-txt: #bdbdbd;
-  --fade: #6b6b6b;
-
-  --dark: #232325;
-  --dark-gray: #28282a;
-  --dark-light-gray: #2d2d2f;
-  --light-gray: #2f3032;
-  --extra-light-gray: #3e3f42;
-  --dark-void: #19191a;
-  --extra-extra-light-gray: #888888;
-
-  --font: "Open Sans";
-  
-  --orange: #FF9F40;
-  --green: #56EC56;
-  --purple: #a04dff;
-  --dark-purple: #6b0fff;
-  --olive: #58D68D ;
-  --brown: #9D6C3C;
-  --yellow: #FFFF47;
-  --dark-blue: #5751c8;
-  --red: #ff4d4d;
-  --dark-red: #f2241c;
-  --font-size: 11.5px;
+html {
+  touch-action: manipulation;
 }
 
 body {
@@ -67,6 +35,7 @@ body, input, button, textarea {
   font-family: var(--font);
   caret-color: var(--primary);
   color: var(--txt);
+  font-weight: 1000 !important;
 }
 
 .parsed-link {
@@ -90,7 +59,7 @@ body, input, button, textarea {
 }
 
 .shadow {
-  box-shadow: 0 1px 8px rgba(15,15,15,.6);
+  box-shadow: 0 2px 20px rgba(15,15,15,.2);
 }
 
 .pc {
@@ -120,7 +89,7 @@ body, input, button, textarea {
 }
 
 .scroll-thin::-webkit-scrollbar-thumb {
-  background-color: var(--light-gray);
+  background-color: var(--dark-gray);
   border-radius: 4px;
 }
 

@@ -3,9 +3,9 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
-<circle fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="24.044" cy="24.6" r="5.045"/>
+<circle fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="8" stroke-miterlimit="10" cx="24.044" cy="24.6" r="5.045"/>
 <g>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M35.419,66.201L8.741,39.523C6.407,37.189,4.476,32.58,4.449,29.28L4.308,11.883c-0.027-3.3,2.651-5.978,5.951-5.951l17.397,0.141
 		c3.3,0.027,7.909,1.958,10.242,4.291L65.74,38.207c2.333,2.333,2.333,6.152,0,8.485l-18.69,18.69"/>
 </g>

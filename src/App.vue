@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="[{hidePassive}, deviceLayout]">
+  <div id="app" :class="[{hidePassive}, deviceLayout, $store.state.theme]">
     <transition name="fade-t">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>

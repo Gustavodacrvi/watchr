@@ -15,14 +15,21 @@
   transform: scale(1,1); /* used for drag and drop */
   transition-duration: .15s;
   overflow: hidden;
+  font-family: "Open Sans Bold";
 }
 
 .mobile .header {
   height: 42px;
 }
 
-.header:hover, .isActive {
+.dark .header:hover,
+.dark .isActive {
   background-color: var(--dark);
+}
+
+.light .header:hover,
+.light .isActive {
+  background-color: var(--dark-gray);
 }
 
 .slim-sidebar .header:hover, .slim-sidebar .isActive {
@@ -45,6 +52,7 @@
   align-items: center;
   width: 20px;
   margin-left: 1px;
+  transform: translateY(-1.5px);
   flex-shrink: 0;
   height: 100%;
 }

@@ -6,6 +6,6 @@
 <g>
 	<path fill="var(--primary)" d="M16,0C7.2,0,0,7.2,0,16v33.75c0,8.8,7.2,16,16,16h34.183c8.8,0,16-7.2,16-16V16c0-8.8-7.2-16-16-16H16z"/>
 </g>
-<path fill="none" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+<path fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M14.213,33.623l6.672,7.982c1.893,2.265,5.283,2.554,7.532,0.643l4.781-4.062c2.25-1.911,5.925-5.046,8.168-6.966l13.138-11.584"/>
 </svg>

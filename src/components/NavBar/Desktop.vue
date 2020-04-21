@@ -9,16 +9,24 @@
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support/overview">{{ 'Support' }}</router-link>
     <div class="line"></div>
     <div class="icons">
-      <DropIcon style="z-index: 3"
-        class="drop"
+      <VersionApp/>
+      <DropIcon
+        style="z-index: 3"
+        class="drop nav-el"
         handle="user"
         handleColor="var(--fade)"
+        width='14px'
        
         :options="dropLinks"
         @handle-toggle='v => isLinksIconDropOpen = v'
       />
-      <VersionApp
-        style="position: relative;z-index: 1;flex-basis: 65px;flex-shrink: 0"
+      <Icon
+        class="nav-el primary-hover cursor"
+        icon="moon"
+        color="var(--fade)"
+        width='14px'
+
+        @click="$store.commit('toggleTheme')"
       />
       <ButtonApp v-if="user && user.isAnonymous" class="no-back btn" value="Sign in" @click="upgradeUser" style='padding: 6px;margin-right: 6px'/>
     </div>
@@ -85,9 +93,11 @@ export default {
 
 <style scoped>
 
+.nav-el {
+  margin-right: 14px;
+}
+
 .drop {
-  margin-left: 14px;
-  transform: translateY(6px);
   position: relative;
   z-index: 3;
 }
@@ -128,6 +138,7 @@ export default {
 .icons {
   display: inline-flex;
   flex-direction: row-reverse;
+  align-items: center;
   position: absolute;
   right: 34px;
   width: 225px;

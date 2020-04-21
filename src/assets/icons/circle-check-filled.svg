@@ -4,6 +4,6 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="67.92px" height="67.92px" viewBox="0 0 67.92 67.92" enable-background="new 0 0 67.92 67.92" xml:space="preserve">
 <circle fill="var(--primary)" cx="33.96" cy="33.96" r="33.96"/>
-<path fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+<path fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M18.17,34.343l6.215,7.436c1.764,2.11,4.921,2.38,7.017,0.599l4.454-3.784c2.096-1.781,5.52-4.701,7.609-6.489l20.489-17.541"/>
 </svg>

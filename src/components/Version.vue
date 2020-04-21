@@ -29,7 +29,7 @@ export default {
 .tag {
   font-size: .85em;
   border-radius: 50px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   transition-duration: .15s;
   color: var(--fade);
   transform: scale(1,1);

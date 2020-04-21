@@ -97,6 +97,71 @@ const cal = localStorage.getItem('allowCalendar')
 if (cal)
   allowCalendar = cal === 'true'
 
+let theme = 'light'
+
+if (localStorage.getItem("theme") && localStorage.getItem("theme") === "dark") {
+  theme = "dark"
+} else if (!localStorage.getItem("theme") && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  theme = "dark"
+}
+// document.documentElement.style.setProperty('--your-variable', '#YOURCOLOR')
+const c = (name, color) => document.documentElement.style.setProperty(name, color)
+
+c('--orange', '#FF9F40')
+c('--green', '#56EC56')
+c('--purple', '#a04dff')
+c('--dark-purple', '#6b0fff')
+c('--olive', '#58D68D')
+c('--brown', '#9D6C3C')
+c('--yellow', '#FFFF47')
+c('--dark-blue', '#5751c8')
+c('--red', '#ff4d4d')
+c('--dark-red', '#f2241c')
+c('--font-size', '11.5px')
+
+const setColors = theme => {
+
+  c('--primary-dark', '#2b5cda')
+  c('--primary', '#5a81e2')
+  c('--primary-light', '#8aa5ea')
+
+  if (theme === 'dark') {
+
+    c('--back-color', '#232325')
+    c('--sidebar-color', '#1e1e20')
+    c('--light-sidebar-color', '#232325')
+    c('--card', '#28282a')
+    c('--txt', '#cccccc')
+    c('--dark-txt', '#bdbdbd')
+    c('--fade', '#6b6b6b')
+    c('--dark', '#232325')
+    c('--dark-gray', '#28282a')
+    c('--dark-light-gray', '#2d2d2f')
+    c('--light-gray', '#2f3032')
+    c('--extra-light-gray', '#3e3f42')
+    c('--dark-void', '#19191a')
+    c('--extra-extra-light-gray', '#888888')
+    c('--font', 'Open Sans')
+  } else {
+
+    c('--back-color', '#fff')
+    c('--sidebar-color', '#F2F2F3')
+    c('--light-sidebar-color', '#f5f5f5')
+    c('--card', '#fff')
+    c('--txt', '#363636')
+    c('--dark-txt', '#616161')
+    c('--fade', '#9A9A9A')
+    c('--dark', '#232325')
+    c('--dark-gray', '#dedede')
+    c('--dark-light-gray', '#2d2d2f')
+    c('--light-gray', '#D1D1D1')
+    c('--extra-light-gray', '#3e3f42')
+    c('--dark-void', '#19191a')
+    c('--extra-extra-light-gray', '#888888')
+    c('--font', 'Open Sans')
+  }
+}
+
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter, folder,
@@ -106,6 +171,8 @@ const store = new Vuex.Store({
     lastVersion,
     allowCalendar,
     version,
+    theme,
+    
     popup: {
       comp: '',
       naked: false,
@@ -523,6 +590,11 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleTheme(state) {
+      state.theme = state.theme === "light" ? 'dark' : 'light'
+      localStorage.setItem("theme", state.theme)
+      setColors(state.theme)
+    },
     saveViewEvents(state, arr) {
       state.viewEvents = arr
     },
@@ -909,6 +981,8 @@ const store = new Vuex.Store({
     },
   }
 })
+
+setColors(theme)
 
 store.commit('saveUser', null)
 

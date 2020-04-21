@@ -10,17 +10,17 @@
 			c-2.2,0-5.093-1.43-6.429-3.178l-3.478-4.55c-1.336-1.748-4.229-3.207-6.429-3.242L6.499,42.064z"/>
 	</g>
 	<g>
-		<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 			M52.729,6.233C51.938,4.18,49.492,2.5,47.292,2.5H38.5c-2.2,0-5.8,0-8,0h-8.792c-2.2,0-4.647,1.68-5.437,3.733L3.937,38.267
 			C3.147,40.32,2.5,43.8,2.5,46v16.833c0,2.2,1.8,4,4,4h24c2.2,0,5.8,0,8,0h24c2.2,0,4-1.8,4-4V46c0-2.2-0.647-5.68-1.437-7.733
 			L52.729,6.233z"/>
 	</g>
 	<g>
-		<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 			M34.5,52.792h-4.229c-2.2,0-4.758-1.633-5.685-3.628l-1.797-3.869c-0.927-1.995-3.485-3.628-5.685-3.628l-13.674,0"/>
 	</g>
 	<g>
-		<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 			M65.096,41.667l-13.201,0c-2.2,0-4.758,1.633-5.685,3.628l-1.797,3.869c-0.927,1.995-3.485,3.628-5.685,3.628H34.5"/>
 	</g>
 </g>

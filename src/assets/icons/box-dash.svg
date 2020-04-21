@@ -5,7 +5,7 @@
 	 width="66.653px" height="66.25px" viewBox="0 0 66.653 66.25" enable-background="new 0 0 66.653 66.25" xml:space="preserve">
 <g>
 	
-		<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12.1248,12.1248" d="
+		<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12.1248,12.1248" d="
 		M18.5,2.5c-8.8,0-16,7.2-16,16v29.25c0,8.8,7.2,16,16,16h29.653c8.8,0,16-7.2,16-16V18.5c0-8.8-7.2-16-16-16H18.5z"/>
 </g>
 </svg>

@@ -3,8 +3,8 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
-<circle fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="36.042" cy="36.042" r="31.763"/>
-<ellipse fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="36.042" cy="36.05" rx="10.905" ry="31.754"/>
-<line fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10" x1="5.428" y1="26.25" x2="66.655" y2="26.25"/>
-<line fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10" x1="5.428" y1="45.594" x2="66.655" y2="45.594"/>
+<circle fill="none" stroke="currentColor" stroke-width="8" stroke-miterlimit="10" cx="36.042" cy="36.042" r="31.763"/>
+<ellipse fill="none" stroke="currentColor" stroke-width="8" stroke-miterlimit="10" cx="36.042" cy="36.05" rx="10.905" ry="31.754"/>
+<line fill="none" stroke="currentColor" stroke-width="8" stroke-miterlimit="10" x1="5.428" y1="26.25" x2="66.655" y2="26.25"/>
+<line fill="none" stroke="currentColor" stroke-width="8" stroke-miterlimit="10" x1="5.428" y1="45.594" x2="66.655" y2="45.594"/>
 </svg>

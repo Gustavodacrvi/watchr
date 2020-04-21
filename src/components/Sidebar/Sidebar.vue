@@ -19,7 +19,7 @@
         >
           <div v-if="showSidebarStuff && (!isDesktopBreakPoint || showing)" class="sidebar-content">
             <div class="sidebar-menus">
-              <SidebarRenderer
+              <SidebarRenderer class="smart-items"
                 type='list'
                 :isSmart='true'
                 :enableSort='true'
@@ -632,7 +632,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0,0,0,.3);
   width: 5px;
   height: 145px;
-  margin-left: 6px;
+  margin-left: 9px;
   top: 50%;
   border-radius: 100px;
   transform: translateY(-50%);
@@ -738,7 +738,7 @@ export default {
 }
 
 .Sidebar-wrapper.desktop {
-  padding: 0 16px;
+  padding: 0 11px;
 }
 
 .comp-wrapper {
@@ -759,7 +759,6 @@ export default {
   left: 0;
   top: 0;
   height: 100%;
-  box-shadow: 0 -2px 3px rgba(5,5,5, .8);
   transition-duration: .3s;
 }
 
@@ -842,6 +841,10 @@ export default {
   background-color: var(--card);
   border-radius: 16px;
   box-shadow: 0 4px 14px rgba(10,10,10,.3);
+}
+
+.smart-items {
+  font-family: "Open Sans Bold";
 }
 
 .bar-trans-enter-to {

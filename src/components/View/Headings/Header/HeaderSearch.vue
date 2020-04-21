@@ -12,7 +12,7 @@
     >
       <div class="search-icon-wrapper">
         <svg class="svg search-el" viewBox="0 0 12.375 12.375" width='35px' height='35px'>
-          <circle ref='circle' class="pie" stroke-dasharray="0 100" fill="none" :stroke="circleStroke" stroke-width="6" cx="50%" cy="50%" r="3"/>
+          <circle ref='circle' class="pie" stroke-dasharray="0 100" fill="none" :stroke="circleStroke" stroke-width="8" cx="50%" cy="50%" r="3"/>
         </svg>
         <Icon class="cursor remove-highlight search-el"
           icon="search"

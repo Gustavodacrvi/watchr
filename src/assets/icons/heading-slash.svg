@@ -4,7 +4,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="73.548px" height="73.721px" viewBox="0 0 73.548 73.721" enable-background="new 0 0 73.548 73.721" xml:space="preserve">
 <g>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10" d="M63.832,8.888
+	<path fill="none" stroke="currentColor" stroke-width="8" stroke-miterlimit="10" d="M63.832,8.888
 		c-2.291-2.292-5.051-3.437-8.278-3.437H16.496c-3.227,0-5.987,1.146-8.279,3.437C5.925,11.18,4.78,13.94,4.78,17.168v39.056
 		c0,3.227,1.146,5.987,3.437,8.279c2.292,2.292,5.052,3.438,8.279,3.438h39.056c3.227,0,5.987-1.146,8.278-3.438
 		c2.292-2.292,3.438-5.052,3.438-8.279V17.168C67.269,13.94,66.123,11.18,63.832,8.888z"/>
@@ -15,6 +15,6 @@
 		c0.354,0.354,0.532,0.774,0.532,1.259v8.956h14.33v-8.956c0-0.485,0.177-0.905,0.531-1.259c0.355-0.355,0.775-0.532,1.259-0.532
 		h3.583c0.485,0,0.905,0.177,1.26,0.532c0.354,0.354,0.531,0.774,0.531,1.259L50.354,49.235L50.354,49.235z"/>
 </g>
-<line fill="none" stroke="var(--back-color)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="68.355" y1="71.221" x2="2.5" y2="5.366"/>
-<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="71.048" y1="68.355" x2="5.193" y2="2.5"/>
+<line fill="none" stroke="var(--back-color)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="68.355" y1="71.221" x2="2.5" y2="5.366"/>
+<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="71.048" y1="68.355" x2="5.193" y2="2.5"/>
 </svg>

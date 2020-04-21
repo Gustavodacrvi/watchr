@@ -1334,7 +1334,7 @@ export default {
   cursor: pointer;
   outline: none;
   background-color: var(--card);
-  box-shadow: 0 0 8px rgba(0,0,0, .3);
+  box-shadow: 0 2px 20px rgba(15,15,15,.2);
 }
 
 .add-item-wrapper:active .add-item {

@@ -7,7 +7,7 @@
 	<path fill="#010101" d="M17.977,7.538"/>
 	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M17.977,7.538"/>
 </g>
-<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="0.888" y1="8.43" x2="71.195" y2="8.43"/>
-<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="0.888" y1="63.653" x2="71.195" y2="63.653"/>
-<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="0.888" y1="36.042" x2="71.195" y2="36.042"/>
+<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="0.888" y1="8.43" x2="71.195" y2="8.43"/>
+<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="0.888" y1="63.653" x2="71.195" y2="63.653"/>
+<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="0.888" y1="36.042" x2="71.195" y2="36.042"/>
 </svg>

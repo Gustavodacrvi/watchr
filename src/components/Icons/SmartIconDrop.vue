@@ -44,7 +44,7 @@
               @blur='focus = false'
               @focus='focus = true'
             />
-            <span v-else ref="tag-mode-name">
+            <span v-else ref="tag-mode-name" class="value">
               {{ name }}
             </span>
           </div>
@@ -557,6 +557,11 @@ export default {
   background-color: var(--light-gray);
 }
 
+.value {
+  display: block;
+  transform: translateY(-1px);
+}
+
 .icon-wrapper {
   min-width: 20px;
   display: flex;
@@ -583,7 +588,7 @@ export default {
   padding: 0;
   width: 80px;
   outline: none;
-  transform: translateY(1px);
+  transform: translateY(-1px);
 }
 
 .list {

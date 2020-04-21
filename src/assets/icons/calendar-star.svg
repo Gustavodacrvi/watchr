@@ -3,9 +3,9 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
-<path fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M3.827,19.127"/>
-<path fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+<path fill="currentColor" fill-opacity='1' stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M3.827,19.127"/>
 <g>
 	<path fill="currentColor" fill-opacity='1' d="M45.161,52.934c0.472,2.709-1.146,3.903-3.595,2.652l-0.971-0.496c-2.449-1.25-6.442-1.221-8.873,0.065
@@ -13,7 +13,7 @@
 		c-1.974-1.914-1.367-3.831,1.35-4.259l1.077-0.17c2.716-0.428,5.93-2.799,7.14-5.268l0.48-0.979
 		c1.211-2.469,3.221-2.484,4.468-0.033l0.494,0.972c1.247,2.451,4.494,4.775,7.216,5.163l1.079,0.154
 		c2.722,0.388,3.358,2.296,1.412,4.239l-0.772,0.77c-1.946,1.943-3.152,5.749-2.68,8.459L45.161,52.934z"/>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M45.161,52.934c0.472,2.709-1.146,3.903-3.595,2.652l-0.971-0.496c-2.449-1.25-6.442-1.221-8.873,0.065l-0.964,0.51
 		c-2.431,1.286-4.066,0.116-3.634-2.6l0.171-1.077c0.432-2.716-0.829-6.504-2.803-8.419l-0.783-0.759
 		c-1.974-1.914-1.367-3.831,1.35-4.259l1.077-0.17c2.716-0.428,5.93-2.799,7.14-5.268l0.48-0.979
@@ -21,13 +21,13 @@
 		c2.722,0.388,3.358,2.296,1.412,4.239l-0.772,0.77c-1.946,1.943-3.152,5.749-2.68,8.459L45.161,52.934z"/>
 </g>
 <g>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M67.331,27.646v35.292c0,3.3-2.7,6-6,6H10.753c-3.3,0-6-2.7-6-6V27.646"/>
 </g>
 <g>
 	<path fill="currentColor" fill-opacity='1' d="M10.753,19.979c-3.3,0-6-2.7-6-6V9.146c0-3.3,2.7-6,6-6h49.768c3.3,0,6,2.7,6,6v4.833c0,3.3-2.7,6-6,6
 		H10.753z"/>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M10.753,19.979c-3.3,0-6-2.7-6-6V9.146c0-3.3,2.7-6,6-6h49.768c3.3,0,6,2.7,6,6v4.833c0,3.3-2.7,6-6,6H10.753z"/>
 </g>
 </svg>

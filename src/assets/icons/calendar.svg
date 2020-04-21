@@ -4,25 +4,25 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M66.471,28.493V62.65c0,3.3-2.7,6-6,6H11.613c-3.3,0-6-2.7-6-6V28.493"/>
 </g>
 <g>
 	<path fill="currentColor" fill-opacity='1' d="M11.613,21.037c-3.3,0-6-2.7-6-6v-4.371c0-3.3,2.7-6,6-6h48.071c3.3,0,6,2.7,6,6v4.371c0,3.3-2.7,6-6,6
 		H11.613z"/>
-	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M11.613,21.037c-3.3,0-6-2.7-6-6v-4.371c0-3.3,2.7-6,6-6h48.071c3.3,0,6,2.7,6,6v4.371c0,3.3-2.7,6-6,6H11.613z"/>
 </g>
 <g>
 	
-		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="20.603" y1="32.545" x2="20.603" y2="55.481"/>
+		<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="20.603" y1="32.545" x2="20.603" y2="55.481"/>
 </g>
 <g>
 	
-		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="36.731" y1="32.545" x2="36.731" y2="55.481"/>
+		<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="36.731" y1="32.545" x2="36.731" y2="55.481"/>
 </g>
 <g>
 	
-		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="52.858" y1="32.545" x2="52.858" y2="55.481"/>
+		<line fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="52.858" y1="32.545" x2="52.858" y2="55.481"/>
 </g>
 </svg>
