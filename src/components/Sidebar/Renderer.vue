@@ -131,7 +131,7 @@ export default {
           if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
-      delay: this.isDesktopDevice ? 10 : 150,
+      delay: this.isDesktopDevice ? 15 : 150,
       handle: '.item-handle',
 
       onUpdate: evt => {

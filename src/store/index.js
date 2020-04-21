@@ -377,11 +377,11 @@ const store = new Vuex.Store({
           name: 'Dark Blue',
         },
         {
-          color: '#ffff4d',
+          color: '#FFFF47',
           name: 'Yellow',
         },
         {
-          color: '#e4944e',
+          color: '#9D6C3C',
           name: 'Brown',
         },
         {
@@ -397,11 +397,11 @@ const store = new Vuex.Store({
           name: 'Flamingo',
         },
         {
-          color: '#3efe45',
+          color: '#56EC56',
           name: 'Green',
         },
         {
-          color: '#3dffa5',
+          color: '#58D68D ',
           name: 'Olive',
         },
         {
@@ -409,7 +409,7 @@ const store = new Vuex.Store({
           name: 'Sage',
         },
         {
-          color: '#f68a46',
+          color: '#FF9F40',
           name: 'Orange',
         },
         {

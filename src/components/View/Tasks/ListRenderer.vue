@@ -514,7 +514,7 @@ export default {
       let lastToElement = null
 
       const onMove = () => divs = []
-      
+
       const obj = {
         disabled: this.disableSortableMount,
         multiDrag: this.enableSelect || !this.isDesktopDevice,
@@ -523,7 +523,7 @@ export default {
         animation: 200,
         forceFallback: true,
         fallbackOnBody: true,
-        delay: this.isDesktopDevice ? 5 : 100,
+        delay: this.isDesktopDevice ? 15 : 100,
         handle: '.item-handle',
         
         group: this.group || {

@@ -2,13 +2,7 @@
   <div class="footer" :class="{slimMode, showing}">
     <div class="inner-footer">
       <div class="wrapper">
-        <Icon v-if='showing && isDesktopDevice && showIconDropdown && !slimMode'
-          class="scheduler-toggler cursor primary-hover"
-          :icon='!scheduling ? "calendar-star" : "star"'
-          color="var(--fade)"
-          @click='$emit("toggle-scheduling")'
-        />
-        <div class="drop" v-if="showIconDropdown && showing && !scheduling">
+        <div class="drop" v-if="showIconDropdown && showing">
           <Icon v-for="i in sideIcons" :key='i.icon'
             class="sect-icon cursor remove-highlight primary-hover"
             :icon='i.icon'
@@ -44,7 +38,7 @@ export default {
   components: {
     IconDrop,
   },
-  props: ['showIconDropdown', 'sideIcons', 'render', 'getSectionOptions', 'scheduling', 'slimMode'],
+  props: ['showIconDropdown', 'sideIcons', 'render', 'getSectionOptions', 'slimMode'],
   data() {
     return {
       showing: this.render,
@@ -53,9 +47,6 @@ export default {
   },
   computed: {
     ...mapGetters(['isDesktopDevice', 'isDesktopBreakPoint']),
-    schedulerToggleColor() {
-      return this.scheduling ? 'var(--yellow)' : 'var(--purple)'
-    },
   },
   watch: {
     render() {
@@ -146,7 +137,7 @@ export default {
   position: absolute;
   right: 17px;
   display: flex;
-  transform: translate(26px, 0);
+  transform: translate(26px, 14px);
 }
 
 .footer.mobile .drop {

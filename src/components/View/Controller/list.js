@@ -118,8 +118,9 @@ export default {
     
     mainFilter() {
       const list = this.viewList
+      const isTaskInList = this.isTaskInList
       if (list) {
-        return task => this.isTaskInList(task, list.id)
+        return task => isTaskInList(task, list.id)
       }
       return () => false
     },
@@ -128,9 +129,11 @@ export default {
       const viewList = this.viewList
       if (viewList) {
         const headings = this.$store.getters['list/getListHeadingsById'](viewList.id)
+
+        const isTaskInHeading = this.isTaskInHeading
         
         for (const h of headings) {
-          const pipedFilter = task => this.isTaskInHeading(task, h)
+          const pipedFilter = task => isTaskInHeading(task, h)
 
           const save = obj => {
             this.$store.dispatch('list/saveHeading', {

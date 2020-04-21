@@ -25,7 +25,7 @@ export default {
           {
             class: ['icon', 'remove-highlight'],
             style: {
-              width: (context.props.width ? context.props.width : (isDesktopDevice ? '12px' : '20px')),
+              width: (context.props.width ? context.props.width : (isDesktopDevice ? '13px' : '20px')),
               color: context.props.color,
             },
           },

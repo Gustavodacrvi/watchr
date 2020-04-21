@@ -96,19 +96,24 @@ export default {
     },
     mainFilter() {
       const n = this.viewName
+
+      const doesTaskIncludeText = this.doesTaskIncludeText
+      const isTaskInView = this.isTaskInView
+      const isTaskShowingOnDate = this.isTaskShowingOnDate
+      
       if (this.viewType === 'search')
-        return task => this.doesTaskIncludeText(task, n)
+        return task => doesTaskIncludeText(task, n)
       if (n === 'Today' && this.hasOverdueTasks)
-        return task => this.isTaskInView(task, 'Overdue') ||
-                        this.isTaskInView(task, 'Today')
+        return task => isTaskInView(task, 'Overdue') ||
+                        isTaskInView(task, 'Today')
       switch (n) {
         case 'Later lists': return () => false
-        case 'Calendar': return task => this.isTaskShowingOnDate(task, this.calendarDate)
+        case 'Calendar': return task => isTaskShowingOnDate(task, this.calendarDate)
         case 'Upcoming': return task => task.calendar
         case 'Logged lists': return t => false
         case 'Assigned to me': return t => t.assigned === this.user.uid
       }
-      return task => this.isTaskInView(task, n)
+      return task => isTaskInView(task, n)
     },
     rootFilter() {
       const n = this.viewName

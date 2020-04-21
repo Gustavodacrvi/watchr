@@ -4,12 +4,13 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="EditRaw">
+    <div class="EditRaw"
+      @pointerdown.stop
+    >
       <div class="back-layer"></div>
       <div class="cont rb" ref='cont'>
         <div
           class="first-field"
-          @pointerdown.stop
 
           :style="{minHeight: getHeight + 'px'}"
         >
@@ -303,9 +304,9 @@ export default {
 
 .drop-input {
   width: 100%;
-  font-size: 1.05m;
+  font-size: 1;
   margin-left: 26px;
-  transform: translate(-1px, 1px);
+  transform: translate(-1px, 2.5px);
 }
 
 </style>

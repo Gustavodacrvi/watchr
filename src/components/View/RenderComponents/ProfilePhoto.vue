@@ -136,8 +136,4 @@ export default {
   background-color: var(--sidebar-color);
 }
 
-.user {
-  transform: translateY(2px);
-}
-
 </style>

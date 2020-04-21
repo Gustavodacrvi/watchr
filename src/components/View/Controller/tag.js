@@ -48,8 +48,9 @@ export default {
     viewNameValue() {return this.viewName},
     mainFilter() {
       const tag = this.viewTag
+      const doesTaskPassInclusiveTags = this.doesTaskPassInclusiveTags
       if (tag)
-        return task => this.doesTaskPassInclusiveTags(task, [tag.id])
+        return task => doesTaskPassInclusiveTags(task, [tag.id])
       return () => false
     },
     rootFilter() {

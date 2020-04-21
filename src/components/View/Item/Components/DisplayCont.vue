@@ -92,7 +92,7 @@ export default {
       requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
         s.height = height
-        s.opacity = .4
+        s.opacity = .7
 
         setTimeout(() => {
           s.height = '10px'
@@ -108,7 +108,7 @@ export default {
 
       s.transitionDuration = 0
       s.height = height
-      s.opacity = .4
+      s.opacity = .7
 
       requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
@@ -259,7 +259,7 @@ export default {
 
 .info {
   height: 40%;
-  font-size: .95em;
+  font-size: .825em;
   overflow: hidden;
 }
 

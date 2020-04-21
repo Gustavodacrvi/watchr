@@ -123,8 +123,9 @@ export default {
     
     mainFilter() {
       const group = this.viewGroup
+      const isTaskInGroup = this.isTaskInGroup
       if (group)
-        return task => this.isTaskInGroup(task, group.id)
+        return task => isTaskInGroup(task, group.id)
       return () => false
     },
     rootFilter() {

@@ -70,8 +70,9 @@ export default {
     
     mainFilter() {
       const fold = this.viewFolder
+      const isTaskInFolder = this.isTaskInFolder
       if (fold)
-        return task => this.isTaskInFolder(task, fold.id)
+        return task => isTaskInFolder(task, fold.id)
       return () => false
     },
     rootFilter() {

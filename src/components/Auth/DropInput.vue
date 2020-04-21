@@ -86,7 +86,7 @@ export default {
         const newHeight = (height || el.scrollHeight)
         if (newHeight)
           el.style.height = (height || el.scrollHeight) + 'px'
-        else el.style.height = '12px'
+        else el.style.height = '18px'
       }
     },
     enterItems(el, done) {

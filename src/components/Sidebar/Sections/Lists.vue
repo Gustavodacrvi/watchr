@@ -375,7 +375,7 @@ export default {
 }
 
 .hasRootLists {
-  margin-top: 25px;
+  margin-top: 30px;
 }
 
 .folders-root {

@@ -133,7 +133,7 @@ export default {
         b,
         writes,
         {
-          finalIds: utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, this.rootNonFilteredIds),
+          finalIds: utilsTask.getFixedIdsFromNonFilteredAndFiltered(finalIds, this.nonFilteredIds),
           ...this.getUpdateIdsInfo()
         }
       )
