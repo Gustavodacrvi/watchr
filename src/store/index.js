@@ -97,23 +97,23 @@ const cal = localStorage.getItem('allowCalendar')
 if (cal)
   allowCalendar = cal === 'true'
 
-let theme = 'light'
+let theme = 'dark'
 
-if (localStorage.getItem("theme") && localStorage.getItem("theme") === "dark") {
+/* if (localStorage.getItem("theme") && localStorage.getItem("theme") === "dark") {
   theme = "dark"
 } else if (!localStorage.getItem("theme") && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
   theme = "dark"
-}
+} */
 // document.documentElement.style.setProperty('--your-variable', '#YOURCOLOR')
 const c = (name, color) => document.documentElement.style.setProperty(name, color)
 
-c('--orange', '#FF9F40')
-c('--green', '#56EC56')
+c('--orange', '#ff852e')
+c('--green', '#409a48')
 c('--purple', '#a04dff')
 c('--dark-purple', '#6b0fff')
-c('--olive', '#58D68D')
+c('--olive', '#35A298')
 c('--brown', '#9D6C3C')
-c('--yellow', '#FFFF47')
+c('--yellow', '#F9D213')
 c('--dark-blue', '#5751c8')
 c('--red', '#ff4d4d')
 c('--dark-red', '#f2241c')
@@ -148,7 +148,7 @@ const setColors = theme => {
     c('--sidebar-color', '#F2F2F3')
     c('--light-sidebar-color', '#f5f5f5')
     c('--card', '#fff')
-    c('--txt', '#363636')
+    c('--txt', '#5c5c5c')
     c('--dark-txt', '#616161')
     c('--fade', '#9A9A9A')
     c('--dark', '#232325')
@@ -444,7 +444,7 @@ const store = new Vuex.Store({
           name: 'Dark Blue',
         },
         {
-          color: '#FFFF47',
+          color: '#F9D213',
           name: 'Yellow',
         },
         {
@@ -464,11 +464,11 @@ const store = new Vuex.Store({
           name: 'Flamingo',
         },
         {
-          color: '#56EC56',
+          color: '#409a48',
           name: 'Green',
         },
         {
-          color: '#58D68D ',
+          color: '#35A298 ',
           name: 'Olive',
         },
         {
@@ -476,7 +476,7 @@ const store = new Vuex.Store({
           name: 'Sage',
         },
         {
-          color: '#FF9F40',
+          color: '#ff852e',
           name: 'Orange',
         },
         {

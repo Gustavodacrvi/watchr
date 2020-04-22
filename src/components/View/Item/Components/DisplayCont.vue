@@ -242,7 +242,7 @@ export default {
   height: 100%;
   width: 25px;
   flex-shrink: 0;
-  opacity: .4;
+  opacity: .2;
   transition-duration: .15s;
 }
 

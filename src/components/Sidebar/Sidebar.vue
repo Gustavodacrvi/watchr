@@ -738,7 +738,7 @@ export default {
 }
 
 .Sidebar-wrapper.desktop {
-  padding: 0 11px;
+  padding: 0 14px;
 }
 
 .comp-wrapper {
