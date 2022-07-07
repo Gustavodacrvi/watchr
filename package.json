@@ -13,7 +13,7 @@
   "dependencies": {
     "core-js": "^2.6.11",
     "firebase": "^6.6.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "moment-locales-webpack-plugin": "^1.1.2",
     "register-service-worker": "^1.6.2",
     "sortablejs": "^1.10.2",
